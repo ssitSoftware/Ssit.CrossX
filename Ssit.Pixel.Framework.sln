@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.Pixel.Framework", "Ssit.Pixel.Framework\Ssit.Pixel.Framework.csproj", "{DA1A6507-8D4C-4351-8079-20126A75241E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.Utils.IoC", "Ssit.Utils.IoC\Ssit.Utils.IoC.csproj", "{B3CD3B64-BB3A-4DDA-B3BD-7DAE1C6986B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.Utils.Mvvm", "Ssit.Utils.Mvvm\Ssit.Utils.Mvvm.csproj", "{402BF95D-A9F5-43CE-BFA9-13B6CED3CF21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA1A6507-8D4C-4351-8079-20126A75241E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA1A6507-8D4C-4351-8079-20126A75241E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA1A6507-8D4C-4351-8079-20126A75241E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA1A6507-8D4C-4351-8079-20126A75241E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3CD3B64-BB3A-4DDA-B3BD-7DAE1C6986B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3CD3B64-BB3A-4DDA-B3BD-7DAE1C6986B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3CD3B64-BB3A-4DDA-B3BD-7DAE1C6986B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3CD3B64-BB3A-4DDA-B3BD-7DAE1C6986B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{402BF95D-A9F5-43CE-BFA9-13B6CED3CF21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{402BF95D-A9F5-43CE-BFA9-13B6CED3CF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{402BF95D-A9F5-43CE-BFA9-13B6CED3CF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{402BF95D-A9F5-43CE-BFA9-13B6CED3CF21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

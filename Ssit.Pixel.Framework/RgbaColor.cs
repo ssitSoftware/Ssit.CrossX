@@ -36,6 +36,12 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         A = (byte)(alpha * 255);
     }
 
+    /// <summary>
+    /// Blends this color with another color based on a specified mix ratio.
+    /// </summary>
+    /// <param name="other">The other RgbaColor to blend with.</param>
+    /// <param name="mix">The mix ratio, where 0 results in the original color and 1 results in the other color.</param>
+    /// <returns>A new RgbaColor that is the result of the blend operation.</returns>
     public RgbaColor Mix(RgbaColor other, float mix)
     {
         var red = Rf * (1 - mix) + other.Rf * mix;
@@ -63,22 +69,59 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         long argb = (A | (B << 8) | (G << 16) | (R << 24));
         return (uint)argb;
     }
-    
+
+    /// <summary>
+    /// Represents the red component of the color in the RGBA color space.
+    /// </summary>
     public byte R;
+
+    /// <summary>
+    /// Represents the green component of the color in the RGBA color space.
+    /// </summary>
     public byte G;
+
+    /// <summary>
+    /// Represents the blue component of the color in the RGBA color space.
+    /// </summary>
     public byte B;
+
+    /// <summary>
+    /// Represents the alpha component of the RGBA color,
+    /// specifying the transparency level. A value of 255
+    /// represents full opacity, while a value of 0 represents
+    /// full transparency.
+    /// </summary>
     public byte A;
 
+    /// <summary>
+    /// Represents the normalized red component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
     public float Rf => R / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized green component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
     public float Gf => G / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized blue component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
     public float Bf => B / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized alpha component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0, where 0.0 is full transparency and 1.0 is full opacity.
+    /// </summary>
     public float Af => A / 255.0f;
 
     public static RgbaColor operator * (RgbaColor color1, RgbaColor color2)
     {
         return new(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);
     }
-
+    
     public static RgbaColor operator *(RgbaColor color, float multiply) => new(color.Rf, color.Gf, color.Bf, color.Af * multiply);
     public static RgbaColor operator *(RgbaColor color, double multiply) => color * (float)multiply;
 
@@ -106,6 +149,13 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         }
     }
 
+    /// <summary>
+    /// Creates an RgbaColor instance from a 32-bit integer representation of a color.
+    /// The integer should be in the format 0xAARRGGBB where AA is the alpha component,
+    /// RR is the red component, GG is the green component, and BB is the blue component.
+    /// </summary>
+    /// <param name="intColor">The 32-bit integer representation of the color.</param>
+    /// <returns>An RgbaColor instance representing the specified color.</returns>
     public static RgbaColor FromInt32(int intColor)
     {
         var a = (intColor >> 24) & 0xff;
@@ -115,7 +165,14 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
 
         return new((byte)r, (byte)g, (byte)b, (byte)a);
     }
-    
+
+    /// <summary>
+    /// Creates an RgbaColor instance from a 32-bit unsigned integer representation of a color.
+    /// The integer should be in the format 0xAABBGGRR where AA is the alpha component,
+    /// RR is the red component, GG is the green component, and BB is the blue component.
+    /// </summary>
+    /// <param name="intColor">The 32-bit unsigned integer representation of the color.</param>
+    /// <returns>An RgbaColor instance representing the specified color.</returns>
     public static RgbaColor FromUInt32(uint intColor)
     {
         var a = (intColor >> 24) & 0xff;
@@ -126,11 +183,31 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         return new((byte)r, (byte)g, (byte)b, (byte)a);
     }
 
+    /// <summary>
+    /// Returns a new RgbaColor instance with the specified alpha component, retaining the same red, green, and blue components.
+    /// </summary>
+    /// <param name="alpha">The byte value of the alpha component to be set in the new RgbaColor.</param>
+    /// <returns>A new RgbaColor instance with the specified alpha value.</returns>
     public readonly RgbaColor WithAlpha(byte alpha)
     {
         return new(R, G, B, alpha);
     }
 
+    /// <summary>
+    /// Converts this RgbaColor instance to a System.Drawing.Color object.
+    /// The resulting Color object will have the same red, green, blue, and alpha components
+    /// as this RgbaColor instance.
+    /// </summary>
+    /// <returns>
+    /// A System.Drawing.Color object representing the same color as this RgbaColor instance.
+    /// </returns>
     public readonly Color ToDrawingColor() => Color.FromArgb(A, R, G, B);
+
+    /// <summary>
+    /// Implicitly converts a System.Drawing.Color instance to an RgbaColor instance.
+    /// The conversion takes the red, green, blue, and alpha components from the System.Drawing.Color.
+    /// </summary>
+    /// <param name="color">The System.Drawing.Color instance to be converted.</param>
+    /// <returns>An RgbaColor instance representing the specified System.Drawing.Color instance.</returns>
     public static implicit operator RgbaColor(Color color) => new RgbaColor(color.R, color.G, color.B, color.A);
 }

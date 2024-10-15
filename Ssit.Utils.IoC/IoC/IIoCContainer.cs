@@ -4,7 +4,7 @@ namespace Ssit.Utils.IoC;
 
 /// <summary>
 /// Interface representing an Inversion of Control (IoC) Container.
-/// Provides methods for resolving dependencies and constructing objects using injected dependencied.
+/// Provides methods for resolving dependencies and constructing objects using injected dependencies.
 /// </summary>
 public interface IIoCContainer: IDisposable
 {

@@ -2,22 +2,87 @@
 
 public partial struct RgbaColor
 {
+    /// <summary>
+    /// RGB(0,0,0) Alpha: 0
+    /// </summary>
     public static readonly RgbaColor Transparent = new(0);
+    
+    /// <summary>
+    /// RGB(240,248,255)
+    /// </summary>
     public static readonly RgbaColor AliceBlue = new(0xfffff8f0);
+    
+    /// <summary>
+    /// RGB(250,235,215)
+    /// </summary>
     public static readonly RgbaColor AntiqueWhite = new(0xffd7ebfa);
+    
+    /// <summary>
+    /// RGB(255, 255, 255)
+    /// </summary>
     public static readonly RgbaColor Aqua = new(0xffffff00);
+    
+    /// <summary>
+    /// RGB(127, 255, 212)
+    /// </summary>
     public static readonly RgbaColor Aquamarine = new(0xffd4ff7f);
+    
+    /// <summary>
+    /// RGB(240, 255, 255)
+    /// </summary>
     public static readonly RgbaColor Azure = new(0xfffffff0);
+    
+    /// <summary>
+    /// RGB(245, 245, 220)
+    /// </summary>
     public static readonly RgbaColor Beige = new(0xffdcf5f5);
+    
+    /// <summary>
+    /// RGB(255, 228, 196)
+    /// </summary>
     public static readonly RgbaColor Bisque = new(0xffc4e4ff);
+    
+    /// <summary>
+    /// RGB(0,0,0)
+    /// </summary>
     public static readonly RgbaColor Black = new(0xff000000);
+    
+    /// <summary>
+    /// RGB(255, 235, 205)
+    /// </summary>
     public static readonly RgbaColor BlanchedAlmond = new(0xffcdebff);
+    
+    /// <summary>
+    /// RGB(0,0,255)
+    /// </summary>
     public static readonly RgbaColor Blue = new(0xffff0000);
+    
+    /// <summary>
+    /// RGB(138,43,226)
+    /// </summary>
     public static readonly RgbaColor BlueViolet = new(0xffe22b8a);
+    
+    /// <summary>
+    /// RGB(165, 42, 42)
+    /// </summary>
     public static readonly RgbaColor Brown = new(0xff2a2aa5);
+    
+    /// <summary>
+    /// RGB(135, 184, 222)
+    /// </summary>
     public static readonly RgbaColor BurlyWood = new(0xff87b8de);
+    
+    /// <summary>
+    /// RGB(95,158,160)
+    /// </summary>
     public static readonly RgbaColor CadetBlue = new(0xffa09e5f);
+    
+    /// <summary>
+    /// RGB(127,255,0)
+    /// </summary>
     public static readonly RgbaColor Chartreuse = new(0xff00ff7f);
+    
+    
     public static readonly RgbaColor Chocolate = new(0xff1e69d2);
     public static readonly RgbaColor Coral = new(0xff507fff);
     public static readonly RgbaColor CornflowerBlue = new(0xffed9564);
@@ -139,8 +204,24 @@ public partial struct RgbaColor
     public static readonly RgbaColor Turquoise = new(0xffd0e040);
     public static readonly RgbaColor Violet = new(0xffee82ee);
     public static readonly RgbaColor Wheat = new(0xffb3def5);
+    
+    /// <summary>
+    /// RGB(255, 255, 255)
+    /// </summary>
     public static readonly RgbaColor White = new(uint.MaxValue);
+    
+    /// <summary>
+    /// RGB(245, 245, 245)
+    /// </summary>
     public static readonly RgbaColor WhiteSmoke = new(0xfff5f5f5);
+    
+    /// <summary>
+    /// RGB(255, 255, 0)
+    /// </summary>
     public static readonly RgbaColor Yellow = new(0xff00ffff);
+    
+    /// <summary>
+    /// RGB(154, 205, 50)
+    /// </summary>
     public static readonly RgbaColor YellowGreen = new(0xff32cd9a);
 }

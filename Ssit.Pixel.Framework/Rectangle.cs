@@ -8,7 +8,7 @@ namespace Ssit.Pixel.Framework;
 /// Represents a rectangle defined by its position and size.
 /// </summary>
 [DebuggerDisplay("Rectangle = ({X}, {Y}, {Width}, {Height})")]
-public readonly struct Rectangle
+public readonly struct Rectangle : IEquatable<Rectangle>
 {
     public Rectangle(int x, int y, int width, int height)
     {
@@ -124,5 +124,20 @@ public readonly struct Rectangle
     public Rectangle Inflate(Size size)
     {
         return new(X - size.Width, Y - size.Height, Width + size.Width * 2, Height + size.Height * 2);
+    }
+
+    public bool Equals(Rectangle other)
+    {
+        return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is Rectangle other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, Width, Height);
     }
 }

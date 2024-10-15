@@ -82,17 +82,57 @@ public partial struct RgbaColor
     /// </summary>
     public static readonly RgbaColor Chartreuse = new(0xff00ff7f);
     
-    
+    /// <summary>
+    /// RGB(210,105,30)
+    /// </summary>
     public static readonly RgbaColor Chocolate = new(0xff1e69d2);
+    
+    /// <summary>
+    /// RGB(127, 255, 80)
+    /// </summary>
     public static readonly RgbaColor Coral = new(0xff507fff);
+    
+    /// <summary>
+    /// RGB(100,149,237)
+    /// </summary>
     public static readonly RgbaColor CornflowerBlue = new(0xffed9564);
+    
+    /// <summary>
+    /// RGB(255, 248, 220)
+    /// </summary>
     public static readonly RgbaColor Cornsilk = new(0xffdcf8ff);
+    
+    /// <summary>
+    /// RGB(220,20,60)
+    /// </summary>
     public static readonly RgbaColor Crimson = new(0xff3c14dc);
+    
+    /// <summary>
+    /// RGB(0, 255, 255)
+    /// </summary>
     public static readonly RgbaColor Cyan = new(0xffffff00);
+    
+    /// <summary>
+    /// RGB(0,0,139)
+    /// </summary>
     public static readonly RgbaColor DarkBlue = new(0xff8b0000);
+    
+    /// <summary>
+    /// RGB(0, 139, 139)
+    /// </summary>
     public static readonly RgbaColor DarkCyan = new(0xff8b8b00);
+    
+    /// <summary>
+    /// RGB(184,134,11)
+    /// </summary>
     public static readonly RgbaColor DarkGoldenrod = new(0xff0b86b8);
+    
+    /// <summary>
+    /// RGB(169,169,169)
+    /// </summary>
     public static readonly RgbaColor DarkGray = new(0xffa9a9a9);
+    
+    
     public static readonly RgbaColor DarkGreen = new(0xff006400);
     public static readonly RgbaColor DarkKhaki = new(0xff6bb7bd);
     public static readonly RgbaColor DarkMagenta = new(0xff8b008b);
@@ -201,8 +241,20 @@ public partial struct RgbaColor
     public static readonly RgbaColor Teal = new(0xff808000);
     public static readonly RgbaColor Thistle = new(0xffd8bfd8);
     public static readonly RgbaColor Tomato = new(0xff4763ff);
+    
+    /// <summary>
+    /// RGB(64,224,208)
+    /// </summary>
     public static readonly RgbaColor Turquoise = new(0xffd0e040);
+    
+    /// <summary>
+    /// RGB(238,130,238)
+    /// </summary>
     public static readonly RgbaColor Violet = new(0xffee82ee);
+    
+    /// <summary>
+    /// RGB(245,222,179)
+    /// </summary>
     public static readonly RgbaColor Wheat = new(0xffb3def5);
     
     /// <summary>

@@ -19,7 +19,7 @@ internal class FontsManager: IFontsManager, IDisposable
     
     private Font _default;
 
-    public Font this[string name] => _fonts.GetValueOrDefault(name, _default);
+    public IFont this[string name] => _fonts.GetValueOrDefault(name, _default);
     
     public FontsManager(IIoCContainer container)
     {
@@ -34,11 +34,9 @@ internal class FontsManager: IFontsManager, IDisposable
         foreach (var fontInfo in fontsDesc.Fonts)
         {
             var font = _container.IoCConstruct<Font>(fontInfo);
-            if (_default is null)
-            {
-                _default = font;
-            }
             _fonts.Add(fontInfo.Name, font);
+            
+            _default ??= font;
         }
     }
     

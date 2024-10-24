@@ -11,6 +11,15 @@ public interface IDialogService
     /// Displays a dialog with the specified view model.
     /// </summary>
     /// <typeparam name="TViewModel">The type of the view model.</typeparam>
+    /// <typeparam name="TResult">Type of dialog result</typeparam>
+    /// <param name="parameter">An optional parameter to pass to the view model constructor.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    Task<TResult> ShowDialog<TViewModel, TResult>(object parameter = null) where TViewModel : IDialogContext<TResult>;
+
+    /// <summary>
+    /// Displays a dialog with the specified view model.
+    /// </summary>
+    /// <typeparam name="TViewModel">The type of the view model.</typeparam>
     /// <param name="parameter">An optional parameter to pass to the view model constructor.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     Task ShowDialog<TViewModel>(object parameter = null);

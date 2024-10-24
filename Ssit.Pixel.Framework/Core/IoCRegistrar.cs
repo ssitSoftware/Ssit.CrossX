@@ -6,7 +6,7 @@ using Ssit.Utils.IoC;
 
 namespace Ssit.Pixel.Framework.Core;
 
-public static class IoCRegistrar
+internal static class IoCRegistrar
 {
     /// <summary>
     /// Registers the essential Pixel Core components with the IoC Container Builder.

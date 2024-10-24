@@ -11,4 +11,5 @@ public interface ITexture: IDisposable
     /// Gets the size of the texture as a <see cref="Ssit.Pixel.Framework.Size"/> structure.
     /// </summary>
     Size Size { get; }
+    TextureMaps TextureMaps { get; }
 }

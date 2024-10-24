@@ -12,7 +12,7 @@ public interface ISoundEffectInstance: IDisposable
     /// The Emitter controls the position and velocity of the sound in a 3D space,
     /// allowing for spatial audio effects.
     /// </summary>
-    SoundEmitter Emitter { get; set; }
+    ISoundEmitter Emitter { get; set; }
 
     /// <summary>
     /// Gets or sets the sound parameters associated with the sound effect instance.

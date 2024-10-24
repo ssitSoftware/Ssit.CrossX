@@ -6,13 +6,13 @@ using Ssit.Pixel.Framework.IO;
 using Ssit.Pixel.Framework.Utils;
 using Ssit.Utils.IoC;
 
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Framework.Graphics.Internal;
 
-public class Font
+internal class Font : IFont
 {
     public delegate void DrawTextureDelegate(ITexture texture, Vector2 position, Rectangle source, RgbaColor color);
-    
-    internal struct TextSource
+
+    private struct TextSource
     {
         public StringBuilder Builder;
         public string String;
@@ -20,8 +20,8 @@ public class Font
         public char this[int index] => String is not null ? String[index] : Builder[index];
         public int Length => String?.Length ?? Builder.Length;
     }
-    
-    internal class FontInfo
+
+    public class FontInfo
     {
         public string Name { get; set; }
         public string Path { get; set; }
@@ -31,11 +31,11 @@ public class Font
         public bool TechnicalLine { get; set; }
         public int OutlineColor { get; set; }
     }
-    
-    internal ITexture FillSheet { get; }
-    internal ITexture OutlineSheet { get; }
-    internal IReadOnlyList<Rectangle> Glyphs => _glyphs;
-    internal int Kerning { get; }
+
+    private ITexture FillSheet { get; }
+    private ITexture OutlineSheet { get; }
+    public IReadOnlyList<Rectangle> Glyphs => _glyphs;
+    private int Kerning { get; }
     
     public string Name { get; }
     public int Size { get; }
@@ -250,7 +250,7 @@ public class Font
         return list.ToArray();
     }
 
-    internal void Dispose()
+    public void Dispose()
     {
         FillSheet?.Dispose();
         OutlineSheet?.Dispose();

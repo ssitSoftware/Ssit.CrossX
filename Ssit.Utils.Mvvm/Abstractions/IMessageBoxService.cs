@@ -11,7 +11,7 @@ public interface IMessageBoxService
     /// Displays a message box to the user with specified parameters.
     /// </summary>
     /// <param name="title">The title of the message box.</param>
-    /// <param name="message">The message text to display.</param.
+    /// <param name="message">The message text to display.</param>
     /// <param name="buttons">The buttons to include in the message box.</param>
     /// <param name="icon">The icon to display in the message box (default is none).</param>
     /// <returns>A task that represents the result of the message box interaction, returning the button clicked by the user.</returns>

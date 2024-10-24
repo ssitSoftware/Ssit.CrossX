@@ -9,7 +9,7 @@ public interface ISoundManager
     /// Gets or sets the primary sound listener.
     /// This represents the listener object with its position, velocity and direction.
     /// </summary>
-    SoundListener Listener { get; set; }
+    ISoundListener Listener { get; set; }
 
     /// <summary>
     /// Gets or sets the master volume level for the sound.

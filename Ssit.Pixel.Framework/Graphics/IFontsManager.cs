@@ -16,5 +16,5 @@ public interface IFontsManager
     /// <summary>
     /// Gets font with a given name or default.
     /// </summary>
-    Font this[string name] { get; }
+    IFont this[string name] { get; }
 }

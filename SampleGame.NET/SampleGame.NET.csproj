@@ -62,7 +62,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SampleGame\SampleGame.csproj" />
-      <ProjectReference Include="..\Ssit.Pixel.Framework.NET\Ssit.Pixel.Framework.NET.csproj" />
+      <ProjectReference Include="..\Ssit.Pixel.NET\Ssit.Pixel.NET.csproj" />
     </ItemGroup>
 
 </Project>

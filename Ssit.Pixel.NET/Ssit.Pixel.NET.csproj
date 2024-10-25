@@ -29,14 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Platforms\MacCatalyst\libjpeg.dylib" />
-      <None Remove="Platforms\MacCatalyst\libogg.dylib" />
-      <None Remove="Platforms\MacCatalyst\libpng.dylib" />
-      <None Remove="Platforms\MacCatalyst\libSDL2.dylib" />
-      <None Remove="Platforms\MacCatalyst\libSDL2_image.dylib" />
-      <None Remove="Platforms\MacCatalyst\libSDL2_mixer.dylib" />
-      <None Remove="Platforms\MacCatalyst\libvorbis.dylib" />
-      <None Remove="Platforms\MacCatalyst\libvorbisfile.dylib" />
+     
       <None Update="libjpeg.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

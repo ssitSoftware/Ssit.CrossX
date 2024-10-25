@@ -29,4 +29,31 @@
       <ProjectReference Include="..\Ssit.Pixel.Framework\Ssit.Pixel.Framework.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Platforms\MacCatalyst\libjpeg.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libogg.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libpng.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libSDL2.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libSDL2_image.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libSDL2_mixer.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libvorbis.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Platforms\MacCatalyst\libvorbisfile.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -6,6 +6,8 @@ namespace Ssit.Pixel.Framework.Core;
 
 public abstract class PixelApp
 {
+    public WindowParameters WindowParameters { get; }
+    
     internal bool ShouldContinue { get; private set; } = true;
     
     internal IIoCContainer InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure) 
@@ -13,18 +15,22 @@ public abstract class PixelApp
     
     internal void Start(object args) => OnStart(args);
 
+    internal void SetActive(bool active) => OnActivate(active);
+
     internal void Dispose()
     {
         OnDispose(true);
     }
 
-    protected void Finish() => ShouldContinue = false;
-    
-    protected IRenderingDevice Device { get; }
-
-    protected PixelApp(IRenderingDevice device)
+    protected virtual void OnActivate(bool active)
     {
-        Device = device;
+    }
+    
+    protected void Finish() => ShouldContinue = false;
+
+    protected PixelApp(WindowParameters windowParameters)
+    {
+        WindowParameters = windowParameters;
     }
     
     ~PixelApp()
@@ -53,7 +59,6 @@ public abstract class PixelApp
 
     protected virtual void OnDraw()
     {
-        Device.Renderer.Clear(RgbaColor.CornflowerBlue);
     }
     
     protected virtual void OnDispose(bool disposing)

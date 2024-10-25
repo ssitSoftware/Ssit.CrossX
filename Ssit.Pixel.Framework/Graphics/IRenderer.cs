@@ -9,6 +9,15 @@ namespace Ssit.Pixel.Framework.Graphics;
 public interface IRenderer
 {
     /// <summary>
+    /// Gets the target size of the renderer.
+    /// </summary>
+    /// <value>
+    /// A <see cref="Size"/> structure representing the width and height
+    /// of the rendering target.
+    /// </value>
+    Size TargetSize { get; }
+    
+    /// <summary>
     /// Clears the render target, setting it to the specified color.
     /// </summary>
     /// <param name="color">The color to use for clearing the render target.</param>

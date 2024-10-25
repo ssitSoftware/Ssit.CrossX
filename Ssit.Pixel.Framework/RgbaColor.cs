@@ -204,6 +204,13 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     public readonly Color ToDrawingColor() => Color.FromArgb(A, R, G, B);
 
     /// <summary>
+    /// Implicitly converts a RgbaColor instance to a System.Drawing.Color instance.
+    /// </summary>
+    /// <param name="color">The RgbaColor color instance to be converted.</param>
+    /// <returns>A System.Drawing.Color instance representing the specified RgbaColor instance.</returns>
+    public static implicit operator Color(RgbaColor color) => color.ToDrawingColor();
+    
+    /// <summary>
     /// Implicitly converts a System.Drawing.Color instance to an RgbaColor instance.
     /// The conversion takes the red, green, blue, and alpha components from the System.Drawing.Color.
     /// </summary>

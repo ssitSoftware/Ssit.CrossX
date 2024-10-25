@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Service for game controller input handling.

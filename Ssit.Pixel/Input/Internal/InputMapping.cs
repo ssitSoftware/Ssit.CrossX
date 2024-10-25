@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ssit.Pixel.Framework.Input.Internal;
+namespace Ssit.Pixel.Input.Internal;
 
 internal class InputMapping : IMapper, IInputMapping
 {

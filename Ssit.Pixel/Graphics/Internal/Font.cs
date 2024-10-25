@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Ssit.Pixel.Framework.IO;
-using Ssit.Pixel.Framework.IoC;
-using Ssit.Pixel.Framework.Utils;
+using Ssit.Pixel.IO;
+using Ssit.Pixel.IoC;
+using Ssit.Pixel.Utils;
 
-namespace Ssit.Pixel.Framework.Graphics.Internal;
+namespace Ssit.Pixel.Graphics.Internal;
 
 internal class Font : IFont
 {

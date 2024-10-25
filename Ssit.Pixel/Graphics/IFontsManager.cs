@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Graphics;
 
 /// <summary>
 /// Service managing fonts in the application.

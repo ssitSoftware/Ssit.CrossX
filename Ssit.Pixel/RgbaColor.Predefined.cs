@@ -1,4 +1,4 @@
-﻿namespace Ssit.Pixel.Framework;
+﻿namespace Ssit.Pixel;
 
 public partial struct RgbaColor
 {

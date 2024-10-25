@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Defines methods for mapping game controller axes and buttons,

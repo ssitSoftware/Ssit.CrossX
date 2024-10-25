@@ -1,38 +1,26 @@
 using System;
-using Ssit.Pixel.Framework.Input;
-using static SDL2.Bindings.SDL;
+using System.Collections.Generic;
+using Ssit.Pixel.Input;
 
 namespace Ssit.Pixel.NET.Input;
 
 internal class KeyboardImpl: IKeyboard
 {
-    private readonly bool[] _buttons = new bool[(int)Key.Max];
-    private readonly bool[] _previousButtons = new bool[(int)Key.Max];
+    private HashSet<Key> _buttons = new();
+    private HashSet<Key> _previousButtons = new();
     
     public ButtonState GetKey(Key key)
     {
-        bool isDown = _buttons[(int) key];
-        bool wasDown = _previousButtons[(int) key];
+        bool isDown = _buttons.Contains(key);
+        bool wasDown = _previousButtons.Contains(key);
         return new ButtonState(isDown, isDown != wasDown);
     }
 
-    public void PreUpdate()
+    public void UpdateButtons(Action<HashSet<Key>> callback)
     {
-        Array.Copy(_buttons, _previousButtons, _buttons.Length);
+        (_previousButtons, _buttons) = (_buttons, _previousButtons);
         
-        var keysPtr = SDL_GetKeyboardState(out var count);
-        count = Math.Min(count, _buttons.Length);
-
-        unsafe
-        {
-            byte* ptr = (byte*) keysPtr;
-            
-            if (ptr == null) throw new InvalidProgramException();
-            
-            for (var idx = 0; idx < count; ++idx)
-            {
-                _buttons[idx] = ptr[idx] == 1;
-            }
-        }
+        _buttons.Clear();
+        callback(_buttons);
     }
 }

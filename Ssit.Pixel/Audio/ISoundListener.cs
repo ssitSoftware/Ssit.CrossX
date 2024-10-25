@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Represents a sound listener within the audio framework.

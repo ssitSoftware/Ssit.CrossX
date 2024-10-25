@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Represents the state of a button, indicating whether it is pressed or not

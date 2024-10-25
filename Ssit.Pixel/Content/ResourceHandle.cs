@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Content;
+namespace Ssit.Pixel.Content;
 
 /// <summary>
 /// Represents disposable handle to the resource. 

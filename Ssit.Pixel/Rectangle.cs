@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework;
+namespace Ssit.Pixel;
 
 /// <summary>
 /// Represents a rectangle defined by its position and size.

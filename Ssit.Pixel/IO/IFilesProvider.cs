@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Ssit.Pixel.Framework.IO;
+namespace Ssit.Pixel.IO;
 
 /// <summary>
 /// Provides methods to open files from various locations.

@@ -1,21 +1,30 @@
 using System;
-using Ssit.Pixel.Framework.Graphics;
-using Ssit.Pixel.Framework.IoC;
+using Ssit.Pixel.IoC;
 
-namespace Ssit.Pixel.Framework.Core;
+namespace Ssit.Pixel.Core;
 
-public abstract class PixelApp
+public interface IApp
+{
+    IIoCContainer InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure);
+    void SetActive(bool active);
+    void Update(float dt);
+    void Draw();
+    void Resize(Size size);
+    void Start(object args);
+}
+
+public abstract class PixelApp: IApp
 {
     public WindowParameters WindowParameters { get; }
     
     internal bool ShouldContinue { get; private set; } = true;
     
-    internal IIoCContainer InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure) 
+    IIoCContainer IApp.InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure) 
         => OnInitializeServices(builder, postConfigure);
     
-    internal void Start(object args) => OnStart(args);
+    void IApp.Start(object args) => OnStart(args);
 
-    internal void SetActive(bool active) => OnActivate(active);
+    void IApp.SetActive(bool active) => OnActivate(active);
 
     internal void Dispose()
     {
@@ -49,13 +58,19 @@ public abstract class PixelApp
     {
     }
 
-    internal void Update(float elapsedTime) => OnUpdate(elapsedTime);
+    void IApp.Update(float elapsedTime) => OnUpdate(elapsedTime);
 
     protected virtual void OnUpdate(float elapsedTime)
     {
     }
 
-    internal void Draw() => OnDraw();
+    void IApp.Draw() => OnDraw();
+    public void Resize(Size size) => OnResize(size);
+
+    protected virtual void OnResize(Size size)
+    {
+        
+    }
 
     protected virtual void OnDraw()
     {

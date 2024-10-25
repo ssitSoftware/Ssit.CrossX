@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Ssit.Pixel.Framework;
+namespace Ssit.Pixel;
 
 /// <summary>
 /// Represents a color in the RGBA (Red, Green, Blue, Alpha) color space.

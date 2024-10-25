@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Ssit.Pixel.Framework.IO;
-using Ssit.Pixel.Framework.IoC;
+using Ssit.Pixel.IO;
+using Ssit.Pixel.IoC;
 
-namespace Ssit.Pixel.Framework.Content.Internal;
+namespace Ssit.Pixel.Content.Internal;
 
 internal class ContentManager: IContentManager
 {

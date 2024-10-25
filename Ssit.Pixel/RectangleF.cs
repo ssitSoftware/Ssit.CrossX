@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework;
+namespace Ssit.Pixel;
 
 /// <summary>
 /// Represents a rectangle defined by a location (X, Y) and a size (Width, Height) with floating-point precision.

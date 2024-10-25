@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework.Graphics.Effects.Lighting2D;
+namespace Ssit.Pixel.Graphics.Effects.Lighting2D;
 
 /// <summary>
 /// Represents a light source in a 2D environment.

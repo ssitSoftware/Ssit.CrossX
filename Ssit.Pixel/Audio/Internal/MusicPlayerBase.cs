@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ssit.Pixel.Framework.Audio.Internal;
+namespace Ssit.Pixel.Audio.Internal;
 
 public abstract class MusicPlayerBase: IMusicPlayer
 {

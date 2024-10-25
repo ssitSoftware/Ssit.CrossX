@@ -56,4 +56,17 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Platforms\MacCatalyst\Triangle.metal" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Platforms\Android\" />
+      <Folder Include="Platforms\iOS\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Shaders\Metal\Triangle.metal" />
+    </ItemGroup>
+
 </Project>

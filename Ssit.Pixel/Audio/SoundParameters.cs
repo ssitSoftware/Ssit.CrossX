@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// SoundParameters struct holds various properties and parameters related to sound effects.

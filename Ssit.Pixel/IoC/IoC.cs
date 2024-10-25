@@ -1,6 +1,6 @@
-using Ssit.Pixel.Framework.IoC.Impl;
+using Ssit.Pixel.IoC.Impl;
 
-namespace Ssit.Pixel.Framework.IoC;
+namespace Ssit.Pixel.IoC;
 
 public static class IoC
 {

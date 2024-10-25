@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Provides methods to query the state of keys on a keyboard.

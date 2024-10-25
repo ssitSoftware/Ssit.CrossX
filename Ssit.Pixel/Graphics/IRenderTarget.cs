@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Graphics;
 
 /// <summary>
 /// Represents a render target texture.

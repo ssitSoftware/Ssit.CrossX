@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ssit.Pixel.Framework.Core;
+namespace Ssit.Pixel.Core;
 
 public class ParametersBase
 {

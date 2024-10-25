@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Defines the interface for managing sound within the framework.

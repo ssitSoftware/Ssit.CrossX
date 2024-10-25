@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input.Internal;
+namespace Ssit.Pixel.Input.Internal;
 
 public abstract class KeyboardBase: IKeyboard
 {

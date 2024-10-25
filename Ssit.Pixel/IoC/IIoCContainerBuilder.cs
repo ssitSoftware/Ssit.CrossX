@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.IoC;
+namespace Ssit.Pixel.IoC;
 
 /// <summary>
 /// Interface for building an Inversion of Control (IoC) container.

@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Defines the various axes available on a game controller.

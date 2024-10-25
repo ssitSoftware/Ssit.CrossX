@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Ssit.Pixel.Framework.Graphics.Effects.Lighting2D;
+using Ssit.Pixel.Graphics.Effects.Lighting2D;
 
-namespace Ssit.Pixel.Framework.Graphics.Effects;
+namespace Ssit.Pixel.Graphics.Effects;
 
 public interface ILightning2dEffect: IEffect
 {

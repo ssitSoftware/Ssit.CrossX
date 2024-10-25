@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Input;
+namespace Ssit.Pixel.Input;
 
 /// <summary>
 /// Service managing input mappings for multiple players.

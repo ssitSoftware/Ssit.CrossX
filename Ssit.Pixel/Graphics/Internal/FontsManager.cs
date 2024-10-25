@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using Ssit.Pixel.Framework.IoC;
+using Ssit.Pixel.IoC;
 
-namespace Ssit.Pixel.Framework.Graphics.Internal;
+namespace Ssit.Pixel.Graphics.Internal;
 
 internal class FontsManager: IFontsManager, IDisposable
 {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Represents a music playlist that holds a collection of songs and provides functionality to manage them.

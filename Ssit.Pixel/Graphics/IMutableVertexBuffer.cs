@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Graphics;
 
 public interface IMutableVertexBuffer: IVertexBuffer
 {

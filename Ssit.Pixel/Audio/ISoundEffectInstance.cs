@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Represents an instance of a sound effect, supporting operations like play, stop, pause, and resume.

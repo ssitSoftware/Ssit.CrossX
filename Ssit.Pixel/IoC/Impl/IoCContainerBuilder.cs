@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ssit.Pixel.Framework.IoC.Impl;
+namespace Ssit.Pixel.IoC.Impl;
 
 internal class IoCContainerBuilder: IIoCContainerBuilder
 {

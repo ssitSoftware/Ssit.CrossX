@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Text;
 
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Graphics;
 
 /// <summary>
 /// Provides methods for rendering text, textures, and primitives on the screen.

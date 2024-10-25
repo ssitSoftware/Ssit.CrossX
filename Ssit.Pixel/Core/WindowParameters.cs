@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Core;
+namespace Ssit.Pixel.Core;
 
 public class WindowParameters: ParametersBase
 {

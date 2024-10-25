@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Ssit.Pixel.Framework.Input;
+using Ssit.Pixel.Input;
 using static SDL2.Bindings.SDL;
 
 namespace Ssit.Pixel.NET.Input;

@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Defines the interface for a sound effect. Provides methods to create

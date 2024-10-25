@@ -1,36 +1,49 @@
+using System;
+using System.IO;
 using System.Numerics;
 using System.Text;
-using Ssit.Pixel.Framework.Graphics;
-using IFont = Ssit.Pixel.Framework.Graphics.IFont;
+using Metal;
+using Ssit.Pixel.Graphics;
+using IFont = Ssit.Pixel.Graphics.IFont;
 
-using static SDL2.Bindings.SDL;
-
-namespace Ssit.Pixel.Framework.NET.Graphics;
+namespace Ssit.Pixel.NET.Graphics;
 
 internal class RendererImpl: IRenderer
 {
-    private readonly IntPtr _rendererHandle;
     private readonly RenderingDeviceImpl _renderingDevice;
-
-    public Size TargetSize
+    private readonly IMTLLibrary _defaultLibrary;
+    public Size TargetSize => _renderingDevice.TargetSize;
+    
+    public RendererImpl(RenderingDeviceImpl renderingDevice)
     {
-        get
-        {
-            SDL_GetRendererOutputSize(_rendererHandle, out var w, out var h);
-            return new Size(w, h);
-        }
+        _renderingDevice = renderingDevice;
+        _defaultLibrary =
+            renderingDevice.View.Device!.CreateLibrary(LoadShaderSrc("Triangle"), new MTLCompileOptions(), out var _);
     }
     
-    public RendererImpl(IntPtr rendererHandle, RenderingDeviceImpl renderingDevice)
+    private string LoadShaderSrc(string name)
     {
-        _rendererHandle = rendererHandle;
-        _renderingDevice = renderingDevice;
+        using var stream = typeof(RenderingDeviceImpl).Assembly.GetManifestResourceStream($"Ssit.Pixel.NET.Shaders.Metal.{name}.metal");
+        return new StreamReader(stream!).ReadToEnd();
     }
 
     public void Clear(RgbaColor color)
     {
-        SetRenderColor(color);
-        SDL_RenderClear(_rendererHandle);
+        IMTLCommandBuffer commandBuffer = _renderingDevice.CommandBuffer();
+        
+        // Obtain a renderPassDescriptor generated from the view's drawable textures
+        MTLRenderPassDescriptor renderPassDescriptor = _renderingDevice.View.CurrentRenderPassDescriptor;
+        
+        // If we have a valid drawable, begin the commands to render into it
+        if (renderPassDescriptor != null)
+        {
+            renderPassDescriptor.ColorAttachments[0].ClearColor =
+                new MTLClearColor(color.Rf, color.Gf, color.Bf, color.Af);
+            renderPassDescriptor.ColorAttachments[0].LoadAction = MTLLoadAction.Clear;
+            
+            var renderEncoder = commandBuffer.CreateRenderCommandEncoder(renderPassDescriptor);
+            renderEncoder.EndEncoding();
+        }
     }
 
     public void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null)
@@ -57,18 +70,6 @@ internal class RendererImpl: IRenderer
 
     public void FillRectangle(Rectangle rectangle, RgbaColor color)
     {
-        const float scale = 1f;
-        
-        var sdlRect = new SDL_Rect
-        {
-            x = (int)(rectangle.X * scale),
-            y = (int)(rectangle.Y * scale),
-            w = (int)(rectangle.Width * scale),
-            h = (int)(rectangle.Height * scale)
-        };
-        
-        SetRenderColor(color);
-        SDL_RenderFillRect(_rendererHandle, ref sdlRect);
     }
 
     public void DrawPrimitives(IVertexBuffer vertexBuffer, ITexture texture = null, RgbaColor? color = null,
@@ -76,6 +77,4 @@ internal class RendererImpl: IRenderer
     {
         throw new NotImplementedException();
     }
-    
-    private void SetRenderColor(RgbaColor color) => SDL_SetRenderDrawColor(_rendererHandle, color.R, color.G, color.B, color.A);
 }

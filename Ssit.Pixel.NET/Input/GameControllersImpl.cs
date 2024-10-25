@@ -1,6 +1,6 @@
 using System;
-using Ssit.Pixel.Framework.Input;
-using Ssit.Pixel.Framework.Input.Internal;
+using Ssit.Pixel.Input;
+using Ssit.Pixel.Input.Internal;
 
 namespace Ssit.Pixel.NET.Input;
 

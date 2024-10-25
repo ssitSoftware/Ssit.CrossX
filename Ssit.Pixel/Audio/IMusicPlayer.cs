@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Defines methods for controlling music playback and managing playlists.

@@ -1,12 +1,12 @@
-using Ssit.Pixel.Framework.Content;
-using Ssit.Pixel.Framework.Content.Internal;
-using Ssit.Pixel.Framework.Graphics;
-using Ssit.Pixel.Framework.Graphics.Internal;
-using Ssit.Pixel.Framework.IoC;
+using Ssit.Pixel.Content;
+using Ssit.Pixel.Content.Internal;
+using Ssit.Pixel.Graphics;
+using Ssit.Pixel.Graphics.Internal;
+using Ssit.Pixel.IoC;
 
-namespace Ssit.Pixel.Framework.Core;
+namespace Ssit.Pixel.Core;
 
-internal static class IoCRegistrar
+public static class IoCRegistrar
 {
     /// <summary>
     /// Registers the essential Pixel Core components with the IoC Container Builder.

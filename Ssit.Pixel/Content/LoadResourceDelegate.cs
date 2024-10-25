@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Content;
+namespace Ssit.Pixel.Content;
 
 /// <summary>
 /// Delegate to method, which loads resource from given path.

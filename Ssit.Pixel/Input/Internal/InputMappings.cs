@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Ssit.Pixel.Framework.IoC;
+using Ssit.Pixel.IoC;
 
-namespace Ssit.Pixel.Framework.Input.Internal;
+namespace Ssit.Pixel.Input.Internal;
 
 internal class InputMappings: IInputMappings
 {

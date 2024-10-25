@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// The SoundEmitter struct is used to represent the position and velocity of a sound source in 3D space.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Ssit.Pixel.Framework.IoC.Impl;
+namespace Ssit.Pixel.IoC.Impl;
 
 internal static class ObjectCreationHelper
 {

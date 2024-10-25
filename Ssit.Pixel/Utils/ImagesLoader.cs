@@ -1,7 +1,7 @@
 using System.IO;
 using SkiaSharp;
 
-namespace Ssit.Pixel.Framework.Utils;
+namespace Ssit.Pixel.Utils;
 
 /// <summary>
 /// Provides functionality to load images and extract pixel data.

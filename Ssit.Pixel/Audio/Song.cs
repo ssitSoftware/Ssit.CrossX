@@ -1,4 +1,4 @@
-namespace Ssit.Pixel.Framework.Audio;
+namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Represents a song with a name and a file path.

@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.Framework.Graphics;
+namespace Ssit.Pixel.Graphics;
 
 /// <summary>
 /// Represents a texture in the graphics framework.

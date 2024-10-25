@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 
-namespace Ssit.Pixel.Framework;
+namespace Ssit.Pixel;
 
 [DebuggerDisplay("Size = ({Width}, {Height})")]
 public readonly struct Size

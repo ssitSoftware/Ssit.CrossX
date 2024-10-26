@@ -82,7 +82,7 @@ public abstract class RendererBase : IRenderer
         
     }
 
-    public virtual void FillRectangle(Rectangle rectangle, RgbaColor color)
+    public virtual void FillRectangle(RectangleF rectangle, RgbaColor color)
     {
         if (CurrentBatchMode != BatchMode.ColorBuffer)
         {

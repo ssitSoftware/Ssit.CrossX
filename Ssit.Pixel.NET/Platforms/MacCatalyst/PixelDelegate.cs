@@ -88,6 +88,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         _services = app.InitializeServices(newBuilder, o => { });
         
         app.Start(null);
+        _app.Resize(new Size((int) _metalView.Layer.Bounds.Width.Value, (int) _metalView.Layer.Bounds.Height.Value));
+        
         Window.MakeKeyAndVisible();
         
         _windowParameters.Width = (int)Window!.Frame.Width;

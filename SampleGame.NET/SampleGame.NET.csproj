@@ -18,8 +18,8 @@
         <UseMaui>true</UseMaui>
         <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
         <SingleProject>true</SingleProject>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
 
         <!-- Display name -->
         <ApplicationTitle>SampleGame</ApplicationTitle>

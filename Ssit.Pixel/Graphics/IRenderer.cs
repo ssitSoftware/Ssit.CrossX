@@ -73,7 +73,7 @@ public interface IRenderer
     /// </summary>
     /// <param name="rectangle">The rectangle to fill, defined by its position and size.</param>
     /// <param name="color">The color to use for filling the rectangle.</param>
-    void FillRectangle(Rectangle rectangle, RgbaColor color);
+    void FillRectangle(RectangleF rectangle, RgbaColor color);
 
     /// <summary>
     /// Renders a set of primitives using the provided texture and vertex buffer, with optional color, transformation, and effect.

@@ -21,13 +21,4 @@
       <PackageReference Include="SkiaSharp" Version="2.88.8" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="Graphics\Internal\RendererBase.cs">
-        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
-      </Compile>
-      <Compile Update="Graphics\DynamicVertexBuffer.cs">
-        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
-      </Compile>
-    </ItemGroup>
-
 </Project>

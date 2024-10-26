@@ -5,24 +5,30 @@ namespace Ssit.Pixel.Core;
 
 public interface IApp
 {
-    IIoCContainer InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure);
+    void InitializeServices(IIoCContainerBuilder builder);
     void SetActive(bool active);
     void Update(float dt);
     void Draw();
     void Resize(Size size);
     void Start(object args);
+    void Initialize(IIoCContainer container);
 }
 
 public abstract class PixelApp: IApp
 {
-    public WindowParameters WindowParameters { get; }
+    public WindowParameters WindowParameters { get; private set; }
     
     internal bool ShouldContinue { get; private set; } = true;
     
-    IIoCContainer IApp.InitializeServices(IIoCContainerBuilder builder, Action<IIoCContainerBuilder> postConfigure) 
-        => OnInitializeServices(builder, postConfigure);
+    void IApp.InitializeServices(IIoCContainerBuilder builder) => OnInitializeServices(builder);
     
     void IApp.Start(object args) => OnStart(args);
+    void IApp.Initialize(IIoCContainer container) => OnInitialize(container);
+
+    protected virtual void OnInitialize(IIoCContainer container)
+    {
+        WindowParameters = container.Get<WindowParameters>();
+    }
 
     void IApp.SetActive(bool active) => OnActivate(active);
 
@@ -37,9 +43,8 @@ public abstract class PixelApp: IApp
     
     protected void Finish() => ShouldContinue = false;
 
-    protected PixelApp(WindowParameters windowParameters)
+    protected PixelApp()
     {
-        WindowParameters = windowParameters;
     }
     
     ~PixelApp()
@@ -47,11 +52,8 @@ public abstract class PixelApp: IApp
         OnDispose(false);
     }
 
-    protected virtual IIoCContainer OnInitializeServices(IIoCContainerBuilder builder,
-        Action<IIoCContainerBuilder> postConfigure)
+    protected virtual void OnInitializeServices(IIoCContainerBuilder builder)
     {
-        postConfigure?.Invoke(builder);
-        return builder.Build();
     }
 
     protected virtual void OnStart(object args)

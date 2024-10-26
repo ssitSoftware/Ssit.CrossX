@@ -1,6 +1,7 @@
 using System;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.Input.Internal;
+using Ssit.Pixel.NET.Core;
 
 namespace Ssit.Pixel.NET.Input;
 
@@ -41,11 +42,11 @@ internal class GameControllersImpl: GameControllersBase
         }
     }
 
-    public void ProcessEvent(SDL2.Bindings.SDL.SDL_Event e)
+    public void ProcessEvent(SDL2.Bindings.SDL.SDL_Event e, IActionScheduler actionScheduler)
     {
         foreach (var controller in _gameControllers)
         {
-            controller.ProcessEvent(e);
+            controller.ProcessEvent(e, actionScheduler);
         }
     }
     

@@ -37,6 +37,13 @@ internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
 
     public IMTLCommandBuffer CommandBuffer => _currentCommandBuffer;
 
+    public void CommitCommandBuffer()
+    {
+        _currentCommandBuffer.Commit();
+        _currentCommandBuffer.WaitUntilCompleted();
+        _currentCommandBuffer = _commandQueue.CommandBuffer()!;
+    }
+    
     public void Draw(MTKView view, IApp app)
     {
         _currentCommandBuffer = _commandQueue.CommandBuffer()!;
@@ -49,4 +56,6 @@ internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
         _currentCommandBuffer.PresentDrawable(drawable!);
         _currentCommandBuffer.Commit();
     }
+
+    
 }

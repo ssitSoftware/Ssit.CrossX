@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Numerics;
 using Ssit.Pixel;
+using Ssit.Pixel.Content;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Input;
+using Ssit.Pixel.IO;
+using Ssit.Pixel.IoC;
+using Rectangle = Ssit.Pixel.Rectangle;
 using RectangleF = Ssit.Pixel.RectangleF;
 using Size = Ssit.Pixel.Size;
 
@@ -12,82 +16,75 @@ namespace SampleGame;
 
 public class GameApp: PixelApp
 {
-    private readonly IKeyboard _keyboard;
-    private readonly IGameControllers _gameControllers;
+    private IKeyboard _keyboard;
+    private IGameControllers _gameControllers;
     private IRenderer _renderer;
+    private IContentManager _contentManager;
+
+    private ResourceHandle<ITexture> _texture;
 
     private RgbaColor _backgroundColor = Color.IndianRed;
 
     private Size _size = Size.Zero;
 
-    private Vector2 _position = new(50, 50);
-    private Vector2 _direction = new(1, 1);
+    private readonly List<Entity> _entities = new();
+
+    private float _cumulatedTime = 0;
+    private const float TimeDelta = 1 / 120f; 
     
-    public GameApp(IRenderingDevice device, IKeyboard keyboard, IGameControllers gameControllers, WindowParameters windowParameters) : base(windowParameters)
+    public GameApp()
     {
-        _keyboard = keyboard;
-        _gameControllers = gameControllers;
-        _renderer = device.Renderer;
+        for (var idx = 0; idx < 100; ++idx)
+        {
+            _entities.Add(new Entity());
+        }
     }
-    
-    private Random _random = new Random();
-    
+
+    protected override void OnInitializeServices(IIoCContainerBuilder builder)
+    {
+        builder.WithInstance<IFilesProvider>(new EmbededFilesProvider(typeof(GameApp).Assembly));
+    }
+
+    protected override void OnInitialize(IIoCContainer container)
+    {
+        base.OnInitialize(container);
+        
+        _keyboard = container.Get<IKeyboard>();
+        _gameControllers = container.Get<IGameControllers>();
+        _renderer = container.Get<IRenderer>();
+        _contentManager = container.Get<IContentManager>();
+
+        _texture = _contentManager.Load<ITexture>("Assets/Image.jpg");
+    }
+
     protected override void OnUpdate(float elapsedTime)
     {
-        if (_keyboard.GetKey(Key.W) == ButtonState.JustPressed)
-        {
-            _backgroundColor = RgbaColor.FromInt32( (int)(_random.Next() | 0xff000000));
-        }
-        
-        if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)
-        {
-            WindowParameters.Width = 400;
-            WindowParameters.Height = 300;
-            WindowParameters.Apply();
-        }
+        _backgroundColor = RgbaColor.GreenYellow;
 
-        if (_gameControllers.GetButton(0, GameControllerButton.A) == ButtonState.JustPressed)
-        {
-            _backgroundColor = Color.Indigo;
-        }
+        _cumulatedTime += elapsedTime;
 
-        _position += _direction * elapsedTime * 500;
+        while (_cumulatedTime >= TimeDelta)
+        {
+            foreach (var entity in _entities)
+            {
+                entity.Update(TimeDelta, _size);
+            }
 
-        var maxX = _size.Width - 50;
-        var maxY = _size.Height - 50;
-        
-        var minX = 50;
-        var minY = 50;
-        
-        if ( _position.X < minX )
-        {
-            _position.X = minY + (minY - _position.X);
-            _direction.X = 1;
-        }
-        
-        if ( _position.Y < minY )
-        {
-            _position.Y = minY + (minY - _position.Y);
-            _direction.Y = 1;
-        }
-        
-        if ( _position.X > maxX )
-        {
-            _position.X = maxX - (_position.X - maxX);
-            _direction.X = -1;
-        }
-        
-        if ( _position.Y > maxY )
-        {
-            _position.Y = maxY - (_position.Y - maxY);
-            _direction.Y = -1;
+            _cumulatedTime -= TimeDelta;
         }
     }
 
     protected override void OnDraw()
     {
         _renderer.Clear(_backgroundColor);
-        _renderer.FillRectangle(new RectangleF(_position.X - 50, _position.Y - 50, 100, 100), Color.Chartreuse);
+        
+        // foreach (var entity in _entities)
+        // {
+        //     _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
+        // }
+        
+        _renderer.DrawTexture(_texture.Resource, 
+            new Rectangle(0, 0, _size.Width, _size.Height));
     }
 
     protected override void OnResize(Size size)

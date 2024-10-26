@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Ssit.Pixel.Graphics;
 using Ssit.Pixel.IO;
 using Ssit.Pixel.IoC;
 
@@ -28,10 +30,13 @@ internal class ContentManager: IContentManager
     {
         _ioCContainer = ioCContainer;
         _filesProvider = filesProvider;
+        RegisterLoader<ITexture>(LoadTextureFunc);
     }
-    
+
     public ResourceHandle<TResource> Load<TResource>(string path) where TResource : class, IDisposable
     {
+        path = PathHelper.NormalizePath(path);
+        
         var key = GetKey<TResource>(path);
 
         if (!_resources.TryGetValue(key, out var resource))
@@ -78,5 +83,23 @@ internal class ContentManager: IContentManager
 
         using var stream = _filesProvider.Open(path);
         return _ioCContainer.IoCConstruct<TResource>(stream);
+    }
+    
+    private IDisposable LoadTextureFunc(string path)
+    {
+        var name = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path));
+        var ext = Path.GetExtension(path);
+
+        var hasDiffuseImplicit = _filesProvider.FileExists(name + ext);
+        var hasDiffuseExplicit = _filesProvider.FileExists(name + ".diffuse" + ext);
+        var hasNormals = _filesProvider.FileExists(name + ".normal" + ext);
+
+        return _ioCContainer.IoCConstruct<ITexture>(new LoadTextureParameters
+        {
+            DiffuseMapStream =  hasDiffuseImplicit ? _filesProvider.Open(name + ext) : hasDiffuseExplicit ? 
+                _filesProvider.Open(name + ".diffuse" + ext) : null,
+            
+            NormalMapStream = hasNormals ? _filesProvider.Open(name + ".normal" + ext) : null
+        });
     }
 }

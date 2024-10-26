@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Ssit.Pixel.Input;
+using Ssit.Pixel.NET.Core;
 using static SDL2.Bindings.SDL;
 
 namespace Ssit.Pixel.NET.Input;
@@ -13,14 +14,14 @@ internal class GameController: IDisposable
     
     private readonly HashSet<GameControllerButton> _previousButtons = new();
     
-    public void ProcessEvent(SDL_Event @event)
+    public void ProcessEvent(SDL_Event @event, IActionScheduler actionScheduler)
     {
         switch (@event.type)
         {
             case SDL_EventType.SDL_CONTROLLERDEVICEADDED:
                 if (IntPtr.Zero == _handle)
                 {
-                    _handle = SDL_FindController();
+                    actionScheduler.Schedule(() => _handle = SDL_FindController());
                 }
                 break;
 
@@ -28,9 +29,12 @@ internal class GameController: IDisposable
                 if (_handle != IntPtr.Zero && 
                     @event.cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(_handle)))
                 {
-                    AttachedControllers.Remove(@event.cdevice.which);
-                    SDL_GameControllerClose(_handle);
-                    _handle = SDL_FindController();
+                    actionScheduler.Schedule(() =>
+                    {
+                        AttachedControllers.Remove(@event.cdevice.which);
+                        SDL_GameControllerClose(_handle);
+                        _handle = SDL_FindController();
+                    });
                 }
                 break;
         }

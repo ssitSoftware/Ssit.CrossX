@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Metal;
@@ -15,6 +16,8 @@ internal class RenderStateManager
     private IRenderTarget _currentRenderTarget;
     private ITexture _currentTexture;
     private IEffect _currentEffect;
+    private TextureFilter _currentTextureFilter = TextureFilter.Nearest;
+    
     private VertexMode _currentVertexMode = VertexMode.Invalid;
     private Size _currentSize = Size.Zero;
     
@@ -25,11 +28,13 @@ internal class RenderStateManager
     private IMetalShaderEffect _basicEffectPCT;
     
     private IMTLDepthStencilState _depthStencilState;
+
+    private IMTLSamplerState _nearestSamplerState, _linearSamplerState;
     
     private readonly int _matrixRawSize = Marshal.SizeOf<Matrix4x4>();
     private readonly byte[] _matrixRawData;
     
-    private IMTLBuffer _transformConstantBuffer;
+    private readonly IMTLBuffer _transformConstantBuffer;
     
     public RenderStateManager(IMetalDevice metalDevice)
     {
@@ -48,6 +53,20 @@ internal class RenderStateManager
         _matrixRawData = new byte[_matrixRawSize];
         
         _transformConstantBuffer = metalDevice.MetalView.Device.CreateBuffer((uint)_matrixRawSize, MTLResourceOptions.CpuCacheModeDefault);
+
+        _nearestSamplerState = metalDevice.MetalView.Device.CreateSamplerState(new MTLSamplerDescriptor
+        {
+            MagFilter = MTLSamplerMinMagFilter.Nearest,
+            MinFilter = MTLSamplerMinMagFilter.Nearest,
+            BorderColor = MTLSamplerBorderColor.TransparentBlack,
+        });
+        
+        _linearSamplerState = metalDevice.MetalView.Device.CreateSamplerState(new MTLSamplerDescriptor
+        {
+            MagFilter = MTLSamplerMinMagFilter.Linear,
+            MinFilter = MTLSamplerMinMagFilter.Linear,
+            BorderColor = MTLSamplerBorderColor.TransparentBlack,
+        });
     }
 
     public void EndRenderState()
@@ -56,7 +75,8 @@ internal class RenderStateManager
         _currentEncoder = null;
     }
     
-    public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode, Action onNewState, RgbaColor? clearColor = null)
+    public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter filter,
+        Action onNewState, RgbaColor? clearColor = null)
     {
         var changeState = clearColor.HasValue;
         changeState |= _currentEncoder is null;
@@ -65,6 +85,7 @@ internal class RenderStateManager
         changeState |= !ReferenceEquals(texture, _currentTexture);
         changeState |= !ReferenceEquals(_metalDevice.RenderTarget, _currentRenderTarget);
         changeState |= _currentSize != _metalDevice.TargetSize;
+        changeState |= _currentTextureFilter != filter;
         
         if (!changeState)
         {
@@ -79,6 +100,7 @@ internal class RenderStateManager
         _currentTexture = texture;
         _currentVertexMode = vertexMode;
         _currentSize = _metalDevice.TargetSize;
+        _currentTextureFilter = filter;
 
         var shaderEffect = (effect as IMetalShaderEffect) ?? ((vertexMode & VertexMode.Texture) != 0 ? _basicEffectPCT : _basicEffectPC);
         
@@ -109,6 +131,12 @@ internal class RenderStateManager
             shaderEffect.Apply(_currentEncoder);
             
             _currentEncoder.SetDepthStencilState(_depthStencilState);
+
+            if (texture is not null)
+            {
+                _currentEncoder.SetFragmentSamplerState(_currentTextureFilter == TextureFilter.Nearest ? _nearestSamplerState : _linearSamplerState, 0);
+                _currentEncoder.SetFragmentTexture(texture.GetMap<IMTLTexture>(TextureMaps.Diffuse), 0);
+            }
             
             ApplyTransform();
             return _currentEncoder;

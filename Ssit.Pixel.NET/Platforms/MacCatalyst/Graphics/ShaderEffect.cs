@@ -39,7 +39,7 @@ public class ShaderEffect: IMetalShaderEffect
         };
 
         pipelineDescriptor.ColorAttachments[0].PixelFormat = device.MetalView.ColorPixelFormat;
-        _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var _);
+        _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var error);
     }
     
     public void Dispose()
@@ -71,4 +71,4 @@ internal class BasicShaderEffectPc(IMetalDevice device)
     : ShaderEffect(device, VertexPositionColor.Mode, "Basic", "vertex_pc", "fragment_pc");
 
 internal class BasicShaderEffectPct(IMetalDevice device)
-    : ShaderEffect(device, VertexPositionColorTexture.Mode, "Basic", "vertex_pc", "fragment_pc");
+    : ShaderEffect(device, VertexPositionColorTexture.Mode, "BasicTexture", "vertex_pct", "fragment_pct");

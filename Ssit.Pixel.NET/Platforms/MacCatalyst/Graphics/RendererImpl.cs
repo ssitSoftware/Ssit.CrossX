@@ -33,12 +33,14 @@ internal class RendererImpl: RendererBase
 
     public override void Clear(RgbaColor color)
     {
-        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, Flush, color);
+        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, Flush, color);
     }
     
     public override void Flush()
     {
-        if (_renderStateManager.CurrentEncoder is not null)
+        bool encoderWasUsed = _renderStateManager.CurrentEncoder is not null;
+        
+        if (encoderWasUsed)
         {
             if (CurrentBatchMode == BatchMode.TextureBuffer)
             {
@@ -54,10 +56,16 @@ internal class RendererImpl: RendererBase
         ColorVertexBuffer.Reset();
         
         CurrentBatchMode = BatchMode.None;
-        _renderStateManager.EndRenderState();
+
+        if (encoderWasUsed)
+        {
+            _renderStateManager.EndRenderState();
+            _renderingDevice.CommitCommandBuffer();
+        }
     }
 
-    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode) => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, Flush);
+    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter) 
+        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, Flush);
 
     private void DrawColorBuffer()
     {
@@ -80,7 +88,7 @@ internal class RendererImpl: RendererBase
     }
 
     public override void DrawPrimitives(IVertexBuffer vertexBuffer,int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
-        Matrix3x2? transform = null, IEffect effect = null)
+        Matrix3x2? transform = null, TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null)
     {
         if (CurrentBatchMode != BatchMode.None)
         {
@@ -90,7 +98,7 @@ internal class RendererImpl: RendererBase
         CurrentBatchMode = BatchMode.None;
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, Flush);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, Flush);
         
         encoder.SetVertexBuffer(mtlBuffer, 0, 0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);

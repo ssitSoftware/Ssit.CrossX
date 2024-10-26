@@ -68,6 +68,7 @@
 
     <ItemGroup>
       <EmbeddedResource Include="Shaders\Metal\Basic.metal" />
+      <EmbeddedResource Include="Shaders\Metal\BasicTexture.metal" />
     </ItemGroup>
 
 </Project>

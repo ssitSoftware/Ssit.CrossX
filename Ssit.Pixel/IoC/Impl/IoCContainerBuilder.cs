@@ -96,8 +96,12 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
         {
             if (type.Value is null)
                 continue;
-            
-            TryGet(type.Key, out var _);
+
+            if (!TryGet(type.Key, out var _))
+            {
+                throw new InvalidOperationException("Cannot create instance of type " + type.Value.Type.Name + 
+                                                    " because its constructor requires not registered services.");
+            }
         }
 
         return _container;

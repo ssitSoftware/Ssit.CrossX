@@ -1,0 +1,7 @@
+namespace Ssit.Pixel.Graphics;
+
+public enum TextureFilter
+{
+    Nearest = 0,
+    Linear = 1,
+}

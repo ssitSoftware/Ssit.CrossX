@@ -13,7 +13,7 @@ using UIKit;
 
 namespace Ssit.Pixel.NET;
 
-public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where TApp: PixelApp
+public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where TApp: PixelApp, new()
 {
     public override UIWindow? Window { get; set; }
     private MTKView _metalView;
@@ -35,9 +35,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     {
         _windowParameters = new WindowParameters();
         _windowParameters.ApplyParameters += WindowParametersOnApplyParameters;
-        
-        var iocBuilder = IoC.IoC.NewBuilder()
-            .WithPixelCore();
+
+        var iocBuilder = IoC.IoC.NewBuilder();
         
         Window = new UIWindow(UIScreen.MainScreen.Bounds);
         Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
@@ -51,19 +50,18 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         
         _metalView = new MTKView(Window!.Frame, MTLDevice.SystemDefault)
         {
-            AutoresizingMask = UIViewAutoresizing.All
+            AutoresizingMask = UIViewAutoresizing.All,
+            SampleCount = 1,
+            DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8,
+            ColorPixelFormat = MTLPixelFormat.BGRA8Unorm,
+            PreferredFramesPerSecond = 60,
+            ClearColor = new MTLClearColor(0.0f, 0.0f, 0.0f, 1.0f),
+            Delegate = this
         };
         
         _pixelViewController = new PixelViewController();
         _pixelViewController.View!.AddSubview(_metalView);
         Window.RootViewController = _pixelViewController;
-        
-        _metalView.SampleCount = 1;
-        _metalView.DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8;
-        _metalView.ColorPixelFormat = MTLPixelFormat.BGRA8Unorm;
-        _metalView.PreferredFramesPerSecond = 60;
-        _metalView.ClearColor = new MTLClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        _metalView.Delegate = this;
 
         _renderingDevice = new RenderingDeviceImpl(_metalView);
 
@@ -74,20 +72,26 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
 
         iocBuilder
             .WithInstance<IRenderingDevice>(_renderingDevice)
+            .WithInstance<IMetalDevice>(_renderingDevice)
             .WithInstance(_renderingDevice.Renderer)
-            .WithInstance<IKeyboard>(_keyboard);
+            .WithInstance<IKeyboard>(_keyboard)
+            .WithInstance(_metalView.Device)
+            .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
+            .WithImplementation<ITexture, TextureImpl>()
+            .WithInstance(_windowParameters)
+            .WithPixelCore();
 
-        var services = iocBuilder.Build();
-        _app = services.IoCConstruct<TApp>(_windowParameters);
-
-        var newBuilder = IoC.IoC.NewBuilder();
-        newBuilder.WithParent(services);
+        _app = new TApp();
         
         IApp app = _app;
         _pixelViewController.SetApp(app);
-        _services = app.InitializeServices(newBuilder, o => { });
+        app.InitializeServices(iocBuilder);
+
+        _services = iocBuilder.Build();
         
+        app.Initialize(_services);
         app.Start(null);
+        
         _app.Resize(new Size((int) _metalView.Layer.Bounds.Width.Value, (int) _metalView.Layer.Bounds.Height.Value));
         
         Window.MakeKeyAndVisible();

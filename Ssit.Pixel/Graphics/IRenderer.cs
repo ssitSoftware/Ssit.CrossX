@@ -48,8 +48,11 @@ public interface IRenderer
     /// <param name="targetRectangle">The destination rectangle on the screen.</param>
     /// <param name="sourceRectangle">The source rectangle from the texture. If null, the entire texture is used.</param>
     /// <param name="color">Color to multiply texture with.</param>
+    /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">An optional effect to be applied to the texture.</param>
-    void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, IEffect effect = null);
+    void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, 
+        TextureFilter filter = TextureFilter.Nearest, 
+        IEffect effect = null);
     
     /// <summary>
     /// Draws the specified texture at a given position with optional parameters for the source rectangle, origin, rotation, scale, color, and effect.
@@ -62,10 +65,12 @@ public interface IRenderer
     /// <param name="scale">The optional scale factor for rendering the texture.</param>
     /// <param name="color">The optional color to apply to the texture. If not provided, the default color will be used.</param>
     /// <param name="transform">Render transform for this draw.</param>
+    /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to be applied during rendering.</param>
     void DrawTexture(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null,
         Vector2? origin = null, float rotation = 0, float scale = 1, RgbaColor? color = null,
         RenderTransform transform = RenderTransform.None,
+        TextureFilter filter = TextureFilter.Nearest,
         IEffect effect = null);
 
     /// <summary>
@@ -84,7 +89,10 @@ public interface IRenderer
     /// <param name="texture">The texture to apply to the primitives. If not provided, no texture will be used.</param>
     /// <param name="color">The optional color to apply to the primitives. If not provided, a default color will be used.</param>
     /// <param name="transform">The optional transform to apply to the primitives. If not provided, no transform will be applied.</param>
+    /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to apply to the rendering. If not provided, no effect will be applied.</param>
-    void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null, 
-        RgbaColor? color = null, Matrix3x2? transform = null, IEffect effect = null);
+    void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null,
+        RgbaColor? color = null, Matrix3x2? transform = null, TextureFilter filter = TextureFilter.Nearest, IEffect effect = null);
+
+    void Flush();
 }

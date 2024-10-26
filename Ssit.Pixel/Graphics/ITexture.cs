@@ -12,4 +12,6 @@ public interface ITexture: IDisposable
     /// </summary>
     Size Size { get; }
     TextureMaps TextureMaps { get; }
+
+    TTextureMap GetMap<TTextureMap>(TextureMaps map) where TTextureMap : class;
 }

@@ -3,6 +3,11 @@
 
 using namespace metal;
 
+struct uniforms_t
+{
+    float4x4 worldViewProj;
+};
+
 typedef struct {
     float4 position [[attribute(0)]];
     float4 color [[attribute(1)]];
@@ -14,18 +19,19 @@ typedef struct {
 } ColorInOut;
 
 // Vertex shader function
-vertex ColorInOut triangle_vertex(VertexInput in [[ stage_in ]])
+vertex ColorInOut vertex_pc(VertexInput in [[ stage_in ]],
+                            constant uniforms_t& uniforms [[ buffer(1) ]])
 {
     ColorInOut out;
-   
-    out.position = in.position;
+
+    out.position = in.position * uniforms.worldViewProj;
     out.color = in.color;
-    
+
     return out;
 }
 
 // Fragment shader function
-fragment float4 triangle_fragment(ColorInOut in [[stage_in]])
+fragment float4 fragment_pc(ColorInOut in [[stage_in]])
 {
     return in.color;
 }

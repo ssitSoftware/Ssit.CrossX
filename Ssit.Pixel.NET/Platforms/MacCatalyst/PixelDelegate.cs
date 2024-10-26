@@ -24,9 +24,13 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     private WindowParameters _windowParameters;
     
     private TApp _app;
+    private IApp App => _app;
 
     private IIoCContainer _services;
-    
+
+    public override void OnActivated(UIApplication application) => App?.SetActive(true);
+    public override void OnResignActivation(UIApplication application) => App?.SetActive(false);
+
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
         _windowParameters = new WindowParameters();
@@ -36,6 +40,9 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             .WithPixelCore();
         
         Window = new UIWindow(UIScreen.MainScreen.Bounds);
+        Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
+        Window.WindowScene.Titlebar.Toolbar = null;
+        
         if (MTLDevice.SystemDefault is  null)
         {
             Console.WriteLine("Metal is not supported on this device");
@@ -85,6 +92,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         
         _windowParameters.Width = (int)Window!.Frame.Width;
         _windowParameters.Height = (int)Window!.Frame.Height;
+        
         _windowParameters.Apply(false);
         
         return true;

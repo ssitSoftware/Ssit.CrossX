@@ -1,80 +1,98 @@
 using System;
 using System.IO;
 using System.Numerics;
-using System.Text;
 using Metal;
 using Ssit.Pixel.Graphics;
-using IFont = Ssit.Pixel.Graphics.IFont;
+using Ssit.Pixel.Graphics.Internal;
 
 namespace Ssit.Pixel.NET.Graphics;
 
-internal class RendererImpl: IRenderer
+internal class RendererImpl: RendererBase
 {
     private readonly RenderingDeviceImpl _renderingDevice;
-    private readonly IMTLLibrary _defaultLibrary;
-    public Size TargetSize => _renderingDevice.TargetSize;
+    private readonly RenderStateManager _renderStateManager;
+
+    private readonly IMTLBuffer _mtlColorVertexBuffer;
+    private readonly IMTLBuffer _mtlTextureVertexBuffer;
+    
+    public override Size TargetSize => _renderingDevice.TargetSize;
     
     public RendererImpl(RenderingDeviceImpl renderingDevice)
     {
         _renderingDevice = renderingDevice;
-        _defaultLibrary =
-            renderingDevice.View.Device!.CreateLibrary(LoadShaderSrc("Triangle"), new MTLCompileOptions(), out var _);
+        _renderStateManager = new RenderStateManager(_renderingDevice);
+
+        _mtlColorVertexBuffer =
+            renderingDevice.View.Device.CreateBuffer( (UIntPtr)(ColorVertexBuffer.Size * ColorVertexBuffer.Stride),
+                MTLResourceOptions.StorageModeShared);
+        
+        _mtlTextureVertexBuffer =
+            renderingDevice.View.Device.CreateBuffer( (UIntPtr)(TextureVertexBuffer.Size * TextureVertexBuffer.Stride),
+                MTLResourceOptions.StorageModeShared);
+    }
+
+    public override void Clear(RgbaColor color)
+    {
+        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, Flush, color);
     }
     
-    private string LoadShaderSrc(string name)
+    public override void Flush()
     {
-        using var stream = typeof(RenderingDeviceImpl).Assembly.GetManifestResourceStream($"Ssit.Pixel.NET.Shaders.Metal.{name}.metal");
-        return new StreamReader(stream!).ReadToEnd();
-    }
-
-    public void Clear(RgbaColor color)
-    {
-        IMTLCommandBuffer commandBuffer = _renderingDevice.CommandBuffer();
-        
-        // Obtain a renderPassDescriptor generated from the view's drawable textures
-        MTLRenderPassDescriptor renderPassDescriptor = _renderingDevice.View.CurrentRenderPassDescriptor;
-        
-        // If we have a valid drawable, begin the commands to render into it
-        if (renderPassDescriptor != null)
+        if (_renderStateManager.CurrentEncoder is not null)
         {
-            renderPassDescriptor.ColorAttachments[0].ClearColor =
-                new MTLClearColor(color.Rf, color.Gf, color.Bf, color.Af);
-            renderPassDescriptor.ColorAttachments[0].LoadAction = MTLLoadAction.Clear;
-            
-            var renderEncoder = commandBuffer.CreateRenderCommandEncoder(renderPassDescriptor);
-            renderEncoder.EndEncoding();
+            if (CurrentBatchMode == BatchMode.TextureBuffer)
+            {
+                DrawTextureBuffer();
+            }
+            else if (CurrentBatchMode == BatchMode.ColorBuffer)
+            {
+                DrawColorBuffer();
+            }
         }
+        
+        TextureVertexBuffer.Reset();
+        ColorVertexBuffer.Reset();
+        
+        CurrentBatchMode = BatchMode.None;
+        _renderStateManager.EndRenderState();
     }
 
-    public void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null)
+    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode) => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, Flush);
+
+    private void DrawColorBuffer()
     {
-        throw new NotImplementedException();
+        ColorVertexBuffer.CopyDataTo(_mtlColorVertexBuffer.Contents, (int)_mtlColorVertexBuffer.Length);
+
+        var encoder = _renderStateManager.CurrentEncoder;
+        
+        encoder.SetVertexBuffer(_mtlColorVertexBuffer, 0, 0);
+        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, 0, (UIntPtr)ColorVertexBuffer.Offset);
     }
 
-    public void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null)
+    private void DrawTextureBuffer()
     {
-        throw new NotImplementedException();
+        TextureVertexBuffer.CopyDataTo(_mtlTextureVertexBuffer.Contents, (int)_mtlTextureVertexBuffer.Length);
+
+        var encoder = _renderStateManager.CurrentEncoder;
+        
+        encoder.SetVertexBuffer(_mtlTextureVertexBuffer, 0, 0);
+        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, 0, (UIntPtr)TextureVertexBuffer.Offset);
     }
 
-    public void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, IEffect effect = null)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DrawTexture(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null, Vector2? origin = null,
-        float rotation = 0, float scale = 1, RgbaColor? color = null, RenderTransform transform = RenderTransform.None,
-        IEffect effect = null)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void FillRectangle(Rectangle rectangle, RgbaColor color)
-    {
-    }
-
-    public void DrawPrimitives(IVertexBuffer vertexBuffer, ITexture texture = null, RgbaColor? color = null,
+    public override void DrawPrimitives(IVertexBuffer vertexBuffer,int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
         Matrix3x2? transform = null, IEffect effect = null)
     {
-        throw new NotImplementedException();
+        if (CurrentBatchMode != BatchMode.None)
+        {
+            Flush();
+        }
+
+        CurrentBatchMode = BatchMode.None;
+        
+        var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, Flush);
+        
+        encoder.SetVertexBuffer(mtlBuffer, 0, 0);
+        encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);
     }
 }

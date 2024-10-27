@@ -15,7 +15,7 @@ namespace Ssit.Pixel.NET;
 
 public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where TApp: PixelApp, new()
 {
-    public override UIWindow? Window { get; set; }
+    public override UIWindow Window { get; set; }
     private MTKView _metalView;
     private RenderingDeviceImpl _renderingDevice;
     private KeyboardImpl _keyboard;

@@ -1,11 +1,6 @@
 using System;
-using System.Drawing;
-using System.Numerics;
-using System.Runtime.InteropServices;
 using Metal;
-using Microsoft.Maui.Platform;
 using Ssit.Pixel.Graphics;
-using Ssit.Pixel.Graphics.Internal;
 
 namespace Ssit.Pixel.NET.Graphics;
 
@@ -31,11 +26,6 @@ internal class RenderStateManager
 
     private IMTLSamplerState _nearestSamplerState, _linearSamplerState;
     
-    private readonly int _matrixRawSize = Marshal.SizeOf<Matrix4x4>();
-    private readonly byte[] _matrixRawData;
-    
-    private readonly IMTLBuffer _transformConstantBuffer;
-    
     public RenderStateManager(IMetalDevice metalDevice)
     {
         _metalDevice = metalDevice;
@@ -50,22 +40,19 @@ internal class RenderStateManager
         };
 
         _depthStencilState = metalDevice.MetalView.Device!.CreateDepthStencilState(depthStateDesc);
-        _matrixRawData = new byte[_matrixRawSize];
-        
-        _transformConstantBuffer = metalDevice.MetalView.Device.CreateBuffer((uint)_matrixRawSize, MTLResourceOptions.CpuCacheModeDefault);
 
         _nearestSamplerState = metalDevice.MetalView.Device.CreateSamplerState(new MTLSamplerDescriptor
         {
             MagFilter = MTLSamplerMinMagFilter.Nearest,
             MinFilter = MTLSamplerMinMagFilter.Nearest,
-            BorderColor = MTLSamplerBorderColor.TransparentBlack,
+            BorderColor = MTLSamplerBorderColor.OpaqueBlack,
         });
         
         _linearSamplerState = metalDevice.MetalView.Device.CreateSamplerState(new MTLSamplerDescriptor
         {
             MagFilter = MTLSamplerMinMagFilter.Linear,
             MinFilter = MTLSamplerMinMagFilter.Linear,
-            BorderColor = MTLSamplerBorderColor.TransparentBlack,
+            BorderColor = MTLSamplerBorderColor.OpaqueBlack,
         });
     }
 
@@ -138,37 +125,9 @@ internal class RenderStateManager
                 _currentEncoder.SetFragmentTexture(texture.GetMap<IMTLTexture>(TextureMaps.Diffuse), 0);
             }
             
-            ApplyTransform();
             return _currentEncoder;
         }
 
         throw new InvalidOperationException();
-    }
-
-    private void ApplyTransform(Matrix3x2? world = null)
-    {
-        var transform = Matrix4x4.CreateOrthographicOffCenter(0, _metalDevice.TargetSize.Width, _metalDevice.TargetSize.Height, 0, 0, 100);
-
-        if (world.HasValue)
-        {
-            var m = world.Value;
-            var worldTransform = new Matrix4x4(
-                m.M11, m.M12, 0, 0, 
-                m.M21, m.M22, 0, 0, 
-                0, 0, 1, 0, 
-                m.M31, m.M32, 0, 1);
-
-            transform = Matrix4x4.Multiply(transform, worldTransform);
-        }
-        
-        transform = Matrix4x4.Transpose(transform);
-        
-        GCHandle pinnedUniforms = GCHandle.Alloc(transform, GCHandleType.Pinned);
-        IntPtr ptr = pinnedUniforms.AddrOfPinnedObject();
-        Marshal.Copy(ptr, _matrixRawData, 0, _matrixRawSize);
-        pinnedUniforms.Free();
-
-        Marshal.Copy(_matrixRawData, 0, _transformConstantBuffer.Contents, _matrixRawSize);
-        _currentEncoder.SetVertexBuffer(_transformConstantBuffer, 0,  1);
     }
 }

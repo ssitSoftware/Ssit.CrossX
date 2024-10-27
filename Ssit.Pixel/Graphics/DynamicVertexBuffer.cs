@@ -1,8 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Ssit.Pixel.Graphics;
 
-public class DynamicVertexBuffer<TVertex> where TVertex: struct
+public class DynamicVertexBuffer<TVertex> where TVertex: unmanaged
 {
     private readonly TVertex[] _vertices;
     private readonly int _structSize;

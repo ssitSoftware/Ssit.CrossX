@@ -1,11 +1,13 @@
+using System;
 using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Metal;
 using Ssit.Pixel.Graphics;
 
 namespace Ssit.Pixel.NET.Graphics;
 
-public class ShaderEffect: IMetalShaderEffect
+public abstract class ShaderEffect: IMetalShaderEffect
 {
     private readonly IMetalDevice _device;
     public bool OverwriteExistingPixels { get; set; }
@@ -15,6 +17,10 @@ public class ShaderEffect: IMetalShaderEffect
 
     private IMTLLibrary _library;
     private IMTLRenderPipelineState _pipelineState;
+    
+    private int _constBufferSize;
+
+    private IMTLBuffer _constantBuffer;
     
     public ShaderEffect(IMetalDevice device, VertexMode vertexMode, string path, string vsName, string fsName)
     {
@@ -41,6 +47,12 @@ public class ShaderEffect: IMetalShaderEffect
         pipelineDescriptor.ColorAttachments[0].PixelFormat = device.MetalView.ColorPixelFormat;
         _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var error);
     }
+
+    protected void CreateConstantBuffer(int size)
+    {
+        _constantBuffer = _device.MetalView.Device!.CreateBuffer((uint)size, MTLResourceOptions.CpuCacheModeDefault);
+        _constBufferSize = size;
+    }
     
     public void Dispose()
     {
@@ -61,14 +73,71 @@ public class ShaderEffect: IMetalShaderEffect
         return new StreamReader(stream!).ReadToEnd();
     }
 
-    public virtual void Apply(IMTLRenderCommandEncoder encoder)
+    public void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? world = null)
     {
         encoder.SetRenderPipelineState(_pipelineState);
+        
+        var transform = Matrix4x4.CreateOrthographicOffCenter(0, _device.TargetSize.Width, _device.TargetSize.Height, 0, 0, 100);
+
+        if (world.HasValue)
+        {
+            var m = world.Value;
+            var worldTransform = new Matrix4x4(
+                m.M11, m.M12, 0, 0, 
+                m.M21, m.M22, 0, 0, 
+                0, 0, 1, 0, 
+                m.M31, m.M32, 0, 1);
+
+            transform = Matrix4x4.Multiply(transform, worldTransform);
+        }
+        
+        transform = Matrix4x4.Transpose(transform);
+        
+        OnApply(encoder, transform);
+        
+        encoder.SetVertexBuffer(_constantBuffer, 0,  1);
+    }
+
+    protected abstract void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform);
+
+    protected void ApplyConstants<TStruct>(IMTLRenderCommandEncoder encoder, TStruct data) where TStruct : unmanaged
+    {
+        var size = _constBufferSize;
+        unsafe
+        {
+            void* str = &data;
+            {
+                void* target = (void*) _constantBuffer.Contents;
+                Buffer.MemoryCopy(str, target, size, size);
+            }
+        }
     }
 }
 
-internal class BasicShaderEffectPc(IMetalDevice device)
-    : ShaderEffect(device, VertexPositionColor.Mode, "Basic", "vertex_pc", "fragment_pc");
+internal class BasicShaderEffectPc : ShaderEffect
+{
+    public BasicShaderEffectPc(IMetalDevice device) 
+        : base(device, VertexPositionColor.Mode, "Basic", "vertex_pc", "fragment_pc")
+    {
+        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());
+    }
 
-internal class BasicShaderEffectPct(IMetalDevice device)
-    : ShaderEffect(device, VertexPositionColorTexture.Mode, "BasicTexture", "vertex_pct", "fragment_pct");
+    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform)
+    {
+        ApplyConstants(encoder, transform);
+    }
+}
+
+internal class BasicShaderEffectPct : ShaderEffect
+{
+    public BasicShaderEffectPct(IMetalDevice device) 
+        : base(device, VertexPositionColorTexture.Mode, "BasicTexture", "vertex_pct", "fragment_pct")
+    {
+        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());
+    }
+    
+    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform)
+    {
+        ApplyConstants(encoder, transform);
+    }
+}

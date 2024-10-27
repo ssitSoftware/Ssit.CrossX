@@ -78,13 +78,18 @@ public class GameApp: PixelApp
     {
         _renderer.Clear(_backgroundColor);
         
-        // foreach (var entity in _entities)
-        // {
-        //     _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
-        // }
+        foreach (var entity in _entities)
+        {
+            _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
+        }
         
         _renderer.DrawTexture(_texture.Resource, 
-            new Rectangle(0, 0, _size.Width, _size.Height));
+            new Rectangle(10, 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4));
+        
+        _renderer.DrawTexture(_texture.Resource, 
+            new Rectangle(20 + _texture.Resource.Size.Width * 4, 10, 
+                _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4), 
+            filter: TextureFilter.Linear);
     }
 
     protected override void OnResize(Size size)

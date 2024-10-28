@@ -1,3 +1,4 @@
+using System;
 using Foundation;
 using Metal;
 using MetalKit;
@@ -6,23 +7,25 @@ using Ssit.Pixel.Graphics;
 
 namespace Ssit.Pixel.NET.Graphics;
 
-internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
+internal class RenderingWindowImpl : NSObject, IRenderingWindow, IMetalDevice
 {
     private readonly MTKView _mtkView;
     
     private IMTLCommandQueue _commandQueue;
     public IRenderer Renderer { get; }
-    public IRenderTarget RenderTarget { get; private set; }
+    public IRenderTarget CurrentRenderTarget { get; set; }
 
     private IMTLCommandBuffer _currentCommandBuffer;
 
     public MTKView MetalView => _mtkView;
-    
-    public Size TargetSize => RenderTarget?.Size ?? new Size((int) _mtkView.Layer.Bounds.Width.Value, (int) _mtkView.Layer.Bounds.Height.Value);
 
+    public Size TargetSize => CurrentRenderTarget?.Size ?? Size;
+
+    public Size Size => new((int) _mtkView.Layer.Bounds.Width.Value, (int) _mtkView.Layer.Bounds.Height.Value);
+    
     public MTKView View => _mtkView;
 
-    public RenderingDeviceImpl(MTKView mtkView)
+    public RenderingWindowImpl(MTKView mtkView)
     {
         _mtkView = mtkView;
         _commandQueue = mtkView!.Device!.CreateCommandQueue();
@@ -32,7 +35,7 @@ internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
     
     public void SetRenderTarget(IRenderTarget renderTarget)
     {
-        RenderTarget = renderTarget;
+        CurrentRenderTarget = renderTarget;
     }
 
     public IMTLCommandBuffer CommandBuffer => _currentCommandBuffer;
@@ -41,6 +44,8 @@ internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
     {
         _currentCommandBuffer.Commit();
         _currentCommandBuffer.WaitUntilCompleted();
+        _currentCommandBuffer.Dispose();
+        
         _currentCommandBuffer = _commandQueue.CommandBuffer()!;
     }
     
@@ -49,13 +54,23 @@ internal class RenderingDeviceImpl : NSObject, IRenderingDevice, IMetalDevice
         _currentCommandBuffer = _commandQueue.CommandBuffer()!;
         var drawable = view.CurrentDrawable;
 
+        Renderer.SetTransform(null);
         app.Draw();
-        
-        ((RendererImpl)Renderer).Flush();
+        Renderer.Flush();
         
         _currentCommandBuffer.PresentDrawable(drawable!);
         _currentCommandBuffer.Commit();
     }
 
-    
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _currentCommandBuffer?.Dispose();
+            _currentCommandBuffer = null;
+            _commandQueue.Dispose();
+
+            (Renderer as IDisposable)?.Dispose();
+        }
+    }
 }

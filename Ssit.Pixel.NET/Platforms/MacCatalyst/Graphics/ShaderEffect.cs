@@ -69,7 +69,7 @@ public abstract class ShaderEffect: IMetalShaderEffect
     
     private string LoadShaderSrc(string name)
     {
-        using var stream = typeof(RenderingDeviceImpl).Assembly.GetManifestResourceStream($"Ssit.Pixel.NET.Shaders.Metal.{name}.metal");
+        using var stream = typeof(RenderingWindowImpl).Assembly.GetManifestResourceStream($"Ssit.Pixel.NET.Shaders.Metal.{name}.metal");
         return new StreamReader(stream!).ReadToEnd();
     }
 
@@ -77,20 +77,13 @@ public abstract class ShaderEffect: IMetalShaderEffect
     {
         encoder.SetRenderPipelineState(_pipelineState);
         
-        var transform = Matrix4x4.CreateOrthographicOffCenter(0, _device.TargetSize.Width, _device.TargetSize.Height, 0, 0, 100);
+        var transform = Matrix4x4.CreateOrthographicOffCenter(0, _device.TargetSize.Width, _device.TargetSize.Height, 0, 1000, -1000);
 
         if (world.HasValue)
         {
-            var m = world.Value;
-            var worldTransform = new Matrix4x4(
-                m.M11, m.M12, 0, 0, 
-                m.M21, m.M22, 0, 0, 
-                0, 0, 1, 0, 
-                m.M31, m.M32, 0, 1);
-
-            transform = Matrix4x4.Multiply(transform, worldTransform);
+            transform = Matrix4x4.Multiply(world.Value, transform);
         }
-        
+
         transform = Matrix4x4.Transpose(transform);
         
         OnApply(encoder, transform);
@@ -116,7 +109,7 @@ public abstract class ShaderEffect: IMetalShaderEffect
 
 internal class BasicShaderEffectPc : ShaderEffect
 {
-    public BasicShaderEffectPc(IMetalDevice device) 
+    public BasicShaderEffectPc(IMetalDevice device)
         : base(device, VertexPositionColor.Mode, "Basic", "vertex_pc", "fragment_pc")
     {
         CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());
@@ -130,7 +123,7 @@ internal class BasicShaderEffectPc : ShaderEffect
 
 internal class BasicShaderEffectPct : ShaderEffect
 {
-    public BasicShaderEffectPct(IMetalDevice device) 
+    public BasicShaderEffectPct(IMetalDevice device)
         : base(device, VertexPositionColorTexture.Mode, "BasicTexture", "vertex_pct", "fragment_pct")
     {
         CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());

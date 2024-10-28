@@ -1,10 +1,11 @@
 using System;
+using System.Numerics;
 using Metal;
 using Ssit.Pixel.Graphics;
 
 namespace Ssit.Pixel.NET.Graphics;
 
-internal class RenderStateManager
+internal class RenderStateManager: IDisposable
 {
     private readonly IMetalDevice _metalDevice;
     
@@ -25,6 +26,12 @@ internal class RenderStateManager
     private IMTLDepthStencilState _depthStencilState;
 
     private IMTLSamplerState _nearestSamplerState, _linearSamplerState;
+
+    private MTLRenderPassDescriptor _offscreenDescriptor = new()
+    {
+        DepthAttachment = new MTLRenderPassDepthAttachmentDescriptor(),
+        StencilAttachment = new MTLRenderPassStencilAttachmentDescriptor()
+    };
     
     public RenderStateManager(IMetalDevice metalDevice)
     {
@@ -35,7 +42,7 @@ internal class RenderStateManager
         
         var depthStateDesc = new MTLDepthStencilDescriptor
         {
-            DepthCompareFunction = MTLCompareFunction.Less,
+            DepthCompareFunction = MTLCompareFunction.LessEqual,
             DepthWriteEnabled = true
         };
 
@@ -63,14 +70,14 @@ internal class RenderStateManager
     }
     
     public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter filter,
-        Action onNewState, RgbaColor? clearColor = null)
+        Action onNewState, Matrix4x4? worldTransform, RgbaColor? clearColor = null)
     {
         var changeState = clearColor.HasValue;
         changeState |= _currentEncoder is null;
         changeState |= vertexMode != _currentVertexMode;
         changeState |= !ReferenceEquals(effect, _currentEffect);
         changeState |= !ReferenceEquals(texture, _currentTexture);
-        changeState |= !ReferenceEquals(_metalDevice.RenderTarget, _currentRenderTarget);
+        changeState |= !ReferenceEquals(_metalDevice.CurrentRenderTarget, _currentRenderTarget);
         changeState |= _currentSize != _metalDevice.TargetSize;
         changeState |= _currentTextureFilter != filter;
         
@@ -83,7 +90,7 @@ internal class RenderStateManager
         EndRenderState();
         
         _currentEffect = effect;
-        _currentRenderTarget = _metalDevice.RenderTarget;
+        _currentRenderTarget = _metalDevice.CurrentRenderTarget;
         _currentTexture = texture;
         _currentVertexMode = vertexMode;
         _currentSize = _metalDevice.TargetSize;
@@ -96,13 +103,25 @@ internal class RenderStateManager
         // Obtain a renderPassDescriptor generated from the view's drawable textures
         MTLRenderPassDescriptor renderPassDescriptor = null;
 
-        if (_metalDevice.RenderTarget is null)
+        if (_metalDevice.CurrentRenderTarget is null)
         {
             renderPassDescriptor = _metalDevice.MetalView.CurrentRenderPassDescriptor;
         }
         else
         {
-            throw new NotImplementedException();
+            renderPassDescriptor = _offscreenDescriptor;
+            
+            renderPassDescriptor.ColorAttachments[0].Texture =
+                _metalDevice.CurrentRenderTarget.GetMap<IMTLTexture>(TextureMaps.Diffuse);
+            
+            renderPassDescriptor.DepthAttachment!.Texture =
+                _metalDevice.CurrentRenderTarget.GetMap<IMTLTexture>(TextureMaps.DepthBuffer);
+            
+            renderPassDescriptor.StencilAttachment!.Texture =
+                _metalDevice.CurrentRenderTarget.GetMap<IMTLTexture>(TextureMaps.DepthBuffer);
+            
+            renderPassDescriptor.RenderTargetWidth = (uint)_metalDevice.CurrentRenderTarget.Size.Width;
+            renderPassDescriptor.RenderTargetHeight = (uint)_metalDevice.CurrentRenderTarget.Size.Height;
         }
         
         if (renderPassDescriptor != null)
@@ -113,9 +132,12 @@ internal class RenderStateManager
             renderPassDescriptor.ColorAttachments[0].LoadAction =
                 clearColor.HasValue ? MTLLoadAction.Clear : MTLLoadAction.Load;
             
+            renderPassDescriptor.DepthAttachment!.LoadAction = clearColor.HasValue ? MTLLoadAction.Clear : MTLLoadAction.Load;
+            renderPassDescriptor.StencilAttachment!.LoadAction = clearColor.HasValue ? MTLLoadAction.Clear : MTLLoadAction.Load;
+            
             _currentEncoder = commandBuffer.CreateRenderCommandEncoder(renderPassDescriptor);
 
-            shaderEffect.Apply(_currentEncoder);
+            shaderEffect.Apply(_currentEncoder, worldTransform);
             
             _currentEncoder.SetDepthStencilState(_depthStencilState);
 
@@ -129,5 +151,16 @@ internal class RenderStateManager
         }
 
         throw new InvalidOperationException();
+    }
+
+    public void Dispose()
+    {
+        _currentEncoder?.EndEncoding();
+        
+        _basicEffectPC?.Dispose();
+        _basicEffectPCT?.Dispose();
+        _depthStencilState?.Dispose();
+        _nearestSamplerState?.Dispose();
+        _linearSamplerState?.Dispose();
     }
 }

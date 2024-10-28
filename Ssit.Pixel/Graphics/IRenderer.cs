@@ -9,6 +9,12 @@ namespace Ssit.Pixel.Graphics;
 public interface IRenderer
 {
     /// <summary>
+    /// Sets the render target for subsequent rendering operations.
+    /// </summary>
+    /// <param name="renderTarget">The render target to set. If null, the app window render target will be used.</param>
+    void SetRenderTarget(IRenderTarget renderTarget);
+    
+    /// <summary>
     /// Gets the target size of the renderer.
     /// </summary>
     /// <value>
@@ -16,6 +22,18 @@ public interface IRenderer
     /// of the rendering target.
     /// </value>
     Size TargetSize { get; }
+
+    /// <summary>
+    /// Sets the transformation matrix that will be used for rendering.
+    /// </summary>
+    /// <param name="matrix">The transformation matrix to apply. If null, the identity matrix will be used.</param>
+    void SetTransform(Matrix3x2? matrix);
+    
+    /// <summary>
+    /// Sets the transformation matrix that will be used for rendering.
+    /// </summary>
+    /// <param name="matrix">The transformation matrix to apply.</param>
+    void SetTransform(Matrix4x4 matrix);
     
     /// <summary>
     /// Clears the render target, setting it to the specified color.
@@ -30,7 +48,8 @@ public interface IRenderer
     /// <param name="text">The text string to render.</param>
     /// <param name="position">The screen coordinates where the text should be rendered.</param>
     /// <param name="color">The optional color of the text. If not provided, a default color will be used.</param>
-    void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null);
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
+    void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null, float depth = 0);
     
     /// <summary>
     /// Renders the specified text string at a given position with an optional color.
@@ -39,7 +58,8 @@ public interface IRenderer
     /// <param name="text">A StringBuilder containing the text string to render.</param>
     /// <param name="position">The screen coordinates where the text should be rendered.</param>
     /// <param name="color">The optional color of the text. If not provided, a default color will be used.</param>
-    void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null);
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
+    void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null, float depth = 0);
 
     /// <summary>
     /// Draws a texture at the specified target rectangle with optional source rectangle and effect.
@@ -50,9 +70,10 @@ public interface IRenderer
     /// <param name="color">Color to multiply texture with.</param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">An optional effect to be applied to the texture.</param>
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
     void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, 
         TextureFilter filter = TextureFilter.Nearest, 
-        IEffect effect = null);
+        IEffect effect = null, float depth = 0);
     
     /// <summary>
     /// Draws the specified texture at a given position with optional parameters for the source rectangle, origin, rotation, scale, color, and effect.
@@ -67,18 +88,19 @@ public interface IRenderer
     /// <param name="transform">Render transform for this draw.</param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to be applied during rendering.</param>
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
     void DrawTexture(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null,
         Vector2? origin = null, float rotation = 0, float scale = 1, RgbaColor? color = null,
-        RenderTransform transform = RenderTransform.None,
         TextureFilter filter = TextureFilter.Nearest,
-        IEffect effect = null);
+        IEffect effect = null, float depth = 0);
 
     /// <summary>
     /// Fills a rectangle on the screen with the specified color.
     /// </summary>
     /// <param name="rectangle">The rectangle to fill, defined by its position and size.</param>
     /// <param name="color">The color to use for filling the rectangle.</param>
-    void FillRectangle(RectangleF rectangle, RgbaColor color);
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
+    void FillRectangle(RectangleF rectangle, RgbaColor color, float depth = 0);
 
     /// <summary>
     /// Renders a set of primitives using the provided texture and vertex buffer, with optional color, transformation, and effect.
@@ -88,11 +110,11 @@ public interface IRenderer
     /// <param name="vertexCount">Specifies number of vertices to draw.</param>
     /// <param name="texture">The texture to apply to the primitives. If not provided, no texture will be used.</param>
     /// <param name="color">The optional color to apply to the primitives. If not provided, a default color will be used.</param>
-    /// <param name="transform">The optional transform to apply to the primitives. If not provided, no transform will be applied.</param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to apply to the rendering. If not provided, no effect will be applied.</param>
     void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null,
-        RgbaColor? color = null, Matrix3x2? transform = null, TextureFilter filter = TextureFilter.Nearest, IEffect effect = null);
+        RgbaColor? color = null, TextureFilter filter = TextureFilter.Nearest, 
+        IEffect effect = null);
 
     void Flush();
 }

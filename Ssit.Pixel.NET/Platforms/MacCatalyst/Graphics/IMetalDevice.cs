@@ -8,6 +8,7 @@ public interface IMetalDevice
 {
     MTKView MetalView { get; }
     IMTLCommandBuffer CommandBuffer { get; }
-    IRenderTarget RenderTarget { get; }
+    IRenderTarget CurrentRenderTarget { get; set; }
     Size TargetSize { get; }
+    void CommitCommandBuffer();
 }

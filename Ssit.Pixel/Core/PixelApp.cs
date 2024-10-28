@@ -3,7 +3,7 @@ using Ssit.Pixel.IoC;
 
 namespace Ssit.Pixel.Core;
 
-public interface IApp
+public interface IApp: IDisposable
 {
     void InitializeServices(IIoCContainerBuilder builder);
     void SetActive(bool active);
@@ -32,7 +32,7 @@ public abstract class PixelApp: IApp
 
     void IApp.SetActive(bool active) => OnActivate(active);
 
-    internal void Dispose()
+    public void Dispose()
     {
         OnDispose(true);
     }

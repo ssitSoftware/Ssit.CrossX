@@ -17,7 +17,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
 {
     public override UIWindow Window { get; set; }
     private MTKView _metalView;
-    private RenderingDeviceImpl _renderingDevice;
+    private RenderingWindowImpl _renderingWindow;
     private KeyboardImpl _keyboard;
     private PlatformHandler _platformHandler;
     private PixelViewController _pixelViewController;
@@ -27,6 +27,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     private IApp App => _app;
 
     private IIoCContainer _services;
+    private bool _isDisposed;
 
     public override void OnActivated(UIApplication application) => App?.SetActive(true);
     public override void OnResignActivation(UIApplication application) => App?.SetActive(false);
@@ -63,7 +64,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         _pixelViewController.View!.AddSubview(_metalView);
         Window.RootViewController = _pixelViewController;
 
-        _renderingDevice = new RenderingDeviceImpl(_metalView);
+        _renderingWindow = new RenderingWindowImpl(_metalView);
 
         _platformHandler = new PlatformHandler();
         _platformHandler.Initialize(iocBuilder);
@@ -71,13 +72,13 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         _keyboard = new KeyboardImpl();
 
         iocBuilder
-            .WithInstance<IRenderingDevice>(_renderingDevice)
-            .WithInstance<IMetalDevice>(_renderingDevice)
-            .WithInstance(_renderingDevice.Renderer)
+            .WithInstance<IRenderingWindow>(_renderingWindow)
+            .WithInstance<IMetalDevice>(_renderingWindow)
             .WithInstance<IKeyboard>(_keyboard)
             .WithInstance(_metalView.Device)
             .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
             .WithImplementation<ITexture, TextureImpl>()
+            .WithImplementation<IRenderTarget, RenderTargetImpl>()
             .WithInstance(_windowParameters)
             .WithPixelCore();
 
@@ -108,15 +109,43 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     {
     }
 
+    public override void WillTerminate(UIApplication application)
+    {
+        Dispose(true);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && !_isDisposed)
+        {
+            _app?.Dispose();
+            _app = null;
+
+            _services?.Dispose();
+            _services = null;
+            
+            _isDisposed = true;
+        }
+    }
+
     public void DrawableSizeWillChange(MTKView view, CoreGraphics.CGSize size)
     {
+        if (_isDisposed)
+        {
+            return;
+        }
         _app.Resize(new Size((int) size.Width, (int) size.Height));
     }
 
     public void Draw(MTKView view)
     {
+        if (_isDisposed)
+        {
+            return;
+        }
+        
         _pixelViewController.UpdateKeyboard(_keyboard);
         _platformHandler.Tick(_app);
-        _renderingDevice.Draw(view, _app);
+        _renderingWindow.Draw(view, _app);
     }
 }

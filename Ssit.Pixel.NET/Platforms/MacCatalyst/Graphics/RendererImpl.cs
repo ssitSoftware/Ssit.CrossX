@@ -7,35 +7,41 @@ using Ssit.Pixel.Graphics.Internal;
 
 namespace Ssit.Pixel.NET.Graphics;
 
-internal class RendererImpl: RendererBase
+internal class RendererImpl: RendererBase, IDisposable
 {
-    private readonly RenderingDeviceImpl _renderingDevice;
+    private readonly IMetalDevice _metalDevice;
     private readonly RenderStateManager _renderStateManager;
 
     private readonly IMTLBuffer _mtlColorVertexBuffer;
     private readonly IMTLBuffer _mtlTextureVertexBuffer;
     
-    public override Size TargetSize => _renderingDevice.TargetSize;
+    public override Size TargetSize => _metalDevice.TargetSize;
     
-    public RendererImpl(RenderingDeviceImpl renderingDevice)
+    public RendererImpl(IMetalDevice metalDevice)
     {
-        _renderingDevice = renderingDevice;
-        _renderStateManager = new RenderStateManager(_renderingDevice);
-
+        _metalDevice = metalDevice;
+        _renderStateManager = new RenderStateManager(_metalDevice);
+        
         _mtlColorVertexBuffer =
-            renderingDevice.View.Device.CreateBuffer( (UIntPtr)(ColorVertexBuffer.Size * ColorVertexBuffer.Stride),
+            metalDevice.MetalView.Device!.CreateBuffer( (UIntPtr)(ColorVertexBuffer.Size * ColorVertexBuffer.Stride),
                 MTLResourceOptions.StorageModeShared);
         
         _mtlTextureVertexBuffer =
-            renderingDevice.View.Device.CreateBuffer( (UIntPtr)(TextureVertexBuffer.Size * TextureVertexBuffer.Stride),
+            metalDevice.MetalView.Device.CreateBuffer( (UIntPtr)(TextureVertexBuffer.Size * TextureVertexBuffer.Stride),
                 MTLResourceOptions.StorageModeShared);
     }
 
     public override void Clear(RgbaColor color)
     {
-        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, Flush, color);
+        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, Flush, WorldTransform, color);
+        Flush();
     }
-    
+
+    public override void SetRenderTarget(IRenderTarget renderTarget)
+    {
+        _metalDevice.CurrentRenderTarget = renderTarget;
+    }
+
     public override void Flush()
     {
         bool encoderWasUsed = _renderStateManager.CurrentEncoder is not null;
@@ -60,12 +66,12 @@ internal class RendererImpl: RendererBase
         if (encoderWasUsed)
         {
             _renderStateManager.EndRenderState();
-            _renderingDevice.CommitCommandBuffer();
+            _metalDevice.CommitCommandBuffer();
         }
     }
 
     protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter) 
-        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, Flush);
+        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, Flush, WorldTransform);
 
     private void DrawColorBuffer()
     {
@@ -73,8 +79,8 @@ internal class RendererImpl: RendererBase
 
         var encoder = _renderStateManager.CurrentEncoder;
         
-        encoder.SetVertexBuffer(_mtlColorVertexBuffer, 0, 0);
-        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, 0, (UIntPtr)ColorVertexBuffer.Offset);
+        encoder.SetVertexBuffer(_mtlColorVertexBuffer, (UIntPtr)0, (UIntPtr)0);
+        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, (UIntPtr)0, (UIntPtr)ColorVertexBuffer.Offset);
     }
 
     private void DrawTextureBuffer()
@@ -83,12 +89,12 @@ internal class RendererImpl: RendererBase
 
         var encoder = _renderStateManager.CurrentEncoder;
         
-        encoder.SetVertexBuffer(_mtlTextureVertexBuffer, 0, 0);
-        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, 0, (UIntPtr)TextureVertexBuffer.Offset);
+        encoder.SetVertexBuffer(_mtlTextureVertexBuffer, (UIntPtr)0, (UIntPtr)0);
+        encoder.DrawPrimitives(MTLPrimitiveType.Triangle, (UIntPtr)0, (UIntPtr)TextureVertexBuffer.Offset);
     }
 
     public override void DrawPrimitives(IVertexBuffer vertexBuffer,int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
-        Matrix3x2? transform = null, TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null)
+        TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null)
     {
         if (CurrentBatchMode != BatchMode.None)
         {
@@ -98,9 +104,16 @@ internal class RendererImpl: RendererBase
         CurrentBatchMode = BatchMode.None;
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, Flush);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, Flush, WorldTransform);
         
         encoder.SetVertexBuffer(mtlBuffer, 0, 0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);
+    }
+
+    public void Dispose()
+    {
+        _mtlColorVertexBuffer?.Dispose();
+        _mtlTextureVertexBuffer?.Dispose();
+        _renderStateManager?.Dispose();
     }
 }

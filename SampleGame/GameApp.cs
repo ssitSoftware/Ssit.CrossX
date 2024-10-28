@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using Ssit.Pixel;
 using Ssit.Pixel.Content;
 using Ssit.Pixel.Core;
@@ -9,7 +10,6 @@ using Ssit.Pixel.Input;
 using Ssit.Pixel.IO;
 using Ssit.Pixel.IoC;
 using Rectangle = Ssit.Pixel.Rectangle;
-using RectangleF = Ssit.Pixel.RectangleF;
 using Size = Ssit.Pixel.Size;
 
 namespace SampleGame;
@@ -32,6 +32,8 @@ public class GameApp: PixelApp
     private float _cumulatedTime = 0;
     private const float TimeDelta = 1 / 120f; 
     
+    private IRenderTarget _renderTarget;
+    
     public GameApp()
     {
         for (var idx = 0; idx < 100; ++idx)
@@ -45,16 +47,34 @@ public class GameApp: PixelApp
         builder.WithInstance<IFilesProvider>(new EmbededFilesProvider(typeof(GameApp).Assembly));
     }
 
+    protected override void OnDispose(bool disposing)
+    {
+        base.OnDispose(disposing);
+
+        if (disposing)
+        {
+            _renderTarget?.Dispose();
+            _renderer = null;
+            
+            _texture?.Dispose();
+            _texture = null;
+        }
+    }
+
     protected override void OnInitialize(IIoCContainer container)
     {
         base.OnInitialize(container);
         
         _keyboard = container.Get<IKeyboard>();
         _gameControllers = container.Get<IGameControllers>();
-        _renderer = container.Get<IRenderer>();
+        _renderer = container.Get<IRenderingWindow>().Renderer;
         _contentManager = container.Get<IContentManager>();
 
         _texture = _contentManager.Load<ITexture>("Assets/Image.jpg");
+        _renderTarget = container.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
+        {
+            Size = new Size(128, 128)
+        });
     }
 
     protected override void OnUpdate(float elapsedTime)
@@ -78,18 +98,28 @@ public class GameApp: PixelApp
     {
         _renderer.Clear(_backgroundColor);
         
-        foreach (var entity in _entities)
-        {
-            _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
-        }
+        // foreach (var entity in _entities)
+        // {
+        //     _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
+        // }
         
         _renderer.DrawTexture(_texture.Resource, 
-            new Rectangle(10, 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4));
+            new Rectangle(10, 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4), depth: 0);
+
+        _renderer.SetTransform(Matrix3x2.CreateTranslation(_texture.Resource.Size.Width * 2, _texture.Resource.Size.Height * 2));
         
         _renderer.DrawTexture(_texture.Resource, 
-            new Rectangle(20 + _texture.Resource.Size.Width * 4, 10, 
-                _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4), 
-            filter: TextureFilter.Linear);
+            new Rectangle(10 , 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4),
+            depth: 100);
+        
+        _renderer.SetTransform(null);
+        
+        _renderer.SetRenderTarget(_renderTarget);
+        
+        _renderer.Clear(RgbaColor.Coral);
+        _renderer.SetRenderTarget(null);
+        
+        _renderer.DrawTexture(_renderTarget, new Rectangle(0,0,128,128));
     }
 
     protected override void OnResize(Size size)

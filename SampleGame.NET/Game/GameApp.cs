@@ -13,7 +13,7 @@ using Ssit.Pixel.IoC;
 using Rectangle = Ssit.Pixel.Rectangle;
 using Size = Ssit.Pixel.Size;
 
-namespace SampleGame;
+namespace SampleGame.Game;
 
 public class GameApp: PixelApp
 {
@@ -74,6 +74,7 @@ public class GameApp: PixelApp
         _gameControllers = container.Get<IGameControllers>();
         _renderer = container.Get<IRenderingWindow>().Renderer;
         _contentManager = container.Get<IContentManager>();
+        container.Get<ISoundManager>().MasterVolume = 2;
 
         _texture = _contentManager.Get<ITexture>("Assets/Image.jpg");
         _renderTarget = container.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters

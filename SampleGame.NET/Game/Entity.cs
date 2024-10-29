@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using Ssit.Pixel;
 
-namespace SampleGame;
+namespace SampleGame.Game;
 
 internal class Entity
 {

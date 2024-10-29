@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.Pixel.NET.Core;
+namespace Ssit.Pixel.Core;
 
 public interface IActionScheduler
 {

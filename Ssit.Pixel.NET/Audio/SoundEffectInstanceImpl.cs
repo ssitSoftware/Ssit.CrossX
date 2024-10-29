@@ -10,16 +10,14 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
 {
     public readonly Guid Guid = Guid.NewGuid();
     private readonly SoundEffectImpl _soundEffect;
-    private readonly ISoundManagerInt _soundManager;
     private readonly IEventSource _eventSource;
 
     private SoundParameters _parameters;
     private int _sourceHandle = 0;
 
-    public SoundEffectInstanceImpl(SoundEffectImpl soundEffect, ISoundManagerInt soundManager, IEventSource eventSource )
+    public SoundEffectInstanceImpl(SoundEffectImpl soundEffect, IEventSource eventSource )
     {
         _soundEffect = soundEffect;
-        _soundManager = soundManager;
         _eventSource = eventSource;
         soundEffect.AddUser?.Invoke(Guid);
     }
@@ -42,21 +40,43 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
     public void Dispose()
     {
         CleanUpSource();
+        
+        if (_emitter is not null)
+        {
+            _emitter.ParametersUpdated -= UpdateParameters;
+            _emitter = null;
+        }
+        
         _soundEffect.RemoveUser?.Invoke(Guid);
     }
 
-    private void OnMasterVolumeUpdated(float _)
-    {
-        UpdateParameters();
-    }
-
     public event Action Finished;
-    public ISoundEmitter Emitter { get; set; }
+
+    public ISoundEmitter Emitter
+    {
+        get => _emitter;
+        set
+        {
+            if (_emitter is not null)
+            {
+                _emitter.ParametersUpdated -= UpdateParameters;
+            }
+            
+            _emitter = value;
+
+            if (_emitter is not null)
+            {
+                UpdateParameters();
+                _emitter.ParametersUpdated += UpdateParameters;
+            }
+        }
+    }
 
     public bool IsPlaying => _sourceHandle != 0 && !_paused;
 
     private bool _paused;
-    
+    private ISoundEmitter _emitter;
+
     public SoundParameters Parameters
     {
         get => _parameters;
@@ -77,7 +97,7 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
             return;
         }
 
-        var volume = _parameters.Volume * _soundManager.MasterVolume;
+        var volume = MathF.Sqrt(_parameters.Volume);
         var pitch = _parameters.Pitch;
 
         volume = MathF.Max(0, MathF.Min(1, volume));
@@ -88,7 +108,6 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
 
         if (Emitter is not null)
         {
-            
             var vec3 = Emitter.Position;
             AL.Source(_sourceHandle, ALSource3f.Position, vec3.X, vec3.Y, vec3.Z);
 
@@ -111,8 +130,6 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
         _paused = false;
         
         _eventSource.Updating += CheckPlaying;
-        _soundManager.MasterVolumeUpdated += OnMasterVolumeUpdated;
-        
         _sourceHandle = AL.GenSource();
         UpdateParameters();
         
@@ -133,7 +150,6 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
     private void CleanUpSource()
     {
         _eventSource.Updating -= CheckPlaying;
-        _soundManager.MasterVolumeUpdated -= OnMasterVolumeUpdated;
         
         if(_sourceHandle != 0)
         {

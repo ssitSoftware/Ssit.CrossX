@@ -46,7 +46,7 @@ public class GameApp: PixelApp
 
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
-        builder.WithInstance<IFilesProvider>(new EmbededFilesProvider(typeof(GameApp).Assembly));
+        builder.WithInstance<IFilesProvider>(new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame"));
     }
 
     protected override void OnDispose(bool disposing)
@@ -81,14 +81,14 @@ public class GameApp: PixelApp
             Size = new Size(128, 128)
         });
         
-        _soundEffect = _contentManager.Get<ISoundEffect>("Assets/Test2.wav");
+        _soundEffect = _contentManager.Get<ISoundEffect>("Assets/MenuSelect.wav");
     }
 
     protected override void OnUpdate(float elapsedTime)
     {
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
-            _soundEffect.Resource.PlayOnce();
+            _soundEffect.Resource.PlayOnce(pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
         }
         
         _backgroundColor = RgbaColor.GreenYellow;
@@ -109,11 +109,6 @@ public class GameApp: PixelApp
     protected override void OnDraw()
     {
         _renderer.Clear(_backgroundColor);
-        
-        // foreach (var entity in _entities)
-        // {
-        //     _renderer.FillRectangle(new RectangleF(entity.Position.X - 50, entity.Position.Y - 50, 100, 100), entity.Color);
-        // }
         
         _renderer.DrawTexture(_texture.Resource, 
             new Rectangle(10, 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4), depth: 0);

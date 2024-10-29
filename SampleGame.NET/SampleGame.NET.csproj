@@ -56,8 +56,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SampleGame\SampleGame.csproj" />
       <ProjectReference Include="..\Ssit.Pixel.NET\Ssit.Pixel.NET.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Assets\Image.jpg" />
+      <EmbeddedResource Include="Assets\MenuSelect.wav" />
+      <EmbeddedResource Include="Assets\Test2.wav" />
     </ItemGroup>
 
 </Project>

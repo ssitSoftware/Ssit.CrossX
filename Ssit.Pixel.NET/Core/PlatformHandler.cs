@@ -66,12 +66,13 @@ internal class PlatformHandler: IActionScheduler
         SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER);
         
         _gameControllers = new GameControllersImpl();
-        builder.WithInstance<IGameControllers>(_gameControllers);
-
         var soundManager = new SoundManagerImpl();
+        
         builder
-            .WithInstance(soundManager, typeof(ISoundManagerInt), typeof(ISoundManager))
-            .WithInstance<IMusicPlayer>(soundManager.MusicPlayer);
+            .WithInstance<IGameControllers>(_gameControllers)
+            .WithInstance<ISoundManager>(soundManager)
+            .WithInstance<IMusicPlayer>(soundManager.MusicPlayer)
+            .WithInstance<IActionScheduler>(this);
     }
 
     public void Schedule(Action action)

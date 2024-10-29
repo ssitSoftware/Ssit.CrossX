@@ -17,10 +17,10 @@ public interface ISoundEffect: IDisposable
     ISoundEffectInstance CreateInstance();
 
     /// <summary>
-    /// Plays the sound effect once with the specified volume, pan, and pitch values.
+    /// Plays the sound effect once with the specified volume, pitch, and optional spatial emitter.
     /// </summary>
     /// <param name="volume">The volume level of the sound effect, ranging from 0.0 (silent) to 1.0 (full volume).</param>
-    /// <param name="pan">The stereo pan position of the sound effect, ranging from -1.0 (left) to 1.0 (right).</param>
     /// <param name="pitch">The pitch level of the sound effect, where 1.0 is the normal pitch.</param>
-    void PlayOnce(float volume = 1.0f, float pan = 0.0f, float pitch = 1.0f);
+    /// <param name="emitter">An optional sound emitter for spatial audio effects. If set to null, the sound plays without spatial positioning.</param>
+    void PlayOnce(float volume = 1.0f, float pitch = 1.0f, ISoundEmitter emitter = null);
 }

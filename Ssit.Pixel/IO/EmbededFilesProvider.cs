@@ -9,9 +9,11 @@ public class EmbededFilesProvider: IFilesProvider
 {
     private Assembly _assembly;
     private HashSet<string> _files;
+    private string _prefix;
 
-    public EmbededFilesProvider(Assembly assembly)
+    public EmbededFilesProvider(Assembly assembly, string prefix = null)
     {
+        _prefix = (prefix ?? _assembly.GetName().Name) + '.';
         _assembly = assembly;
         _files = new HashSet<string>(_assembly.GetManifestResourceNames()); 
     }
@@ -19,7 +21,7 @@ public class EmbededFilesProvider: IFilesProvider
     private string GetResourceName(string path)
     {
         path = PathHelper.NormalizePath(path).Replace('/', '.');
-        path = _assembly.GetName().Name + '.' + path;
+        path = _prefix + path;
         return path;
     }
     

@@ -12,15 +12,13 @@ namespace Ssit.Pixel.NET.Audio;
 
 internal class SoundEffectImpl: ISoundEffect, IInstanceCountingResource
 {
-    private readonly ISoundManagerInt _soundManager;
     private readonly IIoCContainer _iocContainer;
     private int _bufferHandle;
 
     private readonly List<ISoundEffectInstance> _instances = new();
 
-    public SoundEffectImpl(ISoundManagerInt soundManager, IIoCContainer iocContainer, Stream stream)
+    public SoundEffectImpl(IIoCContainer iocContainer, Stream stream)
     {
-        _soundManager = soundManager;
         _iocContainer = iocContainer;
         
         using var waveReader = new WaveFileReader(stream);
@@ -51,9 +49,11 @@ internal class SoundEffectImpl: ISoundEffect, IInstanceCountingResource
 
     public ISoundEffectInstance CreateInstance() => _iocContainer.IoCConstruct<SoundEffectInstanceImpl>(this);
 
-    public void PlayOnce(float volume = 1, float pan = 0, float pitch = 1)
+    public void PlayOnce(float volume = 1, float pitch = 1, ISoundEmitter emitter = null)
     {
         var instance = CreateInstance();
+        instance.Emitter = emitter;
+        
         _instances.Add(instance);
         
         instance.Finished += () =>

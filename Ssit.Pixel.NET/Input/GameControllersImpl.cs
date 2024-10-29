@@ -1,4 +1,5 @@
 using System;
+using Ssit.Pixel.Core;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.Input.Internal;
 using Ssit.Pixel.NET.Core;

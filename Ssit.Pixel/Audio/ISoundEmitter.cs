@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Ssit.Pixel.Audio;
@@ -23,4 +24,9 @@ public interface ISoundEmitter
     /// Gets the direction in which the sound emitter is facing in 3D space.
     /// </summary>
     Vector3 Direction { get; }
+    
+    /// <summary>
+    /// Event triggered when the sound emitter's parameters are updated.
+    /// </summary>
+    event Action ParametersUpdated;
 }

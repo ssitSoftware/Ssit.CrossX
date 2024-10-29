@@ -18,4 +18,9 @@ public interface ISoundEmitter
     /// The velocity determines the speed and direction at which the emitter is moving.
     /// </summary>
     Vector3 Velocity { get; }
+
+    /// <summary>
+    /// Gets the direction in which the sound emitter is facing in 3D space.
+    /// </summary>
+    Vector3 Direction { get; }
 }

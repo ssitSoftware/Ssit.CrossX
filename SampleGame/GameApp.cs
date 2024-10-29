@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using Ssit.Pixel;
+using Ssit.Pixel.Audio;
 using Ssit.Pixel.Content;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
@@ -33,6 +34,7 @@ public class GameApp: PixelApp
     private const float TimeDelta = 1 / 120f; 
     
     private IRenderTarget _renderTarget;
+    private ResourceHandle<ISoundEffect> _soundEffect;
     
     public GameApp()
     {
@@ -53,6 +55,9 @@ public class GameApp: PixelApp
 
         if (disposing)
         {
+            _soundEffect?.Dispose();
+            _soundEffect = null;
+            
             _renderTarget?.Dispose();
             _renderer = null;
             
@@ -70,15 +75,22 @@ public class GameApp: PixelApp
         _renderer = container.Get<IRenderingWindow>().Renderer;
         _contentManager = container.Get<IContentManager>();
 
-        _texture = _contentManager.Load<ITexture>("Assets/Image.jpg");
+        _texture = _contentManager.Get<ITexture>("Assets/Image.jpg");
         _renderTarget = container.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
             Size = new Size(128, 128)
         });
+        
+        _soundEffect = _contentManager.Get<ISoundEffect>("Assets/Test2.wav");
     }
 
     protected override void OnUpdate(float elapsedTime)
     {
+        if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
+        {
+            _soundEffect.Resource.PlayOnce();
+        }
+        
         _backgroundColor = RgbaColor.GreenYellow;
 
         _cumulatedTime += elapsedTime;

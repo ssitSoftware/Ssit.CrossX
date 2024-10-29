@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ssit.Pixel.IoC.Impl;
 
@@ -7,29 +8,35 @@ internal class IoCContainer : IIoCContainer
 {
     public IIoCContainer Parent { get; set; }
 
+    private readonly List<IDisposable> _disposables = new();
+    
     private readonly Dictionary<Type, object> _instances = new();
 
     private readonly Dictionary<Type, Type> _implementations = new();
 
-    public void Register(Type type, object instance) => _instances.Add(type, instance);
+    public void Register(Type type, object instance)
+    {
+        _instances.Add(type, instance);
+
+        if (instance is IDisposable disposable && !ReferenceEquals(disposable, this))
+        {
+            if (!_disposables.Contains(disposable))
+            {
+                _disposables.Add(disposable);
+            }
+        }
+    }
         
     public void RegisterImplementation(Type type, Type impl) => _implementations.Add(type, impl);
         
     public void Dispose()
     {
-        var list = new List<IDisposable>();
-        
-        foreach (var inst in _instances)
+        for (var idx = _disposables.Count - 1; idx >= 0; idx--)
         {
-            if (inst.Value is IDisposable disposable && !ReferenceEquals(disposable, this))
-            {
-                if (!list.Contains(disposable))
-                {
-                    disposable.Dispose();
-                    list.Add(disposable);
-                }
-            }
+            _disposables[idx].Dispose();
         }
+        _disposables.Clear();
+        _instances.Clear();
     }
 
     public TType Get<TType>()

@@ -2,10 +2,12 @@ using System;
 using Foundation;
 using Metal;
 using MetalKit;
+using Ssit.Pixel.Audio;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.IoC;
+using Ssit.Pixel.NET.Audio;
 using Ssit.Pixel.NET.Core;
 using Ssit.Pixel.NET.Graphics;
 using Ssit.Pixel.NET.Input;
@@ -13,9 +15,14 @@ using UIKit;
 
 namespace Ssit.Pixel.NET;
 
-public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where TApp: PixelApp, new()
+public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEventSource where TApp: PixelApp, new()
 {
     public override UIWindow Window { get; set; }
+    
+    public event Action Updating;
+    public event Action Updated;
+    public event Action RenderFinished;
+    
     private MTKView _metalView;
     private RenderingWindowImpl _renderingWindow;
     private KeyboardImpl _keyboard;
@@ -70,18 +77,20 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         _platformHandler.Initialize(iocBuilder);
 
         _keyboard = new KeyboardImpl();
-
+        
         iocBuilder
             .WithInstance<IRenderingWindow>(_renderingWindow)
             .WithInstance<IMetalDevice>(_renderingWindow)
             .WithInstance<IKeyboard>(_keyboard)
             .WithInstance(_metalView.Device)
+            .WithInstance<IEventSource>(this)
             .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
             .WithImplementation<ITexture, TextureImpl>()
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
             .WithInstance(_windowParameters)
+            .WithImplementation<ISoundEffect, SoundEffectImpl>()
             .WithPixelCore();
-
+        
         _app = new TApp();
         
         IApp app = _app;
@@ -144,8 +153,16 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             return;
         }
         
+        Updating?.Invoke();
+        
         _pixelViewController.UpdateKeyboard(_keyboard);
         _platformHandler.Tick(_app);
+        
+        Updated?.Invoke();
+        
         _renderingWindow.Draw(view, _app);
+        RenderFinished?.Invoke();
     }
+
+    
 }

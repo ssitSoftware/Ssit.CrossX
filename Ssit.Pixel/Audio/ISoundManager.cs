@@ -1,16 +1,12 @@
+using System;
+
 namespace Ssit.Pixel.Audio;
 
 /// <summary>
 /// Defines the interface for managing sound within the framework.
 /// </summary>
-public interface ISoundManager
+public interface ISoundManager: IDisposable
 {
-    /// <summary>
-    /// Gets or sets the primary sound listener.
-    /// This represents the listener object with its position, velocity and direction.
-    /// </summary>
-    ISoundListener Listener { get; set; }
-
     /// <summary>
     /// Gets or sets the master volume level for the sound.
     /// </summary>
@@ -19,4 +15,14 @@ public interface ISoundManager
     /// Changes to this property will affect the overall volume of all sounds in game/app.
     /// </remarks>
     float MasterVolume { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sound listener for the audio framework.
+    /// </summary>
+    /// <remarks>
+    /// This property represents the sound listener which is responsible for interpreting sound sources
+    /// in the 3D space within the audio framework. Adjusting the sound listener's position, velocity,
+    /// and direction can affect how 3D sound is perceived.
+    /// </remarks>
+    ISoundListener SoundListener { get; set; } 
 }

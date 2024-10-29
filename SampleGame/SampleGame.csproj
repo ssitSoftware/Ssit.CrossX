@@ -12,16 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Assets\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AndroidAsset Remove="Assets\Test.jpg" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AndroidAsset Remove="Assets\Image.jpg" />
-      <EmbeddedResource Include="Assets\Image.jpg" />
+        <EmbeddedResource Include="Assets\**" />
     </ItemGroup>
 
 </Project>

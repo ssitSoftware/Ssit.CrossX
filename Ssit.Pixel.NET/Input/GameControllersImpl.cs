@@ -31,7 +31,8 @@ internal class GameControllersImpl: GameControllersBase
 
     protected override void VibrateInternal(int player, ushort low, ushort high, uint ms)
     {
-        
+        CheckPlayerIndex(player);
+        _gameControllers[player].Vibrate(low, high, ms);
     }
     
     public void PostUpdate()

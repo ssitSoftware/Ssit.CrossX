@@ -5,13 +5,13 @@ namespace Ssit.Pixel.Content;
 public interface IContentManager
 {
     /// <summary>
-    /// Loads/gets resource from given path amd returns handle to it.
+    /// Gets resource from given path amd returns handle to it. Underneath loads resource as needed.
     /// </summary>
     /// <param name="path">Path to resource file.</param>
     /// <typeparam name="TResource">Type of resource to load.</typeparam>
     /// <returns>Disposable handle to the resource instance.</returns>
     /// <remarks>Each handle must be disposed, when no longer in use. When all handles are disposed for a specific resource, it is unloaded and released.</remarks>
-    ResourceHandle<TResource> Load<TResource>(string path) where TResource : class, IDisposable;
+    ResourceHandle<TResource> Get<TResource>(string path) where TResource : class, IDisposable;
     
     /// <summary>
     /// Registers custom resource loader.

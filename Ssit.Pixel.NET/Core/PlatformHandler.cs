@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Ssit.Pixel.Audio;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.IoC;
+using Ssit.Pixel.NET.Audio;
 using Ssit.Pixel.NET.Input;
 using static SDL2.Bindings.SDL;
 
@@ -56,15 +58,20 @@ internal class PlatformHandler: IActionScheduler
         _lastTime = stopwatchRead;
         
         app.Update(dt);
-        //_gameControllers.PostUpdate();
+        _gameControllers.PostUpdate();
     }
 
     public void Initialize(IIoCContainerBuilder builder)
     {
-        SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO);
+        SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER);
         
         _gameControllers = new GameControllersImpl();
         builder.WithInstance<IGameControllers>(_gameControllers);
+
+        var soundManager = new SoundManagerImpl();
+        builder
+            .WithInstance(soundManager, typeof(ISoundManagerInt), typeof(ISoundManager))
+            .WithInstance<IMusicPlayer>(soundManager.MusicPlayer);
     }
 
     public void Schedule(Action action)

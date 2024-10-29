@@ -33,7 +33,7 @@ internal class ContentManager: IContentManager
         RegisterLoader<ITexture>(LoadTextureFunc);
     }
 
-    public ResourceHandle<TResource> Load<TResource>(string path) where TResource : class, IDisposable
+    public ResourceHandle<TResource> Get<TResource>(string path) where TResource : class, IDisposable
     {
         path = PathHelper.NormalizePath(path);
         
@@ -45,6 +45,21 @@ internal class ContentManager: IContentManager
 
             resource = new ResourceInstance(obj);
             _resources.Add(key, resource);
+
+            if (obj is IInstanceCountingResource icr)
+            {
+                icr.AddUser = g => resource.Users.Add(g);
+                icr.RemoveUser = g =>
+                {
+                    resource.Users.Remove(g);
+                    
+                    if (resource.Users.Count == 0)
+                    {
+                        resource.Object.Dispose();
+                        _resources.Remove(key);
+                    }
+                };
+            }
         }
 
         var handle = new ResourceHandle<TResource>((TResource) resource.Object, key, g =>
@@ -75,6 +90,7 @@ internal class ContentManager: IContentManager
             var resource = resourceLoader.Invoke(path);
             if (resource is not TResource resourceInstance)
             {
+                resource?.Dispose();
                 throw new Exception($"Resource loading failed for type {type.Name} on path {path}");
             }
 

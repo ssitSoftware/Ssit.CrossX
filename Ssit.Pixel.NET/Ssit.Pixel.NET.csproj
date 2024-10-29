@@ -22,39 +22,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="NAudio.Core" Version="2.2.1" />
+        <PackageReference Include="OpenTK.Audio.OpenAL" Version="4.8.2" />
         <PackageReference Include="SDL2.Bindings" Version="1.1.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Ssit.Pixel\Ssit.Pixel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-     
-      <None Update="libjpeg.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libogg.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libpng.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libSDL2.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libSDL2_image.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libSDL2_mixer.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libvorbis.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="libvorbisfile.dylib" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -69,6 +43,22 @@
     <ItemGroup>
       <EmbeddedResource Include="Shaders\Metal\Basic.metal" />
       <EmbeddedResource Include="Shaders\Metal\BasicTexture.metal" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="libjpeg.dylib" />
+      <None Remove="libogg.dylib" />
+      <None Remove="libpng.dylib" />
+      <None Remove="libSDL2.dylib" />
+      <BundleResource Include="libSDL2.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </BundleResource>
+      <None Remove="libSDL2_image.dylib" />
+
+        <None Remove="libSDL2_mixer.dylib" />
+      
+      <None Remove="libvorbis.dylib" />
+      <None Remove="libvorbisfile.dylib" />
     </ItemGroup>
 
 </Project>

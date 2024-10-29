@@ -8,12 +8,17 @@ namespace Ssit.Pixel.Audio;
 public interface ISoundEffectInstance: IDisposable
 {
     /// <summary>
-    /// Gets or sets the SoundEmitter associated with a sound effect instance.
-    /// The Emitter controls the position and velocity of the sound in a 3D space,
-    /// allowing for spatial audio effects.
+    /// Event that is triggered when the playback of the sound effect instance is finished.
+    /// </summary>
+    event Action Finished;
+
+    /// <summary>
+    /// Gets or sets the sound emitter associated with the sound effect instance.
+    /// The sound emitter provides spatial audio effects by representing the position
+    /// and velocity of the sound source in 3D space.
     /// </summary>
     ISoundEmitter Emitter { get; set; }
-
+    
     /// <summary>
     /// Gets or sets the sound parameters associated with the sound effect instance.
     /// </summary>
@@ -23,9 +28,16 @@ public interface ISoundEffectInstance: IDisposable
     SoundParameters Parameters { get; set; }
 
     /// <summary>
-    /// Begins playback of the sound effect instance.
+    /// Indicates whether the sound effect instance is currently playing.
     /// </summary>
-    void Play();
+    bool IsPlaying { get; }
+
+
+    /// <summary>
+    /// Plays the sound effect instance.
+    /// </summary>
+    /// <param name="loop">If set to true, the sound effect will loop until stopped.</param>
+    void Play(bool loop = false);
 
     /// <summary>
     /// Stops the playback of the sound effect instance that is currently playing.

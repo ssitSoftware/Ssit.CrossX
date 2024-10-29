@@ -138,12 +138,23 @@ internal class GameController: IDisposable
     public void PostUpdate()
     {
         _previousButtons.Clear();
+        
+        if (_handle == IntPtr.Zero) return;
+        
         for (var idx = 0; idx < (int) GameControllerButton.Max; ++idx)
         {
             if (IsButtonDown((GameControllerButton) idx))
             {
                 _previousButtons.Add((GameControllerButton)idx);
             }
+        }
+    }
+    
+    public void Vibrate(ushort low, ushort high, uint ms)
+    {
+        if (_handle != IntPtr.Zero)
+        {
+            SDL_GameControllerRumble(_handle, low, high, ms);
         }
     }
 

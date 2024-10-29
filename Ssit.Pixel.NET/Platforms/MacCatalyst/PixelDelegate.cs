@@ -19,7 +19,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
 {
     public override UIWindow Window { get; set; }
     
-    public event Action Updating;
+    public event Action<float> Updating;
     public event Action Updated;
     public event Action RenderFinished;
     
@@ -36,8 +36,10 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
     private IIoCContainer _services;
     private bool _isDisposed;
 
-    public override void OnActivated(UIApplication application) => App?.SetActive(true);
-    public override void OnResignActivation(UIApplication application) => App?.SetActive(false);
+    private bool _isActive = true;
+    
+    public override void OnActivated(UIApplication application) => App?.SetActive(_isActive = true);
+    public override void OnResignActivation(UIApplication application) => App?.SetActive(_isActive = false);
 
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
@@ -47,8 +49,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         var iocBuilder = IoC.IoC.NewBuilder();
         
         Window = new UIWindow(UIScreen.MainScreen.Bounds);
-        Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
-        Window.WindowScene.Titlebar.Toolbar = null;
+        //Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
+        //Window.WindowScene.Titlebar.Toolbar = null;
         
         if (MTLDevice.SystemDefault is  null)
         {
@@ -153,10 +155,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
             return;
         }
         
-        Updating?.Invoke();
-        
         _pixelViewController.UpdateKeyboard(_keyboard);
-        _platformHandler.Tick(_app);
+        _platformHandler.Tick(_app, f => Updating?.Invoke(f));
         
         Updated?.Invoke();
         

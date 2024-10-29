@@ -59,8 +59,6 @@ internal class SoundManagerImpl: ISoundManager
         AL.Listener(ALListenerfv.Orientation, _listenerOrientation);
         AL.Listener(ALListenerf.Gain, MathF.Sqrt(MasterVolume));
     }
-
-    public readonly MusicPlayerImpl MusicPlayer = new();
     
     private float _masterVolume = 0.5f;
 
@@ -83,8 +81,6 @@ internal class SoundManagerImpl: ISoundManager
 
     public void Dispose()
     {
-        MusicPlayer.Dispose();
-
         if (_context != ALContext.Null)
         {
             ALC.DestroyContext(_context);

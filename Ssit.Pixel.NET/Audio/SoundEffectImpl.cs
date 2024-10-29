@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using NAudio.Wave;
 using OpenTK.Audio.OpenAL;
 using Ssit.Pixel.Audio;
+using Ssit.Pixel.Audio.Internal;
 using Ssit.Pixel.Content;
 using Ssit.Pixel.IoC;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Ssit.Pixel.NET.Audio;
 
@@ -20,29 +19,18 @@ internal class SoundEffectImpl: ISoundEffect, IInstanceCountingResource
     public SoundEffectImpl(IIoCContainer iocContainer, Stream stream)
     {
         _iocContainer = iocContainer;
-        
-        using var waveReader = new WaveFileReader(stream);
-        using var wave = new WaveChannel32(waveReader);
-        var sampleProvider = wave.ToSampleProvider().ToMono();
-        
-        
-        var buffer = new float[waveReader.Length];
-        
-        var samplesCount = sampleProvider.Read(buffer, 0, (int)waveReader.Length);
-        var shorts = new short[samplesCount];
-        for (var idx = 0; idx < samplesCount; idx++)
-        {
-            shorts[idx] = (short)(buffer[idx] * short.MaxValue);
-        }
+
+        var wav = WavLoader.LoadMonoWav(stream);
         
         _bufferHandle = AL.GenBuffer();
 
         unsafe
         {
-            fixed (short* ptr = shorts)
+            fixed (short* ptr = wav.buffer)
             {
-                AL.BufferData(_bufferHandle, ALFormat.Mono16, (IntPtr)ptr, samplesCount * sizeof(short), 
-                    sampleProvider.WaveFormat.SampleRate);
+                AL.BufferData(_bufferHandle, ALFormat.Mono16, 
+                    (IntPtr)ptr, wav.buffer.Length * sizeof(short),
+                    wav.sampleRate);
             }
         }
     }

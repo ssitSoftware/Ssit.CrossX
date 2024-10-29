@@ -22,7 +22,7 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
         soundEffect.AddUser?.Invoke(Guid);
     }
 
-    private void CheckPlaying()
+    private void CheckPlaying(float _)
     {
         if (_sourceHandle == 0)
         {

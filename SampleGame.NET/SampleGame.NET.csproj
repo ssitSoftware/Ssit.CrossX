@@ -60,9 +60,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Assets\Image.jpg" />
-      <EmbeddedResource Include="Assets\MenuSelect.wav" />
-      <EmbeddedResource Include="Assets\Test2.wav" />
+      <EmbeddedResource Include="Assets\**" />
     </ItemGroup>
 
 </Project>

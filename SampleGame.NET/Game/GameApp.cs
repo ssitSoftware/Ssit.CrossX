@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Numerics;
 using Ssit.Pixel;
 using Ssit.Pixel.Audio;
+using Ssit.Pixel.Audio.Internal;
 using Ssit.Pixel.Content;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
@@ -34,6 +35,8 @@ public class GameApp: PixelApp
     private const float TimeDelta = 1 / 120f; 
     
     private IRenderTarget _renderTarget;
+    private IMusicPlayer _musicPlayer;
+    
     private ResourceHandle<ISoundEffect> _soundEffect;
     
     public GameApp()
@@ -74,6 +77,8 @@ public class GameApp: PixelApp
         _gameControllers = container.Get<IGameControllers>();
         _renderer = container.Get<IRenderingWindow>().Renderer;
         _contentManager = container.Get<IContentManager>();
+        _musicPlayer = container.Get<IMusicPlayer>();
+        
         container.Get<ISoundManager>().MasterVolume = 2;
 
         _texture = _contentManager.Get<ITexture>("Assets/Image.jpg");
@@ -83,6 +88,13 @@ public class GameApp: PixelApp
         });
         
         _soundEffect = _contentManager.Get<ISoundEffect>("Assets/MenuSelect.wav");
+        
+        _musicPlayer.RegisterPlaylist("Normal", new MusicPlaylist
+        {
+            new Song("Assets/ObservingTheStar.ogg")
+        });
+        
+        _musicPlayer.ChangePlaylist("Normal");
     }
 
     protected override void OnUpdate(float elapsedTime)

@@ -8,7 +8,7 @@
         <UseMaui>true</UseMaui>
         <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
         <SingleProject>true</SingleProject>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
@@ -22,7 +22,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NAudio.Core" Version="2.2.1" />
         <PackageReference Include="OpenTK.Audio.OpenAL" Version="4.8.2" />
         <PackageReference Include="SDL2.Bindings" Version="1.1.0" />
     </ItemGroup>

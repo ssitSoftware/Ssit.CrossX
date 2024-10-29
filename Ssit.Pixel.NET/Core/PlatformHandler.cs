@@ -46,16 +46,18 @@ internal class PlatformHandler: IActionScheduler
         }
     }
     
-    public void Tick(IApp app)
+    public void Tick(IApp app, Action<float> preUpdate)
     {
+        var stopwatchRead = _stopwatch.Elapsed;
+                var dt = (float)(stopwatchRead - _lastTime).TotalSeconds;
+                _lastTime = stopwatchRead;
+
+        preUpdate(dt);
+                
         while (_actionQueue.TryDequeue(out var action))
         {
             action();
         }
-        
-        var stopwatchRead = _stopwatch.Elapsed;
-        var dt = (float)(stopwatchRead - _lastTime).TotalSeconds;
-        _lastTime = stopwatchRead;
         
         app.Update(dt);
         _gameControllers.PostUpdate();
@@ -71,7 +73,7 @@ internal class PlatformHandler: IActionScheduler
         builder
             .WithInstance<IGameControllers>(_gameControllers)
             .WithInstance<ISoundManager>(soundManager)
-            .WithInstance<IMusicPlayer>(soundManager.MusicPlayer)
+            .WithSingleton<IMusicPlayer, MusicPlayerImpl>()
             .WithInstance<IActionScheduler>(this);
     }
 

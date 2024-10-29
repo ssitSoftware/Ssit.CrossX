@@ -28,7 +28,7 @@ public abstract class MusicPlayerBase: IMusicPlayer
             _currentPlaylist.CurrentPosition = 0;
         }
         
-        SwitchSong(_currentPlaylist, _currentPlaylist.CurrentSong, fadeTimeMs);
+        SwitchSong(_currentPlaylist.List[_currentPlaylist.CurrentSong], fadeTimeMs, _currentPlaylist.CurrentPosition);
     }
 
     public bool NextTrack(int fadeTimeMs = 0, bool loop = true)
@@ -49,7 +49,9 @@ public abstract class MusicPlayerBase: IMusicPlayer
         }
         
         _currentPlaylist.CurrentPosition = 0;
-        SwitchSong(_currentPlaylist, nextSong, fadeTimeMs);
+        _currentPlaylist.CurrentSong = nextSong;
+        
+        SwitchSong(_currentPlaylist.List[nextSong], fadeTimeMs);
         return true;
     }
 
@@ -71,10 +73,12 @@ public abstract class MusicPlayerBase: IMusicPlayer
         }
 
         _currentPlaylist.CurrentPosition = 0;
-        SwitchSong(_currentPlaylist, nextSong, fadeTimeMs);
+        _currentPlaylist.CurrentSong = nextSong;
+        
+        SwitchSong(_currentPlaylist.List[nextSong], fadeTimeMs);
         return true;
     }
     
-    protected abstract long GetSongPosition();
-    protected abstract void SwitchSong(MusicPlaylist currentPlaylist, int index, int fadeTime);
+    protected abstract int GetSongPosition();
+    protected abstract void SwitchSong(Song song, int fadeTime, int startPosition = 0);
 }

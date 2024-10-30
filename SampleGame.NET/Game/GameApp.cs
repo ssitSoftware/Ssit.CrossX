@@ -115,6 +115,8 @@ public class GameApp: PixelApp
 
         mapper.MapAxis("Horizontal", GameControllerAxis.LeftX);
         mapper.MapAxis("Vertical", GameControllerAxis.LeftY);
+        mapper.MapAxis("Horizontal", GameControllerButton.DPadLeft, GameControllerButton.DPadRight);
+        mapper.MapAxis("Vertical", GameControllerButton.DPadUp, GameControllerButton.DPadDown);
         mapper.MapAxis("Horizontal", Key.Left, Key.Right);
         mapper.MapAxis("Vertical", Key.Up, Key.Down);
         

@@ -1,5 +1,6 @@
 using System;
 using OpenTK.Audio.OpenAL;
+using Ssit.Pixel.Audio;
 using Ssit.Pixel.Audio.Internal;
 
 namespace Ssit.Pixel.NET.Audio;
@@ -17,6 +18,7 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     
     private VorbisDataProvider _dataProvider;
     private readonly IMusicDataProvider _musicDataProvider;
+    private readonly IMusicPlayer _musicPlayer;
     private int _alSource;
 
     private int[] _buffers;
@@ -26,9 +28,10 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     private float _volume = 0;
     private Mode _mode;
     
-    public SingleMusicPlayerImpl(IMusicDataProvider musicDataProvider)
+    public SingleMusicPlayerImpl(IMusicDataProvider musicDataProvider, IMusicPlayer musicPlayer)
     {
         _musicDataProvider = musicDataProvider;
+        _musicPlayer = musicPlayer;
     }
     
     public void Start(VorbisDataProvider provider, int bufferLength, int fadeInMilliseconds)
@@ -49,7 +52,7 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
 
     private void UpdateVolume()
     {
-        AL.Source(_alSource, ALSourcef.Gain, _volume);
+        AL.Source(_alSource, ALSourcef.Gain, _volume * _musicPlayer.Volume);
     }
 
     private void Start()
@@ -101,7 +104,6 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
                     _volume = 1;
                     _mode = Mode.Normal;
                 }
-                UpdateVolume();
                 break;
             
             case Mode.FadeOut:
@@ -112,9 +114,10 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
                     finished = true;
                     return;
                 }
-                UpdateVolume();
                 break;
         }
+        
+        UpdateVolume();
         
         var state = (ALSourceState) AL.GetSource(_alSource, ALGetSourcei.SourceState);
         var buffersProcessed = AL.GetSource(_alSource, ALGetSourcei.BuffersProcessed);

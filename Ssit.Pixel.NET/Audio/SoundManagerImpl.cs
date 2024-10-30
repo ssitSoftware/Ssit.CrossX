@@ -7,15 +7,17 @@ namespace Ssit.Pixel.NET.Audio;
 
 internal class SoundManagerImpl: ISoundManager
 {
-    private float[] _listenerOrientation = new float[6];
-    
+    private readonly float[] _listenerOrientation = new float[6];
+
+    public event Action MasterVolumeUpdated;
+
     public float MasterVolume
     {
         get => _masterVolume;
         set
         {
             _masterVolume = value;
-            UpdateListener();
+            MasterVolumeUpdated?.Invoke();
         }
     }
 
@@ -38,27 +40,6 @@ internal class SoundManagerImpl: ISoundManager
             UpdateListener();
         }
     }
-
-    private void UpdateListener()
-    {
-        var position = _soundListener?.Position ?? new Vector3(0, 0, -2);
-        var velocity = _soundListener?.Velocity ?? Vector3.Zero;
-        var at = _soundListener?.At ?? new Vector3(0, 0, 0);
-        var up = _soundListener?.Up ?? new Vector3(0, 1, 0);
-
-        _listenerOrientation[0] = at.X;
-        _listenerOrientation[1] = at.Y;
-        _listenerOrientation[2] = at.Z;
-        
-        _listenerOrientation[3] = up.X;
-        _listenerOrientation[4] = up.Y;
-        _listenerOrientation[5] = up.Z;
-        
-        AL.Listener(ALListener3f.Position, position.X, position.Y, position.Z);
-        AL.Listener(ALListener3f.Velocity, velocity.X, velocity.Y, velocity.Z);
-        AL.Listener(ALListenerfv.Orientation, _listenerOrientation);
-        AL.Listener(ALListenerf.Gain, MathF.Sqrt(MasterVolume));
-    }
     
     private float _masterVolume = 0.5f;
 
@@ -79,6 +60,27 @@ internal class SoundManagerImpl: ISoundManager
         UpdateListener();
     }
 
+    private void UpdateListener()
+    {
+        var position = _soundListener?.Position ?? new Vector3(0, 0, -2);
+        var velocity = _soundListener?.Velocity ?? Vector3.Zero;
+        var at = _soundListener?.At ?? new Vector3(0, 0, 0);
+        var up = _soundListener?.Up ?? new Vector3(0, 1, 0);
+
+        _listenerOrientation[0] = at.X;
+        _listenerOrientation[1] = at.Y;
+        _listenerOrientation[2] = at.Z;
+        
+        _listenerOrientation[3] = up.X;
+        _listenerOrientation[4] = up.Y;
+        _listenerOrientation[5] = up.Z;
+        
+        AL.Listener(ALListener3f.Position, position.X, position.Y, position.Z);
+        AL.Listener(ALListener3f.Velocity, velocity.X, velocity.Y, velocity.Z);
+        AL.Listener(ALListenerfv.Orientation, _listenerOrientation);
+        AL.Listener(ALListenerf.Gain, 1);
+    }
+    
     public void Dispose()
     {
         if (_context != ALContext.Null)

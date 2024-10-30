@@ -3,7 +3,6 @@ using Ssit.Pixel.Audio;
 using OpenTK.Audio.OpenAL;
 using Ssit.Pixel.Core;
 
-
 namespace Ssit.Pixel.NET.Audio;
 
 internal class SoundEffectInstanceImpl: ISoundEffectInstance
@@ -11,14 +10,16 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
     public readonly Guid Guid = Guid.NewGuid();
     private readonly SoundEffectImpl _soundEffect;
     private readonly IEventSource _eventSource;
+    private readonly ISoundManager _soundManager;
 
     private SoundParameters _parameters;
     private int _sourceHandle = 0;
 
-    public SoundEffectInstanceImpl(SoundEffectImpl soundEffect, IEventSource eventSource )
+    public SoundEffectInstanceImpl(SoundEffectImpl soundEffect, IEventSource eventSource, ISoundManager soundManager)
     {
         _soundEffect = soundEffect;
         _eventSource = eventSource;
+        _soundManager = soundManager;
         soundEffect.AddUser?.Invoke(Guid);
     }
 
@@ -90,6 +91,18 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
         }
     }
 
+    private void UpdateVolume()
+    {
+        if (_sourceHandle == 0)
+        {
+            return;
+        }
+        
+        var volume = _parameters.Volume * _soundManager.MasterVolume;
+        volume = MathF.Max(0, MathF.Min(1, volume));
+        AL.Source(_sourceHandle, ALSourcef.Gain, volume);
+    }
+    
     private void UpdateParameters()
     {
         if (_sourceHandle == 0)
@@ -97,13 +110,11 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
             return;
         }
 
-        var volume = MathF.Sqrt(_parameters.Volume);
+        UpdateVolume();
+        
         var pitch = _parameters.Pitch;
-
-        volume = MathF.Max(0, MathF.Min(1, volume));
         pitch = MathF.Max(0, MathF.Min(4, pitch));
-
-        AL.Source(_sourceHandle, ALSourcef.Gain, volume);
+        
         AL.Source(_sourceHandle, ALSourcef.Pitch, pitch);
 
         if (Emitter is not null)
@@ -130,6 +141,7 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
         _paused = false;
         
         _eventSource.Updating += CheckPlaying;
+        _soundManager.MasterVolumeUpdated += UpdateVolume;
         _sourceHandle = AL.GenSource();
         UpdateParameters();
         
@@ -149,6 +161,7 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
 
     private void CleanUpSource()
     {
+        _soundManager.MasterVolumeUpdated -= UpdateVolume;
         _eventSource.Updating -= CheckPlaying;
         
         if(_sourceHandle != 0)

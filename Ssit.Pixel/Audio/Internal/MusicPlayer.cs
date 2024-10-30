@@ -21,6 +21,8 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
     private readonly IActionScheduler _scheduler;
 
     private readonly List<ISingleMusicPlayer> _musicPlayers = new ();
+
+    public float Volume { get; set; } = 0.5f;
     
     public MusicPlayer(IFilesProvider filesProvider, IEventSource eventSource, IIoCContainer iocContainer, IActionScheduler scheduler)
     {

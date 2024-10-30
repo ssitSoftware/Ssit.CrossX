@@ -22,6 +22,7 @@ public class GameApp: PixelApp
     private IGameControllers _gameControllers;
     private IRenderer _renderer;
     private IContentManager _contentManager;
+    private ISoundManager _soundManager;
 
     private ResourceHandle<ITexture> _texture;
 
@@ -87,6 +88,7 @@ public class GameApp: PixelApp
         _renderer = container.Get<IRenderingWindow>().Renderer;
         _contentManager = container.Get<IContentManager>();
         _musicPlayer = container.Get<IMusicPlayer>();
+        _soundManager = container.Get<ISoundManager>();
         
         container.Get<ISoundManager>().MasterVolume = 2;
 
@@ -113,9 +115,29 @@ public class GameApp: PixelApp
 
     protected override void OnUpdate(float elapsedTime)
     {
+        if (_keyboard.GetKey(Key.Down).IsDown)
+        {
+            _musicPlayer.Volume = MathF.Max(0, _musicPlayer.Volume - elapsedTime / 4);
+        }
+        
+        if (_keyboard.GetKey(Key.Up).IsDown)
+        {
+            _musicPlayer.Volume = MathF.Min(1, _musicPlayer.Volume + elapsedTime / 4);
+        }
+        
+        if (_keyboard.GetKey(Key.Left).IsDown)
+        {
+            _soundManager.MasterVolume = MathF.Max(0, _soundManager.MasterVolume - elapsedTime / 4);
+        }
+        
+        if (_keyboard.GetKey(Key.Right).IsDown)
+        {
+            _soundManager.MasterVolume = MathF.Min(1, _soundManager.MasterVolume + elapsedTime / 4);
+        }
+        
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
-            _soundEffect.Resource.PlayOnce(pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
+            _soundEffect.Resource.PlayOnce(volume: 2, pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
         }
         
         if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)

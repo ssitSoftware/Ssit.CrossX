@@ -5,6 +5,14 @@ namespace Ssit.Pixel.Audio;
 /// </summary>
 public interface IMusicPlayer
 {
+    /// <summary>
+    /// Gets or sets the volume level for music playback.
+    /// </summary>
+    /// <value>
+    /// A float value representing the volume, where 0.0 is silent and 1.0 is the maximum volume.
+    /// </value>
+    public float Volume { get; set; }
+    
     /// <summary>Registers a new music playlist with the specified name.</summary>
     /// <param name="name">The name of the playlist to register.</param>
     /// <param name="playlist">The playlist object containing the songs.</param>

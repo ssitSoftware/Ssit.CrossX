@@ -26,16 +26,14 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     private float _volume = 0;
     private Mode _mode;
     
-    public SingleMusicPlayerImpl(VorbisDataProvider dataProvider, 
-        int bufferSize, IMusicManager musicManager,
-        float fadeInTime)
+    public SingleMusicPlayerImpl(IMusicManager musicManager)
     {
-        _dataProvider = dataProvider;
         _musicManager = musicManager;
     }
     
     public void Start(VorbisDataProvider provider, int bufferLength, int fadeInMilliseconds)
     {
+        _dataProvider = provider;
         _alSource = AL.GenSource();
 
         _buffers = AL.GenBuffers(8);

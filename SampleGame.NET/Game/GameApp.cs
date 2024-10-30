@@ -30,7 +30,7 @@ public class GameApp: PixelApp
 
     private Size _size = Size.Zero;
 
-    private readonly List<Entity> _entities = new();
+    private Player _player;
 
     private float _cumulatedTime = 0;
     private const float TimeDelta = 1 / 120f; 
@@ -41,14 +41,6 @@ public class GameApp: PixelApp
     private ISoundEffectInstance _seInstance;
     
     private ResourceHandle<ISoundEffect> _soundEffect;
-    
-    public GameApp()
-    {
-        for (var idx = 0; idx < 100; ++idx)
-        {
-            _entities.Add(new Entity());
-        }
-    }
 
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
@@ -60,8 +52,9 @@ public class GameApp: PixelApp
         var filesProvider = new AggregatedFilesProvider();
         filesProvider.AddProvider("assets:", embededProvider);
         filesProvider.AddProvider("bundle:", bundleProvider);
-        
-        builder.WithInstance<IFilesProvider>(filesProvider);
+
+        builder
+            .WithInstance<IFilesProvider>(filesProvider);
     }
 
     protected override void OnDispose(bool disposing)
@@ -118,6 +111,23 @@ public class GameApp: PixelApp
         });
         
         _musicPlayer.ChangePlaylist("Normal");
+
+        var inputMappings = container.Get<IInputMappings>();
+        var mapper = inputMappings.Mapper(0);
+
+        mapper.MapAxis("Horizontal", GameControllerAxis.LeftX);
+        mapper.MapAxis("Vertical", GameControllerAxis.LeftY);
+        mapper.MapAxis("Horizontal", Key.Left, Key.Right);
+        mapper.MapAxis("Vertical", Key.Up, Key.Down);
+        
+        mapper.MapButton("Fire", GameControllerButton.X);
+        mapper.MapButton("Fire", GameControllerButton.Y);
+        mapper.MapButton("Fire", GameControllerButton.A);
+        mapper.MapButton("Fire", GameControllerButton.B);
+        
+        mapper.MapButton("Fire", Key.X);
+        
+        _player = container.IoCConstruct<Player>();
     }
 
     protected override void OnUpdate(float elapsedTime)
@@ -152,7 +162,6 @@ public class GameApp: PixelApp
             {
                 _seInstance.Play(true);
             }
-            //_soundEffect.Resource.PlayOnce(volume: 2, pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
         }
         
         if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)
@@ -169,13 +178,10 @@ public class GameApp: PixelApp
 
         _cumulatedTime += elapsedTime;
 
+        _player.Update();
         while (_cumulatedTime >= TimeDelta)
         {
-            foreach (var entity in _entities)
-            {
-                entity.Update(TimeDelta, _size);
-            }
-
+            _player.Update(TimeDelta);
             _cumulatedTime -= TimeDelta;
         }
     }
@@ -183,24 +189,7 @@ public class GameApp: PixelApp
     protected override void OnDraw()
     {
         _renderer.Clear(_backgroundColor);
-        
-        _renderer.DrawTexture(_texture.Resource, 
-            new Rectangle(10, 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4), depth: 0);
-
-        _renderer.SetTransform(Matrix3x2.CreateTranslation(_texture.Resource.Size.Width * 2, _texture.Resource.Size.Height * 2));
-        
-        _renderer.DrawTexture(_texture.Resource, 
-            new Rectangle(10 , 10, _texture.Resource.Size.Width * 4, _texture.Resource.Size.Height * 4),
-            depth: 100);
-        
-        _renderer.SetTransform(null);
-        
-        _renderer.SetRenderTarget(_renderTarget);
-        
-        _renderer.Clear(RgbaColor.Coral);
-        _renderer.SetRenderTarget(null);
-        
-        _renderer.DrawTexture(_renderTarget, new Rectangle(0,0,128,128));
+        _player.Draw(_renderer);
     }
 
     protected override void OnResize(Size size)

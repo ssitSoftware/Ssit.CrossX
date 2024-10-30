@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Numerics;
 using Metal;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Graphics.Internal;

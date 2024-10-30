@@ -52,8 +52,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         var iocBuilder = IoC.IoC.NewBuilder();
         
         Window = new UIWindow(UIScreen.MainScreen.Bounds);
-        //Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
-        //Window.WindowScene.Titlebar.Toolbar = null;
+        Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
+        Window.WindowScene.Titlebar.Toolbar = null;
         
         if (MTLDevice.SystemDefault is  null)
         {

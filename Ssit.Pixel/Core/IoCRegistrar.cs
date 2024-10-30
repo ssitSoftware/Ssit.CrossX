@@ -4,6 +4,8 @@ using Ssit.Pixel.Content;
 using Ssit.Pixel.Content.Internal;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Graphics.Internal;
+using Ssit.Pixel.Input;
+using Ssit.Pixel.Input.Internal;
 using Ssit.Pixel.IoC;
 
 namespace Ssit.Pixel.Core;
@@ -20,6 +22,7 @@ public static class IoCRegistrar
         return builder
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
-            .WithSingleton<IMusicPlayer, MusicPlayer>();
+            .WithSingleton<IMusicPlayer, MusicPlayer>()
+            .WithSingleton<IInputMappings, InputMappings>();
     }
 }

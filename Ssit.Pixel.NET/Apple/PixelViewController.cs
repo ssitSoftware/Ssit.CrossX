@@ -102,6 +102,16 @@ internal class PixelViewController : UIViewController
         ProcessPress(presses, evt);
     }
 
+#if !__MACCATALYST__
+    public override bool PrefersStatusBarHidden()
+    {
+        return true;
+    }
+
+    public override bool PrefersHomeIndicatorAutoHidden => true;
+
+#endif
+
     private void ProcessPress(NSSet<UIPress> presses, UIPressesEvent evt)
     {
         foreach (var press in presses)

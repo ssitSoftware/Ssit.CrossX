@@ -71,6 +71,10 @@
       <BundleResource Include="Music\Desert.ogg" />
       <None Remove="Music\DriveInTunnel.ogg" />
       <BundleResource Include="Music\DriveInTunnel.ogg" />
+      <None Update="Platforms\iOS\LaunchScreen.storyboard">
+        <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+        <IsDefaultItem>true</IsDefaultItem>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

@@ -39,25 +39,4 @@
       <EmbeddedResource Include="Shaders\Metal\BasicTexture.metal" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="libjpeg.dylib" />
-      <None Remove="libogg.dylib" />
-      <None Remove="libpng.dylib" />
-      <None Remove="libSDL2_image.dylib" />
-
-        <None Remove="libSDL2_mixer.dylib" />
-      
-      <None Remove="libvorbis.dylib" />
-      <None Remove="libvorbisfile.dylib" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Apple\PixelDelegate.cs">
-        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
-      </Compile>
-      <Compile Update="Apple\PixelViewController.cs">
-        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
-      </Compile>
-    </ItemGroup>
-
 </Project>

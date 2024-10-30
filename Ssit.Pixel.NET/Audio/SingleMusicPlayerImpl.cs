@@ -16,7 +16,7 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     public int Position { get; private set; } = 0;
     
     private VorbisDataProvider _dataProvider;
-    private readonly IMusicManager _musicManager;
+    private readonly IMusicDataProvider _musicDataProvider;
     private int _alSource;
 
     private int[] _buffers;
@@ -26,9 +26,9 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     private float _volume = 0;
     private Mode _mode;
     
-    public SingleMusicPlayerImpl(IMusicManager musicManager)
+    public SingleMusicPlayerImpl(IMusicDataProvider musicDataProvider)
     {
-        _musicManager = musicManager;
+        _musicDataProvider = musicDataProvider;
     }
     
     public void Start(VorbisDataProvider provider, int bufferLength, int fadeInMilliseconds)
@@ -64,6 +64,8 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
 
     private bool FillBuffer(int bufferId)
     {
+        if (_dataProvider is null) return false;
+        
         var dataRead = _dataProvider.Read(_dataBuffer);
         if (dataRead == 0) return false;
         
@@ -87,8 +89,9 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
         _mode = Mode.FadeOut;
     }
     
-    public void Update(float dt)
+    public void Update(float dt, out bool finished)
     {
+        finished = false;
         switch (_mode)
         {
             case Mode.FadeIn:
@@ -107,7 +110,8 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
                 {
                     _volume = 0;
                     UpdateVolume();
-                    _musicManager.RemovePlayer(this);
+                    finished = true;
+                    return;
                 }
                 break;
         }
@@ -123,8 +127,15 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
             var buf = AL.SourceUnqueueBuffer(_alSource);
             if (!FillBuffer(buf))
             {
+                if (_mode == Mode.FadeOut)
+                {
+                    _dataProvider?.Dispose();
+                    _dataProvider = null;
+                    continue;
+                }
+                
                 _dataProvider.Dispose();
-                _dataProvider = _musicManager.GetNext();
+                _dataProvider = _musicDataProvider.GetNext();
 
                 var buffersQueued = AL.GetSource(_alSource, ALGetSourcei.BuffersQueued);
                 Position = -buffersQueued;
@@ -146,6 +157,8 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     
     public void Dispose()
     {
+        _dataProvider?.Dispose();
+        _dataProvider = null;
         AL.SourceStop(_alSource);
         AL.DeleteBuffers(_buffers);
         AL.DeleteSource(_alSource);

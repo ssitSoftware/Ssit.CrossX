@@ -1,3 +1,5 @@
+using Ssit.Pixel.Audio;
+using Ssit.Pixel.Audio.Internal;
 using Ssit.Pixel.Content;
 using Ssit.Pixel.Content.Internal;
 using Ssit.Pixel.Graphics;
@@ -17,6 +19,7 @@ public static class IoCRegistrar
     {
         return builder
             .WithSingleton<IFontsManager, FontsManager>()
-            .WithSingleton<IContentManager, ContentManager>();
+            .WithSingleton<IContentManager, ContentManager>()
+            .WithSingleton<IMusicPlayer, MusicPlayer>();
     }
 }

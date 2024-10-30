@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Ssit.Pixel.Audio;
+using Ssit.Pixel.Audio.Internal;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.IoC;
@@ -73,7 +74,7 @@ internal class PlatformHandler: IActionScheduler
         builder
             .WithInstance<IGameControllers>(_gameControllers)
             .WithInstance<ISoundManager>(soundManager)
-            .WithSingleton<IMusicPlayer, MusicPlayerImpl>()
+            .WithImplementation<ISingleMusicPlayer, SingleMusicPlayerImpl>()
             .WithInstance<IActionScheduler>(this);
     }
 

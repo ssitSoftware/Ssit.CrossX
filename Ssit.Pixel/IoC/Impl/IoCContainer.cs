@@ -13,6 +13,7 @@ internal class IoCContainer : IIoCContainer
     private readonly Dictionary<Type, object> _instances = new();
 
     private readonly Dictionary<Type, Type> _implementations = new();
+    private readonly Dictionary<(string, Type), Type> _keyedImplementations = new();
 
     public void Register(Type type, object instance)
     {
@@ -26,8 +27,18 @@ internal class IoCContainer : IIoCContainer
             }
         }
     }
-        
-    public void RegisterImplementation(Type type, Type impl) => _implementations.Add(type, impl);
+
+    public void RegisterImplementation(Type type, Type impl, string key = null)
+    {
+        if (key == null)
+        {
+            _implementations.Add(type, impl);
+        }
+        else
+        {
+            _keyedImplementations.Add((key, type), impl);
+        }
+    }
         
     public void Dispose()
     {
@@ -87,20 +98,29 @@ internal class IoCContainer : IIoCContainer
     {
         if (type.IsAbstract)
         {
-            type = ResolveImplementation(type);
+            type = ResolveImplementation(type, null);
         }
 
         return ObjectCreationHelper.CreateObject(type, parameters, TryGet);
     }
 
-    public Type ResolveImplementation(Type abstractType)
+    private bool TryGetImplementation(Type abstractType, string key, out Type type)
     {
-        if (_implementations.TryGetValue(abstractType, out var type))
+        if (key is null)
+        {
+            return _implementations.TryGetValue(abstractType, out type);
+        }
+        return _keyedImplementations.TryGetValue((key, abstractType), out type);
+    }
+    
+    public Type ResolveImplementation(Type abstractType, string key = null)
+    {
+        if (TryGetImplementation(abstractType, key, out var type))
         {
             return type;
         }
-            
-        if (abstractType.IsGenericTypeDefinition && _implementations.TryGetValue(abstractType.GetGenericTypeDefinition(), out type))
+
+        if (abstractType.IsGenericTypeDefinition && TryGetImplementation(abstractType.GetGenericTypeDefinition(), key, out type))
         {
             return type.MakeGenericType(abstractType.GetGenericArguments());
         }
@@ -110,8 +130,8 @@ internal class IoCContainer : IIoCContainer
             throw new KeyNotFoundException();
         }
 
-        return Parent.ResolveImplementation(abstractType);
+        return Parent.ResolveImplementation(abstractType, key);
     }
 
-    public Type ResolveImplementation<TType>() => ResolveImplementation(typeof(TType));
+    public Type ResolveImplementation<TType>(string key = null) => ResolveImplementation(typeof(TType), key);
 }

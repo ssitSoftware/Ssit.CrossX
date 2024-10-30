@@ -6,7 +6,7 @@ public static class PathHelper
 {
     public static string NormalizePath(string path)
     {
-        path = path.Replace('\\', '/');
+        path = path.Replace('\\', '/').Replace("//", "/");
         
         var parts = path.Split('/');
 

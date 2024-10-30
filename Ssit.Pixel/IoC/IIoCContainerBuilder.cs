@@ -1,4 +1,5 @@
 using System;
+using Ssit.Pixel.IoC.Impl;
 
 namespace Ssit.Pixel.IoC;
 
@@ -54,6 +55,9 @@ public interface IIoCContainerBuilder
     IIoCContainerBuilder WithImplementation<TAbstract, TImplementation>()
         where TAbstract : class where TImplementation : class, TAbstract;
 
+    IIoCContainerBuilder WithImplementation<TAbstract, TImplementation>(string key)
+        where TAbstract : class where TImplementation : class, TAbstract;
+    
     /// <summary>
     /// Checks if the specified type is registered in the IoC container.
     /// </summary>
@@ -66,4 +70,13 @@ public interface IIoCContainerBuilder
     /// </summary>
     /// <returns>A fully configured instance of an IoC container.</returns>
     IIoCContainer Build();
+
+    /// <summary>
+    /// Gets the implementation mapper associated with the IoC container builder.
+    /// </summary>
+    /// <remarks>
+    /// The implementation mapper is responsible for resolving the implementation types
+    /// associated with abstract types within the IoC container.
+    /// </remarks>
+    IImplementationMapper ImplementationMapper { get; }
 }

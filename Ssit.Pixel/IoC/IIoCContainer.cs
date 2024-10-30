@@ -2,11 +2,28 @@ using System;
 
 namespace Ssit.Pixel.IoC;
 
+public interface IImplementationMapper
+{
+    /// <summary>
+    /// Resolves the implementation type for a given abstract type TType.
+    /// </summary>
+    /// <typeparam name="TType">The abstract type whose implementation needs to be resolved.</typeparam>
+    /// <returns>The implementation type associated with the abstract type TType.</returns>
+    Type ResolveImplementation<TType>(string key = null);
+
+    /// <summary>
+    /// Resolves the concrete implementation type for a given abstract type or interface.
+    /// </summary>
+    /// <param name="type">The abstract type or interface for which to resolve the implementation.</param>
+    /// <returns>The concrete implementation type if found; otherwise, throws a KeyNotFoundException.</returns>
+    Type ResolveImplementation(Type type, string key = null);
+}
+
 /// <summary>
 /// Interface representing an Inversion of Control (IoC) Container.
 /// Provides methods for resolving dependencies and constructing objects using injected dependencies.
 /// </summary>
-public interface IIoCContainer: IDisposable
+public interface IIoCContainer: IImplementationMapper, IDisposable
 {
     /// Retrieves an instance of the requested type from the IoC container.
     /// <typeparam name="TType">The type of the instance to retrieve.</typeparam>
@@ -55,18 +72,4 @@ public interface IIoCContainer: IDisposable
     /// <param name="parameters">Optional parameters to pass to the constructor.</param>
     /// <returns>An object of the specified type.</returns>
     object IoCConstruct(Type type, object parameters = null);
-
-    /// <summary>
-    /// Resolves the implementation type for a given abstract type TType.
-    /// </summary>
-    /// <typeparam name="TType">The abstract type whose implementation needs to be resolved.</typeparam>
-    /// <returns>The implementation type associated with the abstract type TType.</returns>
-    Type ResolveImplementation<TType>();
-
-    /// <summary>
-    /// Resolves the concrete implementation type for a given abstract type or interface.
-    /// </summary>
-    /// <param name="type">The abstract type or interface for which to resolve the implementation.</param>
-    /// <returns>The concrete implementation type if found; otherwise, throws a KeyNotFoundException.</returns>
-    Type ResolveImplementation(Type type);
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Ssit.Pixel.Audio.Internal;
 
-public abstract class MusicPlayerBase: IMusicPlayer
+internal abstract class MusicPlayerBase: IMusicPlayer
 {
     private readonly Dictionary<string, MusicPlaylist> _playlists = new();
     private MusicPlaylist _currentPlaylist;
@@ -14,13 +14,18 @@ public abstract class MusicPlayerBase: IMusicPlayer
 
     public void ChangePlaylist(string name, int fadeTimeMs = 0, bool resetProgress = false)
     {
+        var newPlaylist = _playlists[name];
+        
         if (_currentPlaylist is not null)
         {
+            if (ReferenceEquals(newPlaylist, _currentPlaylist))
+                return;
+            
             var currentPosition = GetSongPosition();
             _currentPlaylist.CurrentPosition = currentPosition;
         }
-        
-        _currentPlaylist = _playlists[name];
+
+        _currentPlaylist = newPlaylist;
 
         if (resetProgress)
         {
@@ -31,45 +36,23 @@ public abstract class MusicPlayerBase: IMusicPlayer
         SwitchSong(_currentPlaylist.List[_currentPlaylist.CurrentSong], fadeTimeMs, _currentPlaylist.CurrentPosition);
     }
 
-    public bool NextTrack(int fadeTimeMs = 0, bool loop = true)
+    public bool NextTrack(int fadeTimeMs = 0)
     {
         if (_currentPlaylist is null) return false;
-        
-        var nextSong = _currentPlaylist.CurrentSong + 1;
-        if (_currentPlaylist.List.Count <= nextSong)
-        {
-            if (loop)
-            {
-                nextSong %= _currentPlaylist.List.Count;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        _currentPlaylist.CurrentPosition = 0;
-        _currentPlaylist.CurrentSong = nextSong;
-        
-        SwitchSong(_currentPlaylist.List[nextSong], fadeTimeMs);
+
+        var song = GetNextSong();
+        SwitchSong(song, fadeTimeMs);
         return true;
     }
 
-    public bool PreviousTrack(int fadeTimeMs = 0, bool loop = true)
+    public bool PreviousTrack(int fadeTimeMs = 0)
     {
         if (_currentPlaylist is null) return false;
         
         var nextSong = _currentPlaylist.CurrentSong - 1;
         if (nextSong < 0)
         {
-            if (loop)
-            {
-                nextSong += _currentPlaylist.List.Count;
-            }
-            else
-            {
-                return false;
-            }
+            nextSong += _currentPlaylist.List.Count;
         }
 
         _currentPlaylist.CurrentPosition = 0;
@@ -77,6 +60,20 @@ public abstract class MusicPlayerBase: IMusicPlayer
         
         SwitchSong(_currentPlaylist.List[nextSong], fadeTimeMs);
         return true;
+    }
+    
+    public Song GetNextSong()
+    {
+        var nextSong = _currentPlaylist.CurrentSong + 1;
+        if (_currentPlaylist.List.Count <= nextSong)
+        {
+            nextSong %= _currentPlaylist.List.Count;
+        }
+        
+        _currentPlaylist.CurrentPosition = 0;
+        _currentPlaylist.CurrentSong = nextSong;
+
+        return _currentPlaylist.List[nextSong];
     }
     
     protected abstract int GetSongPosition();

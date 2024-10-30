@@ -61,6 +61,14 @@
 
     <ItemGroup>
       <EmbeddedResource Include="Assets\**" />
+      <None Remove="Music\Desert.ogg" />
+      <BundleResource Include="Music\Desert.ogg" />
+      <None Remove="Music\DriveInTunnel.ogg" />
+      <BundleResource Include="Music\DriveInTunnel.ogg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Music\" />
     </ItemGroup>
 
 </Project>

@@ -18,13 +18,11 @@ public interface IMusicPlayer
 
     /// <summary>Advances to the next track in the current playlist.</summary>
     /// <param name="fadeTimeMs">The time in milliseconds to fade out the current track and fade in the next track.</param>
-    /// <param name="loop">A boolean indicating whether to loop back to the start of the playlist when the end is reached.</param>
     /// <returns>Returns true if the operation was successful; otherwise, false.</returns>
-    bool NextTrack(int fadeTimeMs = 0, bool loop = true);
+    bool NextTrack(int fadeTimeMs = 0);
 
     /// <summary>Plays the previous track in the current playlist.</summary>
     /// <param name="fadeTimeMs">The time in milliseconds over which to fade the track in and out.</param>
-    /// <param name="loop">Indicates whether the playlist should loop to the last track when reaching the beginning.</param>
     /// <returns>True if the previous track was successfully selected; otherwise, false.</returns>
-    bool PreviousTrack(int fadeTimeMs = 0, bool loop = true);
+    bool PreviousTrack(int fadeTimeMs = 0);
 }

@@ -12,7 +12,9 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
     }
         
     private readonly IoCContainer _container = new();
-        
+
+    public IImplementationMapper ImplementationMapper => _container;
+    
     private readonly Dictionary<Type, SingletonInfo> _singletonTypes = new();
 
     public IoCContainerBuilder()
@@ -64,6 +66,13 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
         where TAbstract : class where TImplementation : class, TAbstract
     {
         _container.RegisterImplementation(typeof(TAbstract), typeof(TImplementation));
+        return this;
+    }
+    
+    public IIoCContainerBuilder WithImplementation<TAbstract, TImplementation>(string key)
+        where TAbstract : class where TImplementation : class, TAbstract
+    {
+        _container.RegisterImplementation(typeof(TAbstract), typeof(TImplementation), key);
         return this;
     }
 

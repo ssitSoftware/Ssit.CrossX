@@ -15,7 +15,7 @@ public class VorbisDataProvider: IDisposable
 
     public VorbisDataProvider(Stream stream)
     {
-        _reader = new VorbisReader(stream);
+        _reader = new VorbisReader(stream, true);
     }
 
     public void Skip(int blocks, int blockSize)

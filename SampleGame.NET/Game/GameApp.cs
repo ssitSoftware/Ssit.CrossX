@@ -49,7 +49,16 @@ public class GameApp: PixelApp
 
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
-        builder.WithInstance<IFilesProvider>(new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame"));
+        var bundleProviderType = builder.ImplementationMapper.ResolveImplementation<IFilesProvider>("Bundle");
+        
+        var bundleProvider = (IFilesProvider)Activator.CreateInstance(bundleProviderType);
+        var embededProvider = new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame");
+
+        var filesProvider = new AggregatedFilesProvider();
+        filesProvider.AddProvider("int:", embededProvider);
+        filesProvider.AddProvider("bundle:", bundleProvider);
+        
+        builder.WithInstance<IFilesProvider>(filesProvider);
     }
 
     protected override void OnDispose(bool disposing)
@@ -81,17 +90,22 @@ public class GameApp: PixelApp
         
         container.Get<ISoundManager>().MasterVolume = 2;
 
-        _texture = _contentManager.Get<ITexture>("Assets/Image.jpg");
+        _texture = _contentManager.Get<ITexture>("int:/Assets/Image.jpg");
         _renderTarget = container.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
             Size = new Size(128, 128)
         });
         
-        _soundEffect = _contentManager.Get<ISoundEffect>("Assets/MenuSelect.wav");
+        _soundEffect = _contentManager.Get<ISoundEffect>("int:/Assets/MenuSelect.wav");
         
         _musicPlayer.RegisterPlaylist("Normal", new MusicPlaylist
         {
-            new Song("Assets/ObservingTheStar.ogg")
+            new Song("bundle:/Music/Desert.ogg")
+        });
+        
+        _musicPlayer.RegisterPlaylist("Other", new MusicPlaylist
+        {
+            new Song("bundle:/Music/DriveInTunnel.ogg")
         });
         
         _musicPlayer.ChangePlaylist("Normal");
@@ -102,6 +116,16 @@ public class GameApp: PixelApp
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
             _soundEffect.Resource.PlayOnce(pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
+        }
+        
+        if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)
+        {
+            _musicPlayer.ChangePlaylist("Other", 2000);
+        }
+        
+        if (_keyboard.GetKey(Key.Y) == ButtonState.JustPressed)
+        {
+            _musicPlayer.ChangePlaylist("Normal", 2000);
         }
         
         _backgroundColor = RgbaColor.GreenYellow;

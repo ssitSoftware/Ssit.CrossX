@@ -1,3 +1,5 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using Foundation;
 using Metal;
@@ -5,7 +7,7 @@ using MetalKit;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 internal class RenderingWindowImpl : NSObject, IRenderingWindow, IMetalDevice
 {
@@ -74,3 +76,5 @@ internal class RenderingWindowImpl : NSObject, IRenderingWindow, IMetalDevice
         }
     }
 }
+
+#endif

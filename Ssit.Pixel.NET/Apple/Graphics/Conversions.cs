@@ -1,8 +1,10 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using Metal;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public static class Conversions
 {
@@ -22,3 +24,5 @@ public static class Conversions
         throw new NotSupportedException();
     }
 }
+
+#endif

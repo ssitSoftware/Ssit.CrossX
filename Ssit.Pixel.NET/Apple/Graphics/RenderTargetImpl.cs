@@ -1,7 +1,9 @@
+#if __IOS__ || __MACCATALYST__
+
 using Metal;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public class RenderTargetImpl: IRenderTarget
 {
@@ -60,3 +62,5 @@ public class RenderTargetImpl: IRenderTarget
         return null;
     }
 }
+
+#endif

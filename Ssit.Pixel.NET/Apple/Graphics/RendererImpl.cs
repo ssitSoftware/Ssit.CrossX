@@ -1,9 +1,11 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using Metal;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Graphics.Internal;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 internal class RendererImpl: RendererBase, IDisposable
 {
@@ -115,3 +117,5 @@ internal class RendererImpl: RendererBase, IDisposable
         _renderStateManager?.Dispose();
     }
 }
+
+#endif

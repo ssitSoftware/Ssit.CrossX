@@ -1,3 +1,5 @@
+#if __MACCATALYST__
+
 using System;
 using System.Collections.Generic;
 using Ssit.Pixel.Core;
@@ -167,3 +169,5 @@ internal class GameController: IDisposable
         _handle = IntPtr.Zero;
     }
 }
+
+#endif

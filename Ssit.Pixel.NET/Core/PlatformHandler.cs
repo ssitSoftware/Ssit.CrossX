@@ -10,7 +10,10 @@ using Ssit.Pixel.Input;
 using Ssit.Pixel.IoC;
 using Ssit.Pixel.NET.Audio;
 using Ssit.Pixel.NET.Input;
-using static SDL2.Bindings.SDL;
+
+#if __MACCATALYST__
+    using static SDL2.Bindings.SDL;
+#endif
 
 namespace Ssit.Pixel.NET.Core;
 
@@ -36,6 +39,7 @@ internal class PlatformHandler: IActionScheduler
 
     private async Task RunSdlEventsTask(CancellationToken token)
     {
+#if __MACCATALYST__
         while (!token.IsCancellationRequested)
         {
             while (SDL_PollEvent(out SDL_Event e) == 1)
@@ -45,6 +49,7 @@ internal class PlatformHandler: IActionScheduler
 
             await Task.Delay(10, token);
         }
+#endif
     }
     
     public void Tick(IApp app, Action<float> preUpdate)
@@ -66,7 +71,9 @@ internal class PlatformHandler: IActionScheduler
 
     public void Initialize(IIoCContainerBuilder builder)
     {
+    #if __MACCATALYST__
         SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER);
+    #endif
         
         _gameControllers = new GameControllersImpl();
         var soundManager = new SoundManagerImpl();

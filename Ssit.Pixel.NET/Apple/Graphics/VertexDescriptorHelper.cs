@@ -1,8 +1,10 @@
+#if __IOS__ || __MACCATALYST__
+
 using System.Collections.Generic;
 using Metal;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public static class VertexDescriptorHelper
 {
@@ -55,3 +57,5 @@ public static class VertexDescriptorHelper
         return vertexDescriptor;
     }
 }
+
+#endif

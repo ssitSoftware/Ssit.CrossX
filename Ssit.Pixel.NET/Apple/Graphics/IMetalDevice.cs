@@ -1,8 +1,10 @@
+#if __IOS__ || __MACCATALYST__
+
 using Metal;
 using MetalKit;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public interface IMetalDevice
 {
@@ -12,3 +14,5 @@ public interface IMetalDevice
     Size TargetSize { get; }
     void CommitCommandBuffer();
 }
+
+#endif

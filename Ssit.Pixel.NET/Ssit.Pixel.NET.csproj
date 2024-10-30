@@ -35,11 +35,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Platforms\Android\" />
-      <Folder Include="Platforms\iOS\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <EmbeddedResource Include="Shaders\Metal\Basic.metal" />
       <EmbeddedResource Include="Shaders\Metal\BasicTexture.metal" />
     </ItemGroup>
@@ -57,10 +52,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="libSDL2.dylib" />
-      <BundleResource Include="libSDL2.dylib">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </BundleResource>
+      <Compile Update="Apple\PixelDelegate.cs">
+        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+      </Compile>
+      <Compile Update="Apple\PixelViewController.cs">
+        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+      </Compile>
     </ItemGroup>
 
 </Project>

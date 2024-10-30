@@ -1,21 +1,21 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using Foundation;
 using Metal;
 using MetalKit;
-using Microsoft.Maui.Controls;
 using Ssit.Pixel.Audio;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.Graphics;
 using Ssit.Pixel.Input;
-using Ssit.Pixel.IO;
 using Ssit.Pixel.IoC;
 using Ssit.Pixel.NET.Audio;
 using Ssit.Pixel.NET.Core;
-using Ssit.Pixel.NET.Graphics;
+using Ssit.Pixel.NET.Apple.Graphics;
 using Ssit.Pixel.NET.Input;
 using UIKit;
 
-namespace Ssit.Pixel.NET;
+namespace Ssit.Pixel.NET.Apple;
 
 public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEventSource where TApp: PixelApp, new()
 {
@@ -51,8 +51,14 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         var iocBuilder = IoC.IoC.NewBuilder();
         
         Window = new UIWindow(UIScreen.MainScreen.Bounds);
-        Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
-        Window.WindowScene.Titlebar.Toolbar = null;
+        
+#if __MACCATALYST__
+        if (Window?.WindowScene?.Titlebar is not null)
+        {
+            Window.WindowScene.Titlebar.TitleVisibility = UITitlebarTitleVisibility.Hidden;
+            Window.WindowScene.Titlebar.Toolbar = null;
+        }
+#endif
         
         if (MTLDevice.SystemDefault is  null)
         {
@@ -165,6 +171,6 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         _renderingWindow.Draw(view, _app);
         RenderFinished?.Invoke();
     }
-
-    
 }
+
+#endif

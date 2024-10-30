@@ -1,6 +1,6 @@
 ﻿using Foundation;
 using SampleGame.Game;
-using Ssit.Pixel.NET;
+using Ssit.Pixel.NET.Apple;
 using UIKit;
 
 namespace SampleGame;

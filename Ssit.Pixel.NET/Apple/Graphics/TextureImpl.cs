@@ -1,10 +1,12 @@
+#if __IOS__ || __MACCATALYST__
+
 using System.IO;
 using Foundation;
 using Metal;
 using MetalKit;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public class TextureImpl: ITexture
 {
@@ -78,3 +80,5 @@ public class TextureImpl: ITexture
         return null;
     }
 }
+
+#endif

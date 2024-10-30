@@ -1,3 +1,5 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using System.IO;
 using System.Numerics;
@@ -5,7 +7,7 @@ using System.Runtime.InteropServices;
 using Metal;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 public abstract class ShaderEffect: IMetalShaderEffect
 {
@@ -134,3 +136,5 @@ internal class BasicShaderEffectPct : ShaderEffect
         ApplyConstants(encoder, transform);
     }
 }
+
+#endif

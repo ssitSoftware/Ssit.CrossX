@@ -1,9 +1,11 @@
+#if __IOS__ || __MACCATALYST__
+
 using System;
 using System.Numerics;
 using Metal;
 using Ssit.Pixel.Graphics;
 
-namespace Ssit.Pixel.NET.Graphics;
+namespace Ssit.Pixel.NET.Apple.Graphics;
 
 internal class RenderStateManager: IDisposable
 {
@@ -164,3 +166,5 @@ internal class RenderStateManager: IDisposable
         _linearSamplerState?.Dispose();
     }
 }
+
+#endif

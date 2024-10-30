@@ -1,3 +1,5 @@
+#if __IOS__ || __MACCATALYST__
+
 using System.Collections.Generic;
 using Foundation;
 using Ssit.Pixel.Core;
@@ -5,7 +7,7 @@ using Ssit.Pixel.Input;
 using Ssit.Pixel.NET.Input;
 using UIKit;
 
-namespace Ssit.Pixel.NET;
+namespace Ssit.Pixel.NET.Apple;
 
 internal class PixelViewController : UIViewController
 {
@@ -133,3 +135,5 @@ internal class PixelViewController : UIViewController
 
     public void SetApp(IApp app) => _app = app;
 }
+
+#endif

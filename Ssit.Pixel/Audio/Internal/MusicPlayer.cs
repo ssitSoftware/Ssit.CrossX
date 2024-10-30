@@ -134,11 +134,6 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
     protected void SwitchSong(Song song, int fadeTime, int startPosition = 0)
     {
         fadeTime =  Math.Max(50, fadeTime);
-        
-        foreach (var player in _musicPlayers)
-        {
-            player.FadeOut(fadeTime);
-        }
 
         Task.Run(() =>
         {
@@ -148,6 +143,11 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
             
             _scheduler.Schedule((() =>
             {
+                foreach (var player in _musicPlayers)
+                {
+                    player.FadeOut(fadeTime);
+                }
+                        
                 var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
                 _musicPlayers.Add(newPlayer);
                 newPlayer.Start(songProvider, BufferLength, fadeTime);

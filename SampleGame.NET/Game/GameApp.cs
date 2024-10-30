@@ -120,12 +120,12 @@ public class GameApp: PixelApp
         
         if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)
         {
-            _musicPlayer.ChangePlaylist("Other", 2000);
+            _musicPlayer.ChangePlaylist("Other", 0);
         }
         
         if (_keyboard.GetKey(Key.Y) == ButtonState.JustPressed)
         {
-            _musicPlayer.ChangePlaylist("Normal", 2000);
+            _musicPlayer.ChangePlaylist("Normal", 0);
         }
         
         _backgroundColor = RgbaColor.GreenYellow;

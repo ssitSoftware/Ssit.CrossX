@@ -7,6 +7,7 @@ public enum GameControllerAxis
 {
     /// <summary>
     /// Represents the horizontal axis of the left analog stick on a game controller.
+    /// </summary>
     LeftX = 0,
 
     /// <summary>
@@ -35,6 +36,7 @@ public enum GameControllerAxis
     /// Represents the right trigger axis on a game controller.
     /// This axis is used to measure the analog input of the right trigger,
     /// providing a value that ranges from 0 (not pressed) to 1 (fully pressed).
+    /// </summary>
     RightTrigger = 5,
 
     /// <summary>

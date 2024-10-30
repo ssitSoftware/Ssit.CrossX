@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Ssit.Pixel.IoC;
 
@@ -48,12 +49,13 @@ public interface IIoCContainer: IImplementationMapper, IDisposable
     /// <returns>true if the type was found in the container; otherwise, false.</returns>
     bool TryGet<TType>(out TType instance);
 
+
     /// <summary>
-    /// Tries to resolve an instance of the specified generic type from the IoC container.
+    /// Tries to retrieve an instance of the specified type from the IoC container.
     /// </summary>
-    /// <typeparam name="TType">The type of the object to resolve.</typeparam>
-    /// <param name="instance">The resolved instance of the specified type if the resolution is successful; otherwise, the default value of the type.</param>
-    /// <returns>True if the resolution is successful; otherwise, false.</returns>
+    /// <param name="type">The type of the instance to retrieve.</param>
+    /// <param name="instance">When this method returns, contains the object from the container if the type was found; otherwise, the default value for the type.</param>
+    /// <returns>true if the type was found in the container; otherwise, false.</returns>
     bool TryGet(Type type, out object instance);
 
     /// <summary>

@@ -85,7 +85,6 @@ public interface IRenderer
     /// <param name="rotation">The optional rotation angle in radians.</param>
     /// <param name="scale">The optional scale factor for rendering the texture.</param>
     /// <param name="color">The optional color to apply to the texture. If not provided, the default color will be used.</param>
-    /// <param name="transform">Render transform for this draw.</param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to be applied during rendering.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>

@@ -1,7 +1,6 @@
 using System.IO;
-using Ssit.Pixel.IO;
 
-namespace Ssit.Pixel.NET.IO;
+namespace Ssit.Pixel.IO;
 
 public class BundleFilesProvider: IFilesProvider
 {

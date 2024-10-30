@@ -44,13 +44,11 @@ public class GameApp: PixelApp
 
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
-        var bundleProviderType = builder.ImplementationMapper.ResolveImplementation<IFilesProvider>("Bundle");
-        
-        var bundleProvider = (IFilesProvider)Activator.CreateInstance(bundleProviderType);
-        var embededProvider = new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame.Assets");
+        var bundleProvider = new BundleFilesProvider();
+        var embeddedProvider = new EmbeddedFilesProvider(typeof(GameApp).Assembly, "SampleGame.Assets");
 
         var filesProvider = new AggregatedFilesProvider();
-        filesProvider.AddProvider("assets:", embededProvider);
+        filesProvider.AddProvider("assets:", embeddedProvider);
         filesProvider.AddProvider("bundle:", bundleProvider);
 
         builder
@@ -121,10 +119,6 @@ public class GameApp: PixelApp
         mapper.MapAxis("Vertical", Key.Up, Key.Down);
         
         mapper.MapButton("Fire", GameControllerButton.X);
-        mapper.MapButton("Fire", GameControllerButton.Y);
-        mapper.MapButton("Fire", GameControllerButton.A);
-        mapper.MapButton("Fire", GameControllerButton.B);
-        
         mapper.MapButton("Fire", Key.X);
         
         _player = container.IoCConstruct<Player>();

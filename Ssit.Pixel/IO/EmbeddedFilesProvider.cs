@@ -5,13 +5,13 @@ using System.Reflection;
 
 namespace Ssit.Pixel.IO;
 
-public class EmbededFilesProvider: IFilesProvider
+public class EmbeddedFilesProvider: IFilesProvider
 {
     private Assembly _assembly;
     private HashSet<string> _files;
     private string _prefix;
 
-    public EmbededFilesProvider(Assembly assembly, string prefix = null)
+    public EmbeddedFilesProvider(Assembly assembly, string prefix = null)
     {
         _prefix = (prefix ?? _assembly.GetName().Name) + '.';
         _assembly = assembly;

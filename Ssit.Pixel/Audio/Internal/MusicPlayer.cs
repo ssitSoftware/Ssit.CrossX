@@ -121,11 +121,13 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
 
     public void Dispose()
     {
-        foreach (var players in _musicPlayers)
-        {
-            players.Dispose();
-        }
+        var players = _musicPlayers.ToArray();
         _musicPlayers.Clear();
+        
+        foreach (var player in players)
+        {
+            player.Dispose();
+        }
     }
 
     protected int GetSongPosition()

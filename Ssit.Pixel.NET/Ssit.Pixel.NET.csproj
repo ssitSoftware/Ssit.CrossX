@@ -48,16 +48,19 @@
       <None Remove="libjpeg.dylib" />
       <None Remove="libogg.dylib" />
       <None Remove="libpng.dylib" />
-      <None Remove="libSDL2.dylib" />
-      <BundleResource Include="libSDL2.dylib">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </BundleResource>
       <None Remove="libSDL2_image.dylib" />
 
         <None Remove="libSDL2_mixer.dylib" />
       
       <None Remove="libvorbis.dylib" />
       <None Remove="libvorbisfile.dylib" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="libSDL2.dylib" />
+      <BundleResource Include="libSDL2.dylib">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </BundleResource>
     </ItemGroup>
 
 </Project>

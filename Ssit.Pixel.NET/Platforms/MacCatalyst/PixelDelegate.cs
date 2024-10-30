@@ -13,7 +13,6 @@ using Ssit.Pixel.NET.Audio;
 using Ssit.Pixel.NET.Core;
 using Ssit.Pixel.NET.Graphics;
 using Ssit.Pixel.NET.Input;
-using Ssit.Pixel.NET.IO;
 using UIKit;
 
 namespace Ssit.Pixel.NET;
@@ -94,7 +93,6 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
             .WithInstance(_windowParameters)
             .WithImplementation<ISoundEffect, SoundEffectImpl>()
-            .WithImplementation<IFilesProvider, BundleFilesProvider>("Bundle")
             .WithPixelCore();
         
         _app = new TApp();

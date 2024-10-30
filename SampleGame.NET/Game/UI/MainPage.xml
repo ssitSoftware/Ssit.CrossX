@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page ViewModel="MainPageViewModel">
+    
+    <xx_Using Namespace="SampleGame.Game.UI"/>
+    
+    <Container HorizontalAlign="Align.Stretch">
+        <Label xx_Styles="Title, Label" Text="ViewModel.Title" AnchorX="10" AnchorY="10" Width="100" Height="100" HorizontalAlign="Align.Center" VerticalAlign="Align.Start"/>
+        <Label xx_Styles="Label" Text="{Hello World!}" AnchorX="10" AnchorY="10" Width="100" Height="100" HorizontalAlign="Align.Center" VerticalAlign="Align.Start"/>
+        <ListBox Items="ViewModel.Items">
+            <xx_AttachViewCreator Property="Template" ModelType="SampleGame.Game.UI.TestItem">
+                <Label Styles="Label" Text="context.Title"/>
+            </xx_AttachViewCreator>
+        </ListBox>
+    </Container>
+    
+</Page>

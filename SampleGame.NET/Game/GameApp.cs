@@ -37,6 +37,8 @@ public class GameApp: PixelApp
     
     private IRenderTarget _renderTarget;
     private IMusicPlayer _musicPlayer;
+
+    private ISoundEffectInstance _seInstance;
     
     private ResourceHandle<ISoundEffect> _soundEffect;
     
@@ -97,6 +99,13 @@ public class GameApp: PixelApp
         });
         
         _soundEffect = _contentManager.Get<ISoundEffect>("assets:/MenuSelect.wav");
+        _seInstance = _soundEffect.Resource.CreateInstance();
+        
+        _seInstance.Parameters = new SoundParameters
+        {
+            Volume = 1,
+            Pitch = 1
+        };
         
         _musicPlayer.RegisterPlaylist("Normal", new MusicPlaylist
         {
@@ -135,7 +144,15 @@ public class GameApp: PixelApp
         
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
-            _soundEffect.Resource.PlayOnce(volume: 2, pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
+            if (_seInstance.IsPlaying)
+            {
+                _seInstance.Stop();
+            }
+            else
+            {
+                _seInstance.Play(true);
+            }
+            //_soundEffect.Resource.PlayOnce(volume: 2, pitch: Random.Shared.NextSingle() * 1.51f + 0.5f);
         }
         
         if (_keyboard.GetKey(Key.T) == ButtonState.JustPressed)

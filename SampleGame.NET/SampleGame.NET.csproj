@@ -56,7 +56,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Ssit.Pixel.Games\Ssit.Pixel.Games.csproj" />
       <ProjectReference Include="..\Ssit.Pixel.NET\Ssit.Pixel.NET.csproj" />
+      <ProjectReference Include="..\Ssit.Pixel.UI\Ssit.Pixel.UI.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Ssit.Pixel.Core;
 using Ssit.Pixel.IO;
 using Ssit.Pixel.IoC;
@@ -17,14 +18,16 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
     private readonly IFilesProvider _filesProvider;
     private readonly IEventSource _eventSource;
     private readonly IIoCContainer _iocContainer;
+    private readonly IActionScheduler _scheduler;
 
     private readonly List<ISingleMusicPlayer> _musicPlayers = new ();
     
-    public MusicPlayer(IFilesProvider filesProvider, IEventSource eventSource, IIoCContainer iocContainer)
+    public MusicPlayer(IFilesProvider filesProvider, IEventSource eventSource, IIoCContainer iocContainer, IActionScheduler scheduler)
     {
         _filesProvider = filesProvider;
         _eventSource = eventSource;
         _iocContainer = iocContainer;
+        _scheduler = scheduler;
 
         _eventSource.Updating += EventSourceOnUpdating;
     }
@@ -137,14 +140,19 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
             player.FadeOut(fadeTime);
         }
 
-        var songStream = _filesProvider.Open(song.Path);
-        var songProvider = new VorbisDataProvider(songStream);
-        songProvider.Skip(startPosition, BufferLength);
-
-        var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
-
-        _musicPlayers.Add(newPlayer);
-        newPlayer.Start(songProvider, BufferLength, fadeTime);
+        Task.Run(() =>
+        {
+            var songStream = _filesProvider.Open(song.Path);
+            var songProvider = new VorbisDataProvider(songStream);
+            songProvider.Skip(startPosition, BufferLength);
+            
+            _scheduler.Schedule((() =>
+            {
+                var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
+                _musicPlayers.Add(newPlayer);
+                newPlayer.Start(songProvider, BufferLength, fadeTime);
+            }));
+        });
     }
 
     public VorbisDataProvider GetNext()

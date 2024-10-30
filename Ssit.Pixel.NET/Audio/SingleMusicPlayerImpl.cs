@@ -99,9 +99,9 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
                 if (_volume >= 1)
                 {
                     _volume = 1;
-                    UpdateVolume();
                     _mode = Mode.Normal;
                 }
+                UpdateVolume();
                 break;
             
             case Mode.FadeOut:
@@ -109,10 +109,10 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
                 if (_volume <= 0)
                 {
                     _volume = 0;
-                    UpdateVolume();
                     finished = true;
                     return;
                 }
+                UpdateVolume();
                 break;
         }
         

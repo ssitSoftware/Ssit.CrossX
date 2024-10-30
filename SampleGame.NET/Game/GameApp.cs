@@ -53,10 +53,10 @@ public class GameApp: PixelApp
         var bundleProviderType = builder.ImplementationMapper.ResolveImplementation<IFilesProvider>("Bundle");
         
         var bundleProvider = (IFilesProvider)Activator.CreateInstance(bundleProviderType);
-        var embededProvider = new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame");
+        var embededProvider = new EmbededFilesProvider(typeof(GameApp).Assembly, "SampleGame.Assets");
 
         var filesProvider = new AggregatedFilesProvider();
-        filesProvider.AddProvider("int:", embededProvider);
+        filesProvider.AddProvider("assets:", embededProvider);
         filesProvider.AddProvider("bundle:", bundleProvider);
         
         builder.WithInstance<IFilesProvider>(filesProvider);
@@ -89,16 +89,14 @@ public class GameApp: PixelApp
         _contentManager = container.Get<IContentManager>();
         _musicPlayer = container.Get<IMusicPlayer>();
         _soundManager = container.Get<ISoundManager>();
-        
-        container.Get<ISoundManager>().MasterVolume = 2;
 
-        _texture = _contentManager.Get<ITexture>("int:/Assets/Image.jpg");
+        _texture = _contentManager.Get<ITexture>("assets:/Image.jpg");
         _renderTarget = container.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
             Size = new Size(128, 128)
         });
         
-        _soundEffect = _contentManager.Get<ISoundEffect>("int:/Assets/MenuSelect.wav");
+        _soundEffect = _contentManager.Get<ISoundEffect>("assets:/MenuSelect.wav");
         
         _musicPlayer.RegisterPlaylist("Normal", new MusicPlaylist
         {

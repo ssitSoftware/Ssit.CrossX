@@ -1,5 +1,3 @@
-#if __IOS__ && !__MACCATALYST__
-
 using System;
 using Ssit.Pixel.Input;
 
@@ -34,5 +32,3 @@ internal class GameController: IDisposable
     {
     }
 }
-
-#endif

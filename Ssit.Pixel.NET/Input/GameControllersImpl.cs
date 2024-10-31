@@ -1,5 +1,4 @@
 using System;
-using Ssit.Pixel.Core;
 using Ssit.Pixel.Input;
 using Ssit.Pixel.Input.Internal;
 
@@ -7,13 +6,13 @@ namespace Ssit.Pixel.NET.Input;
 
 internal class GameControllersImpl: GameControllersBase
 {
-    private readonly GameController[] _gameControllers = new GameController[4];
+    private readonly Apple.Input.GameController[] _gameControllers = new Apple.Input.GameController[4];
 
     public GameControllersImpl()
     {
         for (var idx = 0; idx < _gameControllers.Length; ++idx)
         {
-            _gameControllers[idx] = new GameController();
+            _gameControllers[idx] = new Apple.Input.GameController();
         }
     }
     

@@ -6,7 +6,7 @@ using Ssit.Pixel.Core;
 using Ssit.Pixel.Input;
 using static SDL2.Bindings.SDL;
 
-namespace Ssit.Pixel.NET.Input;
+namespace Ssit.Pixel.NET.Apple.Input;
 
 internal class GameController: IDisposable
 {

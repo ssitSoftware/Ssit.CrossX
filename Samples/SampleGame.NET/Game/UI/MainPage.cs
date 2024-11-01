@@ -1,0 +1,28 @@
+using Ssit.CrossX.UI;
+using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Views;
+
+namespace SampleGame.Game.UI;
+
+public class MainPage: Page<MainPageViewModel>
+{
+    protected override View CreateView()
+    {
+        return new Container 
+        { 
+            HorizontalAlign = Align.Fill,
+            Children = [
+                new Label
+                {
+                    Text = ViewModel.Title, 
+                    AnchorX = 10,
+                    AnchorY = 10,
+                    Width = 100,
+                    Height = 100,
+                    HorizontalAlign = Align.Center, 
+                    VerticalAlign = Align.Start
+                }.ApplyStyles(Styles, "Title", "Test")
+            ]
+        };
+    }
+}

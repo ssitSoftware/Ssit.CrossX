@@ -1,3 +1,5 @@
+#if __MACCATALYST__ || __IOS__
+
 using GameController;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
@@ -105,3 +107,5 @@ internal class GameControllersImpl: GameControllersBase
         }
     }
 }
+
+#endif

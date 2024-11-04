@@ -43,6 +43,10 @@
       <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <MtouchDebug>true</MtouchDebug>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
 

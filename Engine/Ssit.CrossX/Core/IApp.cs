@@ -1,0 +1,15 @@
+using System;
+using Ssit.CrossX.IoC;
+
+namespace Ssit.CrossX.Core;
+
+public interface IApp: IDisposable
+{
+    void InitializeServices(IIoCContainerBuilder builder);
+    void SetActive(bool active);
+    void Update(Action<float> preUpdate);
+    void Draw();
+    void Resize(Size size);
+    void Start(object args);
+    void Initialize(IIoCContainer container);
+}

@@ -1,28 +1,28 @@
 using System;
+using System.Diagnostics;
 using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.Core;
-
-public interface IApp: IDisposable
-{
-    void InitializeServices(IIoCContainerBuilder builder);
-    void SetActive(bool active);
-    void Update(float dt);
-    void Draw();
-    void Resize(Size size);
-    void Start(object args);
-    void Initialize(IIoCContainer container);
-}
 
 public abstract class PixelApp: IApp
 {
     public WindowParameters WindowParameters { get; private set; }
     
+    private readonly Stopwatch _stopwatch = new();
+    private TimeSpan _lastTime;
+    
     internal bool ShouldContinue { get; private set; } = true;
     
     void IApp.InitializeServices(IIoCContainerBuilder builder) => OnInitializeServices(builder);
+
+    void IApp.Start(object args)
+    {
+        OnStart(args);
+        
+        _stopwatch.Start();
+        _lastTime = _stopwatch.Elapsed;
+    }
     
-    void IApp.Start(object args) => OnStart(args);
     void IApp.Initialize(IIoCContainer container) => OnInitialize(container);
 
     protected virtual void OnInitialize(IIoCContainer container)
@@ -35,6 +35,7 @@ public abstract class PixelApp: IApp
     public void Dispose()
     {
         OnDispose(true);
+        _stopwatch.Stop();
     }
 
     protected virtual void OnActivate(bool active)
@@ -60,7 +61,15 @@ public abstract class PixelApp: IApp
     {
     }
 
-    void IApp.Update(float elapsedTime) => OnUpdate(elapsedTime);
+    void IApp.Update(Action<float> preUpdate)
+    {
+        var stopwatchRead = _stopwatch.Elapsed;
+        var dt = (float)(stopwatchRead - _lastTime).TotalSeconds;
+        _lastTime = stopwatchRead;
+
+        preUpdate(dt);
+        OnUpdate(dt);
+    }
 
     protected virtual void OnUpdate(float elapsedTime)
     {

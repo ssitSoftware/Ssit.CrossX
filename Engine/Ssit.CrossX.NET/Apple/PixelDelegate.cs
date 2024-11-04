@@ -8,10 +8,11 @@ using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.NET.Audio;
-using Ssit.CrossX.NET.Core;
 using Ssit.CrossX.NET.Apple.Graphics;
+using Ssit.CrossX.NET.Apple.Input;
 using Ssit.CrossX.NET.Input;
 using UIKit;
 
@@ -28,7 +29,6 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
     private MTKView _metalView;
     private RenderingWindowImpl _renderingWindow;
     private KeyboardImpl _keyboard;
-    private PlatformHandler _platformHandler;
     private PixelViewController _pixelViewController;
     private WindowParameters _windowParameters;
     
@@ -83,9 +83,6 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
 
         _renderingWindow = new RenderingWindowImpl(_metalView);
 
-        _platformHandler = new PlatformHandler();
-        _platformHandler.Initialize(iocBuilder);
-
         _keyboard = new KeyboardImpl();
         
         iocBuilder
@@ -97,8 +94,10 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
             .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
             .WithImplementation<ITexture, TextureImpl>()
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
+            .WithSingleton<IGameControllers, GameControllersImpl>()
             .WithInstance(_windowParameters)
             .WithImplementation<ISoundEffect, SoundEffectImpl>()
+            .WithOpenAl()
             .WithPixelCore();
         
         _app = new TApp();
@@ -164,7 +163,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         }
         
         _pixelViewController.UpdateKeyboard(_keyboard);
-        _platformHandler.Tick(_app, f => Updating?.Invoke(f));
+        
+        ((IApp)_app).Update(f => Updating?.Invoke(f));
         
         Updated?.Invoke();
         

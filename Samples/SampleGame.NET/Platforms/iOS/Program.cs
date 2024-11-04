@@ -1,14 +1,6 @@
-﻿using Foundation;
-using SampleGame.Game;
-using Ssit.CrossX.NET.Apple;
-using UIKit;
+﻿using UIKit;
 
 namespace SampleGame;
-
-[Register("AppDelegate")]
-public class AppDelegate : PixelDelegate<GameApp>
-{
-}
 
 public class Program
 {

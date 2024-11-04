@@ -23,6 +23,7 @@ public static class IoCRegistrar
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
             .WithSingleton<IMusicPlayer, MusicPlayer>()
-            .WithSingleton<IInputMappings, InputMappings>();
+            .WithSingleton<IInputMappings, InputMappings>()
+            .WithSingleton<IActionScheduler, ActionScheduler>();
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Templates Namespace="SampleGame.Game.UI">
+    
+    <xx_Using>Ssit.CrossX.UI</xx_Using>
+    <xx_Using>Ssit.CrossX.UI.Views</xx_Using>
+    <xx_Using>Ssit.CrossX.UI.Parameters</xx_Using>
+    
+    <xx_Template xx_OfType="TestItem" xx_Name="TestItemTemplate" xx_Context="context">
+        <Container HorizontalAlign="Align.Fill" Height="50" >
+            <Label xx_Styles="Label" Text="context.Title" HorizontalAlign="Align.Start" VerticalAlign="Align.Center"/>
+            <Label xx_Styles="@" Text="{YES!}" HorizontalAlign="Align.End" VerticalAlign="Align.Center"/>
+            <ListBox xx_OfType="string" Items="context.Names">
+                <xx_AttachViewCreator xx_Property="ItemTemplate" xx_Context="subContext">
+                    <Container>
+                        <Label xx_Styles="Label" Text="context.Title"/>
+                        <Label xx_Styles="Label" Text="subContext"/>
+                    </Container>
+                </xx_AttachViewCreator>
+            </ListBox>
+        </Container>
+    </xx_Template>
+</Templates>

@@ -4,5 +4,5 @@ namespace Ssit.CrossX.UI.Views;
 
 public class Label: View
 {
-    public ISharedValue<string> Text { get; set; }
+    public SharedString Text { get; set; }
 }

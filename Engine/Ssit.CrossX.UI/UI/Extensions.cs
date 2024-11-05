@@ -1,11 +1,8 @@
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
+using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI;
-
-public interface IStylesManager
-{
-
-}
 
 public static class Extensions
 {

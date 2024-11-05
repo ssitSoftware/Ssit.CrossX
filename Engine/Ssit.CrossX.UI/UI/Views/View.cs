@@ -1,7 +1,7 @@
 using System;
 using Ssit.CrossX.UI.Parameters;
 
-namespace Ssit.CrossX.UI;
+namespace Ssit.CrossX.UI.Views;
 
 public abstract class View
 {

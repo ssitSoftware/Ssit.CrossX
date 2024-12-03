@@ -16,28 +16,31 @@ public static class Program
             return -1;
         }
 
-        var filename = args[0];
+        var filenames = args;
 
         List<Task> tasks = new List<Task>();
 
         var timer = new Stopwatch();
         timer.Start();
-        
-        foreach (var file in Directory.GetFiles(dir, filename, SearchOption.AllDirectories))
-        {
-            var fullPath = file;
-            var ext = Path.GetExtension(file);
 
-            switch (ext.ToLowerInvariant())
+        foreach (var filename in filenames)
+        {
+            foreach (var file in Directory.GetFiles(dir, filename, SearchOption.AllDirectories))
             {
-                case ".xml":
-                    var converter = GetXmlConverter(fullPath);
-                    if (converter is null)
-                        continue;
-                    
-                    Console.WriteLine(fullPath);
-                    tasks.Add(converter.Generate());
-                    break;
+                var fullPath = file;
+                var ext = Path.GetExtension(file);
+
+                switch (ext.ToLowerInvariant())
+                {
+                    case ".xml":
+                        var converter = GetXmlConverter(fullPath);
+                        if (converter is null)
+                            continue;
+
+                        Console.WriteLine(fullPath);
+                        tasks.Add(converter.Generate());
+                        break;
+                }
             }
         }
 
@@ -61,6 +64,9 @@ public static class Program
             
             case "Templates":
                 return new XmlToTemplatesConverter(fullPath, xmlNode);
+            
+            case "Fonts":
+                return new XmlToFontConverter(fullPath, xmlNode);
         }
 
         return null;

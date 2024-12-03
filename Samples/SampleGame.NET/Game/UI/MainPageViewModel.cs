@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Values;
 
 namespace SampleGame.Game.UI;
@@ -12,6 +11,6 @@ public class TestItem
 
 public class MainPageViewModel
 {
-    public SharedString Title { get; } = "Test Title";
+    public SharedStringValue Title { get; } = "Test Title";
     public List<TestItem> Items { get; } = new();
 }

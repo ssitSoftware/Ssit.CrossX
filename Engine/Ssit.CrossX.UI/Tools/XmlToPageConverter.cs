@@ -26,7 +26,7 @@ public class XmlToPageConverter(string fullPath, XNode xmlNode) : IXmlFileConver
         await streamWriter.FlushAsync();
     }
 
-    public string Convert(XNode node)
+    private string Convert(XNode node)
     {
         List<string> usings = new List<string>();
         XmlToCsConverter.GetUsings(node, usings);

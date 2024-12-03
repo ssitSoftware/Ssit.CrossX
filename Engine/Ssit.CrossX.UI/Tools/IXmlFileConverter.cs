@@ -6,5 +6,4 @@ namespace Ssit.CrossX.Tools;
 public interface IXmlFileConverter
 {
     Task Generate();
-    string Convert(XNode node);
 }

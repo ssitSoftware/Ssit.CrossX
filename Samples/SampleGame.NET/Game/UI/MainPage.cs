@@ -1,23 +1,26 @@
-using Ssit.CrossX.UI;
-using Ssit.CrossX.UI.Views;
-using Ssit.CrossX.UI.Parameters;
+// CXTOOL PAGE GENERATOR
+// MainPage.xml
 
-namespace SampleGame.Game.UI;
+using Ssit.CrossX.UI; //-> 4
+using Ssit.CrossX.UI.Views; //-> 5
+using Ssit.CrossX.UI.Parameters; //-> 6
 
-public class MainPage: Page<MainPageViewModel>
+namespace SampleGame.Game.UI; //-> 2
+
+public class MainPage: Page<MainPageViewModel> //-> 2
 {
     protected override View CreateView()
     {
-        var templates = GetContainer<Templates>();
-
-        return new Container
+        var templates = GetContainer<Templates>(); //-> 8
+        
+        return new Container //-> 10
         {
             HorizontalAlign = Align.Fill,
             Children = [
                 
-                new Label
+                new Label //-> 11
                 {
-                    Text = ViewModel.Title,
+                    Text = ViewModel.Title + "%",
                     AnchorX = 10,
                     AnchorY = 10,
                     Width = 100,
@@ -26,7 +29,7 @@ public class MainPage: Page<MainPageViewModel>
                     VerticalAlign = Align.Start
                 }.ApplyStyles(Styles, "Title", "Label"),
                 
-                new Label
+                new Label //-> 12
                 {
                     Text = "Hello World!",
                     AnchorX = 10,
@@ -37,7 +40,7 @@ public class MainPage: Page<MainPageViewModel>
                     VerticalAlign = Align.Start
                 }.ApplyStyles(Styles, "Label"),
                 
-                new ListBox<TestItem>
+                new ListBox<TestItem> //-> 13
                 {
                     Items = ViewModel.Items,
                     ItemTemplate = templates.TestItemTemplate

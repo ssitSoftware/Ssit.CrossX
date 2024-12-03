@@ -15,4 +15,8 @@
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SkiaSharp" Version="2.88.9" />
+    </ItemGroup>
+
 </Project>

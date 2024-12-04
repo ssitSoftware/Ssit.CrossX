@@ -25,6 +25,26 @@ public readonly struct XNodeAttributes
     {
         return double.TryParse(node.Attribute(name), NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : defaultValue;
     }
+    
+    public double AsPercentOrScalar(string name, double fullValue, double defaultValue)
+    {
+        var val = node.Attribute(name);
+        if (val is null)
+        {
+            return defaultValue;
+        }
+
+        if (val.EndsWith('%'))
+        {
+            val = val.Substring(0, val.Length - 1);
+            
+            int.TryParse(val, out var outlineInt);
+            return outlineInt * fullValue / 100f;
+        }
+
+        double.TryParse(val, NumberStyles.Float, CultureInfo.InvariantCulture, out var result);
+        return result;
+    }
 
     public decimal AsDecimal(string name, decimal defaultValue)
     {

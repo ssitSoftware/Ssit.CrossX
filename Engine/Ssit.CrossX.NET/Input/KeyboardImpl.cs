@@ -22,5 +22,6 @@ internal class KeyboardImpl: IKeyboard
         
         _buttons.Clear();
         callback(_buttons);
+        callback(_buttons);
     }
 }

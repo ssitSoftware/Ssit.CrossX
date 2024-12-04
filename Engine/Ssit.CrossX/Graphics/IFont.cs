@@ -1,4 +1,5 @@
 using System.Text;
+using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics;
 
@@ -30,4 +31,11 @@ public interface IFont
     /// <param name="text">The text to measure, provided as a StringBuilder instance.</param>
     /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
     Size TextSize(StringBuilder text);
+    
+    /// <summary>
+    /// Calculates the size of the specified text using an ICharProvider.
+    /// </summary>
+    /// <param name="text">The text to measure, provided as an ICharProvider instance.</param>
+    /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
+    Size TextSize(ICharProvider text);
 }

@@ -128,26 +128,6 @@ public class GameApp: PixelApp
 
     protected override void OnUpdate(float elapsedTime)
     {
-        if (_keyboard.GetKey(Key.Down).IsDown)
-        {
-            _musicPlayer.Volume = MathF.Max(0, _musicPlayer.Volume - elapsedTime / 4);
-        }
-        
-        if (_keyboard.GetKey(Key.Up).IsDown)
-        {
-            _musicPlayer.Volume = MathF.Min(1, _musicPlayer.Volume + elapsedTime / 4);
-        }
-        
-        if (_keyboard.GetKey(Key.Left).IsDown)
-        {
-            _soundManager.MasterVolume = MathF.Max(0, _soundManager.MasterVolume - elapsedTime / 4);
-        }
-        
-        if (_keyboard.GetKey(Key.Right).IsDown)
-        {
-            _soundManager.MasterVolume = MathF.Min(1, _soundManager.MasterVolume + elapsedTime / 4);
-        }
-        
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
             if (_seInstance.IsPlaying)

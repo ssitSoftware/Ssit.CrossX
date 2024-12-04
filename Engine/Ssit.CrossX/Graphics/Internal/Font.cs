@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Text;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
+using Ssit.CrossX.Text;
 using Ssit.CrossX.Utils;
 
 namespace Ssit.CrossX.Graphics.Internal;
@@ -11,15 +12,6 @@ namespace Ssit.CrossX.Graphics.Internal;
 internal class Font : IFont
 {
     public delegate void DrawTextureDelegate(ITexture texture, Vector2 position, Rectangle source, RgbaColor color);
-
-    private struct TextSource
-    {
-        public StringBuilder Builder;
-        public string String;
-
-        public char this[int index] => String is not null ? String[index] : Builder[index];
-        public int Length => String?.Length ?? Builder.Length;
-    }
 
     public class FontInfo
     {
@@ -165,6 +157,12 @@ internal class Font : IFont
         TextSize(new TextSource
         {
             Builder = text
+        });
+
+    public Size TextSize(ICharProvider text) =>
+        TextSize(new TextSource
+        {
+            Provider = text
         });
 
     private Size TextSize(TextSource text)

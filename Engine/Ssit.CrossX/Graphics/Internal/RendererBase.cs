@@ -70,10 +70,7 @@ public abstract class RendererBase : IRenderer
             return;
         }
         
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource
-        {
-            String = text
-        }, position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
+        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
     }
 
     public void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null)
@@ -83,10 +80,7 @@ public abstract class RendererBase : IRenderer
             return;
         }
         
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource
-        {
-            Builder = text
-        }, position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
+        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
     }
 
     public void DrawText(IFont font, ICharProvider text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null)
@@ -96,14 +90,11 @@ public abstract class RendererBase : IRenderer
             return;
         }
         
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource
-        {
-            Provider = text
-        }, position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
+        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
     }
 
-    public virtual void DrawTexture(ITexture texture, Rectangle targetRectangle, 
-        Rectangle? sourceRectangle = null, RgbaColor? color = null, 
+    public virtual void DrawTexture(ITexture texture, Rectangle targetRectangle,
+        Rectangle? sourceRectangle = null, RgbaColor? color = null,
         TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null, float depth = 0)
     {
         if (CurrentBatchMode != BatchMode.TextureBuffer)

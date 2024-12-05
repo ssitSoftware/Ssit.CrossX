@@ -182,7 +182,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         var lineHeight = (int)MathF.Ceiling(-font.Metrics.Ascent + font.Metrics.Descent + font.Metrics.Leading);
         
         var metrics = new GlyphFont.FontMetrics(capHeight, xHeight, ascender, descender, lineHeight, whitespaceWidth);
-        var fontOut = new GlyphFont(name, size, metrics, glyphs.Select(g => g.Item1).ToArray());
+        var fontOut = new GlyphFont(name, size, outline > 0, metrics, glyphs.Select(g => g.Item1).ToArray());
 
         await using var outStream = new FileStream(outputData, FileMode.Create, FileAccess.Write);
         fontOut.Save(outStream);

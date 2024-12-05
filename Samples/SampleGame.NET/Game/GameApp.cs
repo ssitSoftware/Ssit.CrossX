@@ -172,18 +172,14 @@ public class GameApp: PixelApp
         _renderer.Clear(_backgroundColor);
         _player.Draw(_renderer);
 
-        var font = _fontsManager.GetFont("Default", 32);
-        
-        
+        var font = _fontsManager.GetFont("Default", 16);
         
         _renderer.DrawText(font, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sagittis sed odio et euismod.\n" +
                                  "Cras quis sem pharetra, sagittis duia, tincidunt sem. Donec vel odio nec diam varius rhoncus.\n" +
                                  "Duis facilisis magna vel imperdiet ultricies. Mauris finibus elit ut mauris egestas,\n" +
                                  "vitae rutrum mauris mattis. Mauris feugiat, mauris quis luctus lacinia,\n" +
                                  "nunc metus luctus sem, non ornare mi turpis non odio. Mauris nec eleifend urna, eget scelerisque nibh.\n" +
-                                 "Cras et metus magna. Suspendisse sollicitudin velit id sodales tristique.", new Vector2(20, 100), RgbaColor.Yellow, outlineColor: RgbaColor.Brown);
-        
-        
+                                 "Cras et metus magna. Suspendisse sollicitudin velit id sodales tristique.", new Vector2(20, 100), RgbaColor.White, TextSpacing.SuperExpanded, outlineColor: RgbaColor.Black);
     }
 
     protected override void OnResize(Size size)

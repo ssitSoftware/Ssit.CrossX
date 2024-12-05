@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Fonts>
     <Font Name="Default" Family="Open Sans"
-          Sizes="12,16,24,32" 
+          Sizes="12,16,24,32,64" 
           Weight="Normal" 
           Italic="false" Antialiasing="true" 
-          CharSets="Ascii, Polish, German, French, Spanish" Outline="20%"
+          CharSets="Ascii, Polish, German, French, Spanish" Outline="25%"
           Spacing="25%"
           SheetWidthFactor="16.0"/>
 </Fonts>

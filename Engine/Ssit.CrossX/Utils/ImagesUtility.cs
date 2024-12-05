@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using SkiaSharp;
 
@@ -37,10 +38,14 @@ public static class ImagesUtility
         return data;
     }
 
-    public static Stream GetStream(RgbaColor[,] color)
+    public static Stream GetStream(RgbaColor[,] colors)
     {
-        using var bitmap = new SKBitmap(color.GetLength(0), color.GetLength(1));
+        using var bitmap = new SKBitmap(colors.GetLength(0), colors.GetLength(1));
+
+        var bytes = new byte[colors.GetLength(0) * colors.GetLength(1) * 4];
         
+        var stride = bitmap.Width * 4;
+
         var w = bitmap.Width;
         var h = bitmap.Height;
         
@@ -48,8 +53,19 @@ public static class ImagesUtility
         {
             for (var y = 0; y < h; ++y)
             {
-                var col = color[x, y];
-                bitmap.SetPixel(x, y, new SKColor(col.R, col.G, col.B, col.A));
+                var col = colors[x, y];
+                bytes[0 + x * 4 + y * stride] = col.R;
+                bytes[1 + x * 4 + y * stride] = col.G;
+                bytes[2 + x * 4 + y * stride] = col.B;
+                bytes[3 + x * 4 + y * stride] = col.A; 
+            }
+        }
+
+        unsafe
+        {
+            fixed (byte* pBytes = bytes)
+            {
+                bitmap.SetPixels((IntPtr)pBytes);
             }
         }
 

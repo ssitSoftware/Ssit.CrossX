@@ -21,7 +21,18 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
 
         var sheetPath = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path)) + ".png";
 
-        (FontSheet, OutlineSheet) = LoadComplexSheet(filesProvider, iocContainer, sheetPath);
+        if (Outline)
+        {
+            (FontSheet, OutlineSheet) = LoadComplexSheet(filesProvider, iocContainer, sheetPath);
+        }
+        else
+        {
+            using var texturePath = filesProvider.Open(sheetPath);
+            FontSheet = iocContainer.IoCConstruct<ITexture>(new LoadTextureParameters
+            {
+                DiffuseMapStream = texturePath
+            });
+        }
     }
 
     private (ITexture, ITexture) LoadComplexSheet(IFilesProvider filesProvider, IIoCContainer container, string path)
@@ -37,13 +48,21 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
             for (var y = 0; y < colors.GetLength(1); y++)
             {
                 var color = colors[x, y];
+                
                 if (color.A > 0)
                 {
-                    var outlineAlpha = color.A;
-                    var fillAlpha = color.G;
+                    int outlineAlpha = color.A;
+                    int fillAlpha = color.G;
 
-                    fillColors[x, y] = new RgbaColor(255, 255, 255, fillAlpha);
-                    outlineColors[x, y] = new RgbaColor(255, 255, 255, outlineAlpha);
+                    if (fillAlpha > 128)
+                    {
+                        outlineAlpha = 255 - (fillAlpha - 128) * 2;
+                        outlineAlpha = Math.Max(0, outlineAlpha) * color.A / 255;
+                        outlineAlpha = Math.Min(255, outlineAlpha);
+                    }
+                    
+                    fillColors[x, y] = new RgbaColor(255, 255, 255, (byte)fillAlpha);
+                    outlineColors[x, y] = new RgbaColor(255, 255, 255, (byte)outlineAlpha);
                 }
             }
         }
@@ -74,18 +93,12 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         FontSheet?.Dispose();
     }
     
-    public Size TextSize(string text) => TextSize(new TextSource
+    public Size TextSize(string text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
+    public Size TextSize(StringBuilder text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
+    public Size TextSize(ICharProvider text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
+    
+    private Size TextSize(TextSource text, TextSpacing spacing)
     {
-        String = text
-    });
-
-    public Size TextSize(StringBuilder text) => TextSize(new TextSource
-    {
-        Builder = text
-    });
-
-    public Size TextSize(ICharProvider text) => TextSize(new TextSource
-    {
-        Provider = text
-    });
+        return GlyphFontRenderer.MeasureText(this, text, spacing);
+    }
 }

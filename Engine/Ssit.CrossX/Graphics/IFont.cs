@@ -23,19 +23,19 @@ public interface IFont
     /// </summary>
     /// <param name="text">The text to measure.</param>
     /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(string text);
+    Size TextSize(string text, TextSpacing spacing = TextSpacing.Normal);
 
     /// <summary>
     /// Calculates the size of the specified text using a StringBuilder.
     /// </summary>
     /// <param name="text">The text to measure, provided as a StringBuilder instance.</param>
     /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(StringBuilder text);
+    Size TextSize(StringBuilder text, TextSpacing spacing = TextSpacing.Normal);
     
     /// <summary>
     /// Calculates the size of the specified text using an ICharProvider.
     /// </summary>
     /// <param name="text">The text to measure, provided as an ICharProvider instance.</param>
     /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(ICharProvider text);
+    Size TextSize(ICharProvider text, TextSpacing spacing = TextSpacing.Normal);
 }

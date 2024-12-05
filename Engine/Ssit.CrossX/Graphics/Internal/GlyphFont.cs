@@ -40,6 +40,7 @@ public class GlyphFont
     
     public string Name { get; private set; }
     public int Size { get; private set; }
+    public bool Outline { get; private set; }
     public FontMetrics Metrics { get; private set; }
     
     private const int FirstCharacter = 32;
@@ -49,19 +50,20 @@ public class GlyphFont
     private readonly Dictionary<char, Glyph> _extendedGlyphs = new();
 
     protected GlyphFont()
-        : this("", 0, null)
+        : this("", 0, false,null)
     {
     }
     
-    private GlyphFont(string name, int size, FontMetrics metrics)
+    private GlyphFont(string name, int size, bool outline, FontMetrics metrics)
     {
         Name = name;
         Size = size;
         Metrics = metrics;
+        Outline = outline;
     }
-    
-    public GlyphFont(string name, int size, FontMetrics metrics, IReadOnlyList<Glyph> glyphs)
-        : this(name, size, metrics)
+
+    public GlyphFont(string name, int size, bool outline, FontMetrics metrics, IReadOnlyList<Glyph> glyphs)
+        : this(name, size,outline, metrics)
     {
         foreach (var glyph in glyphs)
         {
@@ -84,6 +86,7 @@ public class GlyphFont
         
         Name = reader.ReadString();
         Size = reader.ReadInt32();
+        Outline = reader.ReadBoolean();
         Metrics = FontMetrics.Load(reader);
         
         var glyph = Glyph.Read(reader);
@@ -108,6 +111,7 @@ public class GlyphFont
         
         writer.Write(Name);
         writer.Write(Size);
+        writer.Write(Outline);
         Metrics.Save(writer);
 
         for (var idx = 0; idx < _glyphs.Length; idx++)
@@ -141,48 +145,5 @@ public class GlyphFont
         }
 
         return _extendedGlyphs.GetValueOrDefault(c, null);
-    }
-    
-    protected Size TextSize(TextSource text)
-    {
-        float width = 0;
-
-        float maxWidth = 0;
-        int lines = 0;
-
-        char previousCharacter = '\0';
-        
-        for (var idx = 0; idx < text.Length; ++idx)
-        {
-            if (text[idx] == '\n')
-            {
-                maxWidth = Math.Max(width, maxWidth);
-                width = 0;
-                lines++;
-                previousCharacter = '\0';
-                continue;
-            }
-            var c = text[idx];
-            var glyph = GetGlyph(c);
-            
-            float advance = Metrics.WhitespaceWidth;
-            
-            if (glyph != null)
-            {
-                advance = glyph.Advance + glyph.GetKerning(previousCharacter);
-                previousCharacter = c;
-            }
-            else
-            {
-                previousCharacter = '\0';
-            }
-
-            width += advance;
-        }
-
-        if (width > 0) lines++;
-        
-        maxWidth = Math.Max(width, maxWidth);
-        return new Size((int)MathF.Ceiling(maxWidth), lines * Size);
     }
 }

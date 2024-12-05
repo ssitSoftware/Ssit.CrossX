@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
 using Ssit.CrossX;
@@ -23,6 +24,7 @@ public class GameApp: PixelApp
     private IRenderer _renderer;
     private IContentManager _contentManager;
     private ISoundManager _soundManager;
+    private IFontsManager _fontsManager;
 
     private ResourceHandle<ITexture> _texture;
 
@@ -108,7 +110,7 @@ public class GameApp: PixelApp
             new Song("bundle:/Music/DriveInTunnel.ogg")
         });
         
-        _musicPlayer.ChangePlaylist("Normal");
+        //_musicPlayer.ChangePlaylist("Normal");
 
         var inputMappings = container.Get<IInputMappings>();
         var mapper = inputMappings.Mapper(0);
@@ -122,6 +124,9 @@ public class GameApp: PixelApp
         
         mapper.MapButton("Fire", GameControllerButton.X);
         mapper.MapButton("Fire", Key.X);
+        
+        _fontsManager = container.Get<IFontsManager>();
+        _fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
         
         _player = container.IoCConstruct<Player>();
     }
@@ -166,6 +171,19 @@ public class GameApp: PixelApp
     {
         _renderer.Clear(_backgroundColor);
         _player.Draw(_renderer);
+
+        var font = _fontsManager.GetFont("Default", 32);
+        
+        
+        
+        _renderer.DrawText(font, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sagittis sed odio et euismod.\n" +
+                                 "Cras quis sem pharetra, sagittis duia, tincidunt sem. Donec vel odio nec diam varius rhoncus.\n" +
+                                 "Duis facilisis magna vel imperdiet ultricies. Mauris finibus elit ut mauris egestas,\n" +
+                                 "vitae rutrum mauris mattis. Mauris feugiat, mauris quis luctus lacinia,\n" +
+                                 "nunc metus luctus sem, non ornare mi turpis non odio. Mauris nec eleifend urna, eget scelerisque nibh.\n" +
+                                 "Cras et metus magna. Suspendisse sollicitudin velit id sodales tristique.", new Vector2(20, 100), RgbaColor.Yellow, outlineColor: RgbaColor.Brown);
+        
+        
     }
 
     protected override void OnResize(Size size)

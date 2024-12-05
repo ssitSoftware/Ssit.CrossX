@@ -105,8 +105,8 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         using var paint = new SKPaint(font);
 
         paint.IsAntialias = antialiasing;
-        paint.HintingLevel = SKPaintHinting.Slight;
-        paint.SubpixelText = false;
+        paint.HintingLevel = SKPaintHinting.Full;
+        paint.SubpixelText = true;
         paint.IsStroke = false;
 
         using var targetBitmap = new SKBitmap(new SKImageInfo(size * 4, size * 4));
@@ -119,16 +119,8 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         
         var outline = (float)attr.AsPercentOrScalar("Outline", size, 0);
         
-        var mode = attr.AsEnum("Mode", GlyphFont.ColorMode.BlackWhite);
-        
         SKColor outlineColor = SKColors.Black;
         SKColor fillColor = SKColors.White;
-
-        if (mode == GlyphFont.ColorMode.RedGreen)
-        {
-            outlineColor = SKColors.Red;
-            fillColor = new SKColor(0, 255, 0);
-        }
         
         foreach (var character in characters)
         {
@@ -154,8 +146,8 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
 
             chars[1] = character;
             
-            var (croppedBitmap, offset) = CropGlyph(targetBitmap, new SKPoint(size, size *2));
-            
+            var (croppedBitmap, offset) = CropGlyph(targetBitmap, new SKPoint(size, size * 2));
+
             var currentWidth = paint.MeasureText(chText);
             
             Dictionary<char, float> kerning = null;
@@ -181,16 +173,16 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         var spacing = (int)Math.Ceiling(attr.AsPercentOrScalar("Spacing", size, 0));
         
         var fontSheet = CreateFontSheet(glyphs, spacing, sheetWidth);
-        
+
         var whitespaceWidth = (int)MathF.Ceiling(paint.MeasureText(" "));
         var ascender = (int)MathF.Ceiling(font.Metrics.Ascent);
         var descender = (int)MathF.Ceiling(font.Metrics.Descent);
         var capHeight = (int)MathF.Ceiling(font.Metrics.CapHeight);
         var xHeight = (int)MathF.Ceiling(font.Metrics.XHeight);
-        var lineHeight = (int)MathF.Ceiling(font.Metrics.Leading);
+        var lineHeight = (int)MathF.Ceiling(-font.Metrics.Ascent + font.Metrics.Descent + font.Metrics.Leading);
         
         var metrics = new GlyphFont.FontMetrics(capHeight, xHeight, ascender, descender, lineHeight, whitespaceWidth);
-        var fontOut = new GlyphFont(name, size, metrics, mode, glyphs.Select(g => g.Item1).ToArray());
+        var fontOut = new GlyphFont(name, size, metrics, glyphs.Select(g => g.Item1).ToArray());
 
         await using var outStream = new FileStream(outputData, FileMode.Create, FileAccess.Write);
         fontOut.Save(outStream);
@@ -321,7 +313,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
             glyphCanvas.DrawBitmap(glyph, -left, -top);
         }
 
-        return (croppedBitmap, new Vector2(point.X - left, point.Y - top));
+        return (croppedBitmap, new Vector2(left - point.X, top - point.Y));
     }
 
     private List<char> GetCharacters(CharSets charsets)

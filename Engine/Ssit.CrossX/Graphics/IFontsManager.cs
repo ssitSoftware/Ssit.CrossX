@@ -10,11 +10,14 @@ public interface IFontsManager
     /// <summary>
     /// Loads font definitions from a JSON stream and initializes the fonts' collection.
     /// </summary>
-    /// <param name="jsonStream">A stream containing the JSON data describing the fonts.</param>
-    void LoadFonts(Stream jsonStream);
+    /// <param name="fontsJsonPath">A path to the JSON data describing the fonts.</param>
+    void LoadFonts(string fontsJsonPath);
 
     /// <summary>
-    /// Gets font with a given name or default.
+    /// Retrieves a font with the specified name and size from the font manager.
     /// </summary>
-    IFont this[string name] { get; }
+    /// <param name="name">The name of the font to retrieve.</param>
+    /// <param name="size">The size of the font to retrieve.</param>
+    /// <returns>An <see cref="IFont"/> instance corresponding to the specified name and size, or null if not found.</returns>
+    IFont GetFont(string name, int size);
 }

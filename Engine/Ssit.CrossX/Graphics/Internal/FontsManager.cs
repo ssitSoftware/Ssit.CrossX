@@ -1,51 +1,72 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
+using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
 internal class FontsManager: IFontsManager, IDisposable
 {
-    private readonly IIoCContainer _container;
-
-    private class FontsDesc
+    private class FontsJson
     {
-        public Font.FontInfo[] Fonts { get; set; }
+        public string[] Fonts { get; set; }
     }
     
-    private readonly Dictionary<string, Font> _fonts = new();
-    
-    private Font _default;
+    private readonly IIoCContainer _container;
+    private readonly IFilesProvider _filesProvider;
 
-    public IFont this[string name] => _fonts.GetValueOrDefault(name, _default);
+    private readonly Dictionary<string, List<IGlyphFont>> _fonts = new();
     
-    public FontsManager(IIoCContainer container)
+    public FontsManager(IIoCContainer container, IFilesProvider filesProvider)
     {
         _container = container;
-    }
-    
-    public void LoadFonts(Stream jsonStream)
-    {
-        var data = new StreamReader(jsonStream).ReadToEnd();
-        var fontsDesc = JsonConvert.DeserializeObject<FontsDesc>(data);
-        
-        foreach (var fontInfo in fontsDesc.Fonts)
-        {
-            var font = _container.IoCConstruct<Font>(fontInfo);
-            _fonts.Add(fontInfo.Name, font);
-            
-            _default ??= font;
-        }
+        _filesProvider = filesProvider;
     }
     
     public void Dispose()
     {
-        foreach (var font in _fonts)
+        var lists = _fonts.Select(x => x.Value).ToArray();
+        foreach (var list in lists)
         {
-            font.Value.Dispose();
+            list.ForEach(o=>o.Dispose());
         }
+        
         _fonts.Clear();
+    }
+
+    public void LoadFonts(string fontsJsonPath)
+    {
+        Dictionary<string, List<IFont>> fonts = new();
+        
+        using var stream = _filesProvider.Open(fontsJsonPath);
+        
+        var paths = JsonConvert.DeserializeObject<FontsJson>(new StreamReader(stream).ReadToEnd());
+        var dir = Path.GetDirectoryName(fontsJsonPath);
+
+        foreach (var path in paths.Fonts)
+        {
+            var fontPath = Path.Combine(dir ?? "", path);
+            var font = _container.IoCConstruct<GraphicGlyphFont>(fontPath);
+
+            if (!_fonts.TryGetValue(font.Name, out var list))
+            {
+                list = new List<IGlyphFont>();
+                _fonts.Add(font.Name, list);
+            }
+            list.Add(font);
+        }
+    }
+
+    public IFont GetFont(string name, int size)
+    {
+        if (_fonts.TryGetValue(name, out var fonts))
+        {
+            return fonts.FirstOrDefault(o => o.Size == size);
+        }
+
+        return null;
     }
 }

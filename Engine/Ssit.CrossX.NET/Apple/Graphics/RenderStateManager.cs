@@ -14,6 +14,8 @@ internal class RenderStateManager: IDisposable
     private IRenderTarget _currentRenderTarget;
     private ITexture _currentTexture;
     private IEffect _currentEffect;
+    private BlendMode _currentBlendMode = BlendMode.None;
+    
     private TextureFilter _currentTextureFilter = TextureFilter.Nearest;
     
     private VertexMode _currentVertexMode = VertexMode.Invalid;
@@ -71,7 +73,9 @@ internal class RenderStateManager: IDisposable
         _currentEncoder = null;
     }
     
-    public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter filter,
+    public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode,
+        TextureFilter filter,
+        BlendMode blendMode,
         Action onNewState, Matrix4x4? worldTransform, RgbaColor? clearColor = null)
     {
         var changeState = clearColor.HasValue;
@@ -82,6 +86,7 @@ internal class RenderStateManager: IDisposable
         changeState |= !ReferenceEquals(_metalDevice.CurrentRenderTarget, _currentRenderTarget);
         changeState |= _currentSize != _metalDevice.TargetSize;
         changeState |= _currentTextureFilter != filter;
+        changeState |= blendMode != _currentBlendMode;
         
         if (!changeState)
         {
@@ -97,13 +102,19 @@ internal class RenderStateManager: IDisposable
         _currentVertexMode = vertexMode;
         _currentSize = _metalDevice.TargetSize;
         _currentTextureFilter = filter;
+        _currentBlendMode = blendMode;
 
         var shaderEffect = (effect as IMetalShaderEffect) ?? ((vertexMode & VertexMode.Texture) != 0 ? _basicEffectPCT : _basicEffectPC);
         
         IMTLCommandBuffer commandBuffer = _metalDevice.CommandBuffer;
+
+        if (commandBuffer is null)
+        {
+            throw new InvalidOperationException();
+        }
         
         // Obtain a renderPassDescriptor generated from the view's drawable textures
-        MTLRenderPassDescriptor renderPassDescriptor = null;
+        MTLRenderPassDescriptor renderPassDescriptor;
 
         if (_metalDevice.CurrentRenderTarget is null)
         {

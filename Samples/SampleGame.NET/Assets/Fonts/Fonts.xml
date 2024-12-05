@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Fonts>
-    <Font Name="Aaa" Family="Open Sans"
-          Mode="BlackWhite"
-          Sizes="32,120" 
-          Weight="Bold" Style="Normal" 
+    <Font Name="Default" Family="Open Sans"
+          Sizes="12,16,24,32" 
+          Weight="Normal" 
           Italic="false" Antialiasing="true" 
-          CharSets="Ascii, Polish, German, French, Spanish" Outline="25%"
+          CharSets="Ascii, Polish, German, French, Spanish" Outline="20%"
           Spacing="25%"
           SheetWidthFactor="16.0"/>
 </Fonts>

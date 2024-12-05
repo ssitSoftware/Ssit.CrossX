@@ -43,11 +43,19 @@ public abstract class ShaderEffect: IMetalShaderEffect
             FragmentFunction = _fragmentShader,
             VertexDescriptor = vertexDescriptor,
             DepthAttachmentPixelFormat = device.MetalView.DepthStencilPixelFormat,
-            StencilAttachmentPixelFormat = device.MetalView.DepthStencilPixelFormat
+            StencilAttachmentPixelFormat = device.MetalView.DepthStencilPixelFormat,
         };
-
+        
+        pipelineDescriptor.ColorAttachments[0].BlendingEnabled = true;
+        pipelineDescriptor.ColorAttachments[0].RgbBlendOperation           = MTLBlendOperation.Add;
+        pipelineDescriptor.ColorAttachments[0].AlphaBlendOperation         = MTLBlendOperation.Add;
+        pipelineDescriptor.ColorAttachments[0].SourceRgbBlendFactor        = MTLBlendFactor.SourceAlpha;
+        pipelineDescriptor.ColorAttachments[0].SourceAlphaBlendFactor      = MTLBlendFactor.SourceAlpha;
+        pipelineDescriptor.ColorAttachments[0].DestinationRgbBlendFactor   = MTLBlendFactor.OneMinusSourceAlpha;
+        pipelineDescriptor.ColorAttachments[0].DestinationAlphaBlendFactor = MTLBlendFactor.OneMinusSourceAlpha;
+            
         pipelineDescriptor.ColorAttachments[0].PixelFormat = device.MetalView.ColorPixelFormat;
-        _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var error);
+        _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var _);
     }
 
     protected void CreateConstantBuffer(int size)

@@ -1,7 +1,15 @@
 using System.Numerics;
 using System.Text;
+using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics;
+
+public enum BlendMode
+{
+    None,
+    AlphaBlend,
+    Additive
+}
 
 /// <summary>
 /// Provides methods for rendering text, textures, and primitives on the screen.
@@ -23,6 +31,13 @@ public interface IRenderer
     /// </value>
     Size TargetSize { get; }
 
+
+    /// <summary>
+    /// Sets the blend mode for rendering operations.
+    /// </summary>
+    /// <param name="blendMode">The blend mode to use for rendering.</param>
+    void SetBlendMode(BlendMode blendMode);
+    
     /// <summary>
     /// Sets the transformation matrix that will be used for rendering.
     /// </summary>
@@ -49,7 +64,7 @@ public interface IRenderer
     /// <param name="position">The screen coordinates where the text should be rendered.</param>
     /// <param name="color">The optional color of the text. If not provided, a default color will be used.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
-    void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null, float depth = 0);
+    void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null);
     
     /// <summary>
     /// Renders the specified text string at a given position with an optional color.
@@ -59,8 +74,18 @@ public interface IRenderer
     /// <param name="position">The screen coordinates where the text should be rendered.</param>
     /// <param name="color">The optional color of the text. If not provided, a default color will be used.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
-    void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null, float depth = 0);
+    void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null);
 
+    /// <summary>
+    /// Renders the specified text string at a given position with an optional color.
+    /// </summary>
+    /// <param name="font">The font used to render the text.</param>
+    /// <param name="text">A ICharProvider containing the text characters to render.</param>
+    /// <param name="position">The screen coordinates where the text should be rendered.</param>
+    /// <param name="color">The optional color of the text. If not provided, a default color will be used.</param>
+    /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
+    void DrawText(IFont font, ICharProvider text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null);
+    
     /// <summary>
     /// Draws a texture at the specified target rectangle with optional source rectangle and effect.
     /// </summary>
@@ -72,7 +97,7 @@ public interface IRenderer
     /// <param name="effect">An optional effect to be applied to the texture.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
     void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, 
-        TextureFilter filter = TextureFilter.Nearest, 
+        TextureFilter filter = TextureFilter.Nearest,
         IEffect effect = null, float depth = 0);
     
     /// <summary>

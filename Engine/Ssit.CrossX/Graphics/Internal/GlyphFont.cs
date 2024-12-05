@@ -38,12 +38,6 @@ public class GlyphFont
         }
     }
     
-    public enum ColorMode
-    {
-        BlackWhite = 0,
-        RedGreen
-    }
-    
     public string Name { get; private set; }
     public int Size { get; private set; }
     public FontMetrics Metrics { get; private set; }
@@ -53,24 +47,21 @@ public class GlyphFont
     
     private readonly Glyph[] _glyphs = new Glyph[NumBasicCharacters];
     private readonly Dictionary<char, Glyph> _extendedGlyphs = new();
-    
-    protected ColorMode Mode { get; private set; }
 
     protected GlyphFont()
-        : this("", 0, ColorMode.BlackWhite, null)
+        : this("", 0, null)
     {
     }
     
-    private GlyphFont(string name, int size, ColorMode colorMode, FontMetrics metrics)
+    private GlyphFont(string name, int size, FontMetrics metrics)
     {
         Name = name;
         Size = size;
-        Mode = colorMode;
         Metrics = metrics;
     }
     
-    public GlyphFont(string name, int size, FontMetrics metrics, ColorMode colorMode, IReadOnlyList<Glyph> glyphs)
-        : this(name, size, colorMode, metrics)
+    public GlyphFont(string name, int size, FontMetrics metrics, IReadOnlyList<Glyph> glyphs)
+        : this(name, size, metrics)
     {
         foreach (var glyph in glyphs)
         {
@@ -93,7 +84,6 @@ public class GlyphFont
         
         Name = reader.ReadString();
         Size = reader.ReadInt32();
-        Mode = (ColorMode)reader.ReadByte();
         Metrics = FontMetrics.Load(reader);
         
         var glyph = Glyph.Read(reader);
@@ -118,7 +108,6 @@ public class GlyphFont
         
         writer.Write(Name);
         writer.Write(Size);
-        writer.Write((byte)Mode);
         Metrics.Save(writer);
 
         for (var idx = 0; idx < _glyphs.Length; idx++)
@@ -140,7 +129,7 @@ public class GlyphFont
         writer.Flush();
     }
     
-    private Glyph GetGlyph(char c)
+    public Glyph GetGlyph(char c)
     {
         var index = c - FirstCharacter;
         

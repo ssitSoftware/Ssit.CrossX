@@ -18,13 +18,22 @@ using UIKit;
 
 namespace Ssit.CrossX.NET.Apple;
 
-public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEventSource where TApp: PixelApp, new()
+public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where TApp: PixelApp, new()
 {
+    private class EventSource : IEventSource
+    {
+        public event Action<float> Updating;
+        public event Action Updated;
+        public event Action RenderFinished;
+
+        public void OnUpdate(float dt) => Updating?.Invoke(dt);
+        public void OnUpdated() => Updated?.Invoke();
+        public void OnRenderFinished() => RenderFinished?.Invoke();
+    }
+    
     public override UIWindow Window { get; set; }
     
-    public event Action<float> Updating;
-    public event Action Updated;
-    public event Action RenderFinished;
+    private EventSource _eventSource = new();
     
     private MTKView _metalView;
     private RenderingWindowImpl _renderingWindow;
@@ -90,7 +99,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
             .WithInstance<IMetalDevice>(_renderingWindow)
             .WithInstance<IKeyboard>(_keyboard)
             .WithInstance(_metalView.Device)
-            .WithInstance<IEventSource>(this)
+            .WithInstance<IEventSource>(_eventSource)
             .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
             .WithImplementation<ITexture, TextureImpl>()
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
@@ -164,12 +173,12 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate, IEven
         
         _pixelViewController.UpdateKeyboard(_keyboard);
         
-        ((IApp)_app).Update(f => Updating?.Invoke(f));
+        ((IApp)_app).Update(f => _eventSource.OnUpdate(f));
         
-        Updated?.Invoke();
+        _eventSource.OnUpdated();
         
         _renderingWindow.Draw(view, _app);
-        RenderFinished?.Invoke();
+        _eventSource.OnRenderFinished();
     }
 }
 

@@ -12,7 +12,7 @@ public class TextureImpl: ITexture
 {
     private IMTLTexture _diffuseTexture;
     private IMTLTexture _normalTexture;
-
+    
     public TextureImpl(MTKTextureLoader textureLoader, LoadTextureParameters loadTextureParameters)
     {
         _diffuseTexture = LoadTexture(textureLoader, loadTextureParameters.DiffuseMapStream);

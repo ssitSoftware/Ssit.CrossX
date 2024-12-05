@@ -71,7 +71,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         var slant = attr.AsBoolean("Italic", false) ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
 
         using var typeface = SKTypeface.FromFamilyName(family, weight, style, slant);
-
+        
         var list = new List<string>();
         
         foreach (var size in sizes)
@@ -98,14 +98,14 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
 
         await Task.Delay(10);
 
-        XNodeAttributes attr = new XNodeAttributes(node);
+        var attr = new XNodeAttributes(node);
         var antialiasing = attr.AsBoolean("Antialiasing", true);
 
         using var font = new SKFont(typeface, size);
         using var paint = new SKPaint(font);
 
         paint.IsAntialias = antialiasing;
-        paint.HintingLevel = SKPaintHinting.Full;
+        paint.HintingLevel = SKPaintHinting.Slight;
         paint.SubpixelText = false;
         paint.IsStroke = false;
 
@@ -119,6 +119,17 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         
         var outline = (float)attr.AsPercentOrScalar("Outline", size, 0);
         
+        var mode = attr.AsEnum("Mode", GlyphFont.ColorMode.BlackWhite);
+        
+        SKColor outlineColor = SKColors.Black;
+        SKColor fillColor = SKColors.White;
+
+        if (mode == GlyphFont.ColorMode.RedGreen)
+        {
+            outlineColor = SKColors.Red;
+            fillColor = new SKColor(0, 255, 0);
+        }
+        
         foreach (var character in characters)
         {
             glyphCanvas.Clear(SKColors.Transparent);
@@ -131,13 +142,14 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
                 paint.StrokeWidth = outline;
                 paint.StrokeCap = SKStrokeCap.Round;
                 paint.StrokeJoin = SKStrokeJoin.Round;
-                paint.Color = SKColors.Black;
+                paint.Color = outlineColor;
                 
                 glyphCanvas.DrawText(chText, new SKPoint(size, size * 2), paint);
             }
 
-            paint.Color = SKColors.White;
+            paint.Color = fillColor;
             paint.IsStroke = false;
+            
             glyphCanvas.DrawText(chText, new SKPoint(size, size * 2), paint);
 
             chars[1] = character;
@@ -160,7 +172,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
                     kerning.Add(chars[0], bothWidth - currentWidth - prevWidth);
                 }
             }
-            
+
             glyphs.Add((new Glyph(character, new Rectangle(0,0,0,0), offset, currentWidth, kerning), croppedBitmap));
         }
 
@@ -171,8 +183,14 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         var fontSheet = CreateFontSheet(glyphs, spacing, sheetWidth);
         
         var whitespaceWidth = (int)MathF.Ceiling(paint.MeasureText(" "));
+        var ascender = (int)MathF.Ceiling(font.Metrics.Ascent);
+        var descender = (int)MathF.Ceiling(font.Metrics.Descent);
+        var capHeight = (int)MathF.Ceiling(font.Metrics.CapHeight);
+        var xHeight = (int)MathF.Ceiling(font.Metrics.XHeight);
+        var lineHeight = (int)MathF.Ceiling(font.Metrics.Leading);
         
-        var fontOut = new GlyphFont(name, size, whitespaceWidth, glyphs.Select(g => g.Item1).ToArray());
+        var metrics = new GlyphFont.FontMetrics(capHeight, xHeight, ascender, descender, lineHeight, whitespaceWidth);
+        var fontOut = new GlyphFont(name, size, metrics, mode, glyphs.Select(g => g.Item1).ToArray());
 
         await using var outStream = new FileStream(outputData, FileMode.Create, FileAccess.Write);
         fontOut.Save(outStream);

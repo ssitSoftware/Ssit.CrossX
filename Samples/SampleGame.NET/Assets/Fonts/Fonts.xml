@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Fonts>
-    <Font Name="Herculanum" Family="American Typewriter" 
-          Sizes="32" 
-          Weight="Normal" Style="Normal" 
+    <Font Name="Aaa" Family="Open Sans"
+          Mode="BlackWhite"
+          Sizes="32,120" 
+          Weight="Bold" Style="Normal" 
           Italic="false" Antialiasing="true" 
           CharSets="Ascii, Polish, German, French, Spanish" Outline="25%"
           Spacing="25%"
-          SheetWidthFactor="32.0"/>
+          SheetWidthFactor="16.0"/>
 </Fonts>

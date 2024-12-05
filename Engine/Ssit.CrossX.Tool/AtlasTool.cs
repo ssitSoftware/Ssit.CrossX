@@ -5,7 +5,8 @@ namespace Ssit.CrossX.Tool;
 
 public static class AtlasTool
 {
-    public static SKBitmap CreateAtlas<T>(IReadOnlyList<(T item, SKBitmap bmp)> pieces, IList<(T, Rectangle)> mapping, int spacing = 2, int maxWidth = 2048, int heightFactor = 2)
+    public static SKBitmap CreateAtlas<T>(IReadOnlyList<(T item, SKBitmap bmp)> pieces, IList<(T, Rectangle)> mapping,
+        int spacing = 2, int maxWidth = 2048, int heightFactor = 2)
     {
         var area = 0;
 
@@ -62,7 +63,11 @@ public static class AtlasTool
         using var outCanvas = new SKCanvas(outBitmap);
         
         outCanvas.Clear(SKColors.Transparent);
-        outCanvas.DrawBitmap(tempBitmap, SKPoint.Empty);
+        outCanvas.DrawBitmap(tempBitmap, SKPoint.Empty, new SKPaint
+        {
+            IsAntialias = true,
+            BlendMode = SKBlendMode.Plus
+        });
 
         return outBitmap;
     }

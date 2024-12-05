@@ -6,30 +6,71 @@ namespace Ssit.CrossX.Graphics.Internal;
 
 public class GlyphFont
 {
-    public int WhiteSpaceWidth { get; set; }
+    public class FontMetrics(int capHeight, int xHeight, int ascender, int descender, int lineHeight, int whitespaceWidth)
+    {
+        public int CapHeight { get; } = capHeight;
+        public int XHeight { get; } = xHeight;
+        public int Ascender { get; } = ascender;
+        public int Descender { get; } = descender;
+        public int LineHeight { get; } = lineHeight;
+        public int WhitespaceWidth { get; } = whitespaceWidth;
+
+        internal void Save(BinaryWriter writer)
+        {
+            writer.Write(CapHeight);
+            writer.Write(XHeight);
+            writer.Write(Ascender);
+            writer.Write(Descender);
+            writer.Write(LineHeight);
+            writer.Write(WhitespaceWidth);
+        }
+
+        internal static FontMetrics Load(BinaryReader reader)
+        {
+            var capHeight = reader.ReadInt32();
+            var xHeight = reader.ReadInt32();
+            var ascender = reader.ReadInt32();
+            var descender = reader.ReadInt32();
+            var lineHeight = reader.ReadInt32();
+            var whitespaceWidth = reader.ReadInt32();
+            
+            return new FontMetrics(capHeight, xHeight, ascender, descender, lineHeight, whitespaceWidth);
+        }
+    }
+    
+    public enum ColorMode
+    {
+        BlackWhite = 0,
+        RedGreen
+    }
+    
     public string Name { get; private set; }
     public int Size { get; private set; }
+    public FontMetrics Metrics { get; private set; }
     
     private const int FirstCharacter = 32;
     private const int NumBasicCharacters = 128 - FirstCharacter;
     
     private readonly Glyph[] _glyphs = new Glyph[NumBasicCharacters];
     private readonly Dictionary<char, Glyph> _extendedGlyphs = new();
+    
+    protected ColorMode Mode { get; private set; }
 
-    protected GlyphFont() 
-        : this("", 0, 0)
+    protected GlyphFont()
+        : this("", 0, ColorMode.BlackWhite, null)
     {
     }
     
-    private GlyphFont(string name, int size, int whiteSpaceWidth)
+    private GlyphFont(string name, int size, ColorMode colorMode, FontMetrics metrics)
     {
         Name = name;
         Size = size;
-        WhiteSpaceWidth = whiteSpaceWidth;
+        Mode = colorMode;
+        Metrics = metrics;
     }
     
-    public GlyphFont(string name, int size, int whiteSpaceWidth, IReadOnlyList<Glyph> glyphs)
-        : this(name, size, whiteSpaceWidth)
+    public GlyphFont(string name, int size, FontMetrics metrics, ColorMode colorMode, IReadOnlyList<Glyph> glyphs)
+        : this(name, size, colorMode, metrics)
     {
         foreach (var glyph in glyphs)
         {
@@ -52,7 +93,8 @@ public class GlyphFont
         
         Name = reader.ReadString();
         Size = reader.ReadInt32();
-        WhiteSpaceWidth = reader.ReadInt32();
+        Mode = (ColorMode)reader.ReadByte();
+        Metrics = FontMetrics.Load(reader);
         
         var glyph = Glyph.Read(reader);
         while (glyph is not null)
@@ -76,7 +118,8 @@ public class GlyphFont
         
         writer.Write(Name);
         writer.Write(Size);
-        writer.Write(WhiteSpaceWidth);
+        writer.Write((byte)Mode);
+        Metrics.Save(writer);
 
         for (var idx = 0; idx < _glyphs.Length; idx++)
         {
@@ -133,7 +176,7 @@ public class GlyphFont
             var c = text[idx];
             var glyph = GetGlyph(c);
             
-            float advance = WhiteSpaceWidth;
+            float advance = Metrics.WhitespaceWidth;
             
             if (glyph != null)
             {

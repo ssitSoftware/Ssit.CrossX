@@ -15,7 +15,7 @@ internal class RenderStateManager: IDisposable
     private ITexture _currentTexture;
     private IEffect _currentEffect;
     private BlendMode _currentBlendMode = BlendMode.None;
-    private RgbaColor _currentBlendColor;
+    private RgbaColor? _currentBlendColor;
     
     private TextureFilter _currentTextureFilter = TextureFilter.Nearest;
     
@@ -81,7 +81,7 @@ internal class RenderStateManager: IDisposable
         BlendMode blendMode,
         Action onNewState, 
         Matrix4x4? worldTransform,
-        RgbaColor blendColor,
+        RgbaColor? blendColor = null,
         RgbaColor? clearColor = null)
     {
         var changeState = clearColor.HasValue;

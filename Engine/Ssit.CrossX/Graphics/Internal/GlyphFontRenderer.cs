@@ -25,21 +25,21 @@ internal static class GlyphFontRenderer
             context.Update(text, font, spacing);
             CalculateLines(font, text, spacing, context);
         }
-        
-        var internalRenderer = renderer as IInternalRenderer;
+
+        var internalRenderer = renderer.Unsafe;
         if (internalRenderer is null) return;
         
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
             internalRenderer?.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawTexture, font.OutlineSheet, font, context.Lines, position, align,
+            RenderText(internalRenderer.FastDrawQuad, font.OutlineSheet, font, context.Lines, position, align,
                 outlineColor, spacing, context.Width, context.Height, depth);
         }
 
         if (color.A > 0)
         {
             internalRenderer?.BeginRender(font.FontSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawTexture, font.FontSheet, font, context.Lines, position, align, color,
+            RenderText(internalRenderer.FastDrawQuad, font.FontSheet, font, context.Lines, position, align, color,
                 spacing, context.Width, context.Height, depth);
         }
     }
@@ -78,21 +78,21 @@ internal static class GlyphFontRenderer
         {
             position.Y = target.Bottom;
         }
-        
-        var internalRenderer = renderer as IInternalRenderer;
+
+        var internalRenderer = renderer.Unsafe;
         if (internalRenderer is null) return;
         
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
             internalRenderer?.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawTexture, font.OutlineSheet, font, context.Lines, position, align,
+            RenderText(internalRenderer.FastDrawQuad, font.OutlineSheet, font, context.Lines, position, align,
                 outlineColor, spacing, context.Width, context.Height, depth);
         }
 
         if (color.A > 0)
         {
             internalRenderer?.BeginRender(font.FontSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawTexture, font.FontSheet, font, context.Lines, position, align, color,
+            RenderText(internalRenderer.FastDrawQuad, font.FontSheet, font, context.Lines, position, align, color,
                 spacing, context.Width, context.Height, depth);
         }
     }

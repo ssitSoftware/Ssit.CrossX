@@ -6,6 +6,7 @@ using namespace metal;
 struct uniforms_t
 {
     float4x4 worldViewProj;
+    float4 color;
 };
 
 typedef struct {
@@ -25,7 +26,7 @@ vertex ColorInOut vertex_pc(VertexInput in [[ stage_in ]],
     ColorInOut out;
 
     out.position = in.position * uniforms.worldViewProj;
-    out.color = in.color;
+    out.color = in.color * uniforms.color;
 
     return out;
 }

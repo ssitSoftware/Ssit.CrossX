@@ -1,12 +1,12 @@
-using System;
 using System.Numerics;
-using System.Text;
 using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
-public abstract class RendererBase : IRenderer, IInternalRenderer
+public abstract class RendererBase : IRenderer, IUnsafeRenderer
 {
+    public IUnsafeRenderer Unsafe => this;
+    
     protected enum BatchMode
     {
         None,
@@ -103,7 +103,7 @@ public abstract class RendererBase : IRenderer, IInternalRenderer
         CurrentBatchMode = BatchMode.TextureBuffer;
     }
 
-    public void FastDrawTexture(ITexture texture, Rectangle target, Rectangle source, RgbaColor color, float depth = 0)
+    public void FastDrawQuad(ITexture texture, Rectangle target, Rectangle source, RgbaColor color, float depth = 0)
     {
         if (TextureVertexBuffer.Offset + 6 > TextureVertexBuffer.Size)
         {

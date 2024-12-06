@@ -5,6 +5,41 @@ using System.Runtime.InteropServices;
 
 namespace Ssit.CrossX;
 
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct RgbaColorF
+{
+    /// <summary>
+    /// Represents the red component of the color in the RGBA color space.
+    /// </summary>
+    public float R;
+
+    /// <summary>
+    /// Represents the green component of the color in the RGBA color space.
+    /// </summary>
+    public float G;
+
+    /// <summary>
+    /// Represents the blue component of the color in the RGBA color space.
+    /// </summary>
+    public float B;
+
+    /// <summary>
+    /// Represents the alpha component of the RGBA color,
+    /// specifying the transparency level. A value of 255
+    /// represents full opacity, while a value of 0 represents
+    /// full transparency.
+    /// </summary>
+    public float A;
+    
+    public static implicit operator RgbaColorF(RgbaColor color) => new ()
+    {
+        R = color.Rf,
+        G = color.Gf,
+        B = color.Bf,
+        A = color.Af
+    };
+}
+
 /// <summary>
 /// Represents a color in the RGBA (Red, Green, Blue, Alpha) color space.
 /// </summary>

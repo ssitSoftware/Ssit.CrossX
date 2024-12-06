@@ -83,7 +83,7 @@ public abstract class ShaderEffect: IMetalShaderEffect
         return new StreamReader(stream!).ReadToEnd();
     }
 
-    public void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? world = null)
+    public void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? world = null, RgbaColor? blendColor = null)
     {
         encoder.SetRenderPipelineState(_pipelineState);
         
@@ -96,12 +96,12 @@ public abstract class ShaderEffect: IMetalShaderEffect
 
         transform = Matrix4x4.Transpose(transform);
         
-        OnApply(encoder, transform);
+        OnApply(encoder, transform, blendColor ?? RgbaColor.White);
         
         encoder.SetVertexBuffer(_constantBuffer, 0,  1);
     }
 
-    protected abstract void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform);
+    protected abstract void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform, RgbaColor color);
 
     protected void ApplyConstants<TStruct>(IMTLRenderCommandEncoder encoder, TStruct data) where TStruct : unmanaged
     {
@@ -117,17 +117,28 @@ public abstract class ShaderEffect: IMetalShaderEffect
     }
 }
 
+internal struct TransformAndColor
+{
+    public Matrix4x4 Transform;
+    public RgbaColorF Color;
+}
+
 internal class BasicShaderEffectPc : ShaderEffect
 {
     public BasicShaderEffectPc(IMetalDevice device)
         : base(device, VertexPositionColor.Mode, "Basic", "vertex_pc", "fragment_pc")
     {
-        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());
+        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>() + Marshal.SizeOf<float>() * 4);
     }
 
-    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform)
+    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform, RgbaColor color)
     {
-        ApplyConstants(encoder, transform);
+        var data = new TransformAndColor
+        {
+            Transform = transform,
+            Color = color
+        };
+        ApplyConstants(encoder, data);
     }
 }
 
@@ -136,12 +147,17 @@ internal class BasicShaderEffectPct : ShaderEffect
     public BasicShaderEffectPct(IMetalDevice device)
         : base(device, VertexPositionColorTexture.Mode, "BasicTexture", "vertex_pct", "fragment_pct")
     {
-        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>());
+        CreateConstantBuffer(Marshal.SizeOf<Matrix4x4>() + + Marshal.SizeOf<float>() * 4);
     }
     
-    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform)
+    protected override void OnApply(IMTLRenderCommandEncoder encoder, Matrix4x4 transform, RgbaColor color)
     {
-        ApplyConstants(encoder, transform);
+        var data = new TransformAndColor
+        {
+            Transform = transform,
+            Color = color
+        };
+        ApplyConstants(encoder, data);
     }
 }
 

@@ -16,6 +16,8 @@ public enum BlendMode
 /// </summary>
 public interface IRenderer
 {
+    IUnsafeRenderer Unsafe { get; }
+    
     /// <summary>
     /// Sets the render target for subsequent rendering operations.
     /// </summary>

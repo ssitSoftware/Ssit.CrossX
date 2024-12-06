@@ -1,6 +1,7 @@
 #if __IOS__ || __MACCATALYST__
 
 using System;
+using System.Numerics;
 using Metal;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Internal;
@@ -93,8 +94,8 @@ internal class RendererImpl: RendererBase, IDisposable
         encoder.DrawPrimitives(MTLPrimitiveType.Triangle, (UIntPtr)0, (UIntPtr)TextureVertexBuffer.Offset);
     }
 
-    public override void DrawPrimitives(IVertexBuffer vertexBuffer,int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
-        TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null)
+    public override void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
+        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null)
     {
         if (CurrentBatchMode != BatchMode.None)
         {
@@ -102,9 +103,21 @@ internal class RendererImpl: RendererBase, IDisposable
         }
 
         CurrentBatchMode = BatchMode.None;
+
+        if (WorldTransform.HasValue)
+        {
+            if (transform.HasValue)
+            {
+                transform = Matrix4x4.Multiply(transform.Value, WorldTransform.Value);
+            }
+            else
+            {
+                transform = WorldTransform.Value;
+            }
+        }
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, WorldTransform);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, transform);
         
         encoder.SetVertexBuffer(mtlBuffer, 0, 0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);

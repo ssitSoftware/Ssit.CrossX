@@ -151,9 +151,10 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
             _container.Register(type, instance);
             return true;
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            Console.WriteLine(ex);
+            throw;
         }
     }
 }

@@ -28,6 +28,8 @@ public class TextRenderingContext
     private float _height;
     private bool _fullStringCheckEnabled;
 
+    internal IGlyphFont Font => _font;
+    
     public float Width
     {
         get

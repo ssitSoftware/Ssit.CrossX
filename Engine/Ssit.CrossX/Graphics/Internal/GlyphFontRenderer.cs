@@ -5,6 +5,9 @@ using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
+public delegate void DrawTextureQuadDelegate(ITexture texture,
+    Rectangle target, Rectangle source, RgbaColor color, float depth = 0);
+
 internal static class GlyphFontRenderer
 {
     private static readonly TextRenderingContext TempContext = new();
@@ -23,14 +26,21 @@ internal static class GlyphFontRenderer
             CalculateLines(font, text, spacing, context);
         }
         
+        var internalRenderer = renderer as IInternalRenderer;
+        if (internalRenderer is null) return;
+        
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
-            RenderText(renderer, font.OutlineSheet, font, context.Lines, position, align, outlineColor, spacing, context.Width, context.Height, depth);
+            internalRenderer?.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
+            RenderText(internalRenderer.FastDrawTexture, font.OutlineSheet, font, context.Lines, position, align,
+                outlineColor, spacing, context.Width, context.Height, depth);
         }
 
         if (color.A > 0)
         {
-            RenderText(renderer, font.FontSheet, font, context.Lines, position, align, color, spacing, context.Width, context.Height, depth);
+            internalRenderer?.BeginRender(font.FontSheet, TextureFilter.Nearest);
+            RenderText(internalRenderer.FastDrawTexture, font.FontSheet, font, context.Lines, position, align, color,
+                spacing, context.Width, context.Height, depth);
         }
     }
 
@@ -69,14 +79,21 @@ internal static class GlyphFontRenderer
             position.Y = target.Bottom;
         }
         
+        var internalRenderer = renderer as IInternalRenderer;
+        if (internalRenderer is null) return;
+        
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
-            RenderText(renderer, font.OutlineSheet, font, context.Lines, position, align, outlineColor, spacing, context.Width, context.Height, depth);
+            internalRenderer?.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
+            RenderText(internalRenderer.FastDrawTexture, font.OutlineSheet, font, context.Lines, position, align,
+                outlineColor, spacing, context.Width, context.Height, depth);
         }
 
         if (color.A > 0)
         {
-            RenderText(renderer, font.FontSheet, font, context.Lines, position, align, color, spacing, context.Width, context.Height, depth);
+            internalRenderer?.BeginRender(font.FontSheet, TextureFilter.Nearest);
+            RenderText(internalRenderer.FastDrawTexture, font.FontSheet, font, context.Lines, position, align, color,
+                spacing, context.Width, context.Height, depth);
         }
     }
 
@@ -148,7 +165,7 @@ internal static class GlyphFontRenderer
         context.Lines.Add(line3);
     }
 
-    private static void RenderText(IRenderer renderer, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
+    internal static void RenderText(DrawTextureQuadDelegate drawDelegate, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
         Vector2 position, TextAlign align, RgbaColor color, TextSpacing spacing, float justifyWidth, float height, float depth)
     {
         float additionalSpacing = (int)(spacing - 50) * font.Metrics.WhitespaceWidth / 50f;
@@ -185,7 +202,7 @@ internal static class GlyphFontRenderer
                 posX += glyph.GetKerning(previousCharacter);
             
                 var target = new Rectangle( (int)(posX + glyph.Offset.X), (int)(posY + glyph.Offset.Y), glyph.Source.Width, glyph.Source.Height);
-                renderer.DrawTexture(texture, target, glyph.Source, color: color, depth: depth);
+                drawDelegate(texture, target, glyph.Source, color: color, depth: depth);
 
                 posX += glyph.Advance + additionalSpacing;
                 previousCharacter = c;

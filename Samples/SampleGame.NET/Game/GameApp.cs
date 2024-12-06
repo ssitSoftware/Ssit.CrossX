@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
+using System.Text;
 using Ssit.CrossX;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;
@@ -26,6 +27,7 @@ public class GameApp: PixelApp
     private IContentManager _contentManager;
     private ISoundManager _soundManager;
     private IFontsManager _fontsManager;
+    private IIoCContainer _iocContainer;
 
     private ResourceHandle<ITexture> _texture;
 
@@ -45,6 +47,8 @@ public class GameApp: PixelApp
     
     private ResourceHandle<ISoundEffect> _soundEffect;
 
+    private float _fps = 0;
+    
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
         var bundleProvider = new BundleFilesProvider();
@@ -78,7 +82,8 @@ public class GameApp: PixelApp
     protected override void OnInitialize(IIoCContainer container)
     {
         base.OnInitialize(container);
-        
+
+        _iocContainer = container;
         _keyboard = container.Get<IKeyboard>();
         _gameControllers = container.Get<IGameControllers>();
         _renderer = container.Get<IRenderingWindow>().Renderer;
@@ -130,10 +135,14 @@ public class GameApp: PixelApp
         _fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
         
         _player = container.IoCConstruct<Player>();
+        
+        PrepareText();
     }
 
     protected override void OnUpdate(float elapsedTime)
     {
+        _fps = (_fps + 1 / elapsedTime) / 2;
+        
         if (_keyboard.GetKey(Key.S) == ButtonState.JustPressed)
         {
             if (_seInstance.IsPlaying)
@@ -169,29 +178,51 @@ public class GameApp: PixelApp
     }
 
     private readonly TextRenderingContext _renderingContext = new();
-    
-    protected override void OnDraw()
-    {
-        _renderer.Clear(_backgroundColor);
-        _player.Draw(_renderer);
+    private readonly StringBuilder _fpsText = new ();
 
-        var font = _fontsManager.GetFont("Default", 32);
+    private IVertexBuffer[] _textVertices;
+
+    private void PrepareText()
+    {
+        if (_textVertices is not null)
+        {
+            foreach (var buffer in _textVertices)
+            {
+                buffer.Dispose();
+            }
+        }
+        
+        var font = (IGlyphFont)_fontsManager.GetFont("Default", 32);
 
         var text =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus, diam sed dignissim dapibus, mi arcu fringilla elit, ac efficitur nibh elit ut velit. Donec finibus libero vel hendrerit pulvinar. Vivamus laoreet lectus tortor, rhoncus aliquet ipsum convallis vitae. Integer ut tempor nunc, in malesuada nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer sagittis justo sit amet aliquam tincidunt. Integer vitae fringilla felis. Fusce lobortis erat fringilla, ornare ante eu, pellentesque tellus.\n" +
             "Vestibulum nec urna ut felis luctus viverra. Praesent varius velit eget metus lacinia elementum. Praesent nec enim vel neque sollicitudin consectetur. Sed tristique enim vitae quam ullamcorper accumsan eleifend quis sapien. Sed varius odio quis pharetra fermentum. Proin mauris elit, ullamcorper vitae aliquet ac, dignissim vitae risus. Vestibulum fringilla blandit tellus, sed maximus orci mollis quis.\n" +
             "Cras eros nibh, pulvinar ut tellus sed, viverra euismod lacus. Nullam nec magna pharetra, lacinia arcu ac, facilisis tortor. Praesent nec urna et arcu suscipit placerat quis a ante. Maecenas tincidunt nunc mi, ac imperdiet ipsum blandit quis. Duis molestie finibus tincidunt. Ut ultricies quam libero, ultricies semper elit lobortis placerat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis sapien orci, sed lobortis diam malesuada vel. Aenean sit amet elit varius, sagittis leo at, fringilla ante. Donec bibendum condimentum aliquam.";
 
-        var height = _renderingContext.Height;
-                   
-        _renderer.FillRectangle(new RectangleF(100 - 10, 100-10, 1000+20, 20 + height), RgbaColor.Black);
+        _textVertices = _iocContainer.CreateMultilineTextPrimitives(font, text, new RectangleF(100, 100, 500, 1000), TextAlign.Justified, TextSpacing.Normal, font.LineSize / 4f);
+    }
+    
+    protected override void OnDraw()
+    {
+        _renderer.Clear(_backgroundColor);
+        _player.Draw(_renderer);
         
-        _renderer.DrawText(font, text,
-            new RectangleF(100,100,1000, 10000),
-            TextAlign.Center,
-            RgbaColor.LightYellow,
-            outlineColor: RgbaColor.Transparent,
-            context: _renderingContext);
+        var font = (IGlyphFont)_fontsManager.GetFont("Default", 32);
+
+        foreach (var buffer in _textVertices)
+        {
+            _renderer.DrawPrimitives(buffer, 0, buffer.Length, font.OutlineSheet, RgbaColor.Black); 
+        }
+
+        foreach (var buffer in _textVertices)
+        {
+            _renderer.DrawPrimitives(buffer, 0, buffer.Length, font.FontSheet, RgbaColor.White); 
+        }
+        
+        _fpsText.Clear();
+        _fpsText.AppendFormat("FPS: {0}", (int)MathF.Ceiling(_fps));
+        
+        _renderer.DrawText(font, _fpsText, new Vector2(10, 40));
     }
 
     protected override void OnResize(Size size)

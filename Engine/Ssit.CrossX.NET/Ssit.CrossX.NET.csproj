@@ -21,6 +21,13 @@
         <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AndroidSupportedAbis>armeabi-v7a;arm64-v8a</AndroidSupportedAbis>
+      <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+      <MtouchLink>SdkOnly</MtouchLink>
+      <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="OpenTK.Audio.OpenAL" Version="4.8.2" />
         <PackageReference Include="SDL2.Bindings" Version="1.1.0" />

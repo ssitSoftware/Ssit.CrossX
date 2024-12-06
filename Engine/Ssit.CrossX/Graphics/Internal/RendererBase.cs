@@ -5,7 +5,7 @@ using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
-public abstract class RendererBase : IRenderer
+public abstract class RendererBase : IRenderer, IInternalRenderer
 {
     protected enum BatchMode
     {
@@ -14,8 +14,8 @@ public abstract class RendererBase : IRenderer
         TextureBuffer
     }
     
-    protected DynamicVertexBuffer<VertexPositionColor> ColorVertexBuffer { get; } = new(1024, VertexPositionColor.Size);
-    protected DynamicVertexBuffer<VertexPositionColorTexture> TextureVertexBuffer { get; } = new(1024, VertexPositionColorTexture.Size);
+    protected DynamicVertexBuffer<VertexPositionColor> ColorVertexBuffer { get; } = new(64 * 1024, VertexPositionColor.Size);
+    protected DynamicVertexBuffer<VertexPositionColorTexture> TextureVertexBuffer { get; } = new(64 * 1024, VertexPositionColorTexture.Size);
     
     protected BatchMode CurrentBatchMode { get; set; }
     
@@ -89,6 +89,39 @@ public abstract class RendererBase : IRenderer
         }
         
         GlyphFontRenderer.RenderText(this, glyphFont, text, position, align, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, paragraphSpacing, depth, context);
+    }
+
+    public void BeginRender(ITexture texture, TextureFilter textureFilter)
+    {
+        if (CurrentBatchMode != BatchMode.TextureBuffer)
+        {
+            Flush();
+        }
+        
+        PrepareRendering(texture, null, VertexPositionColorTexture.Mode, textureFilter);
+        
+        CurrentBatchMode = BatchMode.TextureBuffer;
+    }
+
+    public void FastDrawTexture(ITexture texture, Rectangle target, Rectangle source, RgbaColor color, float depth = 0)
+    {
+        if (TextureVertexBuffer.Offset + 6 > TextureVertexBuffer.Size)
+        {
+            Flush();
+        }
+        
+        var t00 = new Vector2((float) source.X / texture.Size.Width, (float) source.Y / texture.Size.Height);
+        var t10 = new Vector2((float) source.Right / texture.Size.Width, (float) source.Y / texture.Size.Height);
+        var t11 = new Vector2((float) source.Right / texture.Size.Width, (float) source.Bottom / texture.Size.Height);
+        var t01 = new Vector2((float) source.X / texture.Size.Width, (float) source.Bottom / texture.Size.Height);
+        
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X, target.Y, depth), color, t00));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X, target.Y + target.Height, depth), color, t01));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X + target.Width, target.Y + target.Height, depth), color, t11));
+        
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X, target.Y, depth), color, t00));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X + target.Width, target.Y + target.Height, depth), color, t11));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X + target.Width, target.Y, depth), color, t10));
     }
 
     public virtual void DrawTexture(ITexture texture, Rectangle targetRectangle,
@@ -206,5 +239,5 @@ public abstract class RendererBase : IRenderer
 
     public abstract void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount,
         ITexture texture = null, RgbaColor? color = null, 
-        TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null);
+        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null);
 }

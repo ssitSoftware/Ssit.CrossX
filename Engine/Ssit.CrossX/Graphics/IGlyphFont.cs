@@ -1,6 +1,7 @@
 using System;
+using Ssit.CrossX.Graphics.Internal;
 
-namespace Ssit.CrossX.Graphics.Internal;
+namespace Ssit.CrossX.Graphics;
 
 public interface IGlyphFont: IFont, IDisposable
 {

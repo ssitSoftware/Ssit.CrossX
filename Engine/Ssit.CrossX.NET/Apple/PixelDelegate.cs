@@ -103,6 +103,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             .WithSingleton<MTKTextureLoader, MTKTextureLoader>()
             .WithImplementation<ITexture, TextureImpl>()
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
+            .WithImplementation<IVertexBuffer, VertexBufferImpl>()
             .WithSingleton<IGameControllers, GameControllersImpl>()
             .WithInstance(_windowParameters)
             .WithImplementation<ISoundEffect, SoundEffectImpl>()

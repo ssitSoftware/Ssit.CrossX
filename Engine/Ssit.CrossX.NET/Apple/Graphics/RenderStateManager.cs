@@ -15,6 +15,7 @@ internal class RenderStateManager: IDisposable
     private ITexture _currentTexture;
     private IEffect _currentEffect;
     private BlendMode _currentBlendMode = BlendMode.None;
+    private RgbaColor _currentBlendColor;
     
     private TextureFilter _currentTextureFilter = TextureFilter.Nearest;
     
@@ -36,7 +37,9 @@ internal class RenderStateManager: IDisposable
         DepthAttachment = new MTLRenderPassDepthAttachmentDescriptor(),
         StencilAttachment = new MTLRenderPassStencilAttachmentDescriptor()
     };
+
     
+
     public RenderStateManager(IMetalDevice metalDevice)
     {
         _metalDevice = metalDevice;
@@ -76,7 +79,10 @@ internal class RenderStateManager: IDisposable
     public IMTLRenderCommandEncoder PrepareRenderState(ITexture texture, IEffect effect, VertexMode vertexMode,
         TextureFilter filter,
         BlendMode blendMode,
-        Action onNewState, Matrix4x4? worldTransform, RgbaColor? clearColor = null)
+        Action onNewState, 
+        Matrix4x4? worldTransform,
+        RgbaColor blendColor,
+        RgbaColor? clearColor = null)
     {
         var changeState = clearColor.HasValue;
         changeState |= _currentEncoder is null;
@@ -87,6 +93,7 @@ internal class RenderStateManager: IDisposable
         changeState |= _currentSize != _metalDevice.TargetSize;
         changeState |= _currentTextureFilter != filter;
         changeState |= blendMode != _currentBlendMode;
+        changeState |= blendColor != _currentBlendColor;
         
         if (!changeState)
         {
@@ -103,6 +110,7 @@ internal class RenderStateManager: IDisposable
         _currentSize = _metalDevice.TargetSize;
         _currentTextureFilter = filter;
         _currentBlendMode = blendMode;
+        _currentBlendColor = blendColor;
 
         var shaderEffect = (effect as IMetalShaderEffect) ?? ((vertexMode & VertexMode.Texture) != 0 ? _basicEffectPCT : _basicEffectPC);
         
@@ -150,7 +158,7 @@ internal class RenderStateManager: IDisposable
             
             _currentEncoder = commandBuffer.CreateRenderCommandEncoder(renderPassDescriptor);
 
-            shaderEffect.Apply(_currentEncoder, worldTransform);
+            shaderEffect.Apply(_currentEncoder, worldTransform, blendColor);
             
             _currentEncoder.SetDepthStencilState(_depthStencilState);
 

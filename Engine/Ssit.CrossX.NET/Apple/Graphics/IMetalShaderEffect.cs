@@ -8,7 +8,7 @@ namespace Ssit.CrossX.NET.Apple.Graphics;
 
 public interface IMetalShaderEffect: IEffect
 {
-    void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? worldTransform = null);
+    void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? worldTransform = null, RgbaColor? color = null);
 }
 
 #endif

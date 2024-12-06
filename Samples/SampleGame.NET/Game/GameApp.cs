@@ -13,6 +13,7 @@ using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 using Rectangle = Ssit.CrossX.Rectangle;
+using RectangleF = Ssit.CrossX.RectangleF;
 using Size = Ssit.CrossX.Size;
 
 namespace SampleGame.Game;
@@ -167,19 +168,30 @@ public class GameApp: PixelApp
         }
     }
 
+    private readonly TextRenderingContext _renderingContext = new();
+    
     protected override void OnDraw()
     {
         _renderer.Clear(_backgroundColor);
         _player.Draw(_renderer);
 
-        var font = _fontsManager.GetFont("Default", 16);
+        var font = _fontsManager.GetFont("Default", 32);
+
+        var text =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus, diam sed dignissim dapibus, mi arcu fringilla elit, ac efficitur nibh elit ut velit. Donec finibus libero vel hendrerit pulvinar. Vivamus laoreet lectus tortor, rhoncus aliquet ipsum convallis vitae. Integer ut tempor nunc, in malesuada nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer sagittis justo sit amet aliquam tincidunt. Integer vitae fringilla felis. Fusce lobortis erat fringilla, ornare ante eu, pellentesque tellus.\n" +
+            "Vestibulum nec urna ut felis luctus viverra. Praesent varius velit eget metus lacinia elementum. Praesent nec enim vel neque sollicitudin consectetur. Sed tristique enim vitae quam ullamcorper accumsan eleifend quis sapien. Sed varius odio quis pharetra fermentum. Proin mauris elit, ullamcorper vitae aliquet ac, dignissim vitae risus. Vestibulum fringilla blandit tellus, sed maximus orci mollis quis.\n" +
+            "Cras eros nibh, pulvinar ut tellus sed, viverra euismod lacus. Nullam nec magna pharetra, lacinia arcu ac, facilisis tortor. Praesent nec urna et arcu suscipit placerat quis a ante. Maecenas tincidunt nunc mi, ac imperdiet ipsum blandit quis. Duis molestie finibus tincidunt. Ut ultricies quam libero, ultricies semper elit lobortis placerat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sagittis sapien orci, sed lobortis diam malesuada vel. Aenean sit amet elit varius, sagittis leo at, fringilla ante. Donec bibendum condimentum aliquam.";
+
+        var height = _renderingContext.Height;
+                   
+        _renderer.FillRectangle(new RectangleF(100 - 10, 100-10, 1000+20, 20 + height), RgbaColor.Black);
         
-        _renderer.DrawText(font, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sagittis sed odio et euismod.\n" +
-                                 "Cras quis sem pharetra, sagittis duia, tincidunt sem. Donec vel odio nec diam varius rhoncus.\n" +
-                                 "Duis facilisis magna vel imperdiet ultricies. Mauris finibus elit ut mauris egestas,\n" +
-                                 "vitae rutrum mauris mattis. Mauris feugiat, mauris quis luctus lacinia,\n" +
-                                 "nunc metus luctus sem, non ornare mi turpis non odio. Mauris nec eleifend urna, eget scelerisque nibh.\n" +
-                                 "Cras et metus magna. Suspendisse sollicitudin velit id sodales tristique.", new Vector2(20, 100), RgbaColor.White, TextSpacing.SuperExpanded, outlineColor: RgbaColor.Black);
+        _renderer.DrawText(font, text,
+            new RectangleF(100,100,1000, 10000),
+            TextAlign.Center,
+            RgbaColor.LightYellow,
+            outlineColor: RgbaColor.Transparent,
+            context: _renderingContext);
     }
 
     protected override void OnResize(Size size)

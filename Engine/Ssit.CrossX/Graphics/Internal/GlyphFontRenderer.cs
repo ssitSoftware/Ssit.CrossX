@@ -1,61 +1,303 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
-public static class GlyphFontRenderer
+internal static class GlyphFontRenderer
 {
-    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, Vector2 position,
-        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float depth)
+    private static readonly TextRenderingContext TempContext = new();
+    
+    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, Vector2 position, TextAlign align,
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float depth, TextRenderingContext context)
     {
+        if (context is null)
+        {
+            context = TempContext;
+            CalculateLines(font, text, spacing, context);
+        }
+        else if(!context.IsValid(text, font, spacing))
+        {
+            context.Update(text, font, spacing);
+            CalculateLines(font, text, spacing, context);
+        }
+        
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
-            RenderText(renderer, font.OutlineSheet, font, text, position, outlineColor, spacing, depth);
+            RenderText(renderer, font.OutlineSheet, font, context.Lines, position, align, outlineColor, spacing, context.Width, context.Height, depth);
         }
 
         if (color.A > 0)
         {
-            RenderText(renderer, font.FontSheet, font, text, position, color, spacing, depth);
+            RenderText(renderer, font.FontSheet, font, context.Lines, position, align, color, spacing, context.Width, context.Height, depth);
         }
     }
-    
-    private static void RenderText(IRenderer renderer, ITexture texture, IGlyphFont font, TextSource text, Vector2 position, RgbaColor color, TextSpacing spacing, float depth)
-    {
-        Vector2 pos = position;
 
+    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, RectangleF target, TextAlign align,
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, float depth, TextRenderingContext context)
+    {
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context), "TextRenderingContext must be not null!");
+        }
+        
+        if (!context.IsValid(text, font, spacing, (int)target.Width))
+        {
+            CalculateMultilineText(font, text, target.Width, align, spacing, paragraphSpacing, context);
+        }
+
+        var position = target.TopLeft;
+
+        if ((align & TextAlign.Center) == TextAlign.Center)
+        {
+            position.X = target.Center.X;
+        }
+        
+        if ((align & TextAlign.VCenter) == TextAlign.VCenter)
+        {
+            position.Y = target.Center.Y;
+        }
+        
+        if ((align & TextAlign.Right) == TextAlign.Right)
+        {
+            position.X = target.Right;
+        }
+        
+        if ((align & TextAlign.Bottom) == TextAlign.Bottom)
+        {
+            position.Y = target.Bottom;
+        }
+        
+        if (font.OutlineSheet is not null && outlineColor.A > 0)
+        {
+            RenderText(renderer, font.OutlineSheet, font, context.Lines, position, align, outlineColor, spacing, context.Width, context.Height, depth);
+        }
+
+        if (color.A > 0)
+        {
+            RenderText(renderer, font.FontSheet, font, context.Lines, position, align, color, spacing, context.Width, context.Height, depth);
+        }
+    }
+
+    public static void CalculateMultilineText(IGlyphFont font, TextSource text, float targetWidth, TextAlign align,
+        TextSpacing spacing, float paragraphSpacing, TextRenderingContext context)
+    {
+        context.Update(text, font, spacing, (int)targetWidth);
+        CalculateWrapLines(font, text, spacing, paragraphSpacing, context, (int)targetWidth);
+    }
+
+    private static void CalculateWrapLines(IGlyphFont font, TextSource text, TextSpacing spacing, float paragraphSpacing, TextRenderingContext context, int maxWidth)
+    {
+        context.Lines.Clear();
+
+        var start = 0;
+        var lastSmaller = 0;
+
+        var newLineSpacing = 0f;
+        
+        for (var idx = 0; idx < text.Length; ++idx)
+        {
+            if (text[idx] == '\n')
+            {
+                var line = GetLine(text, start, idx - start, font, spacing);
+                line.Spacing = newLineSpacing;
+                line.EndOfParagraph = true;
+                newLineSpacing = paragraphSpacing;
+                start = idx + 1;
+                lastSmaller = start;
+                context.Lines.Add(line);
+                continue;
+            }
+
+            if (font.GetGlyph(text[idx]) == null)
+            {
+                var width = MeasureWidth(font, new TextSource(text, start, idx - start), spacing);
+                if (width <= maxWidth)
+                {
+                    lastSmaller = idx;
+                }
+                else
+                {
+                    if (lastSmaller > start)
+                    {
+                        var line = GetLine(text, start, lastSmaller - start, font, spacing);
+                        line.Spacing = newLineSpacing;
+                        newLineSpacing = 0;
+                        start = lastSmaller + 1;
+                        idx = start;
+                        context.Lines.Add(line);
+                    }
+                    else
+                    {
+                        var line = GetLine(text, start, idx - start, font, spacing);
+                        line.EndOfParagraph = true;
+                        line.Spacing = newLineSpacing;
+                        newLineSpacing = 0;
+                        start = idx + 1;
+                        lastSmaller = start;
+                        context.Lines.Add(line);
+                    }
+                }
+            }
+        }
+        
+        var line3 = GetLine(text, start, text.Length - start, font, spacing);
+        line3.EndOfParagraph = true;
+        line3.Spacing = newLineSpacing;
+        context.Lines.Add(line3);
+    }
+
+    private static void RenderText(IRenderer renderer, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
+        Vector2 position, TextAlign align, RgbaColor color, TextSpacing spacing, float justifyWidth, float height, float depth)
+    {
         float additionalSpacing = (int)(spacing - 50) * font.Metrics.WhitespaceWidth / 50f;
         
+        var posY = CalculateYPosition(font, position.Y, (int)MathF.Ceiling(height), align, lines.Count == 1);
+
+        for (var idx = 0; idx < lines.Count; ++idx)
+        {
+            var line = lines[idx];
+            var posX = CalculateXPosition(position.X, align, line.Width);
+            posY += line.Spacing;
+
+            var whitespaceSize = font.Metrics.WhitespaceWidth + additionalSpacing;
+
+            if ((align & TextAlign.Justified) == TextAlign.Justified && line is { Whitespaces: > 0, EndOfParagraph: false })
+            {
+                var lineWidthNoSpaces = line.Width - line.Whitespaces * whitespaceSize;
+                whitespaceSize = (justifyWidth - lineWidthNoSpaces) / line.Whitespaces;
+            }
+            
+            var previousCharacter = '\0';
+            for(var i = 0; i < line.Text.Length; ++i)
+            {
+                var c = line.Text[i];
+                var glyph = font.GetGlyph(c);
+             
+                if (glyph == null)
+                {
+                    posX += whitespaceSize;
+                    previousCharacter = '\0';
+                    continue;
+                }
+                
+                posX += glyph.GetKerning(previousCharacter);
+            
+                var target = new Rectangle( (int)(posX + glyph.Offset.X), (int)(posY + glyph.Offset.Y), glyph.Source.Width, glyph.Source.Height);
+                renderer.DrawTexture(texture, target, glyph.Source, color: color, depth: depth);
+
+                posX += glyph.Advance + additionalSpacing;
+                previousCharacter = c;
+            }
+            posY += font.Metrics.LineHeight;
+        }
+    }
+
+    private static float CalculateXPosition(float positionX, TextAlign align, float lineWidth)
+    {
+        if ((align & TextAlign.Center) == TextAlign.Center)
+        {
+            return MathF.Ceiling(positionX - lineWidth / 2f);
+        }
+
+        if ((align & TextAlign.Right) == TextAlign.Right)
+        {
+            return positionX - lineWidth;
+        }
+
+        return positionX;
+    }
+
+    private static float CalculateYPosition(IGlyphFont font, float positionY, int height, TextAlign align, bool oneLine)
+    {
+        if ((align & TextAlign.VCenter) == TextAlign.VCenter)
+        {
+            var offset = font.Metrics.XHeight + font.Metrics.Ascender;
+            
+            return MathF.Ceiling(positionY - (height / 2f - font.Metrics.LineHeight / 2f) + font.Metrics.XHeight / 2f);
+        }
+        
+        if ((align & TextAlign.Bottom) == TextAlign.Bottom)
+        {
+            return positionY - height - font.Metrics.Ascender;
+        }
+
+        return positionY - font.Metrics.Ascender;
+    }
+
+    private static void CalculateLines(IGlyphFont font, TextSource text, TextSpacing spacing, TextRenderingContext context)
+    {
+        context.Lines.Clear();
+        var length = text.Length;
+        var position = 0;
+        
+        for (var idx = 0; idx < length; ++idx)
+        {
+            if (text[idx] != '\n') continue;
+            
+            var line = GetLine(text, position, idx - position, font, spacing);
+            context.Lines.Add(line);
+            position = idx + 1;
+        }
+
+        var lastLine = GetLine(text, position, length - position, font, spacing);
+        context.Lines.Add(lastLine);
+    }
+
+    private static TextRenderingContext.LineDefinition GetLine(TextSource source, int start, int length, IGlyphFont font, TextSpacing spacing)
+    {
+        var line = new TextSource(source, start, length);
+        var width = MeasureWidth(font, line, spacing);
+        var whitespaces = 0;
+                
+        for (var i = 0; i < line.Length; ++i)
+        {
+            if (font.GetGlyph(line[i]) is null)
+            {
+                whitespaces++;
+            }
+        }
+
+        return new TextRenderingContext.LineDefinition
+        {
+            Text = line,
+            Width = width,
+            Whitespaces = whitespaces,
+            EndOfParagraph = false
+        };
+    }
+    
+    private static float MeasureWidth(IGlyphFont glyphFont, TextSource text, TextSpacing spacing)
+    {
+        float width = 0;
+        float additionalSpacing = (int)(spacing - 50) * glyphFont.Metrics.WhitespaceWidth / 50f;
+
         char previousCharacter = '\0';
+        
         for (var idx = 0; idx < text.Length; ++idx)
         {
             var c = text[idx];
+            var glyph = glyphFont.GetGlyph(c);
 
-            if (c == '\n')
-            {
-                pos.X = position.X;
-                pos.Y += font.Metrics.LineHeight;
-                previousCharacter = '\0';
-                continue;
-            }
+            float advance = glyphFont.Metrics.WhitespaceWidth + additionalSpacing;
             
-            var glyph = font.GetGlyph(c);
-
-            if (glyph == null)
+            if (glyph != null)
             {
-                pos.X += font.Metrics.WhitespaceWidth + additionalSpacing;
+                advance = glyph.Advance + glyph.GetKerning(previousCharacter) + additionalSpacing;
+                previousCharacter = c;
+            }
+            else
+            {
                 previousCharacter = '\0';
-                continue;
             }
 
-            pos.X += glyph.GetKerning(previousCharacter);
-            
-            renderer.DrawTexture(texture, pos + glyph.Offset, glyph.Source, color: color, depth: depth);
-
-            pos.X += glyph.Advance + additionalSpacing;
-            previousCharacter = c;
+            width += advance;
         }
-    }
 
+        return width;
+    }
+    
     public static Size MeasureText(IGlyphFont glyphFont, TextSource text, TextSpacing spacing)
     {
         float width = 0;
@@ -95,9 +337,9 @@ public static class GlyphFontRenderer
             width += advance;
         }
 
-        if (width > 0) lines++;
+        lines++;
         
         maxWidth = Math.Max(width, maxWidth);
-        return new Size((int)MathF.Ceiling(maxWidth), lines * glyphFont.Size);
+        return new Size((int)MathF.Ceiling(maxWidth), lines * glyphFont.Metrics.LineHeight);
     }
 }

@@ -19,23 +19,14 @@ public interface IFont
     int Size { get; }
 
     /// <summary>
+    /// Gets the line size of the font, which represents the total height used by a line of text, including any extra spacing.
+    /// </summary>
+    int LineSize { get; }
+    
+    /// <summary>
     /// Calculates the size of the specified text.
     /// </summary>
     /// <param name="text">The text to measure.</param>
     /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(string text, TextSpacing spacing = TextSpacing.Normal);
-
-    /// <summary>
-    /// Calculates the size of the specified text using a StringBuilder.
-    /// </summary>
-    /// <param name="text">The text to measure, provided as a StringBuilder instance.</param>
-    /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(StringBuilder text, TextSpacing spacing = TextSpacing.Normal);
-    
-    /// <summary>
-    /// Calculates the size of the specified text using an ICharProvider.
-    /// </summary>
-    /// <param name="text">The text to measure, provided as an ICharProvider instance.</param>
-    /// <returns>A <see cref="Size"/> structure representing the width and height of the text.</returns>
-    Size TextSize(ICharProvider text, TextSpacing spacing = TextSpacing.Normal);
+    Size TextSize(TextSource text, TextSpacing spacing = TextSpacing.Normal);
 }

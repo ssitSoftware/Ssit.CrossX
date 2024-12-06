@@ -106,7 +106,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
 
         paint.IsAntialias = antialiasing;
         paint.HintingLevel = SKPaintHinting.Full;
-        paint.SubpixelText = true;
+        paint.SubpixelText = false;
         paint.IsStroke = false;
 
         using var targetBitmap = new SKBitmap(new SKImageInfo(size * 4, size * 4));

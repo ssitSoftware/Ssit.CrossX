@@ -14,6 +14,8 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
     public ITexture OutlineSheet { get; }
     public ITexture FontSheet { get; }
 
+    public int LineSize => Metrics.LineHeight;
+    
     public GraphicGlyphFont(string path, IFilesProvider filesProvider, IIoCContainer iocContainer)
     {
         using var stream = filesProvider.Open(path);
@@ -93,12 +95,5 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         FontSheet?.Dispose();
     }
     
-    public Size TextSize(string text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
-    public Size TextSize(StringBuilder text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
-    public Size TextSize(ICharProvider text, TextSpacing spacing = TextSpacing.Normal) => TextSize(new TextSource(text), spacing);
-    
-    private Size TextSize(TextSource text, TextSpacing spacing)
-    {
-        return GlyphFontRenderer.MeasureText(this, text, spacing);
-    }
+    public Size TextSize(TextSource text, TextSpacing spacing) => GlyphFontRenderer.MeasureText(this, text, spacing);
 }

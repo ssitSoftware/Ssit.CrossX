@@ -58,39 +58,37 @@ public abstract class RendererBase : IRenderer
     }
 
     public abstract void Clear(RgbaColor color);
+
     public abstract void Flush();
 
     protected abstract void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode,
         TextureFilter filter);
-    
-    public void DrawText(IFont font, string text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null)
+
+    public void DrawText(IFont font, TextSource text, Vector2 position, TextAlign align = TextAlign.Left, RgbaColor? color = null,
+        TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null)
     {
         if (font is not IGlyphFont glyphFont)
         {
             return;
         }
         
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
+        GlyphFontRenderer.RenderText(this, glyphFont, text, position, align, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth, context);
     }
 
-    public void DrawText(IFont font, StringBuilder text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null)
+    public void DrawText(IFont font, TextSource text, RectangleF position, TextAlign align = TextAlign.Left,
+        RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null)
     {
         if (font is not IGlyphFont glyphFont)
         {
             return;
         }
-        
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
-    }
 
-    public void DrawText(IFont font, ICharProvider text, Vector2 position, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null)
-    {
-        if (font is not IGlyphFont glyphFont)
+        if (paragraphSpacing < 0)
         {
-            return;
+            paragraphSpacing = glyphFont.Metrics.LineHeight / 4f;
         }
         
-        GlyphFontRenderer.RenderText(this, glyphFont, new TextSource(text), position, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, depth);
+        GlyphFontRenderer.RenderText(this, glyphFont, text, position, align, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, paragraphSpacing, depth, context);
     }
 
     public virtual void DrawTexture(ITexture texture, Rectangle targetRectangle,

@@ -37,8 +37,9 @@ public class MainPage: Page<MainPageViewModel>
                 new Label
                 {
                     TextAlign = TextAlign.Center | TextAlign.VCenter,
-                    Text = ViewModel.Counter,
-                    TextColor = RgbaColor.White
+                    Text = "Counter:\n" + ViewModel.Counter,
+                    TextColor = RgbaColor.White,
+                    Font = ("Default", 24)
                 }
             ]
         };

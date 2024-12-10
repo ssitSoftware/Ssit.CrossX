@@ -3,7 +3,7 @@ using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.UI.Services;
 
-internal class UiApp(IIoCContainer services)
+internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher)
     : IUiApp, IUiAppBoundsSource
 {
     INavigation IUiApp.Navigation => Navigation;
@@ -12,9 +12,12 @@ internal class UiApp(IIoCContainer services)
     public RectangleF Bounds { get; private set; }
     
     public IIoCContainer Services { get; private set; } = services;
-
+    
+    private readonly ActionDispatcher _iActionDispatcher = (ActionDispatcher)iActionDispatcher;
+    
     public void Update(float dt)
     {
+        _iActionDispatcher.Dispatch();
         Navigation.Update(dt);
     }
 

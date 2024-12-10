@@ -12,4 +12,6 @@ public class Label: View
     
     public TextAlign? TextAlign { get; set; }
     public TextSpacing? TextSpacing { get; set; }
+    
+    public FontDesc? Font { get; set; }
 }

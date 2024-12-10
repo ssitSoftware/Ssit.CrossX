@@ -6,10 +6,12 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelHandler : ViewHandler<Label>
 {
+    private readonly IFontsManager _fontsManager;
     private readonly TextRenderingContext _textRenderingContext = new ();
     
-    public LabelHandler(CreateHandlerParameters parameters) : base(parameters)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters)
     {
+        _fontsManager = fontsManager;
         if (AttachedView.Text is not null)
         {
             AttachedView.Text.TextChanged += OnTextChanged;
@@ -21,7 +23,7 @@ public class LabelHandler : ViewHandler<Label>
 
     private IFont GetFont()
     {
-        return null;
+        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", AttachedView.Font?.FontSize ?? 12);
     }
     
     private void OnTextChanged()

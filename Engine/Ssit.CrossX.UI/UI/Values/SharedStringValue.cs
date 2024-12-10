@@ -31,6 +31,12 @@ public class SharedStringValue : SharedString
         _builder.AppendFormat(format, args);
         RaiseTextChanged();
     }
+
+    public void AppendText(string format, params object[] args)
+    {
+        _builder.AppendFormat(format, args);
+        RaiseTextChanged();
+    }
     
     public static implicit operator SharedStringValue(string value) => new(value);
 }

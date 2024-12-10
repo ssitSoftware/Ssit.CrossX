@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -6,20 +7,24 @@ namespace SampleGame.Game.UI.ViewModels;
 
 public class MainPageViewModel
 {
-    public SharedStringValue Counter { get; } = new ("0");
-    private int _counter = 0;
-
+    public SharedStringValue Counter { get; } = new ("");
+    
     public MainPageViewModel(IActionDispatcher actionDispatcher)
     {
+        UpdateTime();
         Task.Run(async () =>
         {
-            for (var idx = 0; idx < 10000; idx++)
+            while (true)
             {
+                actionDispatcher.Enqueue(UpdateTime);
                 await Task.Delay(100);
-                _counter++;
-
-                actionDispatcher.Enqueue(() => Counter.FormatText("{0}", _counter));
             }
         });
+    }
+
+    private void UpdateTime()
+    {
+        var now = DateTime.Now;
+        Counter.FormatText("{0:00}:{1:00}:{2:00}", now.Hour, now.Minute, now.Second);
     }
 }

@@ -37,9 +37,10 @@ public class MainPage: Page<MainPageViewModel>
                 new Label
                 {
                     TextAlign = TextAlign.Center | TextAlign.VCenter,
-                    Text = "Counter:\n" + ViewModel.Counter,
+                    Text = "Current Time: " + ViewModel.Counter,
                     TextColor = RgbaColor.White,
-                    Font = ("Default", 24)
+                    TextOutlineColor = RgbaColor.Black,
+                    Font = ("Default", 32)
                 }
             ]
         };

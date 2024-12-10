@@ -79,7 +79,7 @@
         <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
         <IsDefaultItem>true</IsDefaultItem>
       </None>
-      <None Update="Game\UI\MainPage.xml">
+      <None Update="Game\UI\Pages\MainPage.xml">
         <Generator>cxtool</Generator>
         <CustomToolNamespace>Siit.CrossX.UI.Tool</CustomToolNamespace>
       </None>

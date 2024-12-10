@@ -8,7 +8,7 @@ using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics;
 
-public static class TextRendererExtensions
+public static class RendererExtensions
 {
     public static TextRenderingContext CalculateMultilineText(this IFont font, TextSource text,
         TextAlign align, TextSpacing spacing, float maxWidth, float paragraphSpacing, TextRenderingContext context = null)
@@ -21,7 +21,7 @@ public static class TextRendererExtensions
         return context;
     }
 
-    public static IVertexBuffer[] CreateMultilineTextPrimitives(this IIoCContainer container, IGlyphFont font, TextSource text, RectangleF target,
+    public static IVertexBuffer[] CreateMultilineTextPrimitives(this IGlyphFont font, IIoCContainer container , TextSource text, RectangleF target,
         TextAlign align, TextSpacing spacing, float paragraphSpacing, float depth = 0)
     {
         const int maxBufferSize = 60000;
@@ -82,5 +82,17 @@ public static class TextRendererExtensions
         }
 
         return vertexBuffers;
+    }
+
+    public static void RenderVertexBuffers(this IRenderer renderer, IReadOnlyList<IVertexBuffer> buffers, 
+        ITexture texture = null, RgbaColor? color = null, TextureFilter filter = TextureFilter.Nearest, 
+        Matrix4x4? transform = null, 
+        IEffect effect = null)
+    {
+        // ReSharper disable once ForCanBeConvertedToForeach
+        for (var idx = 0; idx < buffers.Count; ++idx)
+        {
+            renderer.DrawPrimitives(buffers[idx], 0, buffers[idx].Length, texture, color, filter, transform, effect);    
+        }
     }
 }

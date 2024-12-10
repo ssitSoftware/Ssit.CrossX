@@ -1,12 +1,17 @@
 namespace Ssit.CrossX.UI.Parameters;
 
-public struct Length
+public struct Length(float value)
 {
-    public float Value { get; }
+    public static readonly Length Auto = new(float.NaN);
+    public static readonly Length Zero = new(0);
+    
+    public bool IsAuto => float.IsNaN(Value);
+    
+    private readonly float Value { get; } = value;
 
-    public Length(float value)
+    public float Calculate(float reference = 0)
     {
-        Value = value;
+        return IsAuto ? reference : Value;
     }
     
     public static implicit operator Length(float value) => new(value);

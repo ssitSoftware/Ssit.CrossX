@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-
 namespace Ssit.CrossX.UI.Views;
 
-public class Container: View
+public class Container: ChildrenContainer
 {
-    public IList<View> Children { get; set; }
+    
 }

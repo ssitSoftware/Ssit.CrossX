@@ -1,0 +1,57 @@
+using Ssit.CrossX.Graphics;
+using Ssit.CrossX.IoC;
+
+namespace Ssit.CrossX.UI.Services;
+
+internal class UiApp(IIoCContainer services)
+    : IUiApp, IUiAppBoundsSource
+{
+    INavigation IUiApp.Navigation => Navigation;
+    
+    public Navigation Navigation { get; set; }
+    public RectangleF Bounds { get; private set; }
+    
+    public IIoCContainer Services { get; } = services;
+
+    public void Update(float dt)
+    {
+        Navigation.Update(dt);
+    }
+
+    public void Draw(IRenderer renderer, RgbaColor? clearColor = null)
+    {
+        if (clearColor?.A > 0)
+        {
+            renderer.Clear(clearColor.Value);
+        }
+        
+        if (!Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
+        {
+            Navigation.PreviousPage.Draw(renderer);
+        }
+        
+        if (Navigation.CurrentPage is not null)
+        {
+            Navigation.CurrentPage.Draw(renderer);
+        }
+        
+        if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
+        {
+            Navigation.PreviousPage.Draw(renderer);
+        }
+    }
+
+    public void SetBounds(RectangleF bounds)
+    {
+        Bounds = bounds;
+        Navigation.PreviousPage?.SetBounds(bounds);
+        Navigation.CurrentPage?.SetBounds(bounds);
+    }
+
+    public void Dispose()
+    {
+        Services?.Dispose();
+    }
+
+    
+}

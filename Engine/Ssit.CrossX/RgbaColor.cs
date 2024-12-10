@@ -157,7 +157,7 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         return new(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);
     }
     
-    public static RgbaColor operator *(RgbaColor color, float multiply) => new(color.Rf, color.Gf, color.Bf, color.Af * multiply);
+    public static RgbaColor operator *(RgbaColor color, float multiply) => new(color.Rf * multiply, color.Gf * multiply, color.Bf * multiply, color.Af * multiply);
     public static RgbaColor operator *(RgbaColor color, double multiply) => color * (float)multiply;
 
     public bool Equals(RgbaColor other) => R == other.R && G == other.G && B == other.B && A == other.A;
@@ -185,47 +185,40 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     }
 
     /// <summary>
-    /// Creates an RgbaColor instance from a 32-bit integer representation of a color.
-    /// The integer should be in the format 0xAARRGGBB where AA is the alpha component,
-    /// RR is the red component, GG is the green component, and BB is the blue component.
+    /// Creates an RgbaColor instance from a 32-bit integer value, optionally premultiplied.
     /// </summary>
-    /// <param name="intColor">The 32-bit integer representation of the color.</param>
-    /// <returns>An RgbaColor instance representing the specified color.</returns>
-    public static RgbaColor FromInt32(int intColor)
+    /// <param name="intColor">A 32-bit integer representing the color, where the alpha component is in the highest 8 bits.</param>
+    /// <param name="premultiply">Indicates whether the color components should be premultiplied by the alpha component.</param>
+    /// <returns>An RgbaColor initialized with the specified integer color value.</returns>
+    public static RgbaColor FromInt32(int intColor, bool premultiply = true)
     {
         var a = (intColor >> 24) & 0xff;
         var r = (intColor >> 16) & 0xff;
         var g = (intColor >> 8) & 0xff;
         var b = intColor & 0xff;
 
-        return new((byte)r, (byte)g, (byte)b, (byte)a);
+        var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
+        return premultiply ? color.AsPremultiplied() : color;
     }
+    
+    public RgbaColor AsPremultiplied() => FromNonPremultiplied(R, G, B, A);
+
 
     /// <summary>
-    /// Creates an RgbaColor instance from a 32-bit unsigned integer representation of a color.
-    /// The integer should be in the format 0xAABBGGRR where AA is the alpha component,
-    /// RR is the red component, GG is the green component, and BB is the blue component.
+    /// Creates a new RgbaColor from a 32-bit unsigned integer representation.
     /// </summary>
-    /// <param name="intColor">The 32-bit unsigned integer representation of the color.</param>
-    /// <returns>An RgbaColor instance representing the specified color.</returns>
-    public static RgbaColor FromUInt32(uint intColor)
+    /// <param name="intColor">The 32-bit unsigned integer that encodes the RGBA color.</param>
+    /// <param name="premultiply">Determines if the color should be premultiplied by its alpha value.</param>
+    /// <returns>An RgbaColor instance representing the decoded RGBA color.</returns>
+    public static RgbaColor FromUInt32(uint intColor, bool premultiply = true)
     {
         var a = (intColor >> 24) & 0xff;
         var b = (intColor >> 16) & 0xff;
         var g = (intColor >> 8) & 0xff;
         var r = intColor & 0xff;
 
-        return new((byte)r, (byte)g, (byte)b, (byte)a);
-    }
-
-    /// <summary>
-    /// Returns a new RgbaColor instance with the specified alpha component, retaining the same red, green, and blue components.
-    /// </summary>
-    /// <param name="alpha">The byte value of the alpha component to be set in the new RgbaColor.</param>
-    /// <returns>A new RgbaColor instance with the specified alpha value.</returns>
-    public readonly RgbaColor WithAlpha(byte alpha)
-    {
-        return new(R, G, B, alpha);
+        var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
+        return premultiply ? color.AsPremultiplied() : color;
     }
 
     /// <summary>
@@ -251,5 +244,25 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     /// </summary>
     /// <param name="color">The System.Drawing.Color instance to be converted.</param>
     /// <returns>An RgbaColor instance representing the specified System.Drawing.Color instance.</returns>
-    public static implicit operator RgbaColor(Color color) => new RgbaColor(color.R, color.G, color.B, color.A);
+    public static implicit operator RgbaColor(Color color) => new(color.R, color.G, color.B, color.A);
+
+    /// <summary>
+    /// Creates a new RgbaColor from non-premultiplied red, green, blue, and alpha values.
+    /// </summary>
+    /// <param name="r">The red component of the color, from 0 to 255.</param>
+    /// <param name="g">The green component of the color, from 0 to 255.</param>
+    /// <param name="b">The blue component of the color, from 0 to 255.</param>
+    /// <param name="a">The alpha component of the color, from 0 to 255.</param>
+    /// <returns>A new RgbaColor with the specified non-premultiplied components.</returns>
+    public static RgbaColor FromNonPremultiplied(byte r, byte g, byte b, byte a) => FromNonPremultiplied(r / 255f, g / 255f, b / 255f, a / 255f);
+
+    /// <summary>
+    /// Creates a new RgbaColor instance from non-premultiplied RGBA values.
+    /// </summary>
+    /// <param name="r">The red component, in the range [0, 1].</param>
+    /// <param name="g">The green component, in the range [0, 1].</param>
+    /// <param name="b">The blue component, in the range [0, 1].</param>
+    /// <param name="a">The alpha component, in the range [0, 1].</param>
+    /// <returns>A new RgbaColor with premultiplied RGB values.</returns>
+    public static RgbaColor FromNonPremultiplied(float r, float g, float b, float a) => new(r * a, g * a, b * a, a);
 }

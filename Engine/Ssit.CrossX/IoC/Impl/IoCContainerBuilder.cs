@@ -129,7 +129,7 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
         {
             if (!_singletonTypes.TryGetValue(type, out implType))
             {
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException($"Implementation for {type.FullName} could not be found.");
             }
 
             _singletonTypes[type] = null;

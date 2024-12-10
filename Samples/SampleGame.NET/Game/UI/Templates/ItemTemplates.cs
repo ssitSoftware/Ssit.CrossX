@@ -1,10 +1,10 @@
 using Ssit.CrossX.UI;
-using Ssit.CrossX.UI.Views;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.Game.UI;
+namespace SampleGame.Game.UI.Templates;
 
-public class Templates: TemplatesContainer
+public class ItemTemplates: TemplatesContainer
 {
     public View TestItemTemplate(TestItem context) => new Container
     {

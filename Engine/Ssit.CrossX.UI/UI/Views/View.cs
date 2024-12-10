@@ -1,9 +1,10 @@
 using System;
+using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Parameters;
 
 namespace Ssit.CrossX.UI.Views;
 
-public abstract class View
+public abstract class View: IHandlerView
 {
     public Guid Guid { get; } = Guid.NewGuid();
     
@@ -15,4 +16,38 @@ public abstract class View
     
     public Length? Width { get; set; }
     public Length? Height { get; set; }
+
+    ViewHandler IHandlerView.Handler => Handler;
+    
+    public Type CustomHandlerType
+    {
+        set
+        {
+            if (!typeof(ViewHandler).IsAssignableFrom(value))
+            {
+                throw new ArgumentException($"Type '{value}' is not a view handler");
+            }
+
+            var type = value;
+
+            while (type != null && type != typeof(ViewHandler) && type != typeof(object))
+            {
+                if (typeof(ViewHandler<>).MakeGenericType(GetType()).IsAssignableFrom(type))
+                {
+                    _customHandlerType = type;
+                    return;
+                }
+                type = type.BaseType;
+            }
+            throw new ArgumentException($"Type '{value}' is not a view handler");
+        }
+        
+        internal get => _customHandlerType;
+    }
+    
+    public void RecalculatePositionAndSize() => Handler?.RecalculatePositionAndSize();
+
+    internal ViewHandler Handler { private get; set; }
+
+    private Type _customHandlerType;
 }

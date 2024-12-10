@@ -1,6 +1,7 @@
 using System;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
@@ -16,6 +17,8 @@ public abstract class View: IHandlerView
     
     public Length? Width { get; set; }
     public Length? Height { get; set; }
+
+    public SharedBool Visible { get; set; } = true;
 
     ViewHandler IHandlerView.Handler => Handler;
     

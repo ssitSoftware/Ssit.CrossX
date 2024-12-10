@@ -2,34 +2,26 @@ using Ssit.CrossX.UI.Parameters;
 
 namespace Ssit.CrossX.UI.Values;
 
-public class Thickness
+public readonly struct Thickness
 {
-    public Length? Left { get; set; }
-    public Length? Right { get; set; }
-    public Length? Top { get; set; }
-    public Length? Bottom { get; set; }
+    public Length? Left { get; }
+    public Length? Right { get; }
+    public Length? Top { get; }
+    public Length? Bottom { get; }
     
-    public static implicit operator Thickness(Length? value) => new()
+    private Thickness(Length? left, Length? top, Length? right, Length? bottom)
     {
-        Left = value,
-        Right = value,
-        Top = value,
-        Bottom = value
-    };
-    
-    public static implicit operator Thickness((Length? horizontal, Length? vertical) th) => new()
-    {
-        Left = th.horizontal,
-        Right = th.horizontal,
-        Top = th.vertical,
-        Bottom = th.vertical
-    };
-    
-    public static implicit operator Thickness((Length? left, Length? top, Length? right, Length? bottom) th) => new()
-    {
-        Left = th.left,
-        Right = th.right,
-        Top = th.top,
-        Bottom = th.bottom
-    };
+        Left = left;
+        Top = top;
+        Right = right;
+        Bottom = bottom;
+    }
+
+    public static implicit operator Thickness(Length? value) => new(value, value, value, value);
+
+    public static implicit operator Thickness((Length? horizontal, Length? vertical) th) =>
+        new(th.horizontal, th.vertical, th.horizontal, th.vertical);
+
+    public static implicit operator Thickness((Length? left, Length? top, Length? right, Length? bottom) th) =>
+        new(th.left, th.top, th.right, th.bottom);
 }

@@ -12,27 +12,63 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
         if (RecalculateChildren.Count == 0)
             return;
 
-        foreach (var child in AttachedView.Children)
+        foreach (var child in RecalculateChildren)
         {
             CalculateChildPosition(child);
         }
+        RecalculateChildren.Clear();
     }
     
     private void CalculateChildPosition(View child)
     {
-        var x = child.AnchorX ?? Length.Zero;
-        var y = child.AnchorY ?? Length.Zero;
+        var handlerView = (IHandlerView)child;
         
-        var width = child.Width ?? Length.Auto;
-        var height = child.Height ?? Length.Auto;
-        
-        var verticalAlign = child.VerticalAlign ?? Align.Fill;
-        var horizontalAlign = child.HorizontalAlign ?? Align.Fill;
+        var x = child.AnchorX ?? Length.Auto;
+        var y = child.AnchorY ?? Length.Auto;
+
+        handlerView.Handler.CalculateSize(out var width, out var height);
+        handlerView.Handler.CalculateAlign(out var horizontalAlign, out var verticalAlign);
 
         var bounds = CalculateTargetBounds(Bounds);
+
+        if (x.IsAuto)
+        {
+            switch (horizontalAlign)
+            {
+                case Align.End:
+                    x = Length.Fill;
+                    break;
+                
+                case Align.Center:
+                    x = new Length(0, 0.5f);
+                    break;
+                
+                case Align.Fill:
+                    x = Length.Zero;
+                    break;
+            }
+        }
         
-        var xx = x.Calculate(bounds.Width);
-        var yy = y.Calculate(bounds.Height);
+        if (y.IsAuto)
+        {
+            switch (verticalAlign)
+            {
+                case Align.End:
+                    y = Length.Fill;
+                    break;
+                
+                case Align.Center:
+                    y = new Length(0, 0.5f);
+                    break;
+                
+                case Align.Fill:
+                    y = Length.Zero;
+                    break;
+            }
+        }
+        
+        var xx = bounds.X + x.Calculate(bounds.Width);
+        var yy = bounds.Y + y.Calculate(bounds.Height);
         var ww = width.Calculate(bounds.Width);
         var hh = height.Calculate(bounds.Height);
         
@@ -40,11 +76,9 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
         {
             case Align.Fill:
                 ww = bounds.Width;
-                xx = bounds.X;
                 break;
             
             case Align.Start:
-                xx = bounds.X;
                 break;
             
             case Align.Center:
@@ -60,11 +94,9 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
         {
             case Align.Fill:
                 hh = bounds.Height;
-                yy = bounds.Y;
                 break;
             
             case Align.Start:
-                yy = bounds.Y;
                 break;
             
             case Align.Center:
@@ -75,8 +107,7 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
                 yy -= hh;
                 break;
         }
-
-        var handlerView = (IHandlerView)child;
+        
         handlerView.Handler.SetBounds(new RectangleF(xx, yy, ww, hh));
     }
 }

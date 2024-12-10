@@ -20,6 +20,16 @@ public static class RendererExtensions
         GlyphFontRenderer.CalculateMultilineText(glyphFont, text, maxWidth, align, spacing, paragraphSpacing, context);
         return context;
     }
+    
+    public static TextRenderingContext CalculateText(this IFont font, TextSource text, TextSpacing spacing, TextRenderingContext context = null)
+    {
+        if(font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
+
+        context ??= new TextRenderingContext();
+        
+        GlyphFontRenderer.CalculateText(glyphFont, text, spacing, context);
+        return context;
+    }
 
     public static IVertexBuffer[] CreateMultilineTextPrimitives(this IGlyphFont font, IIoCContainer container , TextSource text, RectangleF target,
         TextAlign align, TextSpacing spacing, float paragraphSpacing, float depth = 0)

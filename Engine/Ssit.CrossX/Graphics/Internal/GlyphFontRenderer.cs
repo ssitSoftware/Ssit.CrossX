@@ -22,8 +22,7 @@ internal static class GlyphFontRenderer
         }
         else if(!context.IsValid(text, font, spacing))
         {
-            context.Update(text, font, spacing);
-            CalculateLines(font, text, spacing, context);
+            CalculateText(font, text, spacing, context);
         }
 
         var internalRenderer = renderer.Unsafe;
@@ -94,6 +93,15 @@ internal static class GlyphFontRenderer
             internalRenderer?.BeginRender(font.FontSheet, TextureFilter.Nearest);
             RenderText(internalRenderer.FastDrawQuad, font.FontSheet, font, context.Lines, position, align, color,
                 spacing, context.Width, context.Height, depth);
+        }
+    }
+
+    public static void CalculateText(IGlyphFont font, TextSource text, TextSpacing spacing, TextRenderingContext context)
+    {
+        if(!context.IsValid(text, font, spacing))
+        {
+            context.Update(text, font, spacing);
+            CalculateLines(font, text, spacing, context);
         }
     }
 

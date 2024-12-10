@@ -11,7 +11,7 @@ internal class UiApp(IIoCContainer services)
     public Navigation Navigation { get; set; }
     public RectangleF Bounds { get; private set; }
     
-    public IIoCContainer Services { get; } = services;
+    public IIoCContainer Services { get; private set; } = services;
 
     public void Update(float dt)
     {
@@ -50,8 +50,8 @@ internal class UiApp(IIoCContainer services)
 
     public void Dispose()
     {
-        Services?.Dispose();
+        var services = Services;
+        Services = null;
+        services?.Dispose();
     }
-
-    
 }

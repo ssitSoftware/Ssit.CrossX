@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
@@ -41,7 +42,7 @@ public abstract class ViewHandler: IDisposable
     {
         Bounds = rectangleF;
         var offset = Parent?.ScreenBounds.TopLeft ?? Vector2.Zero;
-        ScreenBounds = new RectangleF(offset, Bounds.Size);
+        ScreenBounds = new RectangleF(offset + Bounds.TopLeft, Bounds.Size);
     }
     
     public virtual void Draw(IRenderer renderer)
@@ -72,6 +73,18 @@ public abstract class ViewHandler: IDisposable
     internal void RecalculatePositionAndSize()
     {
         OnRecalculatePositionAndSize();
+    }
+
+    public virtual void CalculateSize(out Length width, out Length height)
+    {
+        width = View.Width ?? Length.Fill;
+        height = View.Height ?? Length.Fill;
+    }
+
+    public virtual void CalculateAlign(out Align horizontalAlign, out Align verticalAlign)
+    {
+        horizontalAlign = View.HorizontalAlign ?? Align.Fill;
+        verticalAlign = View.VerticalAlign ?? Align.Fill;
     }
 }
 

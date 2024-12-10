@@ -21,11 +21,11 @@ public abstract class ChildrenContainerHandler<TContainer>
     {
         var padding = AttachedView.Padding;
 
-        var left = padding.Left?.Calculate(bounds.Width) ?? 0;
-        var right = padding.Right?.Calculate(bounds.Width) ?? 0;
+        var left = padding?.Left?.Calculate(bounds.Width) ?? 0;
+        var right = padding?.Right?.Calculate(bounds.Width) ?? 0;
         
-        var top = padding.Top?.Calculate(bounds.Height) ?? 0;
-        var bottom = padding.Bottom?.Calculate(bounds.Height) ?? 0;
+        var top = padding?.Top?.Calculate(bounds.Height) ?? 0;
+        var bottom = padding?.Bottom?.Calculate(bounds.Height) ?? 0;
 
         return new RectangleF(left + bounds.X, top + bounds.Y, bounds.Width - right - left, bounds.Height - bottom - top);
     }

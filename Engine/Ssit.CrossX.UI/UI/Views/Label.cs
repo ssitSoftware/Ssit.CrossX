@@ -10,8 +10,11 @@ public class Label: View
     public RgbaColor? TextColor { get; set; }
     public RgbaColor? TextOutlineColor { get; set; }
     
-    public TextAlign? TextAlign { get; set; }
+    public ContentAlign? TextAlign { get; set; }
     public TextSpacing? TextSpacing { get; set; }
     
     public FontDesc? Font { get; set; }
+    
+    public Thickness? Padding { get; set; }
+    public RgbaColor? BackgroundColor { get; set; }
 }

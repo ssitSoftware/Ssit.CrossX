@@ -1,4 +1,3 @@
-using SampleGame.Game.UI.Templates;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
@@ -14,33 +13,33 @@ public class MainPage: Page<MainPageViewModel>
     {
         return new Container
         {
-            Padding = ("10%", "10%"),
             Children = [
-                new Background
-                {
-                    BackgroundColor = RgbaColor.CornflowerBlue,
-                    Width = 100,
-                    Height = 100,
-                    AnchorX= "25%",
-                    HorizontalAlign = Align.Center,
-                    VerticalAlign = Align.Center
-                },
-                new Background
-                {
-                    BackgroundColor = RgbaColor.OrangeRed,
-                    Width = 100,
-                    Height = 100,
-                    AnchorX= "75%",
-                    HorizontalAlign = Align.Center,
-                    VerticalAlign = Align.Center
-                },
                 new Label
                 {
-                    TextAlign = TextAlign.Center | TextAlign.VCenter,
+                    TextAlign = ContentAlign.Center | ContentAlign.VCenter,
+                    AnchorY = 10,
+                    VerticalAlign = Align.Start,
                     Text = "Current Time: " + ViewModel.Counter,
                     TextColor = RgbaColor.White,
                     TextOutlineColor = RgbaColor.Black,
-                    Font = ("Default", 32)
+                    Font = ("Default", 32),
+                    BackgroundColor = RgbaColor.DarkRed,
+                    Padding = (10, 10),
+                },
+                new TextView
+                {
+                    BackgroundColor = RgbaColor.DarkRed,
+                    Text = ViewModel.LongText,
+                    TextAlign = ContentAlign.Center | ContentAlign.Top,
+                    HorizontalAlign = Align.Center,
+                    VerticalAlign = Align.Start,
+                    TextColor = RgbaColor.White,
+                    TextOutlineColor = RgbaColor.Black,
+                    AnchorY = 100,
+                    Width = "50%",
+                    Font = ("Default", 24),
+                    ParagraphSpacing = "50%",
+                    Padding = (10, 10)
                 }
             ]
         };

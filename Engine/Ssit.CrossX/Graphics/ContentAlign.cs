@@ -3,7 +3,7 @@ using System;
 namespace Ssit.CrossX.Graphics;
 
 [Flags]
-public enum TextAlign
+public enum ContentAlign
 {
     Left = 0,
     Top = 0,

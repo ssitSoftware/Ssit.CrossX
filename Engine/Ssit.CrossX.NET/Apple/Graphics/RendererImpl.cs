@@ -106,20 +106,13 @@ internal class RendererImpl: RendererBase, IDisposable
 
         if (WorldTransform.HasValue)
         {
-            if (transform.HasValue)
-            {
-                transform = Matrix4x4.Multiply(transform.Value, WorldTransform.Value);
-            }
-            else
-            {
-                transform = WorldTransform.Value;
-            }
+            transform = transform.HasValue ? Matrix4x4.Multiply(transform.Value, WorldTransform.Value) : WorldTransform.Value;
         }
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
         var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, transform, color);
         
-        encoder.SetVertexBuffer(mtlBuffer, 0, 0);
+        encoder.SetVertexBuffer(mtlBuffer, (UIntPtr)0, (UIntPtr)0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);
     }
 

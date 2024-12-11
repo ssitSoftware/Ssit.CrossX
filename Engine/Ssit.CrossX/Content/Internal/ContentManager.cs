@@ -12,15 +12,10 @@ internal class ContentManager: IContentManager
     private readonly IIoCContainer _ioCContainer;
     private readonly IFilesProvider _filesProvider;
 
-    private class ResourceInstance
+    private class ResourceInstance(IDisposable obj)
     {
-        public IDisposable Object { get; }
+        public IDisposable Object { get; } = obj;
         public readonly HashSet<Guid> Users = new();
-
-        public ResourceInstance(IDisposable obj)
-        {
-            Object = obj;
-        }
     }
     
     private readonly Dictionary<string, ResourceInstance> _resources = new();
@@ -62,7 +57,7 @@ internal class ContentManager: IContentManager
             }
         }
 
-        var handle = new ResourceHandle<TResource>((TResource) resource.Object, key, g =>
+        var handle = new ResourceHandleManaged<TResource>((TResource) resource.Object, key, g =>
         {
             resource.Users.Remove(g);
             if (resource.Users.Count == 0)

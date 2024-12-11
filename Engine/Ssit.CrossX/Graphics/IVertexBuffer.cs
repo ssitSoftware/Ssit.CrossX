@@ -9,4 +9,5 @@ public interface IVertexBuffer: IDisposable
     VertexMode VertexMode { get; }
     TType Get<TType>();
     int Length { get; }
+    void Update<TVertex>(TVertex[] vertices) where TVertex : unmanaged;
 }

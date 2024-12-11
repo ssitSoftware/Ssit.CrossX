@@ -70,7 +70,7 @@ public interface IRenderer
     /// <param name="depth">The depth value used for layering text in 3D space.</param>
     /// <param name="outlineColor">The outline color of the text. If null, no outline is drawn.</param>
     /// /// <param name="context">Rendering context for faster rendering by caching text calculations. Use for rendering multiline texts.</param>
-    void DrawText(IFont font, TextSource text, Vector2 position, TextAlign align = TextAlign.Left, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null);
+    void DrawText(IFont font, TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null);
 
     /// <summary>
     /// Draws the specified text on the screen within a defined rectangle.
@@ -85,7 +85,7 @@ public interface IRenderer
     /// <param name="depth">The depth value to use for rendering order. Default is 0.</param>
     /// <param name="outlineColor">The color to render the text outline. If null, no outline is rendered. Use for rendering multiline texts.</param>
     /// <param name="context">Rendering context for rendering cache.</param>
-    void DrawText(IFont font, TextSource text, RectangleF position, TextAlign align = TextAlign.Left, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null);
+    void DrawText(IFont font, TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null);
     
     /// <summary>
     /// Draws a texture at the specified target rectangle with optional source rectangle and effect.

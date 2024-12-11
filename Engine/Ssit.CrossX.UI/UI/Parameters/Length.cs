@@ -9,16 +9,36 @@ public struct Length
     public static readonly Length Fill = new(0,1);
     public static readonly Length Zero = new(0);
     
-    public bool IsAuto => float.IsNaN(_value);
+    public readonly float Value;
+    public readonly float Percent;
+    
+    public bool IsAuto => float.IsNaN(Value);
 
     internal Length(float value, float percent = 0)
     {
-        _value = value;
-        _percent = percent;
+        Value = value;
+        Percent = percent;
     }
 
     private Length(string str)
     {
+        if (str.ToLowerInvariant() == "auto")
+        {
+            Value = float.NaN;
+            return;
+        }
+        
+        if (str.ToLowerInvariant() == "zero")
+        {
+            return;
+        }
+        
+        if (str.ToLowerInvariant() == "fill")
+        {
+            Percent = 1;
+            return;
+        }
+        
         var parts = Regex.Split(str, @"(?<=[+-])");
 
         float value = 0;
@@ -62,20 +82,21 @@ public struct Length
             }
         }
         
-        _value = value;
-        _percent = percent;
+        Value = value;
+        Percent = percent;
     }
     
     public float Calculate(float reference = 0)
     {
-        return IsAuto ? 0 : _value + _percent * reference;
+        return IsAuto ? 0 : Value + Percent * reference;
     }
-
-    private readonly float _value;
-    private readonly float _percent;
-
-    
     
     public static implicit operator Length(float value) => new(value);
     public static implicit operator Length(string str) => new Length(str);
+
+    public static Length operator +(Length length, Length addend) =>
+        new Length(length.Value + addend.Value, length.Percent + addend.Percent);
+    
+    public static Length operator -(Length length, Length sub) =>
+        new Length(length.Value - sub.Value, length.Percent - sub.Percent);
 }

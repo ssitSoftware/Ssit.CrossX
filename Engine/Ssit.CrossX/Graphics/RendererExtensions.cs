@@ -10,14 +10,13 @@ namespace Ssit.CrossX.Graphics;
 
 public static class RendererExtensions
 {
-    public static TextRenderingContext CalculateMultilineText(this IFont font, TextSource text,
-        TextAlign align, TextSpacing spacing, float maxWidth, float paragraphSpacing, TextRenderingContext context = null)
+    public static TextRenderingContext CalculateMultilineText(this IFont font, TextSource text, TextSpacing spacing, float maxWidth, float paragraphSpacing, TextRenderingContext context = null)
     {
         if(font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
 
         context ??= new TextRenderingContext();
         
-        GlyphFontRenderer.CalculateMultilineText(glyphFont, text, maxWidth, align, spacing, paragraphSpacing, context);
+        GlyphFontRenderer.CalculateMultilineText(glyphFont, text, maxWidth, spacing, paragraphSpacing, context);
         return context;
     }
     
@@ -32,32 +31,32 @@ public static class RendererExtensions
     }
 
     public static IVertexBuffer[] CreateMultilineTextPrimitives(this IGlyphFont font, IIoCContainer container , TextSource text, RectangleF target,
-        TextAlign align, TextSpacing spacing, float paragraphSpacing, float depth = 0)
+        ContentAlign align, TextSpacing spacing, float paragraphSpacing, float depth = 0, TextRenderingContext context = null, IVertexBuffer[] oldBuffers = null)
     {
         const int maxBufferSize = 60000;
         
-        var context = CalculateMultilineText(font, text, align, spacing, target.Width, paragraphSpacing);
+        context = CalculateMultilineText(font, text, spacing, target.Width, paragraphSpacing, context);
         
         var list = new List<VertexPositionColorTexture>();
         
         var position = target.TopLeft;
         
-        if ((align & TextAlign.Center) == TextAlign.Center)
+        if ((align & ContentAlign.Center) == ContentAlign.Center)
         {
             position.X = target.Center.X;
         }
         
-        if ((align & TextAlign.VCenter) == TextAlign.VCenter)
+        if ((align & ContentAlign.VCenter) == ContentAlign.VCenter)
         {
             position.Y = target.Center.Y;
         }
         
-        if ((align & TextAlign.Right) == TextAlign.Right)
+        if ((align & ContentAlign.Right) == ContentAlign.Right)
         {
             position.X = target.Right;
         }
         
-        if ((align & TextAlign.Bottom) == TextAlign.Bottom)
+        if ((align & ContentAlign.Bottom) == ContentAlign.Bottom)
         {
             position.Y = target.Bottom;
         }
@@ -81,14 +80,60 @@ public static class RendererExtensions
         GlyphFontRenderer.RenderText(DrawAction, font.FontSheet, context.Font, context.Lines, position, align, RgbaColor.White, spacing, context.Width, context.Height, depth);
 
         var buffers = (int)Math.Ceiling(list.Count / (double)maxBufferSize);
-        var vertexBuffers = new IVertexBuffer[buffers];
+
+        IVertexBuffer[] vertexBuffers = null;
+        
+        if (oldBuffers != null)
+        {
+            if (oldBuffers.Length == buffers)
+            {
+                var total = list.Count;
+                bool isValid = true;
+                for (var idx = 0; idx < buffers; idx++)
+                {
+                    var size = total;
+                    size = Math.Min(size, maxBufferSize);
+                    total -= maxBufferSize;
+                    
+                    if (oldBuffers[idx].Length != size)
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (isValid)
+                {
+                    vertexBuffers = oldBuffers;
+                }
+                else
+                {
+                    foreach (var ob in oldBuffers)
+                    {
+                        ob.Dispose();
+                    }
+                }
+            }
+        }
+        
+        if (vertexBuffers == null)
+        {
+            vertexBuffers = new IVertexBuffer[buffers];   
+        }
         
         for (var idx = 0; idx < buffers; ++idx)
         {
-            vertexBuffers[idx] = container.IoCConstruct<IVertexBuffer>(new CreatePctVertexBufferParameters
+            if (vertexBuffers[idx] != null)
             {
-                Vertices = list.Skip(idx * maxBufferSize).Take(maxBufferSize).ToArray()
-            });
+                vertexBuffers[idx].Update(list.Skip(idx * maxBufferSize).Take(maxBufferSize).ToArray());
+            }
+            else
+            {
+                vertexBuffers[idx] = container.IoCConstruct<IVertexBuffer>(new CreatePctVertexBufferParameters
+                {
+                    Vertices = list.Skip(idx * maxBufferSize).Take(maxBufferSize).ToArray()
+                });
+            }
         }
 
         return vertexBuffers;

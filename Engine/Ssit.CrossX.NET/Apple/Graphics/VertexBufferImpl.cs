@@ -51,6 +51,20 @@ public class VertexBufferImpl: IVertexBuffer
         Length = parameters.Vertices.Length;
     }
 
+    public void Update<TVertex>(TVertex[] data) where TVertex : unmanaged
+    {
+        unsafe
+        {
+            var stride = sizeof(TVertex);
+            long size = stride * Math.Min(data.Length, Length);
+            fixed (void* vertices = data)
+            {
+                var target = (void*)_mtlVertexBuffer.Contents;
+                Buffer.MemoryCopy(vertices, target, (long)_mtlVertexBuffer.Length, size);
+            }
+        }
+    }
+
     public void Dispose()
     {
         _mtlVertexBuffer?.Dispose();

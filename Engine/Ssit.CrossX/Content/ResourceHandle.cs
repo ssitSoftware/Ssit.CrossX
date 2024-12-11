@@ -2,11 +2,7 @@ using System;
 
 namespace Ssit.CrossX.Content;
 
-/// <summary>
-/// Represents disposable handle to the resource. 
-/// </summary>
-/// <typeparam name="TResource">Type of the underlying resource.</typeparam>
-public class ResourceHandle<TResource> : IDisposable where TResource: class, IDisposable
+public abstract class ResourceHandle<TResource> : IDisposable where TResource : class, IDisposable
 {
     /// <summary>
     /// Resource reference.
@@ -18,22 +14,57 @@ public class ResourceHandle<TResource> : IDisposable where TResource: class, IDi
     /// </summary>
     public string Name { get; }
     
+    internal ResourceHandle(TResource resource, string name)
+    {
+        Resource = resource;
+        Name = name;
+    }
+
+    public void Dispose()
+    {
+        OnDispose();
+    }
+
+    protected abstract void OnDispose();
+}
+
+/// <summary>
+/// Represents disposable handle to the resource. 
+/// </summary>
+/// <typeparam name="TResource">Type of the underlying resource.</typeparam>
+public class ResourceHandleManaged<TResource> : ResourceHandle<TResource> where TResource : class, IDisposable
+{
     internal Guid Guid { get; } = Guid.NewGuid();
 
     private readonly Action<Guid> _onDispose;
     
-    internal ResourceHandle(TResource resource, string name, Action<Guid> onDispose)
+    internal ResourceHandleManaged(TResource resource, string name, Action<Guid> onDispose):
+        base(resource, name)
     {
         _onDispose = onDispose;
-        Resource = resource;
-        Name = name;
     }
     
     /// <summary>
     /// Disposes resource handle.
     /// </summary>
-    public void Dispose()
+    protected override void OnDispose()
     {
         _onDispose?.Invoke(Guid);
+    }
+}
+
+public class ResourceHandleUnmanaged<TResource>(TResource resource, string name)
+    : ResourceHandle<TResource>(resource, name)
+    where TResource : class, IDisposable
+{
+    private bool _isDisposed;
+
+    protected override void OnDispose()
+    {
+        if (_isDisposed)
+            return;
+        
+        Resource?.Dispose();
+        _isDisposed = true;
     }
 }

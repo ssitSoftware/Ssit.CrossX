@@ -12,7 +12,7 @@ internal static class GlyphFontRenderer
 {
     private static readonly TextRenderingContext TempContext = new();
     
-    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, Vector2 position, TextAlign align,
+    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, Vector2 position, ContentAlign align,
         RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float depth, TextRenderingContext context)
     {
         if (context is null)
@@ -43,7 +43,7 @@ internal static class GlyphFontRenderer
         }
     }
 
-    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, RectangleF target, TextAlign align,
+    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, RectangleF target, ContentAlign align,
         RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, float depth, TextRenderingContext context)
     {
         if (context is null)
@@ -53,27 +53,27 @@ internal static class GlyphFontRenderer
         
         if (!context.IsValid(text, font, spacing, (int)target.Width))
         {
-            CalculateMultilineText(font, text, target.Width, align, spacing, paragraphSpacing, context);
+            CalculateMultilineText(font, text, target.Width, spacing, paragraphSpacing, context);
         }
 
         var position = target.TopLeft;
 
-        if ((align & TextAlign.Center) == TextAlign.Center)
+        if ((align & ContentAlign.Center) == ContentAlign.Center)
         {
             position.X = target.Center.X;
         }
         
-        if ((align & TextAlign.VCenter) == TextAlign.VCenter)
+        if ((align & ContentAlign.VCenter) == ContentAlign.VCenter)
         {
             position.Y = target.Center.Y;
         }
         
-        if ((align & TextAlign.Right) == TextAlign.Right)
+        if ((align & ContentAlign.Right) == ContentAlign.Right)
         {
             position.X = target.Right;
         }
         
-        if ((align & TextAlign.Bottom) == TextAlign.Bottom)
+        if ((align & ContentAlign.Bottom) == ContentAlign.Bottom)
         {
             position.Y = target.Bottom;
         }
@@ -105,9 +105,14 @@ internal static class GlyphFontRenderer
         }
     }
 
-    public static void CalculateMultilineText(IGlyphFont font, TextSource text, float targetWidth, TextAlign align,
+    public static void CalculateMultilineText(IGlyphFont font, TextSource text, float targetWidth,
         TextSpacing spacing, float paragraphSpacing, TextRenderingContext context)
     {
+        if (context.IsValid(text, font, spacing, (int)targetWidth))
+        {
+            return;
+        }
+        
         context.Update(text, font, spacing, (int)targetWidth);
         CalculateWrapLines(font, text, spacing, paragraphSpacing, context, (int)targetWidth);
     }
@@ -174,7 +179,7 @@ internal static class GlyphFontRenderer
     }
 
     internal static void RenderText(DrawTextureQuadDelegate drawDelegate, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
-        Vector2 position, TextAlign align, RgbaColor color, TextSpacing spacing, float justifyWidth, float height, float depth)
+        Vector2 position, ContentAlign align, RgbaColor color, TextSpacing spacing, float justifyWidth, float height, float depth)
     {
         float additionalSpacing = (int)(spacing - 50) * font.Metrics.WhitespaceWidth / 50f;
         
@@ -188,7 +193,7 @@ internal static class GlyphFontRenderer
 
             var whitespaceSize = font.Metrics.WhitespaceWidth + additionalSpacing;
 
-            if ((align & TextAlign.Justified) == TextAlign.Justified && line is { Whitespaces: > 0, EndOfParagraph: false })
+            if ((align & ContentAlign.Justified) == ContentAlign.Justified && line is { Whitespaces: > 0, EndOfParagraph: false })
             {
                 var lineWidthNoSpaces = line.Width - line.Whitespaces * whitespaceSize;
                 whitespaceSize = (justifyWidth - lineWidthNoSpaces) / line.Whitespaces;
@@ -219,14 +224,14 @@ internal static class GlyphFontRenderer
         }
     }
 
-    private static float CalculateXPosition(float positionX, TextAlign align, float lineWidth)
+    private static float CalculateXPosition(float positionX, ContentAlign align, float lineWidth)
     {
-        if ((align & TextAlign.Center) == TextAlign.Center)
+        if ((align & ContentAlign.Center) == ContentAlign.Center)
         {
             return MathF.Ceiling(positionX - lineWidth / 2f);
         }
 
-        if ((align & TextAlign.Right) == TextAlign.Right)
+        if ((align & ContentAlign.Right) == ContentAlign.Right)
         {
             return positionX - lineWidth;
         }
@@ -234,16 +239,16 @@ internal static class GlyphFontRenderer
         return positionX;
     }
 
-    private static float CalculateYPosition(IGlyphFont font, float positionY, int height, TextAlign align, bool oneLine)
+    private static float CalculateYPosition(IGlyphFont font, float positionY, int height, ContentAlign align, bool oneLine)
     {
-        if ((align & TextAlign.VCenter) == TextAlign.VCenter)
+        if ((align & ContentAlign.VCenter) == ContentAlign.VCenter)
         {
             var offset = font.Metrics.XHeight + font.Metrics.Ascender;
             
             return MathF.Ceiling(positionY - (height / 2f - font.Metrics.LineHeight / 2f) + font.Metrics.XHeight / 2f);
         }
         
-        if ((align & TextAlign.Bottom) == TextAlign.Bottom)
+        if ((align & ContentAlign.Bottom) == ContentAlign.Bottom)
         {
             return positionY - height - font.Metrics.Ascender;
         }

@@ -1,8 +1,10 @@
+using System;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.Game.UI.Pages;
@@ -14,18 +16,18 @@ public class MainPage: Page<MainPageViewModel>
         return new Container
         {
             Children = [
-                new Label
-                {
-                    TextAlign = ContentAlign.Center | ContentAlign.VCenter,
-                    AnchorY = 10,
-                    VerticalAlign = Align.Start,
-                    Text = "Current Time: " + ViewModel.Counter,
-                    TextColor = RgbaColor.White,
-                    TextOutlineColor = RgbaColor.Black,
-                    Font = ("Default", 32),
-                    BackgroundColor = RgbaColor.DarkRed,
-                    Padding = (10, 10),
-                },
+                // new Label
+                // {
+                //     TextAlign = ContentAlign.Center | ContentAlign.VCenter,
+                //     AnchorY = 10,
+                //     VerticalAlign = Align.Start,
+                //     Text = "Current Time: " + ViewModel.Counter,
+                //     TextColor = RgbaColor.White,
+                //     TextOutlineColor = RgbaColor.Black,
+                //     Font = ("Default", 32),
+                //     BackgroundColor = RgbaColor.DarkRed,
+                //     Padding = (10, 10),
+                // },
                 new TextView
                 {
                     BackgroundColor = RgbaColor.DarkRed,
@@ -40,6 +42,20 @@ public class MainPage: Page<MainPageViewModel>
                     Font = ("Default", 24),
                     ParagraphSpacing = "50%",
                     Padding = (10, 10)
+                },
+                new ImageView
+                {
+                    AnchorX = "25%",
+                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
+                },
+                new ImageView
+                {
+                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
+                },
+                new ImageView
+                {
+                    AnchorX = "75%",
+                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
                 }
             ]
         };

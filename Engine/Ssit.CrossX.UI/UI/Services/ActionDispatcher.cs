@@ -5,19 +5,25 @@ namespace Ssit.CrossX.UI.Services;
 
 internal class ActionDispatcher : IActionDispatcher
 {
-    private object _lock = new();
+    private readonly object _lock = new();
     
     private readonly List<Action> _actions = new();
+    private readonly List<Action> _tempList = new();
     
     public void Dispatch()
     {
         lock (_lock)
         {
-            foreach (var action in _actions)
-            {
-                action();
-            }
+            _tempList.Clear();
+            _tempList.AddRange(_actions);
+            _actions.Clear();
         }
+
+        foreach (var action in _tempList)
+        {
+            action();
+        }
+        _tempList.Clear();
     }
     
     public void Enqueue(Action action)

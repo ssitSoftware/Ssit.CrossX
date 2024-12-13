@@ -3,7 +3,7 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
-public class Label: View
+public class Label: Background
 {
     public SharedString Text { get; set; }
     
@@ -16,5 +16,5 @@ public class Label: View
     public FontDesc? Font { get; set; }
     
     public Thickness? Padding { get; set; }
-    public RgbaColor? BackgroundColor { get; set; }
+
 }

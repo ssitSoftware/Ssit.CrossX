@@ -86,7 +86,7 @@ public interface IRenderer
     /// <param name="outlineColor">The color to render the text outline. If null, no outline is rendered. Use for rendering multiline texts.</param>
     /// <param name="context">Rendering context for rendering cache.</param>
     void DrawText(IFont font, TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left, RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null);
-    
+
     /// <summary>
     /// Draws a texture at the specified target rectangle with optional source rectangle and effect.
     /// </summary>
@@ -94,13 +94,15 @@ public interface IRenderer
     /// <param name="targetRectangle">The destination rectangle on the screen.</param>
     /// <param name="sourceRectangle">The source rectangle from the texture. If null, the entire texture is used.</param>
     /// <param name="color">Color to multiply texture with.</param>
+    /// <param name="imageTransform"></param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">An optional effect to be applied to the texture.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
-    void DrawTexture(ITexture texture, Rectangle targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, 
+    void DrawTexture(ITexture texture, RectangleF targetRectangle, Rectangle? sourceRectangle = null, RgbaColor? color = null, 
+        ImageTransform imageTransform = ImageTransform.None,
         TextureFilter filter = TextureFilter.Nearest,
         IEffect effect = null, float depth = 0);
-    
+
     /// <summary>
     /// Draws the specified texture at a given position with optional parameters for the source rectangle, origin, rotation, scale, color, and effect.
     /// </summary>
@@ -111,11 +113,13 @@ public interface IRenderer
     /// <param name="rotation">The optional rotation angle in radians.</param>
     /// <param name="scale">The optional scale factor for rendering the texture.</param>
     /// <param name="color">The optional color to apply to the texture. If not provided, the default color will be used.</param>
+    /// <param name="imageTransform"></param>
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="effect">The optional effect to be applied during rendering.</param>
     /// <param name="depth">Z coordinate for drawing - useful in POV perspective and z-buffer based rendering.</param>
     void DrawTexture(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null,
         Vector2? origin = null, float rotation = 0, float scale = 1, RgbaColor? color = null,
+        ImageTransform imageTransform = ImageTransform.None,
         TextureFilter filter = TextureFilter.Nearest,
         IEffect effect = null, float depth = 0);
 

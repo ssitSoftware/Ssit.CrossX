@@ -8,7 +8,6 @@ using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
-using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.NET.Audio;
 using Ssit.CrossX.NET.Apple.Graphics;
@@ -78,7 +77,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         _metalView = new MTKView(Window!.Frame, MTLDevice.SystemDefault)
         {
             AutoresizingMask = UIViewAutoresizing.All,
-            SampleCount = 1,
+            SampleCount = (UIntPtr)1,
             DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8,
             ColorPixelFormat = MTLPixelFormat.BGRA8Unorm,
             PreferredFramesPerSecond = 60,
@@ -162,7 +161,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         {
             return;
         }
-        _app.Resize(new Size((int) size.Width, (int) size.Height));
+        _app.Resize(new Size((int) _metalView.Layer.Bounds.Width.Value, (int) _metalView.Layer.Bounds.Height.Value));
     }
 
     public void Draw(MTKView view)

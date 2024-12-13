@@ -28,6 +28,17 @@ public sealed class ImageSource: IDisposable
     public event Action ImageChanged;
 
     private bool _reload;
+
+    public bool IsLoading
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _loadTextureTask is not null;
+            }
+        }
+    }
     
     public ResourceHandle<ITexture> Texture
     {

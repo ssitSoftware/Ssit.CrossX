@@ -5,7 +5,7 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public abstract class TextBaseHandler<TTextView> : ViewHandler<TTextView> where TTextView: Label
+public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> where TTextView: Label
 {
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
@@ -194,14 +194,6 @@ public abstract class TextBaseHandler<TTextView> : ViewHandler<TTextView> where 
         else
         {
             verticalAlign = AttachedView.VerticalAlign.Value;
-        }
-    }
-
-    public override void Draw(IRenderer renderer)
-    {
-        if (AttachedView.BackgroundColor?.A > 0)
-        {
-            renderer.FillRectangle(ScreenBounds, AttachedView.BackgroundColor.Value);
         }
     }
 }

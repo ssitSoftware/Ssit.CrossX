@@ -124,8 +124,9 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
         TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(target.X + target.Width, target.Y, depth), color, t10));
     }
 
-    public virtual void DrawTexture(ITexture texture, Rectangle targetRectangle,
+    public virtual void DrawTexture(ITexture texture, RectangleF targetRectangle,
         Rectangle? sourceRectangle = null, RgbaColor? color = null,
+        ImageTransform imageTransform = ImageTransform.None,
         TextureFilter textureFilter = TextureFilter.Nearest, IEffect effect = null, float depth = 0)
     {
         if (CurrentBatchMode != BatchMode.TextureBuffer)
@@ -156,6 +157,32 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             t11 = new Vector2((float) sourceRectangle.Value.Right / texture.Size.Width, (float) sourceRectangle.Value.Bottom / texture.Size.Height);
             t01 = new Vector2((float) sourceRectangle.Value.X / texture.Size.Width, (float) sourceRectangle.Value.Bottom / texture.Size.Height);
         }
+
+        switch (imageTransform)
+        {
+            case ImageTransform.None:
+                break;
+            
+            case ImageTransform.Rotate90:
+                (t01, t11, t10, t00) = (t00, t01, t11, t10);
+                break;
+            
+            case ImageTransform.Rotate180:
+                (t11, t10, t00, t01) = (t00, t01, t11, t10);
+                break;
+            
+            case ImageTransform.Rotate270:
+                (t10, t00, t01, t11) = (t00, t01, t11, t10);
+                break;
+            
+            case ImageTransform.FlipHorizontal:
+                (t00, t01, t11, t10) = (t10, t11, t01, t00);
+                break;
+            
+            case ImageTransform.FlipVertical:
+                (t00, t01, t11, t10) = (t01, t00, t10, t11);
+                break;
+        }
         
         TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth), col, t00));
         TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y + targetRectangle.Height, depth), col, t01));
@@ -168,6 +195,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
 
     public virtual void DrawTexture(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null, Vector2? origin = null,
         float rotation = 0, float scale = 1, RgbaColor? color = null,
+        ImageTransform imageTransform = ImageTransform.None,
         TextureFilter textureFilter = TextureFilter.Nearest,
         IEffect effect = null, float depth = 0)
     {
@@ -203,13 +231,15 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
         position -= origin ?? Vector2.Zero;
         var targetRectangle = new RectangleF(position.X, position.Y, sourceRectangle?.Width ?? texture.Size.Width, sourceRectangle?.Height ?? texture.Size.Height);
         
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth), col, t00));
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y + targetRectangle.Height, depth), col, t01));
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y + targetRectangle.Height, depth), col, t11));
+        var matrix = RenderingHelpers.CreateTransform(targetRectangle, imageTransform);
         
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth), col, t00));
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y + targetRectangle.Height, depth), col, t11));
-        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y, depth), col, t10));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth).Prepare(ref matrix), col, t00));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y + targetRectangle.Height, depth).Prepare(ref matrix), col, t01));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y + targetRectangle.Height, depth).Prepare(ref matrix), col, t11));
+        
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth).Prepare(ref matrix), col, t00));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y + targetRectangle.Height, depth).Prepare(ref matrix), col, t11));
+        TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X + targetRectangle.Width, targetRectangle.Y, depth).Prepare(ref matrix), col, t10));
     }
 
     public virtual void FillRectangle(RectangleF rectangle, RgbaColor color, float depth = 0)

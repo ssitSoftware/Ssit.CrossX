@@ -13,6 +13,9 @@ public class MainPageViewModel
                                             "Maecenas consectetur risus vitae arcu bibendum congue. Cras quis nunc viverra, ultricies nibh quis, sollicitudin nulla. Mauris at purus nec est gravida aliquam eu eu sapien. Donec congue laoreet arcu ut porttitor. Pellentesque et elit id sem luctus posuere tristique in magna. Donec vel cursus felis. Nulla facilisi. Aliquam erat volutpat. Morbi id dui fermentum, dignissim metus eget, elementum neque. Donec in orci sed tellus dignissim laoreet vitae eget nisi.\n" +
                                             "Ut pellentesque ante eros, vel convallis diam varius eu. Morbi ut eros ac dolor commodo tempor. Vivamus at sagittis odio. Morbi eleifend, tortor non lacinia tincidunt, felis urna pretium dolor, id tincidunt purus quam vel velit. Ut convallis arcu dictum maximus cursus. Duis vel massa eu urna pharetra fermentum at id mauris. Sed id ultrices urna. Morbi diam risus, pulvinar vitae tortor ac, vestibulum dictum quam. Mauris arcu quam, dictum in tincidunt ac, malesuada in nisl. Pellentesque eleifend quam in mollis ultricies.\n" +
                                             "Nullam finibus commodo tincidunt. Vivamus iaculis congue laoreet. Integer rutrum sollicitudin dolor, consequat dapibus eros fringilla rutrum. Nam ipsum eros, sollicitudin ut turpis eget, aliquet fringilla felis. Praesent ut tempus lorem. Nunc viverra pretium leo, quis bibendum orci congue vel. Sed pretium bibendum velit, eu dignissim libero blandit a. Aenean ullamcorper et nibh nec dignissim. Praesent condimentum nibh sed faucibus iaculis. Nulla nec mauris erat. Fusce egestas urna ut augue ornare, non aliquet magna faucibus. Aliquam mauris erat, tristique ac enim non, consectetur feugiat ligula. In id tortor ac lorem cursus tincidunt.";
+
+    //public ImageSource Image { get; } = new Uri("https://picsum.photos/480/320", UriKind.Absolute);
+
     public MainPageViewModel(IActionDispatcher actionDispatcher)
     {
         UpdateTime();
@@ -21,6 +24,12 @@ public class MainPageViewModel
             while (true)
             {
                 actionDispatcher.Enqueue(UpdateTime);
+
+                // if (!Image.IsLoading)
+                // {
+                //     Image.SetSource(new Uri("https://picsum.photos/480/320", UriKind.Absolute));
+                // }
+                    
                 await Task.Delay(100);
             }
         });

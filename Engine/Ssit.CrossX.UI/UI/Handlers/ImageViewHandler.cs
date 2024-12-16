@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Parameters;
@@ -171,14 +172,58 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
                 break;
         }
         
+        targetRect = ScreenBounds;
+        var boundsSize = targetRect.Size;
         
+        Vector2 pos = Vector2.Zero;
         
-        sourceRect = new Rectangle(0, 0, size.Width, size.Height);
+        var ca = AttachedView?.ContentAlign ?? ContentAlign.Center | ContentAlign.VCenter;
+        
+        switch (ca & (ContentAlign.Center | ContentAlign.Right))
+        {
+            case ContentAlign.Center:
+                pos.X += (targetRect.Width - targetSize.Width) / 2;
+                break;
+            
+            case ContentAlign.Right:
+                pos.X += (targetRect.Width - targetSize.Width);
+                break;
+        }
+        
+        switch (ca & (ContentAlign.VCenter | ContentAlign.Bottom))
+        {
+            case ContentAlign.VCenter:
+                pos.Y += (targetRect.Height - targetSize.Height) / 2;
+                break;
+            
+            case ContentAlign.Bottom:
+                pos.Y += (targetRect.Height - targetSize.Height);
+                break;
+        }
+
+        targetRect = new RectangleF(pos, targetSize);
+
+        var tw = targetRect.Width + MathF.Min(targetRect.X, 0);
+        tw = MathF.Min(tw, boundsSize.Width);
+        
+        var th = targetRect.Height + MathF.Min(targetRect.Y, 0);
+        th = MathF.Min(th, boundsSize.Height);
+        
+        targetRect = new RectangleF(MathF.Max(targetRect.X, 0), MathF.Max(targetRect.Y, 0), tw, th);
+        
+        float scaleX = targetSize.Width / size.Width;
+        float scaleY = targetSize.Height / size.Height;
+
+        var offX = MathF.Max(0, -targetRect.X);
+        var offY = MathF.Max(0, -targetRect.Y);
+        
+        sourceRect = new Rectangle( (int)(offX / scaleX), (int)(offY / scaleY), (int)(targetRect.Width / scaleX), (int)(targetRect.Height / scaleY));
+        
         if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
         {
             sourceRect = new Rectangle(sourceRect.Y, sourceRect.X, sourceRect.Height, sourceRect.Width);
         }
 
-        targetRect = ScreenBounds;
+        targetRect = targetRect.Offset(ScreenBounds.TopLeft);
     }
 }

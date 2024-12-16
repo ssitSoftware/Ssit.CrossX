@@ -48,7 +48,7 @@ public sealed class ImageSource: IDisposable
             {
                 if (_loadTextureTask != null)
                 {
-                    throw new InvalidOperationException("Cannot change image while loading imag in background.");
+                    throw new InvalidOperationException("Cannot change image while loading image in background.");
                 }
                 
                 _texture?.Dispose();

@@ -13,21 +13,22 @@ public class MainPage: Page<MainPageViewModel>
 {
     protected override View CreateView()
     {
+        
         return new Container
         {
             Children = [
-                // new Label
-                // {
-                //     TextAlign = ContentAlign.Center | ContentAlign.VCenter,
-                //     AnchorY = 10,
-                //     VerticalAlign = Align.Start,
-                //     Text = "Current Time: " + ViewModel.Counter,
-                //     TextColor = RgbaColor.White,
-                //     TextOutlineColor = RgbaColor.Black,
-                //     Font = ("Default", 32),
-                //     BackgroundColor = RgbaColor.DarkRed,
-                //     Padding = (10, 10),
-                // },
+                new Label
+                {
+                    TextAlign = ContentAlign.Center | ContentAlign.VCenter,
+                    AnchorY = 10,
+                    VerticalAlign = Align.Start,
+                    Text = "Current Time: " + ViewModel.Counter,
+                    TextColor = RgbaColor.White,
+                    TextOutlineColor = RgbaColor.Black,
+                    Font = ("Default", 32),
+                    BackgroundColor = RgbaColor.DarkRed,
+                    Padding = (10, 10)
+                },
                 new TextView
                 {
                     BackgroundColor = RgbaColor.DarkRed,
@@ -36,7 +37,7 @@ public class MainPage: Page<MainPageViewModel>
                     HorizontalAlign = Align.Center,
                     VerticalAlign = Align.Start,
                     TextColor = RgbaColor.White,
-                    TextOutlineColor = RgbaColor.Black,
+                    TextOutlineColor = RgbaColor.Black,  
                     AnchorY = 100,
                     Width = "50%",
                     Font = ("Default", 24),
@@ -45,17 +46,13 @@ public class MainPage: Page<MainPageViewModel>
                 },
                 new ImageView
                 {
-                    AnchorX = "25%",
-                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
-                },
-                new ImageView
-                {
-                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
-                },
-                new ImageView
-                {
-                    AnchorX = "75%",
-                    Source = new Uri("https://picsum.photos/480/320", UriKind.Absolute)
+                    BackgroundColor = RgbaColor.Coral,
+                    Scaling = ImageScalingMode.AspectFill,
+                    Width = 960,
+                    Height = 960,
+                    HorizontalAlign = Align.Center,
+                    VerticalAlign = Align.Center,
+                    Source = new Uri("https://picsum.photos/id/368/1280/720", UriKind.Absolute)
                 }
             ]
         };

@@ -232,18 +232,8 @@ public readonly struct RectangleF: IEquatable<RectangleF>
     public static implicit operator RectangleF(Rectangle rect) =>
         new(rect.X, rect.Y, rect.Width, rect.Height);
 
-    public bool Equals(RectangleF other)
-    {
-        return X.Equals(other.X) && Y.Equals(other.Y) && Width.Equals(other.Width) && Height.Equals(other.Height);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return obj is RectangleF other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y, Width, Height);
-    }
+    public bool Equals(RectangleF other) => X.Equals(other.X) && Y.Equals(other.Y) && Width.Equals(other.Width) && Height.Equals(other.Height);
+    public override bool Equals(object obj) => obj is RectangleF other && Equals(other);
+    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+    public RectangleF Offset(Vector2 offset) => new(X + offset.X, Y + offset.Y, Width, Height);
 }

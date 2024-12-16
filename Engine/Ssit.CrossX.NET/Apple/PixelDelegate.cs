@@ -45,11 +45,9 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
 
     private IIoCContainer _services;
     private bool _isDisposed;
-
-    private bool _isActive = true;
     
-    public override void OnActivated(UIApplication application) => App?.SetActive(_isActive = true);
-    public override void OnResignActivation(UIApplication application) => App?.SetActive(_isActive = false);
+    public override void OnActivated(UIApplication application) => App?.SetActive(true);
+    public override void OnResignActivation(UIApplication application) => App?.SetActive(false);
 
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
@@ -80,7 +78,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             SampleCount = (UIntPtr)1,
             DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8,
             ColorPixelFormat = MTLPixelFormat.BGRA8Unorm,
-            PreferredFramesPerSecond = 60,
+            PreferredFramesPerSecond = (IntPtr)60,
             ClearColor = new MTLClearColor(0.0f, 0.0f, 0.0f, 1.0f),
             Delegate = this
         };

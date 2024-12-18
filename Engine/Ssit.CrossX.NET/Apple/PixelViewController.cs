@@ -1,15 +1,20 @@
 #if __IOS__ || __MACCATALYST__
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Numerics;
 using Foundation;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.Input.Internal;
+using Ssit.CrossX.NET.Apple.Input;
 using Ssit.CrossX.NET.Input;
 using UIKit;
 
 namespace Ssit.CrossX.NET.Apple;
 
-internal class PixelViewController : UIViewController
+internal sealed class PixelViewController : UIViewController
 {
     private static readonly Dictionary<UIKeyboardHidUsage, Key> KeyMapping = new()
     {
@@ -80,8 +85,63 @@ internal class PixelViewController : UIViewController
     
     private IApp _app;
     
-    private HashSet<UIKeyboardHidUsage> _pressedKeys = new();
+    private readonly HashSet<UIKeyboardHidUsage> _pressedKeys = new();
+    private int _nextTouchId = 1;
+    private readonly Dictionary<IntPtr, int> _touchIds = new();
     
+    public IPointingDevices PointingDevices => _pointingDevices;
+    private readonly PointingDevicesImpl _pointingDevices = new();
+    
+    private readonly List<Action> _updateActions = new();
+    private readonly List<Action> _tempUpdateActions = new();
+    private readonly Stopwatch _stopwatch = new();
+    
+    private Vector2? _lastHoverPosition;
+    private readonly UIHoverGestureRecognizer _hoverGestureRecognizer;
+    public PixelViewController()
+    {
+        _stopwatch.Start();
+
+        _hoverGestureRecognizer = new UIHoverGestureRecognizer(() => { });
+        _hoverGestureRecognizer.Enabled = true;
+        _hoverGestureRecognizer.DelaysTouchesEnded = false;
+        _hoverGestureRecognizer.DelaysTouchesBegan = false;
+        _hoverGestureRecognizer.CancelsTouchesInView = false;
+        
+        View?.AddGestureRecognizer(_hoverGestureRecognizer);
+    }
+
+    private bool HoverEvent(UIGestureRecognizer _, UIEvent @event)
+    {
+        foreach (var t in @event.AllTouches)
+        {
+            var touch = (UITouch)t;
+
+            var pt = touch.LocationInView(View);
+            var position = new Vector2((float) pt.X, (float) pt.Y) * (float)UIScreen.MainScreen.NativeScale;
+            
+            switch (touch.Phase)
+            {
+                case UITouchPhase.RegionEntered:
+                    _lastHoverPosition = position;
+                    return true;
+                
+                case UITouchPhase.RegionMoved:
+                    _lastHoverPosition = position;
+                    return true;
+                
+                case UITouchPhase.Moved:
+                    _lastHoverPosition = position;
+                    return true;
+                
+                case UITouchPhase.RegionExited:
+                    _lastHoverPosition = null;
+                    return true;
+            }
+        }
+        return true;
+    }
+
     public override void PressesBegan(NSSet<UIPress> presses, UIPressesEvent evt)
     {
         ProcessPress(presses, evt);
@@ -102,6 +162,85 @@ internal class PixelViewController : UIViewController
         ProcessPress(presses, evt);
     }
 
+    public override void TouchesBegan(NSSet touches, UIEvent evt)
+    {
+        base.TouchesBegan(touches, evt);
+        ProcessTouch(touches, evt);
+    }
+
+    public override void TouchesMoved(NSSet touches, UIEvent evt)
+    {
+        base.TouchesMoved(touches, evt);
+        ProcessTouch(touches, evt);
+    }
+
+    public override void TouchesCancelled(NSSet touches, UIEvent evt)
+    {
+        base.TouchesCancelled(touches, evt);
+        ProcessTouch(touches, evt);
+    }
+
+    public override void TouchesEnded(NSSet touches, UIEvent evt)
+    {
+        base.TouchesEnded(touches, evt);
+        ProcessTouch(touches, evt);
+    }
+
+    private void ProcessTouch(NSSet touches, UIEvent evt)
+    {
+        if (touches.Count == 0) return;
+        
+        foreach (var t in touches)
+        {
+            if (t is UITouch touch)
+            {
+                ProcessTouch(touch);
+            }
+        }
+    }
+
+    private int GetTouchId(IntPtr handle)
+    {
+        if (!_touchIds.TryGetValue(handle, out var touchId))
+        {
+            touchId = _nextTouchId++;
+            _touchIds.Add(handle, touchId);
+        }
+
+        return touchId;
+    }
+
+    private void RemoveTouchId(IntPtr handle) => _touchIds.Remove(handle);
+
+    private void ProcessTouch(UITouch touch)
+    {
+        var id = GetTouchId(touch.Handle.Handle);
+        var pt = touch.LocationInView(View);
+        var position = new Vector2((float) pt.X, (float) pt.Y) * (float)UIScreen.MainScreen.NativeScale;
+        
+        
+        switch (touch.Phase)
+        {
+            case UITouchPhase.Began:
+                _pointingDevices.TouchProcessor.AddEvent(TouchProcessor.TouchEventKind.Down, id, position, _stopwatch.Elapsed.TotalSeconds);
+                break;
+
+            case UITouchPhase.Moved:
+                _pointingDevices.TouchProcessor.AddEvent(TouchProcessor.TouchEventKind.Move, id, position, _stopwatch.Elapsed.TotalSeconds);
+                break;
+
+            case UITouchPhase.Cancelled:
+                _pointingDevices.TouchProcessor.AddEvent(TouchProcessor.TouchEventKind.Cancel, id, Vector2.Zero, _stopwatch.Elapsed.TotalSeconds);
+                RemoveTouchId(touch.Handle.Handle);
+                break;
+
+            case UITouchPhase.Ended:
+                _pointingDevices.TouchProcessor.AddEvent(TouchProcessor.TouchEventKind.Up, id, position, _stopwatch.Elapsed.TotalSeconds);
+                RemoveTouchId(touch.Handle.Handle);
+                break;
+        }
+    }
+
 #if !__MACCATALYST__
     public override bool PrefersStatusBarHidden()
     {
@@ -109,7 +248,6 @@ internal class PixelViewController : UIViewController
     }
 
     public override bool PrefersHomeIndicatorAutoHidden => true;
-
 #endif
 
     private void ProcessPress(NSSet<UIPress> presses, UIPressesEvent evt)
@@ -144,6 +282,22 @@ internal class PixelViewController : UIViewController
     }
 
     public void SetApp(IApp app) => _app = app;
+
+    public void ProcessTouches()
+    {
+        if (_hoverGestureRecognizer.State is UIGestureRecognizerState.Began or UIGestureRecognizerState.Changed)
+        {
+            var pt = _hoverGestureRecognizer.LocationInView(View);
+            var position = new Vector2((float)pt.X, (float)pt.Y) * (float)UIScreen.MainScreen.NativeScale;
+            _pointingDevices.UpdateHoverPosition(position);
+        }
+        else
+        {
+            _pointingDevices.UpdateHoverPosition(null);
+        }
+
+        _pointingDevices.TouchProcessor.ConsumeEvents();
+    }
 }
 
 #endif

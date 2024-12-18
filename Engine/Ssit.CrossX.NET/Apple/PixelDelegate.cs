@@ -102,6 +102,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             .WithImplementation<IRenderTarget, RenderTargetImpl>()
             .WithImplementation<IVertexBuffer, VertexBufferImpl>()
             .WithSingleton<IGameControllers, GameControllersImpl>()
+            .WithInstance(_pixelViewController.PointingDevices)
             .WithInstance(_windowParameters)
             .WithImplementation<ISoundEffect, SoundEffectImpl>()
             .WithOpenAl()
@@ -170,6 +171,8 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         }
         
         _pixelViewController.UpdateKeyboard(_keyboard);
+        
+        _pixelViewController.ProcessTouches();
         
         ((IApp)_app).Update(f => _eventSource.OnUpdate(f));
         

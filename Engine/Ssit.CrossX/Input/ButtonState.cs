@@ -29,6 +29,13 @@ public readonly struct ButtonState : IEquatable<ButtonState>
     public static readonly ButtonState Empty = new ();
 
     /// <summary>
+    /// Represents a state where the button is already pressed.
+    /// This state indicates that the button is pressed down
+    /// and that there hasn't been a state change.
+    /// </summary>
+    public static readonly ButtonState Down = new (true, false);
+    
+    /// <summary>
     /// Represents a state where the button has just been pressed.
     /// This state indicates that the button is currently pressed down
     /// and that there has been a state change.

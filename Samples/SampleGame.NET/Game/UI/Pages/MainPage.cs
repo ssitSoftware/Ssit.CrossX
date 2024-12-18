@@ -19,6 +19,17 @@ public class MainPage: Page<MainPageViewModel>
             Children = [
                 new Label
                 {
+                    TextAlign = ContentAlign.Left | ContentAlign.Top,
+                    HorizontalAlign = Align.Start,
+                    VerticalAlign = Align.Start,
+                    Text = "Position: " + ViewModel.Position,
+                    TextColor = RgbaColor.White,
+                    TextOutlineColor = RgbaColor.Black,
+                    Font = ("Default", 16),
+                    Padding = (10, 30)
+                },
+                new Label
+                {
                     TextAlign = ContentAlign.Center | ContentAlign.VCenter,
                     AnchorY = 10,
                     VerticalAlign = Align.Start,

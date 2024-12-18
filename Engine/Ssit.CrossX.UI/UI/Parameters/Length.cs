@@ -12,13 +12,15 @@ public struct Length
     
     public readonly float Value;
     public readonly float Percent;
+    public readonly float Pixels;
     
     public bool IsAuto => float.IsNaN(Value);
 
-    internal Length(float value, float percent = 0)
+    internal Length(float value = 0, float percent = 0, float pixels = 0)
     {
         Value = value;
         Percent = percent;
+        Pixels = pixels;
     }
 
     private static string[] Split(string str)
@@ -61,6 +63,7 @@ public struct Length
 
         float value = 0;
         float percent = 0;
+        float pixels = 0;
 
         float sign = 1;
 
@@ -91,6 +94,11 @@ public struct Length
                             percent += sign * float.Parse(part.Substring(0, part.Length - 1), NumberStyles.Float,
                                 CultureInfo.InvariantCulture) / 100f;
                         }
+                        else if (part.EndsWith("px"))
+                        {
+                            pixels += sign * float.Parse(part.Substring(0, part.Length - 2), NumberStyles.Float,
+                                CultureInfo.InvariantCulture) / 100f;
+                        }
                         else
                         {
                             value += sign * float.Parse(part, NumberStyles.Float, CultureInfo.InvariantCulture);
@@ -104,17 +112,17 @@ public struct Length
         Percent = percent;
     }
     
-    public float Calculate(float reference = 0)
+    public float Calculate(float scale, float reference)
     {
-        return IsAuto ? 0 : Value + Percent * reference;
+        return IsAuto ? 0 : Value * scale + Percent * reference + Pixels;
     }
     
     public static implicit operator Length(float value) => new(value);
     public static implicit operator Length(string str) => new Length(str);
 
     public static Length operator +(Length length, Length addend) =>
-        new Length(length.Value + addend.Value, length.Percent + addend.Percent);
+        new Length(length.Value + addend.Value, length.Percent + addend.Percent, length.Pixels + addend.Pixels);
     
     public static Length operator -(Length length, Length sub) =>
-        new Length(length.Value - sub.Value, length.Percent - sub.Percent);
+        new Length(length.Value - sub.Value, length.Percent - sub.Percent, length.Pixels - sub.Pixels);
 }

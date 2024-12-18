@@ -98,7 +98,7 @@ internal static class GlyphFontRenderer
 
     public static void CalculateText(IGlyphFont font, TextSource text, TextSpacing spacing, TextRenderingContext context)
     {
-        if(!context.IsValid(text, font, spacing))
+        if (!context.IsValid(text, font, spacing))
         {
             context.Update(text, font, spacing);
             CalculateLines(font, text, spacing, context);

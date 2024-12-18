@@ -10,7 +10,7 @@ using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.Game.UI.Pages;
 
-public class MainPage: Page<MainPageViewModel>
+public class MainPage: PageBase<MainPageViewModel>
 {
     protected override bool OnUiButton(UiButton button, IInputContext inputContext)
     {
@@ -35,23 +35,11 @@ public class MainPage: Page<MainPageViewModel>
     {
         return new Container
         {
-            Padding = (20, 20),
             Children = [
-                new Label
-                {
-                    TextAlign = ContentAlign.Left | ContentAlign.Top,
-                    HorizontalAlign = Align.Start,
-                    VerticalAlign = Align.Start,
-                    Text = "Position: " + ViewModel.Position,
-                    TextColor = RgbaColor.White,
-                    TextOutlineColor = RgbaColor.Black,
-                    Font = ("Default", 16),
-                    Padding = (10, 30),
-                },
-
                 new VerticalStack
                 {
-                    Padding = (32, 32),
+                    Padding = (20, 20),
+                    Spacing = 20,
                     BackgroundColor = RgbaColor.Brown,
                     VerticalAlign = Align.Center,
                     HorizontalAlign = Align.Center,

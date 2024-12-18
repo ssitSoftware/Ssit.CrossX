@@ -21,6 +21,16 @@ public abstract class ChildrenContainerHandler<TContainer>
 
     IReadOnlyList<ViewHandler> IChildrenContainer.Children => _childrenHandlersList;
 
+    TParent IViewParent.GetParent<TParent>()
+    {
+        if (this is TParent parent)
+        {
+            return parent;
+        }
+
+        return Parent.GetParent<TParent>();
+    }
+    
     RectangleF IViewParent.CalculateTargetBounds()
     {
         return CalculateTargetBounds(Bounds);
@@ -30,11 +40,11 @@ public abstract class ChildrenContainerHandler<TContainer>
     {
         var padding = AttachedView.Padding;
 
-        var left = padding?.Left?.Calculate(bounds.Width) ?? 0;
-        var right = padding?.Right?.Calculate(bounds.Width) ?? 0;
+        var left = padding?.Left?.Calculate(CurrentScale, bounds.Width) ?? 0;
+        var right = padding?.Right?.Calculate(CurrentScale, bounds.Width) ?? 0;
         
-        var top = padding?.Top?.Calculate(bounds.Height) ?? 0;
-        var bottom = padding?.Bottom?.Calculate(bounds.Height) ?? 0;
+        var top = padding?.Top?.Calculate(CurrentScale, bounds.Height) ?? 0;
+        var bottom = padding?.Bottom?.Calculate(CurrentScale, bounds.Height) ?? 0;
 
         return new RectangleF(left, top, bounds.Width - right - left, bounds.Height - bottom - top);
     }
@@ -71,21 +81,21 @@ public abstract class ChildrenContainerHandler<TContainer>
 
     public override void Update(float dt)
     {
-        UpdateCollection(_hasUnprocessedAddedChildren, _hasUnprocessedRemovedChildren);
-        RecalculateChildrenLayouts();
-
         for (var idx = 0; idx < AttachedView.Children.Count; idx++)
         {
             var child = AttachedView.Children[idx];
             var handlerView = (IHandlerView)child;
             handlerView.Handler.Update(dt);
         }
+        
+        UpdateCollection(_hasUnprocessedAddedChildren, _hasUnprocessedRemovedChildren);
+        RecalculateChildrenLayouts();
     }
 
     public override void SetBounds(RectangleF rectangleF)
     {
         base.SetBounds(rectangleF);
-        RecalculateChildren.UnionWith(AttachedView.Children);
+        RecalculateLayout();
     }
 
     protected override void OnDispose(bool disposing)
@@ -160,7 +170,7 @@ public abstract class ChildrenContainerHandler<TContainer>
     
     protected abstract void RecalculateChildrenLayouts();
     
-    public void RecalculateLayout(View view = null)
+    public virtual void RecalculateLayout(View view = null)
     {
         if (view is null)
         {
@@ -169,6 +179,14 @@ public abstract class ChildrenContainerHandler<TContainer>
         else
         {
             RecalculateChildren.Add(view);
+        }
+        
+        foreach (var child in RecalculateChildren)
+        {
+            if (child is IViewParent parent)
+            {
+                parent.RecalculateLayout();
+            }
         }
     }
 }

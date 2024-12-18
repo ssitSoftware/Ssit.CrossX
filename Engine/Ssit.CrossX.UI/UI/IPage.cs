@@ -6,7 +6,7 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI;
 
-internal interface IPage: IDisposable
+internal interface IPage: IViewParent, IDisposable
 {
     void Load(RectangleF bounds, IUiServices services, IInputContext inputContext, object viewModel);
     void Update(float dt);
@@ -17,4 +17,5 @@ internal interface IPage: IDisposable
     IFocusable FocusedElement { get; set; }
     float TransitionTime { get; set; }
     float TransitionProgress { get; set; }
+    float Scale { get; }
 }

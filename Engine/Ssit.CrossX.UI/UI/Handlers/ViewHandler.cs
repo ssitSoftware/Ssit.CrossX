@@ -22,6 +22,8 @@ public abstract class ViewHandler: IDisposable
     public RectangleF Bounds { get; private set; }
 
     public RectangleF ScreenBounds { get; private set; }
+
+    protected float CurrentScale => Parent.GetParent<IPage>().Scale;
     
     protected ViewHandler(Type type, CreateHandlerParameters parameters)
     {
@@ -33,7 +35,7 @@ public abstract class ViewHandler: IDisposable
         View.Handler = this;
     }
     
-    protected static Length CalculateLengthWithPadding(Length length, Length? pad1, Length? pad2)
+    protected Length CalculateLengthWithPadding(Length length, Length? pad1, Length? pad2)
     {
         var p1 = pad1 ?? Length.Zero;
         var p2 = pad2 ?? Length.Zero;
@@ -59,10 +61,10 @@ public abstract class ViewHandler: IDisposable
             throw new InvalidProgramException("Percent value of paddings cannot 100% or more!");
         }
 
-        var restSize = (length + add).Calculate(0);
+        var restSize = (length + add).Calculate(CurrentScale, 0);
         var totalSize = restSize / rest;
 
-        return totalSize;
+        return new Length(pixels: totalSize);
     }
     
     ~ViewHandler()

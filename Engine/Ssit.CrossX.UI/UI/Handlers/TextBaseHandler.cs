@@ -13,7 +13,6 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     protected virtual RgbaColor? TextColor => AttachedView.TextColor;
     protected virtual RgbaColor? TextOutlineColor => AttachedView.TextOutlineColor;
     
-    
     protected RectangleF TextRectangle
     {
         get
@@ -26,24 +25,24 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
 
             if (AttachedView.Padding?.Left.HasValue ?? false)
             {
-                width -= AttachedView.Padding.Value.Left.Value.Calculate(ScreenBounds.Width);
-                xx += AttachedView.Padding.Value.Left.Value.Calculate(ScreenBounds.Width);
+                width -= AttachedView.Padding.Value.Left.Value.Calculate(CurrentScale, ScreenBounds.Width);
+                xx += AttachedView.Padding.Value.Left.Value.Calculate(CurrentScale, ScreenBounds.Width);
             }
             
             if (AttachedView.Padding?.Right.HasValue ?? false)
             {
-                width -= AttachedView.Padding.Value.Right.Value.Calculate(ScreenBounds.Width);
+                width -= AttachedView.Padding.Value.Right.Value.Calculate(CurrentScale, ScreenBounds.Width);
             }
             
             if (AttachedView.Padding?.Top.HasValue ?? false)
             {
-                height -= AttachedView.Padding.Value.Top.Value.Calculate(ScreenBounds.Height);
-                yy += AttachedView.Padding.Value.Top.Value.Calculate(ScreenBounds.Height);
+                height -= AttachedView.Padding.Value.Top.Value.Calculate(CurrentScale, ScreenBounds.Height);
+                yy += AttachedView.Padding.Value.Top.Value.Calculate(CurrentScale, ScreenBounds.Height);
             }
             
             if (AttachedView.Padding?.Bottom.HasValue ?? false)
             {
-                height -= AttachedView.Padding.Value.Bottom.Value.Calculate(ScreenBounds.Height);
+                height -= AttachedView.Padding.Value.Bottom.Value.Calculate(CurrentScale, ScreenBounds.Height);
             }
             
             return new RectangleF(xx, yy, width, height);
@@ -66,7 +65,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
 
     protected IFont GetFont()
     {
-        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", AttachedView.Font?.FontSize ?? 12);
+        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", (int)MathF.Ceiling((AttachedView.Font?.FontSize ?? 12) * CurrentScale));
     }
     
     protected virtual void OnTextChanged()
@@ -120,13 +119,13 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         
         if (width.IsAuto)
         {
-            width = TextRenderingContext.Width;
+            width = new Length(pixels: TextRenderingContext.Width);
             width = CalculateLengthWithPadding(width, AttachedView.Padding?.Left, AttachedView.Padding?.Right);
         }
 
         if (height.IsAuto)
         {
-            height = TextRenderingContext.Height;
+            height = new Length(pixels: TextRenderingContext.Height);
             height = CalculateLengthWithPadding(height, AttachedView.Padding?.Top, AttachedView.Padding?.Bottom);
         }
     }

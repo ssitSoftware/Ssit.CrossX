@@ -15,6 +15,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container) : base(parameters, fontsManager)
     {
         _container = container;
+        OnTextChanged();
     }
 
     private void UpdateText()
@@ -22,7 +23,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
         var font = (IGlyphFont)GetFont();
         font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
 
-        var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(font.LineSize) ?? 0;
+        var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(CurrentScale, font.LineSize) ?? 0;
         
         CalculateSizeInternal(out var width, out var height);
         CalculateAlign(out var ha, out var va);
@@ -49,7 +50,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
         _recalculateVertices = true;
     }
     
-    protected override void OnTextChanged()
+    protected sealed override void OnTextChanged()
     {
         UpdateText();
         
@@ -72,11 +73,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
 
     public override void SetBounds(RectangleF rectangleF)
     {
-        var oldBounds = TextRectangle;
         base.SetBounds(rectangleF);
-        
-        CalculateSizeInternal(out var width, out var height);
-        CalculateAlign(out var ha, out var va);
 
         var oldWidth = TextRenderingContext.Width;
         var oldHeight = TextRenderingContext.Height;
@@ -142,7 +139,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
         _recalculateVertices = false;
         
         var font = (IGlyphFont)GetFont();
-        var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(font.LineSize) ?? 0;
+        var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(CurrentScale, font.LineSize) ?? 0;
         
         _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle, 
             AttachedView.TextAlign ?? ContentAlign.Left,

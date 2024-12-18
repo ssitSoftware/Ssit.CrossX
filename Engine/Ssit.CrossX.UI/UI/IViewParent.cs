@@ -7,4 +7,5 @@ public interface IViewParent
     RectangleF ScreenBounds { get; }
     void RecalculateLayout(View view = null);
     RectangleF CalculateTargetBounds();
+    TParent GetParent<TParent>() where TParent : class, IViewParent;
 }

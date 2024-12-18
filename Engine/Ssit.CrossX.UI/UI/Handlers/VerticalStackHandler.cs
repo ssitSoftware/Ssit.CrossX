@@ -36,19 +36,22 @@ public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParam
                 var handlerView = (IHandlerView)child;
                 handlerView.Handler.CalculateSize(out var w, out var h1);
 
-                h += h1.Calculate(0);
-                maxW = MathF.Max(maxW, w.Calculate());
+                h += h1.Calculate(CurrentScale, 0);
+                maxW = MathF.Max(maxW, w.Calculate(CurrentScale, 0));
             }
 
             if (height.IsAuto)
             {
-                height = new Length(h, 0);
+                var spaces = AttachedView.Children.Count - 1;
+                h += AttachedView?.Spacing?.Calculate(CurrentScale, 0) * spaces ?? 0;
+                
+                height = new Length(pixels: h);
                 height = CalculateLengthWithPadding(height, AttachedView.Padding?.Top, AttachedView.Padding?.Bottom);
             }
 
             if (width.IsAuto)
             {
-                width = new Length(maxW, 0);
+                width = new Length(pixels: maxW);
                 width = CalculateLengthWithPadding(width, AttachedView.Padding?.Left, AttachedView.Padding?.Right);
             }
         }
@@ -83,10 +86,10 @@ public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParam
             }
         }
         
-        var xx = bounds.X + x.Calculate(bounds.Width);
+        var xx = bounds.X + x.Calculate(CurrentScale, bounds.Width);
         var yy = bounds.Y + offsetY;
-        var ww = width.Calculate(bounds.Width);
-        var hh = height.Calculate(bounds.Height);
+        var ww = width.Calculate(CurrentScale, bounds.Width);
+        var hh = height.Calculate(CurrentScale, bounds.Height);
         
         switch (horizontalAlign)
         {
@@ -108,5 +111,19 @@ public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParam
         
         handlerView.Handler.SetBounds(new RectangleF(xx, yy, ww, hh));
         offsetY += hh;
+        offsetY += AttachedView?.Spacing?.Calculate(CurrentScale, 0) ?? 0;
+    }
+    
+    public override void RecalculateLayout(View view = null)
+    {
+        RecalculateChildren.UnionWith(AttachedView.Children);
+        
+        foreach (var child in RecalculateChildren)
+        {
+            if (child is IViewParent parent)
+            {
+                parent.RecalculateLayout();
+            }
+        }
     }
 }

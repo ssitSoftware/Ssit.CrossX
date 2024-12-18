@@ -62,11 +62,21 @@ internal class FontsManager: IFontsManager, IDisposable
 
     public IFont GetFont(string name, int size)
     {
+        var diff = int.MaxValue;
+        IFont retFont = null;
+        
         if (_fonts.TryGetValue(name, out var fonts))
         {
-            return fonts.FirstOrDefault(o => o.Size == size);
+            foreach (var font in fonts)
+            {
+                if (Math.Abs(font.Size - size) < diff)
+                {
+                    diff = Math.Abs(font.Size - size);
+                    retFont = font;
+                }
+            }
         }
 
-        return null;
+        return retFont;
     }
 }

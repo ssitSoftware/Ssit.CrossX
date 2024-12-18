@@ -33,16 +33,21 @@ public class TextRenderingContext
     {
         get
         {
-            if (_width < 0)
+            lock (this)
             {
-                _width = 0;
-                for (int i = 0; i < Lines.Count; i++)
+                if (_width < 0)
                 {
-                    _width = MathF.Max(Lines[i].Width, _width);
-                }
-            }
+                    var width = 0f;
+                    for (int i = 0; i < Lines.Count; i++)
+                    {
+                        width = MathF.Max(Lines[i].Width, width);
+                    }
 
-            return _width;
+                    _width = width;
+                }
+
+                return _width;
+            }
         }
     }
     
@@ -50,16 +55,21 @@ public class TextRenderingContext
     {
         get
         {
-            if (_height < 0)
+            lock (this)
             {
-                _height = Lines.Count * _font?.Metrics?.LineHeight ?? 0;
-                for (int idx = 0; idx < Lines.Count; idx++)
+                if (_height < 0)
                 {
-                    _height += Lines[idx].Spacing;
-                }
-            }
+                    float height = Lines.Count * _font?.Metrics?.LineHeight ?? 0;
+                    for (int idx = 0; idx < Lines.Count; idx++)
+                    {
+                        height += Lines[idx].Spacing;
+                    }
 
-            return _height;
+                    _height = height;
+                }
+
+                return _height;
+            }
         }
     }
 

@@ -67,10 +67,10 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
             }
         }
         
-        var xx = bounds.X + x.Calculate(bounds.Width);
-        var yy = bounds.Y + y.Calculate(bounds.Height);
-        var ww = width.Calculate(bounds.Width);
-        var hh = height.Calculate(bounds.Height);
+        var xx = bounds.X + x.Calculate(CurrentScale, bounds.Width);
+        var yy = bounds.Y + y.Calculate(CurrentScale, bounds.Height);
+        var ww = width.Calculate(CurrentScale, bounds.Width);
+        var hh = height.Calculate(CurrentScale, bounds.Height);
         
         switch (horizontalAlign)
         {

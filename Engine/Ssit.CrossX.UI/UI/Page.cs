@@ -9,7 +9,7 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI;
 
-public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewModel: class
+public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 {
     protected TViewModel ViewModel { get; private set; }
     protected IStylesManager Styles { get; private set; }
@@ -24,16 +24,31 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
     public float TransitionTime { get; set; } = 0;
     public float TransitionProgress { get; set; }
 
+    protected SizeF ScreenSize => _screenBounds.Size;
+    
     IFocusable IPage.FocusedElement
     {
         get => FocusedElement;
         set => FocusedElement = value;
     }
+
+    float IPage.Scale => Scale;
+    protected virtual float Scale => 1;
     
     RectangleF IViewParent.ScreenBounds => _screenBounds;
     
     ViewHandler IPage.RootHandler => _rootHandler;
 
+    TParent IViewParent.GetParent<TParent>()
+    {
+        if (this is TParent parent)
+        {
+            return parent;
+        }
+
+        throw new NotSupportedException();
+    }
+    
     RectangleF IViewParent.CalculateTargetBounds()
     {
         return _screenBounds;
@@ -54,8 +69,10 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
         var root = CreateView();
         _rootHandler = services.HandlerMapper.Create(root, this);
         
-        _rootHandler.SetBounds(new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
         _screenBounds = bounds;
+        
+        _rootHandler.SetBounds(new RectangleF(0, 0, bounds.Width, bounds.Height));
+        _recalculateLayout = true;
         
         OnLoad(inputContext);
     }
@@ -69,7 +86,7 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
     {
         if (_recalculateLayout)
         {
-            _rootHandler.SetBounds(new RectangleF(0,0,_screenBounds.Width, _screenBounds.Height));
+            _rootHandler.SetBounds(new RectangleF(0, 0,_screenBounds.Width, _screenBounds.Height));
             _recalculateLayout = false;
         }
         

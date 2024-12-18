@@ -78,3 +78,9 @@ public class AsyncCommand: IAsyncCommand
         }
     }
 }
+
+public class AsyncCommand<TParameter>(
+    Func<TParameter, Task> execute,
+    Func<TParameter, bool> canExecute = null,
+    Action<Exception> onException = null)
+    : AsyncCommand(o => execute((TParameter)o), o => canExecute((TParameter)o), onException);

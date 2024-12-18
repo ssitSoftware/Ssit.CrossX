@@ -1,16 +1,37 @@
-using System;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
-using Ssit.CrossX.UI.Values;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.Game.UI.Pages;
 
+public static class Styles
+{
+    public static LabelButton ApplyStyle(this LabelButton button)
+    {
+        button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
+        button.VerticalAlign = Align.Start;
+        button.Font = ("Default", 32);
+        button.Padding = (4, 4);
+        button.TextColor = RgbaColor.DarkGray;
+        button.HoverTextColor = RgbaColor.LightGray;
+        button.FocusedTextColor = RgbaColor.Yellow;
+        button.DisabledTextColor = new(0xff494949);
+        return button;
+    }
+}
+
 public class MainPage: Page<MainPageViewModel>
 {
+    protected override void OnLoad(IInputContext inputContext)
+    {
+        var focusable = inputContext.FindFocusable("Button1", this);
+        inputContext.Focus(focusable, this);
+    }
+
     protected override View CreateView()
     {
         
@@ -26,45 +47,32 @@ public class MainPage: Page<MainPageViewModel>
                     TextColor = RgbaColor.White,
                     TextOutlineColor = RgbaColor.Black,
                     Font = ("Default", 16),
-                    Padding = (10, 30)
+                    Padding = (10, 30),
                 },
-                new Label
+                new LabelButton
                 {
-                    TextAlign = ContentAlign.Center | ContentAlign.VCenter,
                     AnchorY = 10,
-                    VerticalAlign = Align.Start,
                     Text = "Current Time: " + ViewModel.Counter,
-                    TextColor = RgbaColor.White,
-                    TextOutlineColor = RgbaColor.Black,
-                    Font = ("Default", 32),
-                    BackgroundColor = RgbaColor.DarkRed,
-                    Padding = (10, 10)
-                },
-                new TextView
+                    UniqueId = "Button1",
+                    VerticalNavigation = ("Button3", "Button2"),
+                    Command = ViewModel.Button1Command
+                }.ApplyStyle(),
+                new LabelButton
                 {
-                    BackgroundColor = RgbaColor.DarkRed,
-                    Text = ViewModel.LongText,
-                    TextAlign = ContentAlign.Center | ContentAlign.Top,
-                    HorizontalAlign = Align.Center,
-                    VerticalAlign = Align.Start,
-                    TextColor = RgbaColor.White,
-                    TextOutlineColor = RgbaColor.Black,  
-                    AnchorY = 100,
-                    Width = "50%",
-                    Font = ("Default", 24),
-                    ParagraphSpacing = "50%",
-                    Padding = (10, 10)
-                },
-                new ImageView
+                    AnchorY = 80,
+                    Text = "Button 2",
+                    UniqueId = "Button2",
+                    VerticalNavigation = ("Button1", "Button3"),
+                    Command = ViewModel.Button2Command
+                }.ApplyStyle(),
+                new LabelButton
                 {
-                    BackgroundColor = RgbaColor.Coral,
-                    Scaling = ImageScalingMode.AspectFill,
-                    Width = 960,
-                    Height = 960,
-                    HorizontalAlign = Align.Center,
-                    VerticalAlign = Align.Center,
-                    Source = new Uri("https://picsum.photos/id/368/1280/720", UriKind.Absolute)
-                }
+                    AnchorY = 150,
+                    Text = "Przycisk ładny i piękny nr 3",
+                    UniqueId = "Button3",
+                    VerticalNavigation = ("Button2", "Button1"),
+                    Command = ViewModel.Button3Command
+                }.ApplyStyle()
             ]
         };
     }

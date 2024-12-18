@@ -1,8 +1,10 @@
+using System;
 using System.Diagnostics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI;
@@ -17,7 +19,20 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
     private RectangleF _screenBounds;
     private bool _recalculateLayout;
     
+    protected IFocusable FocusedElement { get; private set; }
+
+    public float TransitionTime { get; set; } = 0;
+    public float TransitionProgress { get; set; }
+
+    IFocusable IPage.FocusedElement
+    {
+        get => FocusedElement;
+        set => FocusedElement = value;
+    }
+    
     RectangleF IViewParent.ScreenBounds => _screenBounds;
+    
+    ViewHandler IPage.RootHandler => _rootHandler;
     
     public void RecalculateLayout(View view = null)
     {
@@ -25,7 +40,7 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
         _recalculateLayout = true;
     }
     
-    void IPage.Load(RectangleF bounds, IUiServices services, object viewModel)
+    void IPage.Load(RectangleF bounds, IUiServices services, IInputContext inputContext, object viewModel)
     {
         ViewModel = (TViewModel)viewModel;
         Styles = services.StylesManager;
@@ -36,6 +51,13 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
         
         _rootHandler.SetBounds(new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
         _screenBounds = bounds;
+        
+        OnLoad(inputContext);
+    }
+
+    protected virtual void OnLoad(IInputContext inputContext)
+    {
+        
     }
 
     void IPage.Update(float dt)
@@ -49,9 +71,32 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
         OnUpdate(dt);
     }
 
+    bool IPage.OnUiButton(UiButton button, IInputContext inputContext) => OnUiButton(button, inputContext);
+
     protected virtual void OnUpdate(float dt)
     {
         _rootHandler.Update(dt);
+    }
+
+    protected virtual bool OnUiButton(UiButton button, IInputContext inputContext)
+    {
+        if (button is UiButton.Back or UiButton.MenuOrBack)
+        {
+            return OnBack();
+        }
+
+        return false;
+    }
+
+    protected virtual bool OnBack()
+    {
+        if (ViewModel is IBackCommandSource bcs && (bcs.BackCommand?.CanExecute(null) ?? false))
+        {
+            bcs.BackCommand.Execute(null);
+            return true;
+        }
+        
+        return false;
     }
 
     void IPage.Draw(IRenderer renderer) => OnDraw(renderer);
@@ -71,7 +116,11 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
     {
         return _iocContainer.Get<TContainer>();
     }
-    
+
     protected abstract View CreateView();
-    
+
+    void IDisposable.Dispose()
+    {
+        _rootHandler.Dispose();
+    }
 }

@@ -16,5 +16,4 @@ public class Label: Background
     public FontDesc? Font { get; set; }
     
     public Thickness? Padding { get; set; }
-
 }

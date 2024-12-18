@@ -8,5 +8,5 @@ public interface IHandlerMapper
 {
     IHandlerMapper AddMapping<TView, TViewHandler>() where TView : View where TViewHandler : ViewHandler<TView>;
     Type GetMapping(Type viewType);
-    ViewHandler Create(View view, IViewParent parent = null);
+    ViewHandler Create(View view, IViewParent parent);
 }

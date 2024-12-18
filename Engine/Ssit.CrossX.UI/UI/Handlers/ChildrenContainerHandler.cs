@@ -8,14 +8,18 @@ using Ssit.CrossX.UI.Views;
 namespace Ssit.CrossX.UI.Handlers;
 
 public abstract class ChildrenContainerHandler<TContainer> 
-    : BackgroundHandler<TContainer>, IViewParent where TContainer : ChildrenContainer
+    : BackgroundHandler<TContainer>, IChildrenContainer, IViewParent where TContainer : ChildrenContainer
 {
     private readonly IHandlerMapper _handlerMapper;
     private readonly Dictionary<Guid, ViewHandler> _childrenHandlers = new();
+    private readonly List<ViewHandler> _childrenHandlersList = new();
+    
     protected readonly HashSet<View> RecalculateChildren = new();
     
     private bool _hasUnprocessedRemovedChildren;
     private bool _hasUnprocessedAddedChildren;
+
+    IReadOnlyList<ViewHandler> IChildrenContainer.Children => _childrenHandlersList;
 
     protected RectangleF CalculateTargetBounds(RectangleF bounds)
     {
@@ -82,6 +86,11 @@ public abstract class ChildrenContainerHandler<TContainer>
     protected override void OnDispose(bool disposing)
     {
         base.OnDispose(disposing);
+
+        foreach (var child in _childrenHandlersList)
+        {
+            child.Dispose();
+        }
         
         if (AttachedView.Children is INotifyCollectionChanged collection)
         {
@@ -121,6 +130,7 @@ public abstract class ChildrenContainerHandler<TContainer>
             foreach (var pair in toRemove)
             {
                 _childrenHandlers.Remove(pair.Item1);
+                _childrenHandlersList.Remove(pair.Item2);
                 pair.Item2.Dispose();
             }
         }
@@ -139,6 +149,7 @@ public abstract class ChildrenContainerHandler<TContainer>
     {
         var handler = _handlerMapper.Create(child, this);
         _childrenHandlers.Add(child.Guid, handler);
+        _childrenHandlersList.Add(handler);
         RecalculateChildren.Add(child);
     }
     

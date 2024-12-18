@@ -48,6 +48,8 @@ public abstract class View: IHandlerView
         internal get => _customHandlerType;
     }
     
+    public object CustomHandlerParameters { get; set; }
+    
     public void RecalculatePositionAndSize() => Handler?.RecalculatePositionAndSize();
 
     internal ViewHandler Handler { private get; set; }

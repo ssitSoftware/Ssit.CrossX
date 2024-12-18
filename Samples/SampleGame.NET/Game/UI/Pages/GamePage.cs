@@ -1,14 +1,9 @@
-using SampleGame.Game.UI.Handlers;
 using SampleGame.Game.UI.ViewModels;
+using Ssit.CrossX;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.Game.UI.Pages;
-
-public class Game
-{
-    
-}
 
 public class GamePage: Page<GamePageViewModel>
 {
@@ -17,11 +12,10 @@ public class GamePage: Page<GamePageViewModel>
         return new Container
         {
             Children = [
-                new CustomDataView<Game>
-                {
-                    Data = new Game(),
-                    CustomHandlerType = typeof(GameViewHandler)
-                }
+               new Background
+               {
+                   BackgroundColor = RgbaColor.Blue
+               }
             ]
         };
     }

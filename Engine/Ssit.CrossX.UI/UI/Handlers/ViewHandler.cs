@@ -38,6 +38,10 @@ public abstract class ViewHandler: IDisposable
         OnDispose(false);
     }
 
+    public virtual void Init()
+    {
+    }
+
     public virtual void SetBounds(RectangleF rectangleF)
     {
         Bounds = rectangleF;

@@ -54,7 +54,7 @@ public class TouchProcessor
 
     private readonly Dictionary<int, TouchEntry> _touches = new();
 
-    public float Scale { get; internal set; }
+    public float Scale { get; internal set; } = 1;
 
     public TouchProcessor(ITouchClient touchClient)
     {

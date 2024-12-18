@@ -23,12 +23,12 @@ public class SyncCommand: ICommand
         _canExecute = o => canExecute?.Invoke() ?? true;
     }
     
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object parameter = null)
     {
         return _canExecute?.Invoke(parameter) ?? true;
     }
 
-    public void Execute(object parameter)
+    public void Execute(object parameter = null)
     {
         if (CanExecute(parameter))
         {
@@ -36,3 +36,7 @@ public class SyncCommand: ICommand
         }
     }
 }
+
+public class SyncCommand<TParameter>(Action<TParameter> execute, Func<TParameter, bool> canExecute = null)
+    : SyncCommand(o => execute((TParameter)o),
+        o => canExecute?.Invoke((TParameter)o) ?? true);

@@ -4,7 +4,7 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class LabelHandler : TextBaseHandler<Label>
+public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
     public LabelHandler(ViewHandler.CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters, fontsManager)
     {
@@ -34,9 +34,9 @@ public class LabelHandler : TextBaseHandler<Label>
             text:AttachedView.Text,
             position: TextRectangle,
             align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
-            color: AttachedView.TextColor ?? RgbaColor.Transparent,
+            color: TextColor ?? RgbaColor.Transparent,
             spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
-            outlineColor: AttachedView.TextOutlineColor ?? RgbaColor.Transparent,
+            outlineColor: TextOutlineColor ?? RgbaColor.Transparent,
             context: TextRenderingContext);
     }
 }

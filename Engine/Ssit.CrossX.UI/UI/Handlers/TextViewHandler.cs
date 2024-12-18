@@ -117,8 +117,8 @@ public class TextViewHandler : TextBaseHandler<TextView>
 
         var font = (IGlyphFont)GetFont();
 
-        var textColor = AttachedView?.TextColor ?? RgbaColor.Transparent;
-        var outlineColor = AttachedView?.TextOutlineColor ?? RgbaColor.Transparent;
+        var textColor = TextColor ?? RgbaColor.Transparent;
+        var outlineColor = TextOutlineColor ?? RgbaColor.Transparent;
 
         if (textColor.A > 0)
         {

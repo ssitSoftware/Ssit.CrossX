@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Services;
@@ -24,11 +25,20 @@ public class MainPageViewModel
 
     //public ImageSource Image { get; } = new Uri("https://picsum.photos/480/320", UriKind.Absolute);
 
-    public MainPageViewModel(IActionDispatcher actionDispatcher, IEventSource eventSource, IPointingDevices pointingDevices )
+    public SyncCommand Button1Command { get; }
+    public SyncCommand Button2Command { get; }
+    public SyncCommand Button3Command { get; }
+    
+    public MainPageViewModel(IActionDispatcher actionDispatcher, IEventSource eventSource, IPointingDevices pointingDevices, INavigation navigation )
     {
+        Button1Command = new SyncCommand(o => { });
+        Button2Command = new SyncCommand(o => { }, o => false);
+        Button3Command = new SyncCommand(o => navigation.NavigateTo<GamePageViewModel>());
+        
         _eventSource = eventSource;
         _pointingDevices = pointingDevices;
         _eventSource.Updating += OnUpdating;
+        
         UpdateTime();
         Task.Run(async () =>
         {

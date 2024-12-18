@@ -6,6 +6,7 @@ public enum UiButton
     Right,
     Up,
     Down,
+    Select,
     Back,
     Menu,
     MenuOrBack

@@ -9,7 +9,9 @@ using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
+using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Views;
 using RectangleF = Ssit.CrossX.RectangleF;
 using Size = Ssit.CrossX.Size;
 
@@ -48,6 +50,10 @@ public class GameApp: PixelApp
         base.OnDispose(disposing);
         _uiApp.Dispose();
     }
+    
+    private void MapHandlers(IHandlerMapper mapper)
+    {
+    }
 
     protected override void OnInitialize(IIoCContainer container)
     {
@@ -72,8 +78,12 @@ public class GameApp: PixelApp
         fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
 
         _uiApp = container.InitializeUi(OnInitializeUi);
+
+        MapHandlers(_uiApp.Services.Get<IHandlerMapper>());
+        
         _uiApp.SetBounds(new RectangleF(0, 0, _renderer.TargetSize.Width, _renderer.TargetSize.Height));
         _uiApp.Navigation.NavigateTo<MainPageViewModel>();
+        
     }
 
     protected override void OnUpdate(float elapsedTime) => _uiApp.Update(elapsedTime);

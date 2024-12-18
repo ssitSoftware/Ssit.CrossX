@@ -41,7 +41,7 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
         }
     }
 
-    protected void OnPreUpdate()
+    public void OnPreUpdate()
     {
         for (var idx = 0; idx < _pointers.Count;)
         {

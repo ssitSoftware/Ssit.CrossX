@@ -10,6 +10,10 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
+    protected virtual RgbaColor? TextColor => AttachedView.TextColor;
+    protected virtual RgbaColor? TextOutlineColor => AttachedView.TextOutlineColor;
+    
+    
     protected RectangleF TextRectangle
     {
         get
@@ -53,6 +57,11 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         {
             AttachedView.Text.TextChanged += OnTextChanged;
         }
+    }
+
+    public override void Init()
+    {
+        OnTextChanged();
     }
 
     protected IFont GetFont()

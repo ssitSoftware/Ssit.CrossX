@@ -33,8 +33,8 @@ public static class UiBootstrapper
         MapHandlers(handlerMapper);
         
         var app = (UiApp)services.Get<IUiApp>();
-        app.Navigation = (Navigation)navigation;
-
+        app.Initialize((Navigation)navigation);
+        
         return app;
     }
 
@@ -43,7 +43,8 @@ public static class UiBootstrapper
         handlerMapper
             .AddMapping<Container, ContainerHandler>()
             .AddMapping<Background, BackgroundHandler>()
-            .AddMapping<Label, LabelHandler>()
+            .AddMapping<Label, LabelHandler<Label>>()
+            .AddMapping<LabelButton, LabelButtonHandler<LabelButton>>()
             .AddMapping<TextView, TextViewHandler>()
             .AddMapping<Button, ButtonHandler>()
             .AddMapping<ImageView, ImageViewHandler>();

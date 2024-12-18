@@ -40,11 +40,15 @@ internal class HandlerMapper : IHandlerMapper
 
     public ViewHandler Create(View view, IViewParent parent = null)
     {
-        var type = GetMapping(view.GetType());
-        return (ViewHandler)_iocContainer.IoCConstruct(type, new ViewHandler.CreateHandlerParameters
+        var type = view.CustomHandlerType ?? GetMapping(view.GetType());
+        
+        var handler = (ViewHandler)_iocContainer.IoCConstruct(type, new ViewHandler.CreateHandlerParameters
         {
             View = view,
             Parent = parent
         });
+        
+        handler.Init();
+        return handler;
     }
 }

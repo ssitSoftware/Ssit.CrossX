@@ -5,11 +5,13 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters) : ViewHandler<TBackground>(parameters) where TBackground: Background
 {
+    protected virtual RgbaColor? BackgroundColor => AttachedView.BackgroundColor;
+    
     public override void Draw(IRenderer renderer)
     {
-        if (AttachedView.BackgroundColor.HasValue)
+        if (BackgroundColor.HasValue)
         {
-            renderer.FillRectangle(ScreenBounds, AttachedView.BackgroundColor.Value);
+            renderer.FillRectangle(ScreenBounds, BackgroundColor.Value);
         }
     }
 }

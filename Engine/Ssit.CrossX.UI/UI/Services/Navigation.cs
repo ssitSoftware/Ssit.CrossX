@@ -9,6 +9,7 @@ internal class Navigation: INavigation
     private readonly NavigationMap _navigationMap;
     private readonly IIoCContainer _iocContainer;
     private readonly IUiServices _uiServices;
+    private readonly UiApp _uiApp;
     private readonly IUiAppBoundsSource _uiAppBoundsSource;
 
     private readonly Stack<object> _navigationStack = new();
@@ -23,8 +24,11 @@ internal class Navigation: INavigation
         _navigationMap = navigationMap;
         _iocContainer = iocContainer;
         _uiServices = uiServices;
+        _uiApp = uiApp as UiApp;
         _uiAppBoundsSource = uiApp as IUiAppBoundsSource;
     }
+
+    public int NavigationStackCount => _navigationStack.Count;
     
     public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
     {
@@ -34,6 +38,13 @@ internal class Navigation: INavigation
         var page = InitializePage(vm);
         PreviousPage = CurrentPage;
         CurrentPage = page;
+
+        if (PreviousPage != null)
+        {
+            PreviousPage.TransitionProgress = 1;
+        }
+        CurrentPage.TransitionProgress = 1;
+        
         PreviousPageOnTop = false;
     }
 
@@ -57,6 +68,12 @@ internal class Navigation: INavigation
         PreviousPage = CurrentPage;
         CurrentPage = page;
         PreviousPageOnTop = true;
+        
+        if (PreviousPage != null)
+        {
+            PreviousPage.TransitionProgress = 1;
+        }
+        CurrentPage.TransitionProgress = 1;
     }
 
     public void NavigateBackTo<TViewModel>() where TViewModel : class
@@ -93,6 +110,12 @@ internal class Navigation: INavigation
         PreviousPage = CurrentPage;
         CurrentPage = page;
         PreviousPageOnTop = true;
+        
+        if (PreviousPage != null)
+        {
+            PreviousPage.TransitionProgress = 1;
+        }
+        CurrentPage.TransitionProgress = 1;
     }
 
     private IPage InitializePage(object vm)
@@ -102,12 +125,18 @@ internal class Navigation: INavigation
         var page = (IPage)Activator.CreateInstance(pageType);
         if (page is null) throw new InvalidProgramException();
         
-        page.Load(_uiAppBoundsSource.Bounds, _uiServices, vm);
+        page.Load(_uiAppBoundsSource.Bounds, _uiServices, _uiApp.InputProcessor, vm);
         return page;
     }
 
     public void Update(float dt)
     {
+        if (PreviousPage?.TransitionProgress >= 1)
+        {
+            PreviousPage?.Dispose();
+            PreviousPage = null;
+        }
+        
         PreviousPage?.Update(dt);
         CurrentPage?.Update(dt);
 

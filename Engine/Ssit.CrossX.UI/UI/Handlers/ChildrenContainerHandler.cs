@@ -21,6 +21,11 @@ public abstract class ChildrenContainerHandler<TContainer>
 
     IReadOnlyList<ViewHandler> IChildrenContainer.Children => _childrenHandlersList;
 
+    RectangleF IViewParent.CalculateTargetBounds()
+    {
+        return CalculateTargetBounds(Bounds);
+    }
+    
     protected RectangleF CalculateTargetBounds(RectangleF bounds)
     {
         var padding = AttachedView.Padding;
@@ -31,7 +36,7 @@ public abstract class ChildrenContainerHandler<TContainer>
         var top = padding?.Top?.Calculate(bounds.Height) ?? 0;
         var bottom = padding?.Bottom?.Calculate(bounds.Height) ?? 0;
 
-        return new RectangleF(left + bounds.X, top + bounds.Y, bounds.Width - right - left, bounds.Height - bottom - top);
+        return new RectangleF(left, top, bounds.Width - right - left, bounds.Height - bottom - top);
     }
     
     protected ChildrenContainerHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper) : base(parameters)

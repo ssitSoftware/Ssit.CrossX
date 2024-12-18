@@ -4,3 +4,7 @@ public class Container: ChildrenContainer
 {
     
 }
+
+public class VerticalStack : ChildrenContainer
+{
+}

@@ -296,8 +296,8 @@ internal sealed class PixelViewController : UIViewController
             _pointingDevices.UpdateHoverPosition(null);
         }
 
-        _pointingDevices.TouchProcessor.ConsumeEvents();
         _pointingDevices.OnPreUpdate();
+        _pointingDevices.TouchProcessor.ConsumeEvents();
     }
 }
 

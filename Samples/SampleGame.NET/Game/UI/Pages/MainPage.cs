@@ -1,42 +1,41 @@
+using SampleGame.Game.UI.Styles;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.Game.UI.Pages;
 
-public static class Styles
-{
-    public static LabelButton ApplyStyle(this LabelButton button)
-    {
-        button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
-        button.VerticalAlign = Align.Start;
-        button.Font = ("Default", 32);
-        button.Padding = (4, 4);
-        button.TextColor = RgbaColor.DarkGray;
-        button.HoverTextColor = RgbaColor.LightGray;
-        button.FocusedTextColor = RgbaColor.Yellow;
-        button.DisabledTextColor = new(0xff494949);
-        return button;
-    }
-}
-
 public class MainPage: Page<MainPageViewModel>
 {
-    protected override void OnLoad(IInputContext inputContext)
+    protected override bool OnUiButton(UiButton button, IInputContext inputContext)
     {
-        var focusable = inputContext.FindFocusable("Button1", this);
-        inputContext.Focus(focusable, this);
+        switch (button)
+        {
+            case UiButton.Down:
+            case UiButton.Up:
+
+                if (FocusedElement is null)
+                {
+                    var focusable = inputContext.FindFocusable("Button1", this);
+                    inputContext.Focus(focusable, this);
+                    return true;
+                }
+                break;
+        }
+        
+        return base.OnUiButton(button, inputContext);
     }
 
     protected override View CreateView()
     {
-        
         return new Container
         {
+            Padding = (20, 20),
             Children = [
                 new Label
                 {
@@ -49,30 +48,39 @@ public class MainPage: Page<MainPageViewModel>
                     Font = ("Default", 16),
                     Padding = (10, 30),
                 },
-                new LabelButton
+
+                new VerticalStack
                 {
-                    AnchorY = 10,
-                    Text = "Current Time: " + ViewModel.Counter,
-                    UniqueId = "Button1",
-                    VerticalNavigation = ("Button3", "Button2"),
-                    Command = ViewModel.Button1Command
-                }.ApplyStyle(),
-                new LabelButton
-                {
-                    AnchorY = 80,
-                    Text = "Button 2",
-                    UniqueId = "Button2",
-                    VerticalNavigation = ("Button1", "Button3"),
-                    Command = ViewModel.Button2Command
-                }.ApplyStyle(),
-                new LabelButton
-                {
-                    AnchorY = 150,
-                    Text = "Przycisk ładny i piękny nr 3",
-                    UniqueId = "Button3",
-                    VerticalNavigation = ("Button2", "Button1"),
-                    Command = ViewModel.Button3Command
-                }.ApplyStyle()
+                    Padding = (32, 32),
+                    BackgroundColor = RgbaColor.Brown,
+                    VerticalAlign = Align.Center,
+                    HorizontalAlign = Align.Center,
+                    Children = [
+                        new LabelButton
+                        {
+                            Text = "New Game",
+                            UniqueId = "Button1",
+                            VerticalNavigation = ("Button3", "Button2"),
+                            Command = ViewModel.Button1Command
+                        }.WithDefaultStyle(),
+
+                        new LabelButton
+                        {
+                            Text = "Options",
+                            UniqueId = "Button2",
+                            VerticalNavigation = ("Button1", "Button3"),
+                            Command = ViewModel.Button2Command
+                        }.WithDefaultStyle(),
+
+                        new LabelButton
+                        {
+                            Text = "Credits",
+                            UniqueId = "Button3",
+                            VerticalNavigation = ("Button2", "Button1"),
+                            Command = ViewModel.Button3Command
+                        }.WithDefaultStyle()
+                    ]
+                }
             ]
         };
     }

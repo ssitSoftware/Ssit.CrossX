@@ -125,6 +125,7 @@ internal sealed class InputProcessor: IInputContext
             if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
             {
                 ProcessCapturedPointers();
+                _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId,this);
                 if (page != _navigation.CurrentPage) return;
                 break;
             }
@@ -258,6 +259,8 @@ internal sealed class InputProcessor: IInputContext
     public IFocusable FindFocusable(string uniqueId, object caller)
     {
         var page = GetPage(caller);
+
+        if (uniqueId == null) return page.FocusedElement;
         return FindFocusable(page.RootHandler, uniqueId);
     }
     

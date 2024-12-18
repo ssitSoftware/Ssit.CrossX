@@ -33,6 +33,38 @@ public abstract class ViewHandler: IDisposable
         View.Handler = this;
     }
     
+    protected static Length CalculateLengthWithPadding(Length length, Length? pad1, Length? pad2)
+    {
+        var p1 = pad1 ?? Length.Zero;
+        var p2 = pad2 ?? Length.Zero;
+
+        if (p1.IsAuto)
+        {
+            p1 = Length.Zero;
+        }
+        
+        if (p2.IsAuto)
+        {
+            p2 = Length.Zero;
+        }
+
+        var add = Length.Zero;
+        add += p1.Value + p2.Value;
+
+        var percent = p1.Percent + p2.Percent;
+
+        var rest = 1 - percent;
+        if (rest <= 0)
+        {
+            throw new InvalidProgramException("Percent value of paddings cannot 100% or more!");
+        }
+
+        var restSize = (length + add).Calculate(0);
+        var totalSize = restSize / rest;
+
+        return totalSize;
+    }
+    
     ~ViewHandler()
     {
         OnDispose(false);

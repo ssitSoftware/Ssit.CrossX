@@ -1,0 +1,112 @@
+using System;
+using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Views;
+
+namespace Ssit.CrossX.UI.Handlers;
+
+public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper)
+    : ChildrenContainerHandler<TVerticalStack>(parameters, handlerMapper) where TVerticalStack: VerticalStack
+{
+    protected override void RecalculateChildrenLayouts()
+    {
+        if (RecalculateChildren.Count == 0)
+            return;
+
+        var offsetY = 0f;
+        foreach (var child in RecalculateChildren)
+        {
+            CalculateChildPosition(child, ref offsetY);
+        }
+        RecalculateChildren.Clear();
+    }
+
+    public override void CalculateSize(out Length width, out Length height)
+    {
+        width = View.Width ?? Length.Auto;
+        height = View.Height ?? Length.Auto;
+        
+        if (height.IsAuto || width.IsAuto)
+        {
+            float h = 0;
+            float maxW = 0;
+
+            foreach (var child in AttachedView.Children)
+            {
+                var handlerView = (IHandlerView)child;
+                handlerView.Handler.CalculateSize(out var w, out var h1);
+
+                h += h1.Calculate(0);
+                maxW = MathF.Max(maxW, w.Calculate());
+            }
+
+            if (height.IsAuto)
+            {
+                height = new Length(h, 0);
+                height = CalculateLengthWithPadding(height, AttachedView.Padding?.Top, AttachedView.Padding?.Bottom);
+            }
+
+            if (width.IsAuto)
+            {
+                width = new Length(maxW, 0);
+                width = CalculateLengthWithPadding(width, AttachedView.Padding?.Left, AttachedView.Padding?.Right);
+            }
+        }
+    }
+
+    private void CalculateChildPosition(View child, ref float offsetY)
+    {
+        var handlerView = (IHandlerView)child;
+        
+        var x = child.AnchorX ?? Length.Auto;
+
+        handlerView.Handler.CalculateSize(out var width, out var height);
+        handlerView.Handler.CalculateAlign(out var horizontalAlign, out var _);
+
+        var bounds = CalculateTargetBounds(Bounds);
+
+        if (x.IsAuto)
+        {
+            switch (horizontalAlign)
+            {
+                case Align.End:
+                    x = Length.Fill;
+                    break;
+                
+                case Align.Center:
+                    x = new Length(0, 0.5f);
+                    break;
+                
+                case Align.Fill:
+                    x = Length.Zero;
+                    break;
+            }
+        }
+        
+        var xx = bounds.X + x.Calculate(bounds.Width);
+        var yy = bounds.Y + offsetY;
+        var ww = width.Calculate(bounds.Width);
+        var hh = height.Calculate(bounds.Height);
+        
+        switch (horizontalAlign)
+        {
+            case Align.Fill:
+                ww = bounds.Width;
+                break;
+            
+            case Align.Start:
+                break;
+            
+            case Align.Center:
+                xx -= ww / 2f;
+                break;
+            
+            case Align.End:
+                xx -= ww;
+                break;
+        }
+        
+        handlerView.Handler.SetBounds(new RectangleF(xx, yy, ww, hh));
+        offsetY += hh;
+    }
+}

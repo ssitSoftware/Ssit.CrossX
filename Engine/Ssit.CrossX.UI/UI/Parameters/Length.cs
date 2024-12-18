@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -20,6 +21,23 @@ public struct Length
         Percent = percent;
     }
 
+    private static string[] Split(string str)
+    {
+        var list = new List<string>();
+        var startIndex = 0;
+        for(var idx =0; idx < str.Length; ++idx)
+        {
+            if (str[idx] == '+' || str[idx] == '-')
+            {
+                list.Add(str.Substring(startIndex, idx - startIndex));
+                list.Add(str[idx].ToString());
+                startIndex = idx + 1;
+            }
+        }
+        list.Add(str.Substring(startIndex, str.Length - startIndex));
+        return list.ToArray();
+    }
+    
     private Length(string str)
     {
         if (str.ToLowerInvariant() == "auto")
@@ -39,7 +57,7 @@ public struct Length
             return;
         }
         
-        var parts = Regex.Split(str, @"(?<=[+-])");
+        var parts = Split(str);
 
         float value = 0;
         float percent = 0;

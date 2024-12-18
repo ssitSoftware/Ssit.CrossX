@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace Ssit.CrossX.UI.Views;
 
-public class LabelButton: Label
+public class LabelButton: Label, IButtonView
 {
     public RgbaColor? DisabledTextColor { get; set; }
     public RgbaColor? DisabledTextOutlineColor { get; set; }

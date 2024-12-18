@@ -33,6 +33,11 @@ public abstract class Page<TViewModel>: View, IPage, IViewParent where TViewMode
     RectangleF IViewParent.ScreenBounds => _screenBounds;
     
     ViewHandler IPage.RootHandler => _rootHandler;
+
+    RectangleF IViewParent.CalculateTargetBounds()
+    {
+        return _screenBounds;
+    }
     
     public void RecalculateLayout(View view = null)
     {

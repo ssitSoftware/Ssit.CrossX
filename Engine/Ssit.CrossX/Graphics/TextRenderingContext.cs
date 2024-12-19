@@ -138,7 +138,12 @@ public class TextRenderingContext
     {
         if (_targetWidth != targetWidth)
         {
-            return false;
+            if(_targetWidth != 0) return false;
+
+            if (targetWidth > 0 && Width > targetWidth + font.Metrics.WhitespaceWidth)
+            {
+                return false;
+            }
         }
         
         if (spacing != _spacing)

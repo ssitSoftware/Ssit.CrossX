@@ -77,7 +77,7 @@ public static class RendererExtensions
             list.Add(new VertexPositionColorTexture(new Vector3(targetRect.X + targetRect.Width, targetRect.Y, depth0), color, t10));
         }
         
-        GlyphFontRenderer.RenderText(DrawAction, font.FontSheet, context.Font, context.Lines, position, align, RgbaColor.White, spacing, context.Width, context.Height, depth);
+        GlyphFontRenderer.RenderText(DrawAction, font.FontSheet, context.Font, context.Lines, position, align, RgbaColor.White, spacing, context.TargetWidth, context.Height, depth);
 
         var buffers = (int)Math.Ceiling(list.Count / (double)maxBufferSize);
 

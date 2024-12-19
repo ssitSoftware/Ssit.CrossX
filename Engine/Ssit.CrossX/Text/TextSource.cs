@@ -53,7 +53,7 @@ public readonly struct TextSource
         Length = Math.Min(Length, source.Length - start);
     }
     
-    public char this[int index] =>
+    public char this[int index] => index >= Length ? '\0' :
         _provider is not null ? _provider[index + _start] : _builder is not null ? _builder[index + _start] : _string[index + _start];
 
     public override string ToString()

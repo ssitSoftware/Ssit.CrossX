@@ -18,6 +18,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private ViewHandler _rootHandler;
     private RectangleF _screenBounds;
     private bool _recalculateLayout;
+    private bool _recalculationNeeded = false;
+    protected IIoCContainer Services => _iocContainer;
     
     protected IFocusable FocusedElement { get; private set; }
 
@@ -33,11 +35,15 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     }
 
     float IPage.Scale => Scale;
+    void IPage.SignalRecalculationPending() => _recalculationNeeded = true;
+    
     protected virtual float Scale => 1;
     
     RectangleF IViewParent.ScreenBounds => _screenBounds;
     
     ViewHandler IPage.RootHandler => _rootHandler;
+
+    private int _skipFrames = 5;
 
     TParent IViewParent.GetParent<TParent>()
     {
@@ -58,6 +64,13 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     {
         Debug.Assert(view == null || view == _rootHandler.View);
         _recalculateLayout = true;
+
+        if (view is IViewParent parent)
+        {
+            parent.RecalculateLayout();
+        }
+        
+        _recalculationNeeded = true;
     }
     
     void IPage.Load(RectangleF bounds, IUiServices services, IInputContext inputContext, object viewModel)
@@ -91,6 +104,12 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         }
         
         OnUpdate(dt);
+
+        while (_recalculationNeeded)
+        {
+            _recalculationNeeded = false;
+            _rootHandler.Update(dt);
+        }
     }
 
     bool IPage.OnUiButton(UiButton button, IInputContext inputContext) => OnUiButton(button, inputContext);
@@ -102,9 +121,16 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected virtual bool OnUiButton(UiButton button, IInputContext inputContext)
     {
-        if (button is UiButton.Back or UiButton.MenuOrBack)
+        switch (button)
         {
-            return OnBack();
+            case UiButton.Back:
+                return OnBack();
+            
+            case UiButton.Menu:
+                return OnMenu();
+            
+            case UiButton.MenuOrBack:
+                return OnMenu() || OnBack();
         }
 
         return false;
@@ -112,9 +138,20 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected virtual bool OnBack()
     {
-        if (ViewModel is IBackCommandSource bcs && (bcs.BackCommand?.CanExecute(null) ?? false))
+        if (ViewModel is IPageCommandsSource bcs && (bcs.BackCommand?.CanExecute(null) ?? false))
         {
             bcs.BackCommand.Execute(null);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    protected virtual bool OnMenu()
+    {
+        if (ViewModel is IPageCommandsSource bcs && (bcs.MenuCommand?.CanExecute(null) ?? false))
+        {
+            bcs.MenuCommand.Execute(null);
             return true;
         }
         

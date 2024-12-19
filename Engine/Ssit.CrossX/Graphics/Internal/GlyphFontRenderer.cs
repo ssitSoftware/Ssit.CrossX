@@ -126,24 +126,39 @@ internal static class GlyphFontRenderer
 
         var newLineSpacing = 0f;
         
-        for (var idx = 0; idx < text.Length; ++idx)
+        for (var idx = 0; idx < text.Length + 1; ++idx)
         {
-            if (text[idx] == '\n')
+            if (text[idx] == '\n' || text[idx] == '\0')
             {
-                var line = GetLine(text, start, idx - start, font, spacing);
-                line.Spacing = newLineSpacing;
-                line.EndOfParagraph = true;
-                newLineSpacing = paragraphSpacing;
-                start = idx + 1;
-                lastSmaller = start;
-                context.Lines.Add(line);
+                var width = MeasureWidth(font, new TextSource(text, start, idx - start), spacing);
+
+                if (width < maxWidth)
+                {
+                    var line = GetLine(text, start, idx - start, font, spacing);
+                    line.Spacing = newLineSpacing;
+                    line.EndOfParagraph = true;
+                    newLineSpacing = paragraphSpacing;
+                    start = idx + 1;
+                    lastSmaller = start;
+                    context.Lines.Add(line);
+                }
+                else if (lastSmaller > start)
+                {
+                    var line = GetLine(text, start, lastSmaller - start, font, spacing);
+                    line.Spacing = newLineSpacing;
+                    newLineSpacing = 0;
+                    start = lastSmaller + 1;
+                    lastSmaller = start;
+                    idx = start;
+                    context.Lines.Add(line);
+                }
                 continue;
             }
 
             if (font.GetGlyph(text[idx]) == null)
             {
                 var width = MeasureWidth(font, new TextSource(text, start, idx - start), spacing);
-                if (width <= maxWidth)
+                if (width < maxWidth)
                 {
                     lastSmaller = idx;
                 }
@@ -157,6 +172,10 @@ internal static class GlyphFontRenderer
                         start = lastSmaller + 1;
                         idx = start;
                         context.Lines.Add(line);
+                        if(MathF.Floor(line.Width) > maxWidth)
+                        {
+                            Console.WriteLine();
+                        }
                     }
                     else
                     {
@@ -167,15 +186,14 @@ internal static class GlyphFontRenderer
                         start = idx + 1;
                         lastSmaller = start;
                         context.Lines.Add(line);
+                        if(MathF.Floor(line.Width) > maxWidth)
+                        {
+                            Console.WriteLine();
+                        }
                     }
                 }
             }
         }
-        
-        var line3 = GetLine(text, start, text.Length - start, font, spacing);
-        line3.EndOfParagraph = true;
-        line3.Spacing = newLineSpacing;
-        context.Lines.Add(line3);
     }
 
     internal static void RenderText(DrawTextureQuadDelegate drawDelegate, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
@@ -193,7 +211,7 @@ internal static class GlyphFontRenderer
 
             var whitespaceSize = font.Metrics.WhitespaceWidth + additionalSpacing;
 
-            if ((align & ContentAlign.Justified) == ContentAlign.Justified && line is { Whitespaces: > 0, EndOfParagraph: false })
+            if ((align & ContentAlign.Justified) == ContentAlign.Justified && line is { Whitespaces: > 0, EndOfParagraph: false } && line.Width < justifyWidth + whitespaceSize)
             {
                 var lineWidthNoSpaces = line.Width - line.Whitespaces * whitespaceSize;
                 whitespaceSize = (justifyWidth - lineWidthNoSpaces) / line.Whitespaces;

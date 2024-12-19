@@ -107,7 +107,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     {
         base.Draw(renderer);
         
-        if ( _recalculateVertices)
+        if ( _recalculateVertices || _vertexBuffers == null)
         {
             RecalculateVertices();
         }

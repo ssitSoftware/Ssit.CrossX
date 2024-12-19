@@ -29,6 +29,8 @@ public class TextRenderingContext
 
     internal IGlyphFont Font => _font;
     
+    public float TargetWidth => _targetWidth;
+    
     public float Width
     {
         get

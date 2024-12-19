@@ -2,7 +2,6 @@ using SampleGame.Game.UI.Styles;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -14,20 +13,12 @@ public class MainPage: PageBase<MainPageViewModel>
 {
     protected override bool OnUiButton(UiButton button, IInputContext inputContext)
     {
-        switch (button)
+        if (FocusedElement is null)
         {
-            case UiButton.Down:
-            case UiButton.Up:
-
-                if (FocusedElement is null)
-                {
-                    var focusable = inputContext.FindFocusable("Button1", this);
-                    inputContext.Focus(focusable, this);
-                    return true;
-                }
-                break;
+            var focusable = inputContext.FindFocusable("Button1", this);
+            inputContext.Focus(focusable, this);
+            return true;
         }
-        
         return base.OnUiButton(button, inputContext);
     }
 
@@ -35,7 +26,28 @@ public class MainPage: PageBase<MainPageViewModel>
     {
         return new Container
         {
+            Padding = (10,10),
             Children = [
+                
+                new ScrollView
+                {
+                    BackgroundColor = new (0xff202020),
+                    Width="50%",
+                    Height = "50%",
+                    HorizontalAlign = Align.Center,
+                    VerticalAlign = Align.Start,
+                    ScrollMode  = ScrollMode.Vertical,
+                    ContentView = new TextView
+                    {
+                        BackgroundColor = new (0xff404040),
+                        Text = ViewModel.LongDesc,
+                        TextAlign = ContentAlign.Justified | ContentAlign.Top,
+                        HorizontalAlign = Align.Fill,
+                        VerticalAlign = Align.Start,
+                        TextColor = RgbaColor.White,
+                        Padding = (10, 10)
+                    }
+                },
                 new VerticalStack
                 {
                     Padding = (20, 20),

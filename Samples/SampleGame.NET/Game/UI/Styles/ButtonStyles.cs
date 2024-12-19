@@ -12,7 +12,6 @@ public static class ButtonStyles
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Start;
         button.HorizontalAlign = Align.Center;
-        button.BackgroundColor = RgbaColor.Chartreuse;
         button.Height = 50;
         button.Font = ("Default", 16);
         button.Padding = (16, 16);

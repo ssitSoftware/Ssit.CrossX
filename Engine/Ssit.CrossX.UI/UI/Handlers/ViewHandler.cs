@@ -124,6 +124,15 @@ public abstract class ViewHandler: IDisposable
         horizontalAlign = View.HorizontalAlign ?? Align.Fill;
         verticalAlign = View.VerticalAlign ?? Align.Fill;
     }
+
+    protected void SignalRecalculationPending()
+    {
+        var page = Parent?.GetParent<IPage>();
+        if (page is not null)
+        {
+            page.SignalRecalculationPending();
+        }
+    }
 }
 
 public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters parameters)

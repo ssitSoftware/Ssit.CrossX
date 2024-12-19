@@ -188,5 +188,7 @@ public abstract class ChildrenContainerHandler<TContainer>
                 parent.RecalculateLayout();
             }
         }
+        
+        SignalRecalculationPending();
     }
 }

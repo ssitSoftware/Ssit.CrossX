@@ -97,7 +97,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     public override void Update(float dt)
     {
         base.Update(dt);
-        if (AttachedView.Text.Length > 0 && TextRectangle.Height < MathF.Max(1, TextRenderingContext.Height))
+        if (AttachedView.Text.Length > 0 && MathF.Ceiling(TextRectangle.Height) < MathF.Max(1, TextRenderingContext.Height))
         {
            Parent?.RecalculateLayout(AttachedView);
         }

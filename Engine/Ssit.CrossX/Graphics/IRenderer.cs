@@ -57,6 +57,12 @@ public interface IRenderer
     /// </summary>
     /// <param name="color">The color to use for clearing the render target.</param>
     void Clear(RgbaColor color);
+
+    /// <summary>
+    /// Sets the clipping rectangle, restricting rendering to the specified area.
+    /// </summary>
+    /// <param name="rect">The rectangle defining the clipping area, null for no clipping.</param>
+    void SetClipRect(Rectangle? rect);
     
     /// <summary>
     /// Draws text on the screen at a specified position.

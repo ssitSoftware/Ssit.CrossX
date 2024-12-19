@@ -140,4 +140,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     {
         return HashCode.Combine(X, Y, Width, Height);
     }
+    
+    public static bool operator ==(Rectangle r1, Rectangle r2) => r1.Equals(r2);
+    public static bool operator !=(Rectangle r1, Rectangle r2) => !r1.Equals(r2);
 }

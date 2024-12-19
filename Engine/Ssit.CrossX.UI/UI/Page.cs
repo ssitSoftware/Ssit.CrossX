@@ -43,8 +43,6 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     ViewHandler IPage.RootHandler => _rootHandler;
 
-    private int _skipFrames = 5;
-
     TParent IViewParent.GetParent<TParent>()
     {
         if (this is TParent parent)

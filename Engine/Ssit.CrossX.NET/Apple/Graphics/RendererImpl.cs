@@ -17,6 +17,8 @@ internal class RendererImpl: RendererBase, IDisposable
     private readonly IMTLBuffer _mtlTextureVertexBuffer;
     
     public override Size TargetSize => _metalDevice.TargetSize;
+
+    private Rectangle? _clipRect;
     
     public RendererImpl(IMetalDevice metalDevice)
     {
@@ -34,8 +36,17 @@ internal class RendererImpl: RendererBase, IDisposable
 
     public override void Clear(RgbaColor color)
     {
-        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, _blendMode, Flush, WorldTransform, null, color);
+        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, _blendMode, Flush, WorldTransform, _clipRect, null, color);
         Flush();
+    }
+
+    public override void SetClipRect(Rectangle? rect)
+    {
+        if (_clipRect != rect)
+        {
+            Flush();
+            _clipRect = rect;
+        }
     }
 
     public override void SetRenderTarget(IRenderTarget renderTarget)
@@ -71,8 +82,8 @@ internal class RendererImpl: RendererBase, IDisposable
         }
     }
 
-    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter) 
-        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, _blendMode, Flush, WorldTransform);
+    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter)
+        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, _blendMode, Flush, WorldTransform, _clipRect);
 
     private void DrawColorBuffer()
     {
@@ -110,7 +121,7 @@ internal class RendererImpl: RendererBase, IDisposable
         }
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, transform, color);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, transform, _clipRect, color);
         
         encoder.SetVertexBuffer(mtlBuffer, (UIntPtr)0, (UIntPtr)0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);

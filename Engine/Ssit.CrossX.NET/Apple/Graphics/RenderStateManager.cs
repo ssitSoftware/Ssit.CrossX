@@ -31,14 +31,14 @@ internal class RenderStateManager: IDisposable
     private IMTLDepthStencilState _depthStencilState;
 
     private IMTLSamplerState _nearestSamplerState, _linearSamplerState;
+    
+    private Rectangle? _currentScissorRect;
 
     private MTLRenderPassDescriptor _offscreenDescriptor = new()
     {
         DepthAttachment = new MTLRenderPassDepthAttachmentDescriptor(),
-        StencilAttachment = new MTLRenderPassStencilAttachmentDescriptor()
+        StencilAttachment = new MTLRenderPassStencilAttachmentDescriptor(),
     };
-
-    
 
     public RenderStateManager(IMetalDevice metalDevice)
     {
@@ -81,6 +81,7 @@ internal class RenderStateManager: IDisposable
         BlendMode blendMode,
         Action onNewState, 
         Matrix4x4? worldTransform,
+        Rectangle? scissorRect,
         RgbaColor? blendColor = null,
         RgbaColor? clearColor = null)
     {
@@ -94,6 +95,7 @@ internal class RenderStateManager: IDisposable
         changeState |= _currentTextureFilter != filter;
         changeState |= blendMode != _currentBlendMode;
         changeState |= blendColor != _currentBlendColor;
+        changeState |= _currentScissorRect != scissorRect;
         
         if (!changeState)
         {
@@ -111,6 +113,7 @@ internal class RenderStateManager: IDisposable
         _currentTextureFilter = filter;
         _currentBlendMode = blendMode;
         _currentBlendColor = blendColor;
+        _currentScissorRect = scissorRect;
 
         var shaderEffect = (effect as IMetalShaderEffect) ?? ((vertexMode & VertexMode.Texture) != 0 ? _basicEffectPCT : _basicEffectPC);
         
@@ -166,6 +169,11 @@ internal class RenderStateManager: IDisposable
             {
                 _currentEncoder.SetFragmentSamplerState(_currentTextureFilter == TextureFilter.Nearest ? _nearestSamplerState : _linearSamplerState, 0);
                 _currentEncoder.SetFragmentTexture(texture.GetMap<IMTLTexture>(TextureMaps.Diffuse), 0);
+            }
+
+            if (_currentScissorRect.HasValue)
+            {
+                _currentEncoder.SetScissorRect(new MTLScissorRect((UIntPtr)_currentScissorRect.Value.X, (UIntPtr)_currentScissorRect.Value.Y, (UIntPtr)_currentScissorRect.Value.Width, (UIntPtr)_currentScissorRect.Value.Height));
             }
             
             return _currentEncoder;

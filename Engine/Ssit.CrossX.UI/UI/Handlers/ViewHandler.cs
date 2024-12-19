@@ -62,7 +62,7 @@ public abstract class ViewHandler: IDisposable
         }
 
         var restSize = (length + add).Calculate(CurrentScale, 0);
-        var totalSize = restSize / rest;
+        var totalSize = MathF.Ceiling(restSize / rest);
 
         return new Length(pixels: totalSize);
     }

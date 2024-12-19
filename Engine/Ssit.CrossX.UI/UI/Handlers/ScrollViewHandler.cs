@@ -1,3 +1,4 @@
+using System;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
@@ -31,7 +32,17 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     public override void Draw(IRenderer renderer)
     {
         base.Draw(renderer);
+
+        var rect = ScreenBounds;
+        var l = (int)MathF.Ceiling(rect.X);
+        var t = (int)MathF.Ceiling(rect.Y);
+        
+        var r = (int)MathF.Floor(rect.Right);
+        var b = (int)MathF.Floor(rect.Bottom);
+        
+        renderer.SetClipRect(new Rectangle(l, t, r - l, b - t));
         _contentHandler?.Draw(renderer);
+        renderer.SetClipRect(null);
     }
 
     protected virtual void RecalculateChildrenLayouts()

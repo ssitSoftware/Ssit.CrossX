@@ -61,6 +61,8 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
 
     public abstract void Flush();
 
+    public abstract void SetClipRect(Rectangle? rect);
+
     protected abstract void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode,
         TextureFilter filter);
 

@@ -15,7 +15,7 @@ public class MainPage: PageBase<MainPageViewModel>
     {
         if (FocusedElement is null)
         {
-            var focusable = inputContext.FindFocusable("Button1", this);
+            var focusable = inputContext.FindFocusable("Start", this);
             inputContext.Focus(focusable, this);
             return true;
         }
@@ -33,10 +33,12 @@ public class MainPage: PageBase<MainPageViewModel>
                 {
                     BackgroundColor = new (0xff202020),
                     Width="50%",
-                    Height = "50%",
-                    HorizontalAlign = Align.Center,
-                    VerticalAlign = Align.Start,
+                    Height = "40%",
+                    HorizontalAlign = Align.Start,
+                    VerticalAlign = Align.Center,
                     ScrollMode  = ScrollMode.Vertical,
+                    UniqueId = "ScrollView",
+                    HorizontalNavigation = ("Button1", "Button1"),
                     ContentView = new TextView
                     {
                         BackgroundColor = new (0xff404040),
@@ -55,28 +57,33 @@ public class MainPage: PageBase<MainPageViewModel>
                     BackgroundColor = RgbaColor.Brown,
                     VerticalAlign = Align.Center,
                     HorizontalAlign = Align.Center,
+                    Width = "25%",
+                    AnchorX = "75%",
                     Children = [
                         new LabelButton
                         {
-                            Text = "New Game",
-                            UniqueId = "Button1",
-                            VerticalNavigation = ("Button3", "Button2"),
+                            Text = "Start Game",
+                            UniqueId = "Start",
+                            VerticalNavigation = (null, "Options"),
+                            HorizontalNavigation = ("ScrollView", "ScrollView"),
                             Command = ViewModel.Button1Command
                         }.WithDefaultStyle(),
 
                         new LabelButton
                         {
                             Text = "Options",
-                            UniqueId = "Button2",
-                            VerticalNavigation = ("Button1", "Button3"),
+                            UniqueId = "Options",
+                            VerticalNavigation = ("Start", "Credits"),
+                            HorizontalNavigation = ("ScrollView", "ScrollView"),
                             Command = ViewModel.Button2Command
                         }.WithDefaultStyle(),
 
                         new LabelButton
                         {
                             Text = "Credits",
-                            UniqueId = "Button3",
-                            VerticalNavigation = ("Button2", "Button1"),
+                            UniqueId = "Credits",
+                            VerticalNavigation = ("Options", null),
+                            HorizontalNavigation = ("ScrollView", "ScrollView"),
                             Command = ViewModel.Button3Command
                         }.WithDefaultStyle()
                     ]

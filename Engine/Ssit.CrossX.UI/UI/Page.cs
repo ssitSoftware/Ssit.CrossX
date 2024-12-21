@@ -84,6 +84,13 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         
         _rootHandler.SetBounds(new RectangleF(0, 0, bounds.Width, bounds.Height));
         _recalculateLayout = true;
+        _recalculationNeeded = true;
+        
+        while (_recalculationNeeded)
+        {
+            _recalculationNeeded = false;
+            _rootHandler.Update(0);
+        }
         
         OnLoad(inputContext);
     }
@@ -106,7 +113,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         while (_recalculationNeeded)
         {
             _recalculationNeeded = false;
-            _rootHandler.Update(dt);
+            _rootHandler.Update(0);
         }
     }
 
@@ -162,6 +169,13 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     {
         _screenBounds = bounds;
         _rootHandler.SetBounds(new RectangleF(0,0,_screenBounds.Width, _screenBounds.Height));
+        
+        _recalculationNeeded = true;
+        while (_recalculationNeeded)
+        {
+            _recalculationNeeded = false;
+            _rootHandler.Update(0);
+        }
     }
 
     protected virtual void OnDraw(IRenderer renderer)

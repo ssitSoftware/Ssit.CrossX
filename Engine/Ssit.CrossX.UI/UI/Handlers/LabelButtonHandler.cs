@@ -11,14 +11,9 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInputConsumer, IFocusable where TLabelButton: LabelButton
 {
-    protected override RgbaColor? BackgroundColor => Enabled ? Focused ? AttachedView.FocusedBackgroundColor ?? AttachedView.HoverBackgroundColor ?? AttachedView.BackgroundColor 
-        : _buttonHelper.IsHovered ? AttachedView.HoverBackgroundColor ?? AttachedView.BackgroundColor : AttachedView.BackgroundColor : AttachedView.DisabledBackgroundColor ?? AttachedView.BackgroundColor;
-    
-    protected override RgbaColor? TextColor => Enabled ? Focused ? AttachedView.FocusedTextColor ?? AttachedView.HoverTextColor ?? AttachedView.TextColor 
-        : _buttonHelper.IsHovered ? AttachedView.HoverTextColor ?? AttachedView.TextColor : AttachedView.TextColor : AttachedView.DisabledTextColor ?? AttachedView.TextColor;
-    protected override RgbaColor? TextOutlineColor => Enabled ? Focused ? AttachedView.FocusedTextOutlineColor ?? AttachedView.HoverTextOutlineColor ?? AttachedView.TextOutlineColor 
-        : _buttonHelper.IsHovered ? AttachedView.HoverTextOutlineColor ?? AttachedView.TextOutlineColor : AttachedView.TextOutlineColor : AttachedView.DisabledTextOutlineColor ?? AttachedView.TextOutlineColor;
-    
+    protected override RgbaColor? BackgroundColor => AttachedView.BackgroundColors?.GetColor( _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextColor => AttachedView.TextColors?.GetColor( _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextOutlineColor => AttachedView.TextOutlineColors?.GetColor( _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
     
     public bool Enabled => _buttonHelper.IsEnabled;
     public bool Focused { get; private set; }
@@ -58,4 +53,4 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
         base.OnDispose(disposing);
         _buttonHelper.Dispose();
     }
-}
+}   

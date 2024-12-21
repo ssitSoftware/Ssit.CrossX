@@ -216,7 +216,7 @@ internal sealed class PixelViewController : UIViewController
     {
         var id = GetTouchId(touch.Handle.Handle);
         var pt = touch.LocationInView(View);
-        var position = new Vector2((float) pt.X, (float) pt.Y) * (float)UIScreen.MainScreen.NativeScale;
+        var position = new Vector2((float)pt.X, (float)pt.Y) * (float)(View?.ContentScaleFactor ?? 1f);
         
         
         switch (touch.Phase)
@@ -254,6 +254,8 @@ internal sealed class PixelViewController : UIViewController
     {
         foreach (var press in presses)
         {
+            if (press.Key is null) continue;
+            
             UIKeyboardHidUsage key = press.Key.KeyCode;
 
             if (press.Phase == UIPressPhase.Began)

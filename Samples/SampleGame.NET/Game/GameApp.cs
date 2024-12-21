@@ -1,5 +1,4 @@
-﻿using SampleGame.Game.UI;
-using SampleGame.Game.UI.Pages;
+﻿using SampleGame.Game.UI.Pages;
 using SampleGame.Game.UI.Templates;
 using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
@@ -9,9 +8,7 @@ using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
-using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
-using Ssit.CrossX.UI.Views;
 using RectangleF = Ssit.CrossX.RectangleF;
 using Size = Ssit.CrossX.Size;
 
@@ -21,6 +18,7 @@ public class GameApp: PixelApp
 {
     private IRenderer _renderer;
     private IUiApp _uiApp;
+    //private IPointingDevices _pointingDevices;
     
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
@@ -51,7 +49,7 @@ public class GameApp: PixelApp
         _uiApp.Dispose();
     }
     
-    private void MapHandlers(IHandlerMapper mapper)
+    private void MapHandlers(IHandlerMapper _)
     {
     }
 
@@ -84,9 +82,18 @@ public class GameApp: PixelApp
         _uiApp.SetBounds(new RectangleF(0, 0, _renderer.TargetSize.Width, _renderer.TargetSize.Height));
         _uiApp.Navigation.NavigateTo<MainPageViewModel>();
         
+        //_pointingDevices = container.Get<IPointingDevices>();
     }
 
     protected override void OnUpdate(float elapsedTime) => _uiApp.Update(elapsedTime);
-    protected override void OnDraw() => _uiApp.Draw(_renderer, RgbaColor.Black);
+
+    protected override void OnDraw()
+    {
+        _uiApp.Draw(_renderer, RgbaColor.Black);
+        // foreach (var ptr in _pointingDevices.Pointers)
+        // {
+        //     _renderer.FillRectangle(new RectangleF(ptr.Position - new Vector2(5,5), new SizeF(10,10)), RgbaColor.Red);
+        // }
+    }
     protected override void OnResize(Size size) => _uiApp.SetBounds(new RectangleF(0, 0, size.Width, size.Height));
 }

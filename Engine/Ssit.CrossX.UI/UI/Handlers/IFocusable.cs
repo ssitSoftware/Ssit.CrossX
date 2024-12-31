@@ -7,6 +7,7 @@ public interface IFocusable
 {
     bool Enabled { get; }
     bool Focused { get; }
+    bool DisableAllInput { get; }
     bool OnUiButton(UiButton button, IInputContext inputContext);
     void SetFocus();
     bool ResetFocus();

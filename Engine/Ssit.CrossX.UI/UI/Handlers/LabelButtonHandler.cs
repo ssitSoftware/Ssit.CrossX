@@ -16,6 +16,8 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
     protected override RgbaColor? TextOutlineColor => AttachedView.TextOutlineColors?.GetColor( _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
     
     public bool Enabled => _buttonHelper.IsEnabled;
+    public bool DisableAllInput => _buttonHelper.IsExecutingCommand;
+    
     public bool Focused { get; private set; }
 
     public bool SkipNavigation => false;

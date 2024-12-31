@@ -54,7 +54,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             return;
         }
         
-        IsHovered = IsEnabled && hoverPosition.HasValue && 
+        IsHovered = !_isExecutingDelayedCommand && IsEnabled && hoverPosition.HasValue && 
                     (!matchingPointerId.HasValue || matchingPointerId.Value == _currentPointerId)  &&
                     _viewHandler.ScreenBounds.Contains(hoverPosition.Value);
     }
@@ -62,8 +62,10 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     public bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context)
     {
         if (_isExecutingDelayedCommand)
-            return false;
-        
+        {
+            return true;
+        }
+
         if ( _currentPointerId.HasValue )
         {
             var pointer = pointers.FirstOrDefault(o => o.Id == _currentPointerId.Value);

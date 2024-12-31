@@ -42,6 +42,9 @@ internal sealed class InputProcessor: IInputContext
 
     private void OnUiButton(IPage page, UiButton button)
     {
+        if (true == page.FocusedElement?.DisableAllInput)
+            return;
+        
         if (page.OnUiButton(button, this))
         {
             return;
@@ -114,23 +117,33 @@ internal sealed class InputProcessor: IInputContext
                 break;
             }
         }
+
+        bool disableInput = true == page.FocusedElement?.DisableAllInput;
         
-        for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+        if (disableInput)
         {
-            _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId,this);
-        }
-        
-        for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
-        {
-            if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+            for (var idx = 0; idx < _pointingDevices.Pointers.Count; ++idx)
             {
-                ProcessCapturedPointers();
-                _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId,this);
-                if (page != _navigation.CurrentPage) return;
-                break;
+                CapturePointer(_pointingDevices.Pointers[idx].Id, page.FocusedElement as IInputConsumer);
+            }
+            ProcessCapturedPointers();
+        }
+        else
+        {
+            for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+            {
+                _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
             }
 
-            ProcessCapturedPointers();
+            for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+            {
+                if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+                {
+                    ProcessCapturedPointers();
+                    _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
+                    break;
+                }
+            }
         }
     }
 
@@ -193,7 +206,6 @@ internal sealed class InputProcessor: IInputContext
         return _keyboard.GetKey(Key.Up) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.DPadUp) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.LeftStickUp) == ButtonState.JustPressed;
-
     }
     
     private bool GetUiButtonDown()

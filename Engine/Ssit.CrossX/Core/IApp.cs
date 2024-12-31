@@ -5,6 +5,7 @@ namespace Ssit.CrossX.Core;
 
 public interface IApp: IDisposable
 {
+    bool IsActive { get; }
     void InitializeServices(IIoCContainerBuilder builder);
     void SetActive(bool active);
     void Update(Action<float> preUpdate);

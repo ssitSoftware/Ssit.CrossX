@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using Foundation;
+using MetalKit;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Platform;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
@@ -16,6 +19,8 @@ namespace Ssit.CrossX.NET.Apple;
 
 internal sealed class PixelViewController : UIViewController
 {
+    private readonly MTKView _metalView;
+
     private static readonly Dictionary<UIKeyboardHidUsage, Key> KeyMapping = new()
     {
         {UIKeyboardHidUsage.Keyboard0, Key.D0},
@@ -89,8 +94,13 @@ internal sealed class PixelViewController : UIViewController
     private int _nextTouchId = 1;
     private readonly Dictionary<IntPtr, int> _touchIds = new();
     
-    public IPointingDevices PointingDevices => _pointingDevices;
-    private readonly PointingDevicesImpl _pointingDevices = new();
+#if __MACCATALYST__
+    public IPointingDevices PointingDevices => _pointingDevices ??= new PointingDevicesImpl(_metalView);
+#else
+    public IPointingDevices PointingDevices => _pointingDevices ??= new PointingDevicesImpl();
+#endif
+    
+    private PointingDevicesImpl _pointingDevices = null;
     
     private readonly List<Action> _updateActions = new();
     private readonly List<Action> _tempUpdateActions = new();
@@ -98,8 +108,9 @@ internal sealed class PixelViewController : UIViewController
     
     private Vector2? _lastHoverPosition;
     private readonly UIHoverGestureRecognizer _hoverGestureRecognizer;
-    public PixelViewController()
+    public PixelViewController(MTKView metalView)
     {
+        _metalView = metalView;
         _stopwatch.Start();
 
         _hoverGestureRecognizer = new UIHoverGestureRecognizer(() => { });
@@ -297,6 +308,8 @@ internal sealed class PixelViewController : UIViewController
         {
             _pointingDevices.UpdateHoverPosition(null);
         }
+        
+        
 
         _pointingDevices.OnPreUpdate();
         _pointingDevices.TouchProcessor.ConsumeEvents();

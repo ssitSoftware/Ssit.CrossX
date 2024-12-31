@@ -104,6 +104,11 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
         HoverPosition = position;
     }
 
+    public virtual void SetHoverPosition(Vector2 position)
+    {
+        
+    }
+
     public float CalculateHorizontalVelocity(int id) => TouchProcessor.CalculateHorizontalVelocity(id);
 
     public float CalculateVerticalVelocity(int id) => TouchProcessor.CalculateVerticalVelocity(id);

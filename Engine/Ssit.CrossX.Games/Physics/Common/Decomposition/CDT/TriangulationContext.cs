@@ -39,7 +39,6 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT
     {
         public readonly List<TriangulationPoint> Points = new(200);
         public readonly List<DelaunayTriangle> Triangles = new();
-        private int _stepTime = -1;
 
         public TriangulationContext()
         {

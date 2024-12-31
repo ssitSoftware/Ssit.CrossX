@@ -8,6 +8,8 @@ public abstract class PixelApp: IApp
 {
     public WindowParameters WindowParameters { get; private set; }
     
+    public bool IsActive { get; private set; }
+    
     private readonly Stopwatch _stopwatch = new();
     private TimeSpan _lastTime;
     
@@ -30,7 +32,11 @@ public abstract class PixelApp: IApp
         WindowParameters = container.Get<WindowParameters>();
     }
 
-    void IApp.SetActive(bool active) => OnActivate(active);
+    void IApp.SetActive(bool active)
+    {
+        IsActive = active;
+        OnActivate(active);
+    }
 
     public void Dispose()
     {

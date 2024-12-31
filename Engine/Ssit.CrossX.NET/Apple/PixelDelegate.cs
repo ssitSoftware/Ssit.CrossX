@@ -48,7 +48,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     
     public override void OnActivated(UIApplication application) => App?.SetActive(true);
     public override void OnResignActivation(UIApplication application) => App?.SetActive(false);
-
+    
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
         _windowParameters = new WindowParameters();
@@ -83,7 +83,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             Delegate = this
         };
         
-        _pixelViewController = new PixelViewController();
+        _pixelViewController = new PixelViewController(_metalView);
         _pixelViewController.View!.AddSubview(_metalView);
         Window.RootViewController = _pixelViewController;
 
@@ -171,7 +171,6 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         }
         
         _pixelViewController.UpdateKeyboard(_keyboard);
-        
         _pixelViewController.ProcessTouches();
         
         ((IApp)_app).Update(f => _eventSource.OnUpdate(f));

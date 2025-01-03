@@ -1,0 +1,133 @@
+using System;
+using System.Numerics;
+using Ssit.CrossX.Content;
+
+namespace Ssit.CrossX.Graphics.Sprites;
+
+public class SpriteInstance : IDisposable
+{
+    private readonly Vector2 _origin;
+
+    public delegate void SpriteEventDelegate(string eventName);
+
+    public delegate void SequenceFinishedDelegate(string sequenceName, bool reverse);
+
+    private readonly ResourceHandle<Sprite> _sprite;
+    private readonly ResourceHandle<ITexture> _spriteSheet;
+    
+    public ITexture SpriteSheet => _spriteSheet.Resource;
+    
+    public Vector2 Origin { get; private set; }
+    public Rectangle Source { get; private set; }
+
+    private float _currentTime;
+    private float _maxTime;
+    private int _lastFrame = -1;
+    private float _maxTimeDelta = 0.1f;
+
+    private Sprite.SpriteSequence _currentSequence;
+
+    public event SpriteEventDelegate SpriteEvent;
+    public event SequenceFinishedDelegate SequenceFinished;
+
+    public SpriteInstance(string spritePath, Vector2 origin, IContentManager contentManager)
+    {
+        _sprite = contentManager.Get<Sprite>(spritePath);
+        _spriteSheet = contentManager.Get<ITexture>(_sprite.Resource.SheetName);
+
+        _origin = origin;
+    }
+
+    public void SetSequence(string sequenceName, bool resetPosition = false)
+    {
+        if (_currentSequence?.Name == sequenceName)
+        {
+            if (resetPosition)
+            {
+                _currentTime = 0;
+                _lastFrame = -1;
+            }
+            return;
+        }
+
+        _currentSequence = _sprite.Resource.GetSequence(sequenceName);
+
+        _currentTime = 0;
+        _lastFrame = -1;
+        _maxTime = 0;
+        _maxTimeDelta = 0.5f;
+
+        foreach (var frame in _currentSequence.Frames)
+        {
+            _maxTime += frame.Duration;
+            _maxTimeDelta = MathF.Min(_maxTimeDelta, frame.Duration);
+        }
+
+        AdvanceOne(0, false);
+
+        Source = _currentSequence.Frames[_lastFrame].Source;
+        Origin = _currentSequence.Frames[_lastFrame].Offset + _origin;
+    }
+
+    public void Advance(float dt, bool reverse = false)
+    {
+        if (_currentSequence is null)
+        {
+            Source = Rectangle.Empty;
+            Origin = Vector2.Zero;
+            return;
+        }
+
+        while (dt > 0)
+        {
+            var delta = MathF.Min(dt, _maxTimeDelta);
+            dt -= delta;
+            AdvanceOne(delta, reverse);
+        }
+
+        Source = _currentSequence.Frames[_lastFrame].Source;
+        Origin = _currentSequence.Frames[_lastFrame].Offset + _origin;
+    }
+
+    private void AdvanceOne(float delta, bool reverse)
+    {
+        _currentTime += delta * (reverse ? -1 : 1);
+        var currentSequence = _currentSequence.Name;
+
+        if (_currentTime >= _maxTime || _currentTime < 0)
+        {
+            SequenceFinished?.Invoke(_currentSequence.Name, _currentTime < 0);
+            if (_currentSequence?.Name != currentSequence || _currentSequence is null)
+            {
+                return;
+            }
+        }
+
+        _currentTime += _maxTime;
+        _currentTime %= _maxTime;
+
+        var time = _currentTime;
+        var frame = 0;
+
+        while (time >= _currentSequence.Frames[frame].Duration)
+        {
+            time -= _currentSequence.Frames[frame].Duration;
+            frame++;
+        }
+
+        if (frame != _lastFrame)
+        {
+            if (_currentSequence.Frames[frame].Event != null)
+            {
+                SpriteEvent?.Invoke(_currentSequence.Frames[frame].Event);
+            }
+        }
+
+        _lastFrame = frame;
+    }
+
+    public void Dispose()
+    {
+        _spriteSheet?.Dispose();
+    }
+}

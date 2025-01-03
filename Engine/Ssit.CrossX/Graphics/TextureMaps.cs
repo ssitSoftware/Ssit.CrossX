@@ -8,6 +8,7 @@ public enum TextureMaps
     None = 0,
     Diffuse = 1,
     NormalMap = 2,
-    DepthBuffer = 4,
-    StencilBuffer = 8
+    GlowMap = 4,
+    DepthBuffer = 8,
+    StencilBuffer = 16
 }

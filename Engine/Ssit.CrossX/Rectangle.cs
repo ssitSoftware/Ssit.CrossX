@@ -10,6 +10,8 @@ namespace Ssit.CrossX;
 [DebuggerDisplay("Rectangle = ({X}, {Y}, {Width}, {Height})")]
 public readonly struct Rectangle : IEquatable<Rectangle>
 {
+    public static readonly Rectangle Empty = new(0, 0, 0, 0);
+    
     public Rectangle(int x, int y, int width, int height)
     {
         X = x;

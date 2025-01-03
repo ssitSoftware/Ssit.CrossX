@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Ssit.CrossX.Input;
@@ -10,22 +11,27 @@ public sealed class Pointer(int id)
     public Vector2 Position { get; private set; } = Vector2.Zero;
     public Vector2 Origin { get; private set; } = Vector2.Zero;
 
+    private Stack<(Vector2, Vector2)> _transformHistory;
+
     internal void Update(ButtonState state, Vector2 position, Vector2 origin)
     {
         State = state;
         Position = position;
         Origin = origin;
+        _transformHistory?.Clear();
     }
     
     internal void Update(ButtonState state, Vector2 position)
     {
         State = state;
         Position = position;
+        _transformHistory?.Clear();
     }
     
     internal void Update(ButtonState state)
     {
         State = state;
+        _transformHistory?.Clear();
     }
 
     internal void Reset()
@@ -33,5 +39,29 @@ public sealed class Pointer(int id)
         State = ButtonState.Empty;
         Position = Vector2.Zero;
         Origin = Vector2.Zero;
+        
+        _transformHistory?.Clear();
+    }
+
+    public void PushTransform(Matrix3x2 matrix)
+    {
+        if (_transformHistory is null)
+        {
+            _transformHistory = new Stack<(Vector2, Vector2)>();
+        }
+        
+        _transformHistory.Push((Position, Origin));
+        Position = Vector2.Transform(Position, matrix);
+        Origin = Vector2.Transform(Origin, matrix);
+    }
+
+    public void PopTransform()
+    {
+        if (_transformHistory is null || _transformHistory.Count == 0)
+        {
+            return;
+        }
+        
+        (Position, Origin) = _transformHistory.Pop();
     }
 }

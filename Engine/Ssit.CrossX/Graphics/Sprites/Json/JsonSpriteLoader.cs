@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
+using Newtonsoft.Json;
+using Ssit.CrossX.IO;
+
+namespace Ssit.CrossX.Graphics.Sprites.Json;
+
+public static class JsonSpriteLoader
+{
+    public static IDisposable Load(string path, IFilesProvider filesProvider)
+    {
+        return LoadInternal(path, filesProvider);
+    }
+
+    private static Sprite LoadInternal(string path, IFilesProvider filesProvider)
+    {
+        using var spriteStream = filesProvider.Open(path);
+        var data = new StreamReader(spriteStream).ReadToEnd();
+        var jsonSprite = JsonConvert.DeserializeObject<JsonSprite>(data);
+        
+        var dict = new Dictionary<string, List<(int, Sprite.SpriteFrame)>>();
+
+        foreach (var frame in jsonSprite.Frames)
+        {
+            if (!dict.TryGetValue(frame.Sequence, out var list))
+            {
+                list = new List<(int, Sprite.SpriteFrame)>();
+                dict.Add(frame.Sequence, list);
+            }
+            
+            list.Add((frame.Index, CreateFrame(frame)));
+        }
+        
+        var sequences = new List<Sprite.SpriteSequence>();
+
+        foreach (var sequence in dict)
+        {
+            sequence.Value.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+            
+            var frames = new Sprite.SpriteFrame[sequence.Value.Count];
+            for (var idx = 0; idx < sequence.Value.Count; idx++)
+            {
+                frames[idx] = sequence.Value[idx].Item2;
+            }
+            sequences.Add(new Sprite.SpriteSequence(sequence.Key, frames));
+        }
+        
+        var sheetDir = Path.GetDirectoryName(path);
+        var sheetFile = Path.GetFileNameWithoutExtension(path) + ".png";
+        var sheetPath = Path.Combine(sheetDir ?? "", sheetFile);
+        return new Sprite(sheetPath, sequences);
+    }
+
+    private static Sprite.SpriteFrame CreateFrame(JsonFrame frame)
+    {
+        var duration = frame.Duration / 1000f;
+        
+        Vector2 offset = Vector2.Zero;
+        offset.X -= frame.SourceRect.X;
+        offset.Y -= frame.SourceRect.Y;
+
+        var source = new Rectangle(
+            frame.FrameRect.X,
+            frame.FrameRect.Y,
+            frame.FrameRect.W,
+            frame.FrameRect.H);
+        
+        return new Sprite.SpriteFrame(source, offset, duration);
+    }
+}

@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+
+namespace Ssit.CrossX.Graphics.Sprites;
+
+public class Sprite: IDisposable
+{
+    public class SpriteFrame(Rectangle source, Vector2 offset, float duration)
+    {
+        public Rectangle Source { get; } = source;
+        public Vector2 Offset { get; } = offset;
+        public float Duration { get; } = duration;
+        public string Event { get; set; }
+    }
+    
+    public class SpriteSequence(string name, SpriteFrame[] frames)
+    {
+        public string Name { get; } = name;
+        public SpriteFrame[] Frames { get; } = frames;
+    }
+    
+    public string SheetName { get; }
+    private readonly IReadOnlyDictionary<string, SpriteSequence> _sequences;
+    
+    private Sprite()
+    {
+    }
+
+    internal Sprite(string sheetName, IReadOnlyList<SpriteSequence> sequences)
+    {
+        SheetName = sheetName;
+        var dict = new Dictionary<string, SpriteSequence>();
+        foreach (var sequence in sequences)
+        {
+            dict.Add(sequence.Name, sequence);
+        }
+        _sequences = dict;
+    }
+
+    public SpriteSequence GetSequence(string sequenceName)
+    {
+        return _sequences[sequenceName];
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
+    }
+}

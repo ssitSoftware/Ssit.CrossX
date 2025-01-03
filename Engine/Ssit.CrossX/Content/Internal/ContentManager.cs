@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.Graphics.Sprites.Json;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 
@@ -25,7 +27,9 @@ internal class ContentManager: IContentManager
     {
         _ioCContainer = ioCContainer;
         _filesProvider = filesProvider;
+        
         RegisterLoader<ITexture>(LoadTextureFunc);
+        RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
     }
 
     public ResourceHandle<TResource> Get<TResource>(string path) where TResource : class, IDisposable
@@ -104,13 +108,15 @@ internal class ContentManager: IContentManager
         var hasDiffuseImplicit = _filesProvider.FileExists(name + ext);
         var hasDiffuseExplicit = _filesProvider.FileExists(name + ".diffuse" + ext);
         var hasNormals = _filesProvider.FileExists(name + ".normal" + ext);
+        var hasGlow = _filesProvider.FileExists(name + ".glow" + ext);
 
         return _ioCContainer.IoCConstruct<ITexture>(new LoadTextureParameters
         {
             DiffuseMapStream =  hasDiffuseImplicit ? _filesProvider.Open(name + ext) : hasDiffuseExplicit ? 
                 _filesProvider.Open(name + ".diffuse" + ext) : null,
             
-            NormalMapStream = hasNormals ? _filesProvider.Open(name + ".normal" + ext) : null
+            NormalMapStream = hasNormals ? _filesProvider.Open(name + ".normal" + ext) : null,
+            GlowMapStream = hasGlow ? _filesProvider.Open(name + ".glow" + ext) : null
         });
     }
 }

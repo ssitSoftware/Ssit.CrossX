@@ -230,9 +230,14 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             t01 = new Vector2((float) sourceRectangle.Value.X / texture.Size.Width, (float) sourceRectangle.Value.Bottom / texture.Size.Height);
         }
 
-        position -= origin ?? Vector2.Zero;
-        var targetRectangle = new RectangleF(position.X, position.Y, sourceRectangle?.Width ?? texture.Size.Width, sourceRectangle?.Height ?? texture.Size.Height);
+        if (origin.HasValue)
+        {
+            var offset = origin.Value;
+            offset *= scale;
+            position -= offset;
+        }
         
+        var targetRectangle = new RectangleF(position.X, position.Y, (sourceRectangle?.Width ?? texture.Size.Width) * scale, (sourceRectangle?.Height ?? texture.Size.Height) * scale);
         var matrix = RenderingHelpers.CreateTransform(targetRectangle, imageTransform);
         
         TextureVertexBuffer.AddVertex(new VertexPositionColorTexture(new Vector3(targetRectangle.X, targetRectangle.Y, depth).Prepare(ref matrix), col, t00));

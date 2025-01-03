@@ -12,12 +12,14 @@ public class TextureImpl: ITexture
 {
     private IMTLTexture _diffuseTexture;
     private IMTLTexture _normalTexture;
+    private IMTLTexture _glowTexture;
     
     public TextureImpl(MTKTextureLoader textureLoader, LoadTextureParameters loadTextureParameters)
     {
         _diffuseTexture = LoadTexture(textureLoader, loadTextureParameters.DiffuseMapStream);
         _normalTexture = LoadTexture(textureLoader, loadTextureParameters.NormalMapStream);
-
+        _glowTexture = LoadTexture(textureLoader, loadTextureParameters.GlowMapStream);
+        
         TextureMaps = TextureMaps.None;
 
         if (_diffuseTexture != null)
@@ -33,6 +35,16 @@ public class TextureImpl: ITexture
             if (Size.Width == 0 || Size.Height == 0)
             {
                 Size = new Size((int) _normalTexture.Width, (int) _normalTexture.Height);
+            }
+        }
+        
+        if (_glowTexture != null)
+        {
+            TextureMaps |= TextureMaps.GlowMap;
+
+            if (Size.Width == 0 || Size.Height == 0)
+            {
+                Size = new Size((int) _glowTexture.Width, (int) _glowTexture.Height);
             }
         }
     }

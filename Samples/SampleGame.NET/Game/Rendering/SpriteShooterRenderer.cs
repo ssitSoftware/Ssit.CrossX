@@ -16,15 +16,18 @@ public class SpriteShooterRenderer(SpriteInstance spriteInstance, SpriteInstance
     private ImageTransform _gunTransform = ImageTransform.None;
     public bool IsAiming { get; set; }
     private bool _gunBehind;
+    private float _recoil = 0;
 
     private Vector2 _aimingVector;
 
-    public void UpdateAimingAngle(float angle)
+    public void UpdateAimingAngle(float angle, float recoil)
     {
         if (float.IsNaN(angle))
         {
             return;
         }
+
+        _recoil = recoil;
         
         var intAngle = (int)MathF.Round((180 * angle / MathF.PI + 360) / 22.5f);
         intAngle %= AimingStates.Length * 4;
@@ -46,16 +49,18 @@ public class SpriteShooterRenderer(SpriteInstance spriteInstance, SpriteInstance
             base.Render(renderer, position);
             return;
         }
+
+        var offset = gunOffset - _aimingVector * _recoil;
         
         if (_gunBehind)
         {
-            renderer.DrawSprite(gunSprite, (position + gunOffset) * Scale, Scale, null, _gunTransform);
+            renderer.DrawSprite(gunSprite, (position + offset) * Scale, Scale, null, _gunTransform);
             base.Render(renderer, position);
         }
         else
         {
             base.Render(renderer, position);
-            renderer.DrawSprite(gunSprite, (position + gunOffset) * Scale, Scale, null, _gunTransform);
+            renderer.DrawSprite(gunSprite, (position + offset) * Scale, Scale, null, _gunTransform);
         }
 
         var pos = (position + gunOffset) * Scale + _aimingVector * Scale * 32;

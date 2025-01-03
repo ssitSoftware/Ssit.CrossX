@@ -183,23 +183,6 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
             return hashCode;
         }
     }
-
-    /// <summary>
-    /// Creates an RgbaColor instance from a 32-bit integer value, optionally premultiplied.
-    /// </summary>
-    /// <param name="intColor">A 32-bit integer representing the color, where the alpha component is in the highest 8 bits.</param>
-    /// <param name="premultiply">Indicates whether the color components should be premultiplied by the alpha component.</param>
-    /// <returns>An RgbaColor initialized with the specified integer color value.</returns>
-    public static RgbaColor FromInt32(int intColor, bool premultiply = true)
-    {
-        var a = (intColor >> 24) & 0xff;
-        var r = (intColor >> 16) & 0xff;
-        var g = (intColor >> 8) & 0xff;
-        var b = intColor & 0xff;
-
-        var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
-        return premultiply ? color.AsPremultiplied() : color;
-    }
     
     public RgbaColor AsPremultiplied() => FromNonPremultiplied(R, G, B, A);
 
@@ -210,12 +193,29 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     /// <param name="intColor">The 32-bit unsigned integer that encodes the RGBA color.</param>
     /// <param name="premultiply">Determines if the color should be premultiplied by its alpha value.</param>
     /// <returns>An RgbaColor instance representing the decoded RGBA color.</returns>
-    public static RgbaColor FromUInt32(uint intColor, bool premultiply = true)
+    public static RgbaColor FromRgba(uint intColor, bool premultiply = true)
     {
         var a = (intColor >> 24) & 0xff;
         var b = (intColor >> 16) & 0xff;
         var g = (intColor >> 8) & 0xff;
         var r = intColor & 0xff;
+
+        var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
+        return premultiply ? color.AsPremultiplied() : color;
+    }
+    
+    /// <summary>
+    /// Creates a new RgbaColor from a 32-bit unsigned integer representation.
+    /// </summary>
+    /// <param name="intColor">The 32-bit unsigned integer that encodes the RGBA color.</param>
+    /// <param name="premultiply">Determines if the color should be premultiplied by its alpha value.</param>
+    /// <returns>An RgbaColor instance representing the decoded RGBA color.</returns>
+    public static RgbaColor FromBgra(uint intColor, bool premultiply = true)
+    {
+        var a = (intColor >> 24) & 0xff;
+        var r = (intColor >> 16) & 0xff;
+        var g = (intColor >> 8) & 0xff;
+        var b = intColor & 0xff;
 
         var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
         return premultiply ? color.AsPremultiplied() : color;

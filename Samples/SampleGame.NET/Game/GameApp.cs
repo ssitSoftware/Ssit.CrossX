@@ -120,7 +120,7 @@ public class GameApp: PixelApp
 
     protected override void OnDraw()
     {
-        _renderer.Clear(RgbaColor.SaddleBrown);
+        _renderer.Clear(RgbaColor.FromBgra(0xff513a3d));
         
         foreach (var ptr in _pointingDevices.Pointers)
         {

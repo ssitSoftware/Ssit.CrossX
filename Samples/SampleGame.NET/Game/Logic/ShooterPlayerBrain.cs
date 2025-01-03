@@ -18,6 +18,7 @@ public class ShooterPlayerBrain : Brain
     private readonly IShooterRenderer _renderer;
 
     private bool _reverseMove;
+    private float _recoil;
     
     public Vector2 AimDirection { get; set; } = new Vector2(0,0);
     public Vector2 MoveDirection { get; set; }= new Vector2(0,0);
@@ -56,8 +57,11 @@ public class ShooterPlayerBrain : Brain
         base.OnUpdate(dt);
         ProcessVectors();
         
-        Position += MoveDirection * dt * 20;
+        Position += MoveDirection * dt;
         _renderer.Animate(dt, _reverseMove);
+
+        _recoil -= dt * 10f;
+        _recoil = MathF.Max(0, _recoil);
     }
     
     protected string GetSequence(string state, string direction)
@@ -110,12 +114,15 @@ public class ShooterPlayerBrain : Brain
 
         var angle = MathF.Atan2(AimDirection.Y, AimDirection.X) - MathF.PI / 2;
         
-        _renderer.UpdateAimingAngle(angle);
+        _renderer.UpdateAimingAngle(angle, _recoil);
         _renderer.IsAiming = AimDirection.LengthSquared() > 0.01f;
     }
 
     public void ShootBullet()
     {
-        
+        if (_recoil == 0)
+        {
+            _recoil = 4f;
+        }
     }
 }

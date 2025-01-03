@@ -8,7 +8,8 @@ public class RunBehavior(ShooterPlayerBrain brain) : Behavior
     protected override bool OnUpdate(float dt)
     {
         var moveDirection = brain.Controller.GetMoveDirection();
-        brain.MoveDirection = moveDirection;
+
+        brain.MoveDirection = moveDirection * 50;
         brain.AimDirection = Vector2.Zero;
 
         if (moveDirection.Length() > 0.05f)

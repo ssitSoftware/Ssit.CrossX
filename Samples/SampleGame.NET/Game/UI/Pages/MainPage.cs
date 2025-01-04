@@ -56,7 +56,6 @@ public class MainPage: PageBase<MainPageViewModel>
                 {
                     Padding = (8, 8),
                     Spacing = 8,
-                    BackgroundColor = RgbaColor.Brown,
                     VerticalAlign = Align.Center,
                     HorizontalAlign = Align.End,
                     Width = "256",

@@ -24,6 +24,14 @@ public static class ButtonStyles
             Pushed = RgbaColor.Orange,
             Disabled = new(0xff494949)
         };
+        button.TextOutlineColors = new ButtonStateColors
+        {
+            Normal = RgbaColor.Black,
+            Hover = RgbaColor.Black,
+            Focused = RgbaColor.Black,
+            Pushed = RgbaColor.Black,
+            Disabled = new(0xff494949)
+        };
         button.BackgroundColors = new ButtonStateColors
         {
             Normal = RgbaColor.FromNonPremultiplied(255,255,255,20),

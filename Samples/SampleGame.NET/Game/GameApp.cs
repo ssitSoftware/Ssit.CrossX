@@ -7,8 +7,9 @@ using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
@@ -19,17 +20,28 @@ using Size = Ssit.CrossX.Size;
 
 namespace SampleGame.Game;
 
-public class GameApp: PixelApp
+public class GameApp: PixelApp, IInputCoordinateSystem
 {
     private IRenderer _renderer;
     private IUiApp _uiApp;
     private IPointingDevices _pointingDevices;
 
-    private SpriteInstance _spriteInstance;
-    private SpriteInstance _spriteGunInstance;
-
     private ShooterPlayerBrain _playerBrain;
     private SpriteShooterRenderer _spriteShooterRenderer;
+
+    private PixelAppHost _appHost;
+
+    public Matrix3x2 Transform
+    {
+        get
+        {
+            if (Matrix3x2.Invert(_appHost.Transform, out var matrix))
+            {
+                return matrix;
+            }
+            return Matrix3x2.Identity;
+        }
+    }
     
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
@@ -51,16 +63,14 @@ public class GameApp: PixelApp
             .Map<GamePageViewModel, GamePage>();
 
         builder
-            .WithInstance(new ItemTemplates());
+            .WithInstance(new ItemTemplates())
+            .WithInstance<IInputCoordinateSystem>(this);
     }
     
     protected override void OnDispose(bool disposing)
     {
         base.OnDispose(disposing);
         _uiApp.Dispose();
-        
-        _spriteInstance?.Dispose();
-        _spriteGunInstance?.Dispose();
     }
     
     private void MapHandlers(IHandlerMapper _)
@@ -90,8 +100,11 @@ public class GameApp: PixelApp
         mapper.MapButton("Shoot", Key.X);
         
         mapper.MapButton("Melee", GameControllerButton.X);
+        mapper.MapButton("Melee", Key.C);
         
         mapper.MapButton("Roll", GameControllerButton.A);
+        mapper.MapButton("Roll", Key.Space);
+        
         mapper.MapButton("Reload", GameControllerButton.B);
         
         var fontsManager = container.Get<IFontsManager>();
@@ -101,35 +114,58 @@ public class GameApp: PixelApp
 
         MapHandlers(_uiApp.Services.Get<IHandlerMapper>());
         
-        _uiApp.SetBounds(new RectangleF(0, 0, _renderer.TargetSize.Width, _renderer.TargetSize.Height));
-        _uiApp.Navigation.NavigateTo<MainPageViewModel>();
-        
         _pointingDevices = container.Get<IPointingDevices>();
 
         var cm = container.Get<IContentManager>();
-        _spriteInstance = new SpriteInstance("assets:/Sprites/Hero.json", new Vector2(93, 96), cm);
-        _spriteGunInstance = new SpriteInstance("assets:/Sprites/HeroGun.json", new Vector2(16, 16), cm);
-        _spriteShooterRenderer = new SpriteShooterRenderer(_spriteInstance, _spriteGunInstance, new Vector2(0,-8));
+        cm.RegisterGameContentTypes();
+        
+        using var shadowObj = cm.Get<GameObject>("assets:/Sprites/CharacterShadow");
+        using var heroObj = cm.Get<GameObject>("assets:/Sprites/Hero");
+        using var gunObj = cm.Get<GameObject>("assets:/Sprites/HeroGun");
+        
+        _spriteShooterRenderer = new SpriteShooterRenderer(heroObj, gunObj, new Vector2(0,-9), shadowObj);
         _playerBrain = new ShooterPlayerBrain(new PlayerController(inputMappings), _spriteShooterRenderer);
+
+        _appHost = container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
+        {
+            DesignSize = new Size(480, 360),
+            Mode = PixelAppHost.Mode.Height,
+            Renderer = _renderer,
+            MaxScale = 2
+        });
+        
+        OnResize(_renderer.TargetSize);
+        _uiApp.Navigation.NavigateTo<MainPageViewModel>();
     }
 
     protected override void OnUpdate(float elapsedTime)
     {
         _playerBrain.Update(elapsedTime);
+        _uiApp.Update(elapsedTime);
     }
 
     protected override void OnDraw()
     {
-        _renderer.Clear(RgbaColor.FromBgra(0xff513a3d));
-        
-        foreach (var ptr in _pointingDevices.Pointers)
-        {
-            _renderer.FillRectangle(new RectangleF(ptr.Position - new Vector2(5,5), new SizeF(10,10)), RgbaColor.Red);
-        }
-
-        _spriteShooterRenderer.Scale = 4;
-        _spriteShooterRenderer.Render(_renderer, _playerBrain.Position + _renderer.TargetSize.ToVector() / 8);
+        _renderer.Clear(RgbaColor.Black);
+        _appHost.Render( Render );
     }
 
-    protected override void OnResize(Size size) => _uiApp.SetBounds(new RectangleF(0, 0, size.Width, size.Height));
+    private void Render()
+    {
+        _renderer.Clear(RgbaColor.FromBgra(0xff513a3d));
+        _uiApp.Draw(_renderer);
+
+        _spriteShooterRenderer.Scale = _appHost.Scale;
+
+        _spriteShooterRenderer.Render(_renderer, _playerBrain.Position + _appHost.DesignTargetSize.ToVector() / 2,
+            RenderPass.Shadow);
+        _spriteShooterRenderer.Render(_renderer, _playerBrain.Position + _appHost.DesignTargetSize.ToVector() / 2,
+            RenderPass.Normal);
+    }
+
+    protected override void OnResize(Size size)
+    {
+        _appHost.Resize(size);
+        _uiApp.SetBounds(new RectangleF(Vector2.Zero, _appHost.TargetSize / _appHost.Scale), _appHost.Scale);
+    }
 }

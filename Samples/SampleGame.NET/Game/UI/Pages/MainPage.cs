@@ -26,39 +26,41 @@ public class MainPage: PageBase<MainPageViewModel>
     {
         return new Container
         {
+            Width = 480,
+            HorizontalAlign = Align.Center,
             Padding = (10,10),
             Children = [
                 
-                new ScrollView
-                {
-                    BackgroundColor = new (0xff202020),
-                    Width="50%",
-                    Height = "40%",
-                    HorizontalAlign = Align.Start,
-                    VerticalAlign = Align.Center,
-                    ScrollMode  = ScrollMode.Vertical,
-                    UniqueId = "ScrollView",
-                    HorizontalNavigation = ("Button1", "Button1"),
-                    ContentView = new TextView
-                    {
-                        BackgroundColor = new (0xff404040),
-                        Text = ViewModel.LongDesc,
-                        TextAlign = ContentAlign.Justified | ContentAlign.Top,
-                        HorizontalAlign = Align.Fill,
-                        VerticalAlign = Align.Start,
-                        TextColor = RgbaColor.White,
-                        Padding = (10, 10)
-                    }
-                },
+                // new ScrollView
+                // {
+                //     BackgroundColor = new (0xff202020),
+                //     Width="50%",
+                //     Height = "40%",
+                //     HorizontalAlign = Align.Start,
+                //     VerticalAlign = Align.Center,
+                //     ScrollMode  = ScrollMode.Vertical,
+                //     UniqueId = "ScrollView",
+                //     HorizontalNavigation = ("Button1", "Button1"),
+                //     ContentView = new TextView
+                //     {
+                //         BackgroundColor = new (0xff404040),
+                //         Text = ViewModel.LongDesc,
+                //         TextAlign = ContentAlign.Justified | ContentAlign.Top,
+                //         HorizontalAlign = Align.Fill,
+                //         VerticalAlign = Align.Start,
+                //         TextColor = RgbaColor.White,
+                //         Padding = (10, 10)
+                //     }
+                // },
                 new VerticalStack
                 {
-                    Padding = (20, 20),
-                    Spacing = 20,
+                    Padding = (8, 8),
+                    Spacing = 8,
                     BackgroundColor = RgbaColor.Brown,
                     VerticalAlign = Align.Center,
-                    HorizontalAlign = Align.Center,
-                    Width = "25%",
-                    AnchorX = "75%",
+                    HorizontalAlign = Align.End,
+                    Width = "256",
+                    AnchorX = "100%",
                     Children = [
                         new LabelButton
                         {

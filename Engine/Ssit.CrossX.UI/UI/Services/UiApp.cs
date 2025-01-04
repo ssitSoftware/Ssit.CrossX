@@ -4,13 +4,15 @@ using Ssit.CrossX.IoC;
 namespace Ssit.CrossX.UI.Services;
 
 internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher)
-    : IUiApp, IUiAppBoundsSource
+    : IUiApp
 {
     INavigation IUiApp.Navigation => Navigation;
     
     public Navigation Navigation { get; private set; }
     public RectangleF Bounds { get; private set; }
-    
+
+    public float Scale { get; private set; }
+
     public IIoCContainer Services { get; private set; } = services;
     public InputProcessor InputProcessor { get; private set; }
     
@@ -53,11 +55,13 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
         }
     }
 
-    public void SetBounds(RectangleF bounds)
+    public void SetBounds(RectangleF bounds, float scale)
     {
         Bounds = bounds;
-        Navigation.PreviousPage?.SetBounds(bounds);
-        Navigation.CurrentPage?.SetBounds(bounds);
+        Scale = scale;
+        
+        Navigation.PreviousPage?.SetBounds(bounds, scale);
+        Navigation.CurrentPage?.SetBounds(bounds, scale);
     }
 
     public void Dispose()

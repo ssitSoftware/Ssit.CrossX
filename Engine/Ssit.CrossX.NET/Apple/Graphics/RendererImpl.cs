@@ -51,6 +51,11 @@ internal class RendererImpl: RendererBase, IDisposable
 
     public override void SetRenderTarget(IRenderTarget renderTarget)
     {
+        if (_metalDevice.CurrentRenderTarget != renderTarget)
+        {
+            Flush();
+        }
+
         _metalDevice.CurrentRenderTarget = renderTarget;
     }
 

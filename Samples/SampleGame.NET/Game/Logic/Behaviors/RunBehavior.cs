@@ -14,7 +14,7 @@ public class RunBehavior(ShooterPlayerBrain brain) : Behavior
 
         if (moveDirection.Length() > 0.05f)
         {
-            brain.SetState("Run");
+            brain.SetState("Move");
         }
         else
         {

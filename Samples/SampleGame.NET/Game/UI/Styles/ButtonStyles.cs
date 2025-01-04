@@ -13,9 +13,9 @@ public static class ButtonStyles
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Center;
         button.HorizontalAlign = Align.Fill;
-        button.Height = 50;
-        button.Font = ("Default", 16);
-        button.Padding = (16, 16);
+        button.Height = 24;
+        button.Font = ("Default", 12);
+        button.Padding = (4, 4);
         button.TextColors = new ButtonStateColors
         {
             Normal = RgbaColor.DarkGray,

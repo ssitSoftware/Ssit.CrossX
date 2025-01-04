@@ -12,5 +12,5 @@ public interface IGameObjectRenderer
     float Scale { get; set; }
     void UpdateRenderState(string stateName, ImageTransform transform);
     void Animate(float dt, bool reverse);
-    void Render(IRenderer renderer, Vector2 position);
+    void Render(IRenderer renderer, Vector2 position, RenderPass renderPass);
 }

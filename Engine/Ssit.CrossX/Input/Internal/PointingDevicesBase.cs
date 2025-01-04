@@ -13,6 +13,8 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     public Pointer GetPointer(int id) => _pointers.Find(o => o.Id == id);
     public Vector2? HoverPosition { get; private set; } = null;
 
+    private readonly Stack<Vector2?> _hoverPositions = new();
+    
     protected PointingDevicesBase()
     {
         TouchProcessor = new TouchProcessor(this);
@@ -107,6 +109,30 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     public virtual void SetHoverPosition(Vector2 position)
     {
         
+    }
+
+    public void PushTransform(Matrix3x2 transform)
+    {
+        _hoverPositions.Push(HoverPosition);
+
+        if (HoverPosition.HasValue)
+        {
+            HoverPosition = Vector2.Transform(HoverPosition.Value, transform);
+        }
+        
+        foreach (var ptr in Pointers)
+        {
+            ptr.PushTransform(transform);
+        }
+    }
+
+    public void PopTransform()
+    {
+        foreach (var ptr in Pointers)
+        {
+            ptr.PopTransform();
+        }
+        HoverPosition = _hoverPositions.Pop();
     }
 
     public float CalculateHorizontalVelocity(int id) => TouchProcessor.CalculateHorizontalVelocity(id);

@@ -26,6 +26,8 @@ public abstract class ResourceHandle<TResource> : IDisposable where TResource : 
     }
 
     protected abstract void OnDispose();
+    
+    public static implicit operator TResource( ResourceHandle<TResource> handle ) => handle.Resource;
 }
 
 /// <summary>

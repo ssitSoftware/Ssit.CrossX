@@ -43,7 +43,7 @@ public sealed class Pointer(int id)
         _transformHistory?.Clear();
     }
 
-    public void PushTransform(Matrix3x2 matrix)
+    internal void PushTransform(Matrix3x2 matrix)
     {
         if (_transformHistory is null)
         {
@@ -55,7 +55,7 @@ public sealed class Pointer(int id)
         Origin = Vector2.Transform(Origin, matrix);
     }
 
-    public void PopTransform()
+    internal void PopTransform()
     {
         if (_transformHistory is null || _transformHistory.Count == 0)
         {

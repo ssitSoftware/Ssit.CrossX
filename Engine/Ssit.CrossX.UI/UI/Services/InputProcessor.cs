@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Services;
+
+public interface IInputCoordinateSystem
+{
+    Matrix3x2 Transform { get; }
+}
 
 internal sealed class InputProcessor: IInputContext
 {
@@ -12,16 +18,18 @@ internal sealed class InputProcessor: IInputContext
     private readonly IGameControllers _gameControllers;
     private readonly IPointingDevices _pointingDevices;
     private readonly Navigation _navigation;
+    private readonly IInputCoordinateSystem _coordinateSystem;
 
     private readonly List<IInputConsumer> _inputConsumers = new();
     private readonly List<(int, IInputConsumer)> _capturedPointers = new();
     
-    public InputProcessor(IKeyboard keyboard, IGameControllers gameControllers, IPointingDevices pointingDevices, Navigation navigation)
+    public InputProcessor(IKeyboard keyboard, IGameControllers gameControllers, IPointingDevices pointingDevices, Navigation navigation, IInputCoordinateSystem coordinateSystem = null)
     {
         _keyboard = keyboard;
         _gameControllers = gameControllers;
         _pointingDevices = pointingDevices;
         _navigation = navigation;
+        _coordinateSystem = coordinateSystem;
     }
 
     private void PrepareInputConsumers(ViewHandler handler)
@@ -108,42 +116,54 @@ internal sealed class InputProcessor: IInputContext
         _inputConsumers.Clear();
         PrepareInputConsumers(page.RootHandler);
 
-        int? matchingPointerId = null;
-        foreach (var ptr in _pointingDevices.Pointers)
-        {
-            if (ptr.Position == _pointingDevices.HoverPosition)
-            {
-                matchingPointerId = ptr.Id;
-                break;
-            }
-        }
+        var transform = _coordinateSystem?.Transform ?? Matrix3x2.Identity;
 
-        bool disableInput = true == page.FocusedElement?.DisableAllInput;
-        
-        if (disableInput)
-        {
-            for (var idx = 0; idx < _pointingDevices.Pointers.Count; ++idx)
-            {
-                CapturePointer(_pointingDevices.Pointers[idx].Id, page.FocusedElement as IInputConsumer);
-            }
-            ProcessCapturedPointers();
-        }
-        else
-        {
-            for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
-            {
-                _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
-            }
+        _pointingDevices.PushTransform(transform);
 
-            for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+        try
+        {
+            int? matchingPointerId = null;
+            foreach (var ptr in _pointingDevices.Pointers)
             {
-                if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+                if (ptr.Position == _pointingDevices.HoverPosition)
                 {
-                    ProcessCapturedPointers();
-                    _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
+                    matchingPointerId = ptr.Id;
                     break;
                 }
             }
+
+            bool disableInput = true == page.FocusedElement?.DisableAllInput;
+
+            if (disableInput)
+            {
+                for (var idx = 0; idx < _pointingDevices.Pointers.Count; ++idx)
+                {
+                    CapturePointer(_pointingDevices.Pointers[idx].Id, page.FocusedElement as IInputConsumer);
+                }
+
+                ProcessCapturedPointers();
+            }
+            else
+            {
+                for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+                {
+                    _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
+                }
+
+                for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
+                {
+                    if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+                    {
+                        ProcessCapturedPointers();
+                        _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
+                        break;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            _pointingDevices.PopTransform();
         }
     }
 

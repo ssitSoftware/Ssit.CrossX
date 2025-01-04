@@ -19,6 +19,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private RectangleF _screenBounds;
     private bool _recalculateLayout;
     private bool _recalculationNeeded = false;
+    private RectangleF _bounds;
     protected IIoCContainer Services => _iocContainer;
     
     protected IFocusable FocusedElement { get; private set; }
@@ -36,8 +37,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     float IPage.Scale => Scale;
     void IPage.SignalRecalculationPending() => _recalculationNeeded = true;
-    
-    protected virtual float Scale => 1;
+
+    protected virtual float Scale { get; private set; } = 1;
     
     RectangleF IViewParent.ScreenBounds => _screenBounds;
     
@@ -55,7 +56,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     RectangleF IViewParent.CalculateTargetBounds()
     {
-        return _screenBounds;
+        return _bounds;
     }
     
     public void RecalculateLayout(View view = null)
@@ -71,7 +72,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         _recalculationNeeded = true;
     }
     
-    void IPage.Load(RectangleF bounds, IUiServices services, IInputContext inputContext, object viewModel)
+    void IPage.Load(IUiServices services, IInputContext inputContext, object viewModel)
     {
         ViewModel = (TViewModel)viewModel;
         Styles = services.StylesManager;
@@ -79,19 +80,6 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
         var root = CreateView();
         _rootHandler = services.HandlerMapper.Create(root, this);
-        
-        _screenBounds = bounds;
-        
-        _rootHandler.SetBounds(new RectangleF(0, 0, bounds.Width, bounds.Height));
-        _recalculateLayout = true;
-        _recalculationNeeded = true;
-        
-        while (_recalculationNeeded)
-        {
-            _recalculationNeeded = false;
-            _rootHandler.Update(0);
-        }
-        
         OnLoad(inputContext);
     }
 
@@ -165,10 +153,14 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     void IPage.Draw(IRenderer renderer) => OnDraw(renderer);
     
-    void IPage.SetBounds(RectangleF bounds)
+    void IPage.SetBounds(RectangleF bounds, float scale) => SetBounds(bounds, scale);
+
+    private void SetBounds(RectangleF bounds, float scale)
     {
-        _screenBounds = bounds;
-        _rootHandler.SetBounds(new RectangleF(0,0,_screenBounds.Width, _screenBounds.Height));
+        Scale = scale;
+
+        _bounds = _screenBounds = new RectangleF(bounds.X * scale, bounds.Y * scale, bounds.Width * scale, bounds.Height * scale);
+        _rootHandler.SetBounds(new RectangleF(0,0,_bounds.Width, _bounds.Height));
         
         _recalculationNeeded = true;
         while (_recalculationNeeded)

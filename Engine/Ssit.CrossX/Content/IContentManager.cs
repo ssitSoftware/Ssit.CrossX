@@ -1,4 +1,5 @@
 using System;
+using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.Content;
 
@@ -19,4 +20,6 @@ public interface IContentManager
     /// <param name="loadFunc">Loading method delegate.</param>
     /// <typeparam name="TResource">Type of resource, which custom loading should be registered.</typeparam>
     void RegisterLoader<TResource>(LoadResourceDelegate loadFunc) where TResource: class, IDisposable;
+    
+    IFilesProvider FilesProvider { get; }
 }

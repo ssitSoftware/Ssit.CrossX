@@ -22,7 +22,6 @@ internal class Navigation: INavigation
     private readonly IIoCContainer _iocContainer;
     private readonly IUiServices _uiServices;
     private readonly UiApp _uiApp;
-    private readonly IUiAppBoundsSource _uiAppBoundsSource;
 
     private readonly Stack<StackData> _navigationStack = new();
     private readonly List<IDisposable> _objectsToDisposeOnTransitionFinished = new();
@@ -37,7 +36,6 @@ internal class Navigation: INavigation
         _iocContainer = iocContainer;
         _uiServices = uiServices;
         _uiApp = uiApp as UiApp;
-        _uiAppBoundsSource = uiApp as IUiAppBoundsSource;
     }
 
     public int NavigationStackCount => _navigationStack.Count;
@@ -143,8 +141,9 @@ internal class Navigation: INavigation
         var page = (IPage)Activator.CreateInstance(pageType);
         if (page is null) throw new InvalidProgramException();
         
-        page.Load(_uiAppBoundsSource.Bounds, _uiServices, _uiApp.InputProcessor, vm);
-
+        page.Load(_uiServices, _uiApp.InputProcessor, vm);
+        page.SetBounds(_uiApp.Bounds, _uiApp.Scale);
+        
         if (focusedId != null)
         {
             var focusable = _uiApp.InputProcessor.FindFocusable(focusedId, page);

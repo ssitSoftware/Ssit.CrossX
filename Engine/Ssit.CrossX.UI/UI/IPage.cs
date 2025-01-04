@@ -8,10 +8,10 @@ namespace Ssit.CrossX.UI;
 
 internal interface IPage: IViewParent, IDisposable
 {
-    void Load(RectangleF bounds, IUiServices services, IInputContext inputContext, object viewModel);
+    void Load(IUiServices services, IInputContext inputContext, object viewModel);
     void Update(float dt);
     void Draw(IRenderer renderer);
-    void SetBounds(RectangleF bounds);
+    void SetBounds(RectangleF bounds, float scale);
     ViewHandler RootHandler { get; }
     bool OnUiButton(UiButton button, IInputContext inputProcessor);
     IFocusable FocusedElement { get; set; }

@@ -1,11 +1,13 @@
+using System;
 using System.Numerics;
+using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
 
 namespace SampleGame.Game.Rendering;
 
-public class SpriteRenderer: IGameObjectRenderer
+public class SpriteRenderer: IGameObjectRenderer, IDisposable
 {
     private readonly SpriteInstance _spriteInstance;
     private ImageTransform _transform = ImageTransform.None;
@@ -13,9 +15,9 @@ public class SpriteRenderer: IGameObjectRenderer
     public event SpriteInstance.SpriteEventDelegate AnimationEvent;
     public event SpriteInstance.SequenceFinishedDelegate AnimationFinished;
     
-    public SpriteRenderer(SpriteInstance spriteInstance)
+    public SpriteRenderer(GameObject obj)
     {
-        _spriteInstance = spriteInstance;
+        _spriteInstance = obj.CreateSpriteInstance();
         _spriteInstance.SpriteEvent += OnSpriteEvent;
         _spriteInstance.SequenceFinished += OnSequenceFinished;
     }
@@ -36,9 +38,28 @@ public class SpriteRenderer: IGameObjectRenderer
         _spriteInstance.Advance(dt, reverse);
     }
 
-    public virtual void Render(IRenderer renderer, Vector2 position)
+    public virtual void Render(IRenderer renderer, Vector2 position, RenderPass renderPass)
     {
         position *= Scale;
-        renderer.DrawSprite(_spriteInstance, position, Scale, null, _transform);
+
+        switch (renderPass)
+        {
+            case RenderPass.Normal:
+                renderer.DrawSprite(_spriteInstance, position, Scale, null, _transform);
+                break;
+            
+            case RenderPass.Shadow:
+                break;
+        }
+    }
+
+    protected virtual void OnDispose()
+    {
+        _spriteInstance?.Dispose();
+    }
+    
+    public void Dispose()
+    {
+        OnDispose();
     }
 }

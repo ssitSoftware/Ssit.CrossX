@@ -18,4 +18,10 @@ public readonly struct SizeF
     }
 
     public Vector2 ToVector() => new(Width, Height);
+    
+    public static implicit operator SizeF( Vector2 size ) => new SizeF(size.X, size.Y);
+    public static implicit operator SizeF( Size size ) => new SizeF(size.Width, size.Height);
+    
+    public static SizeF operator * (SizeF size, float multiply) => new(size.Width * multiply, size.Height * multiply);
+    public static SizeF operator / (SizeF size, float divide) => new(size.Width / divide, size.Height / divide);
 }

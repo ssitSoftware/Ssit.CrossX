@@ -45,7 +45,7 @@ public class ShooterPlayerBrain : Brain
         var rollState = new State(rollingBehavior);
         
         AddState("Idle", idleState);
-        AddState("Run", runState);
+        AddState("Move", runState);
         AddState("Chop", chopState);
         AddState("Roll", rollState);
         
@@ -82,20 +82,34 @@ public class ShooterPlayerBrain : Brain
         var transform = ImageTransform.None;
         
         var angle = MathF.Atan2(CharacterDirection.Y, CharacterDirection.X) - MathF.PI / 4;
-        var angleInt = (int)(angle / (MathF.PI / 2) + 4) % 4;
-
+        
+        var angleInt = (int)(angle / (MathF.PI / 8) + 16) % 16;
+        
+        _renderer.GunBehind = angleInt is >= 7 and <= 12;
+        
         switch (angleInt)
         {
-            case 1:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
                 direction = "L/R";
                 transform = ImageTransform.FlipHorizontal;
                 break;
             
-            case 2:
+            
+            case 9:
+            case 10:
+            case 11:
                 direction = "Up";
                 break;
             
-            case 3:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 0:
                 direction = "L/R";
                 break;
         }

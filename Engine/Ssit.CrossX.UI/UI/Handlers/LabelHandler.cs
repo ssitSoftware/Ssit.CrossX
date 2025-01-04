@@ -7,7 +7,7 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
-    public LabelHandler(ViewHandler.CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters, fontsManager)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters, fontsManager)
     {
         OnTextChanged();
     }

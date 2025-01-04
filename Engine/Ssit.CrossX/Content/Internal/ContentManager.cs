@@ -14,6 +14,8 @@ internal class ContentManager: IContentManager
     private readonly IIoCContainer _ioCContainer;
     private readonly IFilesProvider _filesProvider;
 
+    public IFilesProvider FilesProvider => _filesProvider;
+    
     private class ResourceInstance(IDisposable obj)
     {
         public IDisposable Object { get; } = obj;

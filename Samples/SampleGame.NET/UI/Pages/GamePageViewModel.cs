@@ -15,4 +15,7 @@ public class GamePageViewModel(INavigation navigation) : IPageCommandsSource
     
     public SharedValue<int> MaxHitPoints { get; } = new(8);
     public SharedValue<int> HitPoints { get; } = new(4);
+    
+    public SharedValue<int> MaxRounds { get; } = new(6);
+    public SharedValue<int> Rounds { get; } = new(5);
 }

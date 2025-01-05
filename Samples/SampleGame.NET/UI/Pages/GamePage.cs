@@ -25,6 +25,20 @@ public class GamePage: Page<GamePageViewModel>
             ViewModel.HitPoints.Value = value;
             return true;
         }
+        
+        if (button == UiButton.Down)
+        {
+            var value = Math.Max(0, ViewModel.Rounds.Value - 1);
+            ViewModel.Rounds.Value = value;
+            return true;
+        }
+        
+        if (button == UiButton.Up)
+        {
+            var value = Math.Min(ViewModel.MaxRounds.Value, ViewModel.Rounds.Value + 1);
+            ViewModel.Rounds.Value = value;
+            return true;
+        }
         return base.OnUiButton(button, inputContext);
     }
 
@@ -39,12 +53,24 @@ public class GamePage: Page<GamePageViewModel>
                new PointsView
                {
                    Path = "assets:/Sprites/HP",
-                   Spacing = 2,
+                   Spacing = 3,
                    MaxPoints = ViewModel.MaxHitPoints,
                    Points = ViewModel.HitPoints,
-                   HorizontalAlign = Align.Center,
+                   HorizontalAlign = Align.Start,
                    VerticalAlign = Align.Start,
-                   AnchorY = 8
+                   AnchorX = 10,
+                   AnchorY = 10,
+               },
+               new PointsView
+               {
+                   Path = "assets:/Sprites/Rounds",
+                   Spacing = 2,
+                   MaxPoints = ViewModel.MaxRounds,
+                   Points = ViewModel.Rounds,
+                   HorizontalAlign = Align.Start,
+                   VerticalAlign = Align.Start,
+                   AnchorX = 11,
+                   AnchorY = 22,
                }
             ]
         };

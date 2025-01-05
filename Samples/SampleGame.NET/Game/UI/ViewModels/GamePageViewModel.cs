@@ -5,14 +5,9 @@ using Ssit.CrossX.UI.Services;
 
 namespace SampleGame.Game.UI.ViewModels;
 
-public class GamePageViewModel : IPageCommandsSource
+public class GamePageViewModel(INavigation navigation) : IPageCommandsSource
 {
     ICommand IPageCommandsSource.MenuCommand => null;
     ICommand IPageCommandsSource.BackCommand => _backCommand;
-    private readonly SyncCommand _backCommand;
-
-    public GamePageViewModel(INavigation navigation)
-    {
-        _backCommand = new SyncCommand(navigation.NavigateBack);
-    }
+    private readonly SyncCommand _backCommand = new(navigation.NavigateBack);
 }

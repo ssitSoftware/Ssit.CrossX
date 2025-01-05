@@ -8,9 +8,9 @@ public class SpriteInstance : IDisposable
 {
     private readonly Vector2 _origin;
 
-    public delegate void SpriteEventDelegate(string eventName);
+    public delegate void SpriteEventDelegate(SpriteInstance instance, string eventName);
 
-    public delegate void SequenceFinishedDelegate(string sequenceName, bool reverse);
+    public delegate void SequenceFinishedDelegate(SpriteInstance instance, string sequenceName, bool reverse);
 
     private readonly ResourceHandle<Sprite> _sprite;
     private readonly ResourceHandle<ITexture> _spriteSheet;
@@ -19,6 +19,7 @@ public class SpriteInstance : IDisposable
     
     public Vector2 Origin { get; private set; }
     public Rectangle Source { get; private set; }
+    public string CurrentSequence => _currentSequence?.Name ?? "";
 
     private float _currentTime;
     private float _maxTime;
@@ -96,7 +97,7 @@ public class SpriteInstance : IDisposable
 
         if (_currentTime >= _maxTime || _currentTime < 0)
         {
-            SequenceFinished?.Invoke(_currentSequence.Name, _currentTime < 0);
+            SequenceFinished?.Invoke(this, _currentSequence.Name, _currentTime < 0);
             if (_currentSequence?.Name != currentSequence || _currentSequence is null)
             {
                 return;
@@ -119,7 +120,7 @@ public class SpriteInstance : IDisposable
         {
             if (_currentSequence.Frames[frame].Event != null)
             {
-                SpriteEvent?.Invoke(_currentSequence.Frames[frame].Event);
+                SpriteEvent?.Invoke(this, _currentSequence.Frames[frame].Event);
             }
         }
 
@@ -129,5 +130,6 @@ public class SpriteInstance : IDisposable
     public void Dispose()
     {
         _spriteSheet?.Dispose();
+        _sprite?.Dispose();
     }
 }

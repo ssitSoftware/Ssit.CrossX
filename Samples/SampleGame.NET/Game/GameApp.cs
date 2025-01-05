@@ -5,6 +5,7 @@ using SampleGame.Services;
 using SampleGame.UI.Pages;
 using SampleGame.UI.Pages.Internal;
 using SampleGame.UI.Templates;
+using SampleGame.UI.Views;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
@@ -54,7 +55,8 @@ public class GameApp: PixelApp, IInputCoordinateSystem
         filesProvider.AddProvider("bundle:", bundleProvider);
 
         builder
-            .WithInstance<IFilesProvider>(filesProvider);
+            .WithInstance<IFilesProvider>(filesProvider)
+            .WithSingleton<IGameSettings, GameSettings>();
     }
 
     private void OnInitializeUi(INavigationMap navigationMap, IIoCContainerBuilder builder)
@@ -77,8 +79,11 @@ public class GameApp: PixelApp, IInputCoordinateSystem
         _uiApp.Dispose();
     }
     
-    private void MapHandlers(IHandlerMapper _)
+    private void MapHandlers(IHandlerMapper mapper)
     {
+        mapper
+            .AddMapping<GameView, GameViewHandler>()
+            .AddMapping<PointsView, PointsViewHandler>();
     }
 
     protected override void OnInitialize(IIoCContainer container)

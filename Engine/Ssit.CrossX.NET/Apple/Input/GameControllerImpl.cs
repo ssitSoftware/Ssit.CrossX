@@ -71,7 +71,8 @@ internal class GameControllerImpl: IGameController
                     return Controller.ExtendedGamepad?.ButtonOptions?.IsPressed ?? false;
                 
                 case GameControllerButton.Start:
-                    return Controller.ExtendedGamepad?.ButtonMenu?.IsPressed ?? false;
+                    return (Controller.ExtendedGamepad?.ButtonMenu?.Touched ?? false) ||
+                           (Controller.ExtendedGamepad?.ButtonMenu?.IsPressed ?? false);
                 
                 case GameControllerButton.Guide:
                     return Controller.ExtendedGamepad?.ButtonHome?.IsPressed ?? false;

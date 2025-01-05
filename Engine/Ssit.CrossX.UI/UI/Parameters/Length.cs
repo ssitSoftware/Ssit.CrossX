@@ -125,4 +125,7 @@ public struct Length
     
     public static Length operator -(Length length, Length sub) =>
         new Length(length.Value - sub.Value, length.Percent - sub.Percent, length.Pixels - sub.Pixels);
+    
+    public static Length operator *(Length length, float mul) =>
+        new Length(length.Value * mul, length.Percent * mul, length.Pixels * mul);
 }

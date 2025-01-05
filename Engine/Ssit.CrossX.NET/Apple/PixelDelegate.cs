@@ -1,6 +1,7 @@
 #if __IOS__ || __MACCATALYST__
 
 using System;
+using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
@@ -179,6 +180,10 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
         
         _renderingWindow.Draw(view, _app);
         _eventSource.OnRenderFinished();
+    }
+    
+    public void Exit()
+    {
     }
 }
 

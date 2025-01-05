@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Ssit.CrossX.Games.Rendering;
+using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Logic;
 

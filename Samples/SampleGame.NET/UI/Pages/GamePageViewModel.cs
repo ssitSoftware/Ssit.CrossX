@@ -2,12 +2,17 @@ using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 
 namespace SampleGame.UI.Pages;
 
 public class GamePageViewModel(INavigation navigation) : IPageCommandsSource
 {
-    ICommand IPageCommandsSource.MenuCommand => null;
-    ICommand IPageCommandsSource.BackCommand => _backCommand;
+    ICommand IPageCommandsSource.MenuCommand => _backCommand;
+    ICommand IPageCommandsSource.BackCommand => null;
+    
     private readonly SyncCommand _backCommand = new(navigation.NavigateBack);
+    
+    public SharedValue<int> MaxHitPoints { get; } = new(8);
+    public SharedValue<int> HitPoints { get; } = new(4);
 }

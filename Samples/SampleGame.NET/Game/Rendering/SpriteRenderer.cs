@@ -7,13 +7,15 @@ using Ssit.CrossX.Graphics.Sprites;
 
 namespace SampleGame.Game.Rendering;
 
+
+
 public class SpriteRenderer: IGameObjectRenderer, IDisposable
 {
     private readonly SpriteInstance _spriteInstance;
     private ImageTransform _transform = ImageTransform.None;
     
-    public event SpriteInstance.SpriteEventDelegate AnimationEvent;
-    public event SpriteInstance.SequenceFinishedDelegate AnimationFinished;
+    public event AnimationEventDelegate AnimationEvent;
+    public event AnimationFinishedDelegate AnimationFinished;
     
     public SpriteRenderer(GameObject obj)
     {
@@ -22,8 +24,8 @@ public class SpriteRenderer: IGameObjectRenderer, IDisposable
         _spriteInstance.SequenceFinished += OnSequenceFinished;
     }
 
-    private void OnSpriteEvent(string eventName) => AnimationEvent?.Invoke(eventName);
-    private void OnSequenceFinished(string sequenceName, bool reverse) => AnimationFinished?.Invoke(sequenceName, reverse);
+    private void OnSpriteEvent(SpriteInstance _, string eventName) => AnimationEvent?.Invoke(eventName);
+    private void OnSequenceFinished(SpriteInstance _, string sequenceName, bool reverse) => AnimationFinished?.Invoke(sequenceName, reverse);
 
     public float Scale { get; set; } = 1;
 

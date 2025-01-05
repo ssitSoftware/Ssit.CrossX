@@ -13,7 +13,7 @@ public class MainPage: MenuItemsPageBase<MainPageViewModel>
             (Translator["Language"] + ": " + Translator["#LangName"], ViewModel.LanguageCommand),
             (Translator["Options"], ViewModel.OptionsCommand),
             (Translator["Credits"], ViewModel.CreditsCommand),
-            (Translator["Exit"], ViewModel.ExitCommand)
+            //(Translator["Exit"], ViewModel.ExitCommand)
         ]);
 
         return CreateDefaultItemsContainer(menuView);

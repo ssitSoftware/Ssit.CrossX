@@ -198,7 +198,7 @@ internal sealed class InputProcessor: IInputContext
     
     private bool GetUiButtonMenu()
     {
-        return _gameControllers.GetButton(0, GameControllerButton.B) == ButtonState.JustPressed;
+        return _gameControllers.GetButton(0, GameControllerButton.Start) == ButtonState.JustPressed;
     }
 
     private bool GetUiButtonMenuOrBack()

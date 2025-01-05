@@ -8,7 +8,7 @@ namespace Ssit.CrossX.UI.Handlers;
 public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> where TTextView: Label
 {
     private readonly IFontsManager _fontsManager;
-    protected readonly TextRenderingContext TextRenderingContext = new ();
+    protected TextRenderingContext TextRenderingContext = new ();
 
     protected virtual RgbaColor? TextColor => AttachedView.TextColor;
     protected virtual RgbaColor? TextOutlineColor => AttachedView.TextOutlineColor;

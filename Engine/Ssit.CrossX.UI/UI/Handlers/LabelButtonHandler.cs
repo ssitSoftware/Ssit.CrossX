@@ -24,7 +24,7 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters, fontsManager)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher) : base(parameters, fontsManager, actionDispatcher)
     {
         _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this);
     }

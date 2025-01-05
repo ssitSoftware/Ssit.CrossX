@@ -134,6 +134,18 @@ public class TextRenderingContext
         return true;
     }
 
+    public void Reset()
+    {
+        _targetWidth = -1;
+        _textHashCode = 0;
+        _text = null;
+        _font = null;
+        _spacing = default;
+        _width = -1;
+        _height = -1;
+        Lines.Clear();
+    }
+
     public bool IsValid(TextSource text, IGlyphFont font, TextSpacing spacing, int targetWidth = 0)
     {
         if (_targetWidth != targetWidth)

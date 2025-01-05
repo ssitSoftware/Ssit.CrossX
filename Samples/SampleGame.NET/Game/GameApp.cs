@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
 using SampleGame.Game.Logic;
 using SampleGame.Game.Rendering;
-using SampleGame.Game.UI.Pages;
-using SampleGame.Game.UI.Templates;
-using SampleGame.Game.UI.ViewModels;
+using SampleGame.Services;
+using SampleGame.UI.Pages;
+using SampleGame.UI.Pages.Internal;
+using SampleGame.UI.Templates;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
@@ -60,10 +61,13 @@ public class GameApp: PixelApp, IInputCoordinateSystem
     {
         navigationMap
             .Map<MainPageViewModel, MainPage>()
+            .Map<OptionsPageViewModel, OptionsPage>()
             .Map<GamePageViewModel, GamePage>();
 
         builder
             .WithInstance(new ItemTemplates())
+            .WithInstance(new PageInputContext())
+            .WithSingleton<ITranslator, Translator>()
             .WithInstance<IInputCoordinateSystem>(this);
     }
     

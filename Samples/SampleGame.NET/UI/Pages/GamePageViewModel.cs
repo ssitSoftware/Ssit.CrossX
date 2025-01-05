@@ -3,7 +3,7 @@ using Ssit.CrossX.Commands;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 
-namespace SampleGame.Game.UI.ViewModels;
+namespace SampleGame.UI.Pages;
 
 public class GamePageViewModel(INavigation navigation) : IPageCommandsSource
 {

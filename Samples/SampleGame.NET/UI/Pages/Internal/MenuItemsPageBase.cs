@@ -1,42 +1,65 @@
 using System.Collections.Generic;
 using System.Windows.Input;
-using SampleGame.Game.UI.Styles;
+using SampleGame.Services;
+using SampleGame.UI.Styles;
+using Ssit.CrossX;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.Game.UI.Pages;
+namespace SampleGame.UI.Pages.Internal;
 
 public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TViewModel: class
 {
     private string _defaultId;
+    protected ITranslator Translator => Services.Get<ITranslator>();
     
-    protected override bool OnUiButton(UiButton button, IInputContext inputContext)
+    protected override void OnLoad(IInputContext inputContext)
     {
-        if (FocusedElement is null && !string.IsNullOrWhiteSpace(_defaultId))
+        base.OnLoad(inputContext);
+        
+        if (Services.Get<PageInputContext>().AlwaysShowFocus)
         {
             var focusable = inputContext.FindFocusable(_defaultId, this);
             inputContext.Focus(focusable, this);
+        }
+    }
+
+    protected override bool OnUiButton(UiButton button, IInputContext inputContext)
+    {
+        if (FocusedElement is null && !string.IsNullOrWhiteSpace(_defaultId) && button is not UiButton.Back and not UiButton.MenuOrBack)
+        {
+            var focusable = inputContext.FindFocusable(_defaultId, this);
+            inputContext.Focus(focusable, this);
+            Services.Get<PageInputContext>().AlwaysShowFocus = true;
             return true;
         }
         return base.OnUiButton(button, inputContext);
     }
 
     protected View CreateMenuItems(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
-        int defaultButtonIndex = -1, bool cycleItems = false)
+        int defaultButtonIndex = 0, bool isMainList = true)
     {
-        var buttons = new List<View>();
+        var translator = Services.Get<ITranslator>();
+        
+        var controls = new List<View>();
+        var commandsSource = isMainList ? ViewModel as IPageCommandsSource : null;
+            
         for (var i = 0; i < items.Count; i++)
         {
             var nextIndex = i + 1;
             var prevIndex = i - 1;
 
-            if (cycleItems)
+            if (commandsSource is null)
             {
                 nextIndex %= items.Count;
                 prevIndex = (prevIndex + items.Count) % items.Count;
+            }
+            else if(prevIndex < 0)
+            {
+                prevIndex = items.Count;
             }
             
             var button = new LabelButton
@@ -47,7 +70,25 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
                 Command = items[i].command
             }.WithDefaultStyle();
             
-            buttons.Add(button);
+            controls.Add(button);
+        }
+
+        if (commandsSource is not null)
+        {
+            controls.Add(new Background
+            {
+                Height = 4
+            });
+            
+            var button = new LabelButton
+            {
+                Text = "Back",
+                UniqueId = $"{id}{items.Count}",
+                VerticalNavigation = ($"{id}{items.Count-1}", $"{id}0"),
+                Command = commandsSource.BackCommand
+            }.WithDefaultStyle();
+
+            controls.Add(button);
         }
 
         if (defaultButtonIndex >= 0)
@@ -57,12 +98,13 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
 
         return new VerticalStack
         {
+            BackgroundColor = RgbaColor.FromNonPremultiplied(0, 0, 0, 100),
             Padding = (8, 8),
             Spacing = 8,
             VerticalAlign = Align.Center,
             HorizontalAlign = Align.Center,
-            Width = "192",
-            Children = buttons.ToArray()
+            Width = 192,
+            Children = controls.ToArray()
         };
     }
 
@@ -70,8 +112,6 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
     {
         return new Container
         {
-            Width = 480,
-            HorizontalAlign = Align.Center,
             Padding = (10,10),
             Children = [
                 itemsView

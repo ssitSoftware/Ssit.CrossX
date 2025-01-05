@@ -1,6 +1,6 @@
 using Ssit.CrossX.UI;
 
-namespace SampleGame.Game.UI.Templates;
+namespace SampleGame.UI.Templates;
 
 public class ItemTemplates: TemplatesContainer
 {

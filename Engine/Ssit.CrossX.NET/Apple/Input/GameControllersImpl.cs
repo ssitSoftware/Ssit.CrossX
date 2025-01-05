@@ -84,6 +84,11 @@ internal class GameControllersImpl: GameControllersBase
         }
     }
 
+    protected override bool IsConnectedInternal(int player)
+    {
+        return _gameControllers[player] != null;
+    }
+
     protected override ButtonState GetButtonInternal(int player, GameControllerButton button)
     {
         return _gameControllers[player]?.GetButton(button) ?? ButtonState.Empty;

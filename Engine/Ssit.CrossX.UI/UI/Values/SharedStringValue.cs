@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.UI.Values;
 
@@ -24,6 +26,17 @@ public class SharedStringValue : SharedString
         _builder.Append(text);
         RaiseTextChanged();
     }
+    
+    public void SetText(ICharProvider text)
+    {
+        _builder.Clear();
+        for (var idx = 0; idx < text.Length; idx++)
+        {
+            _builder.Append(text[idx]);    
+        }
+        
+        RaiseTextChanged();
+    }
 
     public void FormatText(string format, params object[] args)
     {
@@ -46,17 +59,31 @@ public class SharedStringJoin : SharedString
     private readonly SharedString _str1;
     private readonly SharedString _str2;
 
-    public override int Length => _str1.Length + _str2.Length;
+    public override int Length
+    {
+        get
+        {
+            lock (this)
+            {
+                return _str1.Length + _str2.Length;
+            }
+        }
+    }
 
     public override char this[int index]
     {
         get
         {
-            if (index >= _str1.Length)
+            lock (this)
             {
-                return _str2[index-_str1.Length];
+                if (index >= _str1.Length)
+                {
+                    index -= _str1.Length;
+                    return _str2[index];
+                }
+
+                return _str1[index];
             }
-            return _str1[index];
         }
     }
     
@@ -64,8 +91,16 @@ public class SharedStringJoin : SharedString
     {
         _str1 = str1;
         _str2 = str2;
-        
-        _str1.TextChanged += RaiseTextChanged;
-        _str2.TextChanged += RaiseTextChanged;
+
+        _str1.TextChanged += OnTextChanged;
+        _str2.TextChanged += OnTextChanged;
+    }
+
+    private void OnTextChanged()
+    {
+        lock (this)
+        {
+            RaiseTextChanged();
+        }
     }
 }

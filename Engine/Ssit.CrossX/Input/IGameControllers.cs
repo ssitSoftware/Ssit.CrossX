@@ -28,4 +28,11 @@ public interface IGameControllers
     /// <param name="axis">The specific axis to retrieve the value from.</param>
     /// <returns>A float representing the axis value, ranging from -1.0 to 1.0.</returns>
     float GetAxis(int player, GameControllerAxis axis);
+
+    /// <summary>
+    /// Determines whether the specified player has a connected game controller.
+    /// </summary>
+    /// <param name="player">The player index (e.g., 0 for the first player).</param>
+    /// <returns>A boolean value indicating whether the player's game controller is connected.</returns>
+    bool IsConnected(int player);
 }

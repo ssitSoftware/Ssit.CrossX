@@ -6,6 +6,7 @@ public abstract class GameControllersBase: IGameControllers
     
     public ButtonState GetButton(int player, GameControllerButton button) => GetButtonInternal(player, button);
     public float GetAxis(int player, GameControllerAxis axis) => GetAxisInternal(player, axis);
+    public bool IsConnected(int player) => IsConnectedInternal(player);
 
     public void Vibrate(int player, Vibration low, Vibration high, uint ms)
     {
@@ -18,4 +19,5 @@ public abstract class GameControllersBase: IGameControllers
     protected abstract ButtonState GetButtonInternal(int player, GameControllerButton button);
     protected abstract float GetAxisInternal(int player, GameControllerAxis axis);
     protected abstract void VibrateInternal(int player, ushort low, ushort high, uint ms);
+    protected abstract bool IsConnectedInternal(int player);
 }

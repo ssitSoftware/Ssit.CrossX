@@ -84,7 +84,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Game\UI\Handlers\" />
       <Folder Include="Music\" />
       <Folder Include="Platforms\iOS\Properties\" />
     </ItemGroup>

@@ -4,7 +4,7 @@ using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.Game.UI.Styles;
+namespace SampleGame.UI.Styles;
 
 public static class ButtonStyles
 {
@@ -13,9 +13,9 @@ public static class ButtonStyles
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Center;
         button.HorizontalAlign = Align.Fill;
-        button.Height = 24;
+        button.Height = 20;
         button.Font = ("Default", 12);
-        button.Padding = (4, 4);
+        button.Padding = (2, 2);
         button.TextColors = new ButtonStateColors
         {
             Normal = RgbaColor.DarkGray,

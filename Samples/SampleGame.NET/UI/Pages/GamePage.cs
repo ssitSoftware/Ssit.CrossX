@@ -1,10 +1,9 @@
-using SampleGame.Game.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.Game.UI.Pages;
+namespace SampleGame.UI.Pages;
 
 public class GamePage: Page<GamePageViewModel>
 {

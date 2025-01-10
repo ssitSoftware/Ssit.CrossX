@@ -1,3 +1,7 @@
+#if __MACCATALYST__
+using AppKit;
+#endif
+
 using Ssit.CrossX.Input.Internal;
 namespace Ssit.CrossX.NET.Apple.Input;
 
@@ -7,6 +11,7 @@ public class PointingDevicesImpl : PointingDevicesBase
     //private readonly MetalKit.MTKView _view;
     
     // ReSharper disable once ConvertToPrimaryConstructor
+    
     public PointingDevicesImpl(MetalKit.MTKView view)
     {
         //_view = view;
@@ -22,6 +27,11 @@ public class PointingDevicesImpl : PointingDevicesBase
         // screenPos.Y /= scale;
         
         //CoreGraphics.CGDisplay.MoveCursor(CoreGraphics.CGDisplay.MainDisplayID, screenPos);
+    }
+
+    protected override void ShowPointer(bool show)
+    {
+        //NSCursor.SetHiddenUntilMouseMoves(!show);
     }
 #endif
 }

@@ -1,8 +1,8 @@
 using System.Numerics;
-using Ssit.CrossX.Games.Logic;
+using SampleGame.Game.Logic;
 using Ssit.CrossX.Input;
 
-namespace SampleGame.Game.Logic;
+namespace SampleGame.Game.Actors.Player;
 
 public class PlayerController(IInputMappings inputMappings) : IGameObjectController
 {

@@ -1,6 +1,7 @@
 #if __IOS__ || __MACCATALYST__
 
 using System.IO;
+using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
@@ -62,8 +63,10 @@ public class TextureImpl: ITexture
         {
             return null;
         }
-        
-        return textureLoader.FromData(data, new MTKTextureLoaderOptions(), out var error);
+
+        using var cgImage = CGImage.FromPNG(new CGDataProvider(data), null, false, CGColorRenderingIntent.Default);
+        var texture = textureLoader.FromCGImage(cgImage!, new MTKTextureLoaderOptions(), out var error);
+        return texture;
     }
 
     public void Dispose()

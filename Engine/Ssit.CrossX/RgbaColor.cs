@@ -86,7 +86,7 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
 
         return new(red, green, blue, alpha);
     }
-
+    
     public int ToInt32()
     {
         long argb = (B | (G << 8) | (R << 16) | (A << 24));

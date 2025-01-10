@@ -36,7 +36,7 @@ internal class RendererImpl: RendererBase, IDisposable
 
     public override void Clear(RgbaColor color)
     {
-        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, _blendMode, Flush, WorldTransform, _clipRect, null, color);
+        _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, BlendMode, Flush, WorldTransform, _clipRect, null, color);
         Flush();
     }
 
@@ -88,7 +88,7 @@ internal class RendererImpl: RendererBase, IDisposable
     }
 
     protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter)
-        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, _blendMode, Flush, WorldTransform, _clipRect);
+        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, BlendMode, Flush, WorldTransform, _clipRect);
 
     private void DrawColorBuffer()
     {
@@ -126,7 +126,7 @@ internal class RendererImpl: RendererBase, IDisposable
         }
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, _blendMode, Flush, transform, _clipRect, color);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, BlendMode, Flush, transform, _clipRect, color);
         
         encoder.SetVertexBuffer(mtlBuffer, (UIntPtr)0, (UIntPtr)0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);

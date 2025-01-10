@@ -23,13 +23,14 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
 
     protected Matrix4x4? WorldTransform { get; set; }
 
-    protected BlendMode _blendMode = BlendMode.AlphaBlend;
+    protected BlendMode BlendMode = BlendMode.AlphaBlend;
     
     public abstract void SetRenderTarget(IRenderTarget renderTarget);
 
     public void SetBlendMode(BlendMode blendMode)
     {
-        _blendMode = blendMode;
+        Flush();
+        BlendMode = blendMode;
     }
 
     public void SetTransform(Matrix3x2? matrix)

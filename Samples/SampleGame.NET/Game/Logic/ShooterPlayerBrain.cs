@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using SampleGame.Game.Logic.Behaviors;
+using SampleGame.Game.Logic.Behaviors.ShooterPlayer;
 using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Graphics;
 
@@ -10,29 +11,47 @@ namespace SampleGame.Game.Logic;
 
 public class ShooterPlayerBrain : Brain
 {
-    public Vector2 Position { get; set; }
+    public interface IWeaponHandler
+    {
+        event Action<float> OnShot;
+        
+        bool IsReloading { get; }
+        void Shot();
+        void Attack();
+        void Reload();
+        void CancelReload();
+        void Update(float dt);
+    }
     
     private readonly Dictionary<(string, string), string> _sequences = new();
 
+    private readonly IPhysicsObject _physicsObject;
+    public IWeaponHandler WeaponHandler { get; }
     public readonly IGameObjectController Controller;
     private readonly IShooterRenderer _renderer;
 
     private bool _reverseMove;
     private float _recoil;
     
-    public Vector2 AimDirection { get; set; } = new Vector2(0,0);
-    public Vector2 MoveDirection { get; set; }= new Vector2(0,0);
-
-    public Vector2 CharacterDirection { get; set; } = new Vector2(0, 1);
+    public Vector2 AimDirection { get; set; } = new(0,0);
+    public Vector2 MoveDirection { get; set; }= new(0,0);
+    public Vector2 CharacterDirection { get; set; } = new(0, 1);
     
-    public ShooterPlayerBrain(IGameObjectController controller, IShooterRenderer renderer): base(renderer)
+    public Body Body => _physicsObject.Body;
+    
+    public ShooterPlayerBrain(IPhysicsObject physicsObject, IWeaponHandler weaponHandler, IGameObjectController controller, IShooterRenderer renderer): base(renderer)
     {
         Controller = controller;
+        WeaponHandler = weaponHandler;
+
+        WeaponHandler.OnShot += OnShot;
+        
+        _physicsObject = physicsObject;
         _renderer = renderer;
 
         var runBehavior = new RunBehavior(this);
         var shootBehavior = new ShootBehavior(this);
-        var swordAttackBehavior = new SwordAttachBehavior(this);
+        var swordAttackBehavior = new SwordAttackBehavior(this);
         var attackingBehavior = new AttackingBehavior(this);
         
         
@@ -51,15 +70,16 @@ public class ShooterPlayerBrain : Brain
         
         SetState("Idle");
     }
-    
+
     protected override void OnUpdate(float dt)
     {
         base.OnUpdate(dt);
         ProcessVectors();
+        WeaponHandler.Update(dt);
         
-        Position += MoveDirection * dt;
+        Body.Position += MoveDirection * dt;
         _renderer.Animate(dt, _reverseMove);
-
+        
         _recoil -= dt * 10f;
         _recoil = MathF.Max(0, _recoil);
     }
@@ -126,17 +146,18 @@ public class ShooterPlayerBrain : Brain
         CharacterDirection = Vector2.Normalize(CharacterDirection);
         _reverseMove = Vector2.Dot(CharacterDirection, MoveDirection) < 0;
 
-        var angle = MathF.Atan2(AimDirection.Y, AimDirection.X) - MathF.PI / 2;
+        bool isAiming = AimDirection.Length() > 0.1f;
         
-        _renderer.UpdateAimingAngle(angle, _recoil);
-        _renderer.IsAiming = AimDirection.LengthSquared() > 0.01f;
+        var angle = MathF.Atan2(CharacterDirection.Y, CharacterDirection.X) - MathF.PI / 2;
+        
+        _renderer.UpdateAimingAngle(angle, isAiming, WeaponHandler.IsReloading, _recoil);
     }
 
-    public void ShootBullet()
+    private void OnShot(float recoil)
     {
         if (_recoil == 0)
         {
-            _recoil = 4f;
+            _recoil = recoil;
         }
     }
 }

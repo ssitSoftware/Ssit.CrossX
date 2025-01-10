@@ -34,6 +34,8 @@ public class PointsViewHandler : ViewHandler<PointsView>
 
     private void PointsChanged(int val)
     {
+        PrepareSprites();
+        
         if (_lastValue > _spriteInstances.Count || val > _spriteInstances.Count)
         {
             Recalculate(0);
@@ -71,6 +73,12 @@ public class PointsViewHandler : ViewHandler<PointsView>
 
     private void Recalculate(int _)
     {
+        PrepareSprites();
+        Parent?.RecalculateLayout(AttachedView);
+    }
+
+    private void PrepareSprites()
+    {
         while (_spriteInstances.Count > AttachedView.MaxPoints.Value)
         {
             _spriteInstances.RemoveAt(_spriteInstances.Count - 1);
@@ -81,8 +89,6 @@ public class PointsViewHandler : ViewHandler<PointsView>
             _spriteInstances.Add(_gameObject.Resource.CreateSpriteInstance());
             _spriteInstances[^1].SetSequence("Off");
         }
-        
-        Parent?.RecalculateLayout(AttachedView);
     }
 
     public override void Update(float dt)

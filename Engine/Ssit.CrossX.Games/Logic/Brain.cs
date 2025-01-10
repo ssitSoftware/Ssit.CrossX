@@ -5,7 +5,7 @@ using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Logic;
 
-public abstract class Brain
+public abstract class Brain: IUpdatable
 {
     private readonly Dictionary<string, State> _states = new();
     private State _currentState;
@@ -24,11 +24,25 @@ public abstract class Brain
 
     public string CurrentState { get; private set; }
 
-    public void Update(float dt) => OnUpdate(dt);
+    void IUpdatable.Update(float dt) => OnUpdate(dt);
+    void IUpdatable.FixedUpdate(float dt) => OnFixedUpdate(dt);
+    void IUpdatable.PostFixedUpdate() => OnPostFixedUpdate();
 
     protected virtual void OnUpdate(float dt)
     {
         _currentState?.Update(dt);
+        SetSequence(CurrentState);
+    }
+    
+    protected virtual void OnFixedUpdate(float dt)
+    {
+        _currentState?.FixedUpdate(dt);
+        SetSequence(CurrentState);
+    }
+    
+    protected virtual void OnPostFixedUpdate()
+    {
+        _currentState?.PostFixedUpdate();
         SetSequence(CurrentState);
     }
 

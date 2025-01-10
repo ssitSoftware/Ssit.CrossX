@@ -15,7 +15,10 @@ public class SpriteShooterRenderer : SpriteRenderer, IShooterRenderer
         ["aim0", "aim22", "aim45", "aim67"];
 
     private ImageTransform _gunTransform = ImageTransform.None;
-    public bool IsAiming { get; set; }
+    
+    private bool _showGun;
+    private bool _isAiming;
+    
     public bool GunBehind { get; set; }
     private float _recoil = 0;
 
@@ -33,13 +36,16 @@ public class SpriteShooterRenderer : SpriteRenderer, IShooterRenderer
         _shadowOrigin = shadowObject.Description.Origin;
     }
 
-    public void UpdateAimingAngle(float angle, float recoil)
+    public void UpdateAimingAngle(float angle, bool isAiming, bool reloading, float recoil)
     {
         if (float.IsNaN(angle))
         {
             return;
         }
 
+        _showGun = reloading || isAiming;
+        _isAiming = isAiming;
+        
         _recoil = recoil;
         
         var intAngle = (int)MathF.Round((180 * angle / MathF.PI + 360) / 22.5f);
@@ -48,10 +54,16 @@ public class SpriteShooterRenderer : SpriteRenderer, IShooterRenderer
         _gunTransform = (ImageTransform)(intAngle / AimingStates.Length);
         
         intAngle %= AimingStates.Length;
-        
-        _gunSprite.SetSequence(AimingStates[intAngle], false);
+
+        _gunSprite.SetSequence(reloading ? "Reload" : AimingStates[intAngle]);
 
         _aimingVector = Vector2.Transform(new Vector2(0, 1), Matrix3x2.CreateRotation(angle));
+    }
+    
+    public override void Animate(float dt, bool reverse)
+    {
+        base.Animate(dt, reverse);
+        _gunSprite.Advance(dt);
     }
 
     public override void Render(IRenderer renderer, Vector2 position, RenderPass renderPass)
@@ -61,8 +73,16 @@ public class SpriteShooterRenderer : SpriteRenderer, IShooterRenderer
             renderer.DrawTexture(_shadowTexture.Resource, (position + new Vector2(1, 1)) * Scale, null, _shadowOrigin, 0, Scale, RgbaColor.White * 0.2f);
             return;
         }
+
+        if (renderPass == RenderPass.Overlay && _isAiming)
+        {
+            var pos = (position + _gunOffset) * Scale + _aimingVector * Scale * 32;
+            renderer.FillRectangle(new RectangleF(pos.X - 1, pos.Y - 1, 2, 2), new RgbaColor( 255, 0, 0, 255));
+            base.Render(renderer, position, renderPass);
+            return;
+        }
         
-        if (!IsAiming || renderPass != RenderPass.Normal)
+        if (!_showGun || renderPass != RenderPass.Normal)
         {
             base.Render(renderer, position, renderPass);
             return;
@@ -80,11 +100,6 @@ public class SpriteShooterRenderer : SpriteRenderer, IShooterRenderer
             base.Render(renderer, position, renderPass);
             renderer.DrawSprite(_gunSprite, (position + offset) * Scale, Scale, null, _gunTransform);
         }
-
-        var pos = (position + _gunOffset) * Scale + _aimingVector * Scale * 32;
-        renderer.FillRectangle(new RectangleF(pos.X - 2, pos.Y - 2, 4, 4), new RgbaColor( 255, 0, 0, 255));
-
-        pos = position * Scale;
     }
 
     protected override void OnDispose()

@@ -2,14 +2,14 @@ using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Logic;
 
-namespace SampleGame.Game.Logic.Behaviors;
+namespace SampleGame.Game.Logic.Behaviors.ShooterPlayer;
 
-public class RollingBehavior(ShooterPlayerBrain brain) : Behavior
+public class AttackingBehavior(ShooterPlayerBrain brain) : Behavior
 {
     protected override void OnEnterState()
     {
         base.OnEnterState();
-        brain.MoveDirection = brain.CharacterDirection * 80;
+        brain.MoveDirection = brain.CharacterDirection * 6;
         brain.AimDirection = Vector2.Zero;
     }
 

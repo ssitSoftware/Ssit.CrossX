@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using SampleGame.Game.Logic;
-using SampleGame.Game.Rendering;
 using SampleGame.Services;
 using SampleGame.UI.Pages;
 using SampleGame.UI.Pages.Internal;
@@ -10,7 +8,6 @@ using Ssit.CrossX;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
-using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
@@ -26,11 +23,6 @@ public class GameApp: PixelApp, IInputCoordinateSystem
 {
     private IRenderer _renderer;
     private IUiApp _uiApp;
-    private IPointingDevices _pointingDevices;
-
-    private ShooterPlayerBrain _playerBrain;
-    private SpriteShooterRenderer _spriteShooterRenderer;
-
     private PixelAppHost _appHost;
 
     public Matrix3x2 Transform
@@ -114,26 +106,17 @@ public class GameApp: PixelApp, IInputCoordinateSystem
         mapper.MapButton("Roll", GameControllerButton.A);
         mapper.MapButton("Roll", Key.Space);
         
-        mapper.MapButton("Reload", GameControllerButton.B);
+        mapper.MapButton("Reload", GameControllerButton.Y);
+        mapper.MapButton("Reload", Key.R);
         
         var fontsManager = container.Get<IFontsManager>();
         fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
+        
+        container.Get<IContentManager>().RegisterGameContentTypes();
 
         _uiApp = container.InitializeUi(OnInitializeUi);
 
         MapHandlers(_uiApp.Services.Get<IHandlerMapper>());
-        
-        _pointingDevices = container.Get<IPointingDevices>();
-
-        var cm = container.Get<IContentManager>();
-        cm.RegisterGameContentTypes();
-        
-        using var shadowObj = cm.Get<GameObject>("assets:/Sprites/CharacterShadow");
-        using var heroObj = cm.Get<GameObject>("assets:/Sprites/Hero");
-        using var gunObj = cm.Get<GameObject>("assets:/Sprites/HeroGun");
-        
-        _spriteShooterRenderer = new SpriteShooterRenderer(heroObj, gunObj, new Vector2(0,-9), shadowObj);
-        _playerBrain = new ShooterPlayerBrain(new PlayerController(inputMappings), _spriteShooterRenderer);
 
         _appHost = container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
         {
@@ -149,7 +132,6 @@ public class GameApp: PixelApp, IInputCoordinateSystem
 
     protected override void OnUpdate(float elapsedTime)
     {
-        _playerBrain.Update(elapsedTime);
         _uiApp.Update(elapsedTime);
     }
 
@@ -163,13 +145,6 @@ public class GameApp: PixelApp, IInputCoordinateSystem
     {
         _renderer.Clear(RgbaColor.FromBgra(0xff513a3d));
         _uiApp.Draw(_renderer);
-
-        _spriteShooterRenderer.Scale = _appHost.Scale;
-
-        _spriteShooterRenderer.Render(_renderer, _playerBrain.Position + _appHost.DesignTargetSize.ToVector() / 2,
-            RenderPass.Shadow);
-        _spriteShooterRenderer.Render(_renderer, _playerBrain.Position + _appHost.DesignTargetSize.ToVector() / 2,
-            RenderPass.Normal);
     }
 
     protected override void OnResize(Size size)

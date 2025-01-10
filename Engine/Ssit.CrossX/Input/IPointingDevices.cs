@@ -9,6 +9,8 @@ public interface IPointingDevices
     Pointer GetPointer(int id);
     Vector2? HoverPosition { get; }
     
+    bool ShowHoverPointer { get; set; }
+    
     void PushTransform(Matrix3x2 transform);
     void PopTransform();
     

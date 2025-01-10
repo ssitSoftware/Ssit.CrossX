@@ -70,7 +70,9 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         internal bool _enabled;
         internal float _angularVelocity;
+
         internal Vector2 _linearVelocity;
+
         internal Vector2 _force;
         internal float _invI;
         internal float _invMass;
@@ -83,6 +85,18 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         public PhysicsLogicFilter PhysicsLogicFilter;
         public ControllerFilter ControllerFilter;
+        
+        private int _bodyId;
+        private int _islandIndex;
+        private float _gravityScale;
+        private object _userData;
+        private bool _isBullet;
+        private List<Fixture> _fixtureList;
+        private JointEdge _jointList;
+        private ContactEdge _contactList;
+        private bool _ignoreGravity;
+        private bool _ignoreCcd;
+        private bool _isDisposed;
 
         public event Action<Vector2> Moved;
         
@@ -123,21 +137,37 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <summary>
         /// A unique id for this body.
         /// </summary>
-        public int BodyId { get; private set; }
+        public int BodyId
+        {
+            get => _bodyId;
+            private set => _bodyId = value;
+        }
 
-        public int IslandIndex { get; set; }
+        public int IslandIndex
+        {
+            get => _islandIndex;
+            set => _islandIndex = value;
+        }
 
         /// <summary>
         /// Scale the gravity applied to this body.
         /// Defaults to 1. A value of 2 means double the gravity is applied to this body.
         /// </summary>
-        public float GravityScale { get; set; }
+        public float GravityScale
+        {
+            get => _gravityScale;
+            set => _gravityScale = value;
+        }
 
         /// <summary>
         /// Set the user data. Use this to store your application specific data.
         /// </summary>
         /// <value>The user data.</value>
-        public object UserData { get; set; }
+        public object UserData
+        {
+            get => _userData;
+            set => _userData = value;
+        }
 
         /// <summary>
         /// Gets the total number revolutions the body has made.
@@ -279,7 +309,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// Gets or sets a value indicating whether this body should be included in the CCD solver.
         /// </summary>
         /// <value><c>true</c> if this instance is included in CCD; otherwise, <c>false</c>.</value>
-        public bool IsBullet { get; set; }
+        public bool IsBullet
+        {
+            get => _isBullet;
+            set => _isBullet = value;
+        }
 
         /// <summary>
         /// You can disable sleeping on this body. If you disable sleeping, the
@@ -425,13 +459,21 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// Gets all the fixtures attached to this body.
         /// </summary>
         /// <value>The fixture list.</value>
-        public List<Fixture> FixtureList { get; internal set; }
+        public List<Fixture> FixtureList
+        {
+            get => _fixtureList;
+            internal set => _fixtureList = value;
+        }
 
         /// <summary>
         /// Get the list of all joints attached to this body.
         /// </summary>
         /// <value>The joint list.</value>
-        public JointEdge JointList { get; internal set; }
+        public JointEdge JointList
+        {
+            get => _jointList;
+            internal set => _jointList = value;
+        }
 
         /// <summary>
         /// Get the list of all contacts attached to this body.
@@ -439,7 +481,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// miss some collisions if you don't use ContactListener.
         /// </summary>
         /// <value>The contact list.</value>
-        public ContactEdge ContactList { get; internal set; }
+        public ContactEdge ContactList
+        {
+            get => _contactList;
+            internal set => _contactList = value;
+        }
 
         /// <summary>
         /// Get the world body origin position.
@@ -495,7 +541,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// Gets or sets a value indicating whether this body ignores gravity.
         /// </summary>
         /// <value><c>true</c> if  it ignores gravity; otherwise, <c>false</c>.</value>
-        public bool IgnoreGravity { get; set; }
+        public bool IgnoreGravity
+        {
+            get => _ignoreGravity;
+            set => _ignoreGravity = value;
+        }
 
         /// <summary>
         /// Get the world position of the center of mass.
@@ -689,7 +739,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
         }
 
-        public bool IgnoreCCD { get; set; }
+        public bool IgnoreCCD
+        {
+            get => _ignoreCcd;
+            set => _ignoreCcd = value;
+        }
 
         /// <summary>
         /// Resets the dynamics of this body.
@@ -1317,7 +1371,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         #region IDisposable Members
 
-        public bool IsDisposed { get; set; }
+        public bool IsDisposed
+        {
+            get => _isDisposed;
+            set => _isDisposed = value;
+        }
 
         public void Dispose()
         {

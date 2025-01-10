@@ -5,5 +5,6 @@ public enum RenderPass
     Normal,
     Shadow,
     Glow,
-    Overlay
+    Overlay,
+    Background
 }

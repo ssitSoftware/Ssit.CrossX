@@ -1,7 +1,6 @@
 #if __IOS__ || __MACCATALYST__
 
 using System;
-using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
@@ -33,7 +32,7 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
     
     public override UIWindow Window { get; set; }
     
-    private EventSource _eventSource = new();
+    private readonly EventSource _eventSource = new();
     
     private MTKView _metalView;
     private RenderingWindowImpl _renderingWindow;

@@ -1,7 +1,7 @@
 using System.Numerics;
 using Ssit.CrossX.Games.Logic;
 
-namespace SampleGame.Game.Logic.Behaviors;
+namespace SampleGame.Game.Logic.Behaviors.ShooterPlayer;
 
 public class RunBehavior(ShooterPlayerBrain brain) : Behavior
 {
@@ -9,7 +9,7 @@ public class RunBehavior(ShooterPlayerBrain brain) : Behavior
     {
         var moveDirection = brain.Controller.GetMoveDirection();
 
-        brain.MoveDirection = moveDirection * 50;
+        brain.MoveDirection = moveDirection * 5;
         brain.AimDirection = Vector2.Zero;
 
         if (moveDirection.Length() > 0.05f)

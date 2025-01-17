@@ -11,7 +11,7 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     
     public IReadOnlyList<Pointer> Pointers => _pointers;
     public Pointer GetPointer(int id) => _pointers.Find(o => o.Id == id);
-    public Vector2? HoverPosition { get; private set; } = null;
+    public Vector2? HoverPosition { get; private set; }
     public bool ShowHoverPointer { get; set; } = true;
 
     private readonly Stack<Vector2?> _hoverPositions = new();

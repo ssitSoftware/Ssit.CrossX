@@ -12,6 +12,7 @@ using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.IoC;
 
 namespace SampleGame.Game.Actors;
 
@@ -54,7 +55,7 @@ public sealed class PlayerObject: IPhysicsObject, IDrawable, ICamera, ShooterPla
     private readonly ResourceHandle<GameObject> _bulletsObj;
     private readonly SpriteInstance _bullets;
     
-    public PlayerObject(IContentManager contentManager, IInputMappings inputMappings, Simulation simulation)
+    public PlayerObject(IContentManager contentManager, IIoCContainer container, Simulation simulation)
     {
         _contentManager = contentManager;
         _simulation = simulation;
@@ -69,7 +70,7 @@ public sealed class PlayerObject: IPhysicsObject, IDrawable, ICamera, ShooterPla
         using var gunObj = contentManager.Get<GameObject>("assets:/Sprites/HeroGun");
         
         _spriteShooterRenderer = new SpriteShooterRenderer(heroObj, gunObj, _gunOffset, shadowObj);
-        _brain = new ShooterPlayerBrain(this, this, new PlayerController(inputMappings), _spriteShooterRenderer);
+        _brain = new ShooterPlayerBrain(this, this, container.IoCConstruct<PlayerController>(), _spriteShooterRenderer);
         
         Body = new Body(simulation.World, bodyType: BodyType.Dynamic, userdata: new PlayerObjectData(_brain, this));
 

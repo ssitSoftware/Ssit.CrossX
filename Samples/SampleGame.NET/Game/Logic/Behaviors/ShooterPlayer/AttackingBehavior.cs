@@ -9,7 +9,14 @@ public class AttackingBehavior(ShooterPlayerBrain brain) : Behavior
     protected override void OnEnterState()
     {
         base.OnEnterState();
-        brain.MoveDirection = brain.CharacterDirection * 6;
+
+        var dir = brain.MoveDirection;
+        if (dir.Length() < 0.001f)
+        {
+            dir = brain.CharacterDirection;
+        }
+        
+        brain.MoveDirection = Vector2.Normalize(dir) * 6;
         brain.AimDirection = Vector2.Zero;
     }
 

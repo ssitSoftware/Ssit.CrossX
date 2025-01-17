@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using CoreGraphics;
 using Foundation;
 using MetalKit;
 using Microsoft.Maui.Controls;
@@ -17,7 +18,7 @@ using UIKit;
 
 namespace Ssit.CrossX.NET.Apple;
 
-internal sealed class PixelViewController : UIViewController
+internal sealed class PixelViewController : UIViewController, IUIContextMenuInteractionDelegate
 {
     private readonly MTKView _metalView;
 
@@ -85,7 +86,9 @@ internal sealed class PixelViewController : UIViewController
         {UIKeyboardHidUsage.KeyboardOpenBracket, Key.LeftBracket},
         {UIKeyboardHidUsage.KeyboardCloseBracket, Key.RightBracket},
         {UIKeyboardHidUsage.KeyboardEqualSign, Key.Equals},
-        {UIKeyboardHidUsage.KeyboardSeparator, Key.Minus}
+        {UIKeyboardHidUsage.KeyboardSeparator, Key.Minus},
+        {UIKeyboardHidUsage.KeyboardLeftShift, Key.LeftShift},
+        {UIKeyboardHidUsage.KeyboardRightShift, Key.RightShift},
     };
     
     private IApp _app;
@@ -93,6 +96,8 @@ internal sealed class PixelViewController : UIViewController
     private readonly HashSet<UIKeyboardHidUsage> _pressedKeys = new();
     private int _nextTouchId = 1;
     private readonly Dictionary<IntPtr, int> _touchIds = new();
+
+    private readonly HashSet<Key> _extendedKeys = new();
     
 #if __MACCATALYST__
     public IPointingDevices PointingDevices => _pointingDevices ??= new PointingDevicesImpl(_metalView);
@@ -120,6 +125,12 @@ internal sealed class PixelViewController : UIViewController
         _hoverGestureRecognizer.CancelsTouchesInView = false;
         
         View?.AddGestureRecognizer(_hoverGestureRecognizer);
+    }
+
+    public UIContextMenuConfiguration GetConfigurationForMenu(UIContextMenuInteraction interaction, CGPoint location)
+    {
+        _extendedKeys.Add(Key.MouseRight);
+        return null;
     }
 
     private bool HoverEvent(UIGestureRecognizer _, UIEvent @event)
@@ -199,6 +210,15 @@ internal sealed class PixelViewController : UIViewController
 
     private void ProcessTouch(NSSet touches, UIEvent evt)
     {
+        if (evt?.ButtonMask == UIEventButtonMask.Primary)
+        {
+            _extendedKeys.Add(Key.MouseLeft);
+        }
+        else
+        {
+            _extendedKeys.Remove(Key.MouseLeft);
+        }
+        
         if (touches.Count == 0) return;
         
         foreach (var t in touches)
@@ -228,7 +248,6 @@ internal sealed class PixelViewController : UIViewController
         var id = GetTouchId(touch.Handle.Handle);
         var pt = touch.LocationInView(View);
         var position = new Vector2((float)pt.X, (float)pt.Y) * (float)(View?.ContentScaleFactor ?? 1f);
-        
         
         switch (touch.Phase)
         {
@@ -282,7 +301,7 @@ internal sealed class PixelViewController : UIViewController
 
     public void UpdateKeyboard(KeyboardImpl keyboard)
     {
-        keyboard.UpdateButtons( set =>
+        keyboard.UpdateButtons(set =>
         {
             foreach (var key in _pressedKeys)
             {
@@ -291,7 +310,13 @@ internal sealed class PixelViewController : UIViewController
                     set.Add(keyVal);
                 }
             }
+
+            foreach (var key in _extendedKeys)
+            {
+                set.Add(key);
+            }
         });
+        _extendedKeys.Remove(Key.MouseRight);
     }
 
     public void SetApp(IApp app) => _app = app;

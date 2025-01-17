@@ -83,8 +83,12 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             Delegate = this
         };
         
+        
+        
         _pixelViewController = new PixelViewController(_metalView);
         _pixelViewController.View!.AddSubview(_metalView);
+        _metalView.AddInteraction(new UIContextMenuInteraction(_pixelViewController));
+        
         Window.RootViewController = _pixelViewController;
 
         _renderingWindow = new RenderingWindowImpl(_metalView);

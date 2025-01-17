@@ -98,10 +98,10 @@ public class GameApp: PixelApp, IInputCoordinateSystem
         mapper.MapAxis("AimY", GameControllerAxis.RightY);
         
         mapper.MapButton("Shoot", GameControllerButton.RightShoulder);
-        mapper.MapButton("Shoot", Key.X);
+        mapper.MapButton("Shoot", Key.MouseLeft);
         
         mapper.MapButton("Melee", GameControllerButton.X);
-        mapper.MapButton("Melee", Key.C);
+        mapper.MapButton("Melee", Key.MouseRight);
         
         mapper.MapButton("Roll", GameControllerButton.A);
         mapper.MapButton("Roll", Key.Space);

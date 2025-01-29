@@ -17,8 +17,8 @@ public class GunslingerTemplate: IGameTemplate
             new EmbeddedFilesProvider(typeof(GunslingerTemplate).Assembly, "Gunslinger.Core.Assets"));
     
     public int TileSize => 16;
-    public int TargetWidth => 640;
-    public int TargetHeight => 360;
+    public int TargetWidth => 480;
+    public int TargetHeight => 270;
     
     public RgbaColor DefaultBackground => new(0xff404040);
     public RgbaColor EmptyColor => new(128, 128, 128);

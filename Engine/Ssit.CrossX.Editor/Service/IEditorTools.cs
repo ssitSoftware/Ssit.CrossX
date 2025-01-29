@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using Ssit.CrtossX.Editor.Tools;
+using Ssit.CrossX.Editor.Tools;
 
-namespace Ssit.CrtossX.Editor.Service
+namespace Ssit.CrossX.Editor.Service
 {
     public interface IEditorTools: INotifyPropertyChanged
     {

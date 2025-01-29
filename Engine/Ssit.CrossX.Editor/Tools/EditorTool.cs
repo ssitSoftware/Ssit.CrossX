@@ -1,24 +1,17 @@
 using System.Numerics;
 using Avalonia.Input;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Service;
-using Breeze.Engine;
+using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
 using Ssit.CrossX.Games;
 
-namespace Ssit.CrtossX.Editor.Tools
+namespace Ssit.CrossX.Editor.Tools
 {
-    public abstract class EditorTool: BindableModel, IPointerHandler
+    public abstract class EditorTool(string name, IEditorInstances instances) : BindableModel, IPointerHandler
     {
-        protected EditorTool(string name, IEditorInstances instances)
-        {
-            Name = name;
-            Instances = instances;
-        }
-
-        public string Name { get; }
-        protected IEditorInstances Instances { get; }
+        public string Name { get; } = name;
+        protected IEditorInstances Instances { get; } = instances;
 
         protected readonly SKPaint SkPaint = new();
 

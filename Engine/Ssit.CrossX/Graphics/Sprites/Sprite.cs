@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace Ssit.CrossX.Graphics.Sprites;
@@ -24,6 +25,8 @@ public class Sprite: IDisposable
     public Size SourceSize { get; }
     
     private readonly IReadOnlyDictionary<string, SpriteSequence> _sequences;
+
+    public SpriteSequence[] Sequences => _sequences.Values.ToArray();
     
     private Sprite()
     {

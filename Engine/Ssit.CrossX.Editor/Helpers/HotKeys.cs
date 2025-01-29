@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using Avalonia.Input;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     public static class HotKeys
     {

@@ -1,7 +1,7 @@
 using System.Numerics;
 using Avalonia.Input;
 
-namespace Ssit.CrtossX.Editor.Input
+namespace Ssit.CrossX.Editor.Input
 {
     public readonly struct MouseInputInfo
     {

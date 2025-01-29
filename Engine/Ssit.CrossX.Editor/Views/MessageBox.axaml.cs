@@ -2,9 +2,9 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Ssit.CrtossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Helpers;
 
-namespace Ssit.CrtossX.Editor.Views
+namespace Ssit.CrossX.Editor.Views
 {
     public partial class MessageBox : Window
     {

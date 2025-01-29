@@ -1,8 +1,9 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Template;
 
-namespace Ssit.CrtossX.Editor;
+namespace Ssit.CrossX.Editor;
 
 public static class EditorRunner
 {

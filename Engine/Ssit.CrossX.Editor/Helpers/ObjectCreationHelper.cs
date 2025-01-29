@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     internal static class ObjectCreationHelper
     {

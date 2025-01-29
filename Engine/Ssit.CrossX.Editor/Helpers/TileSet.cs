@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Breeze.Engine.Game;
 using SkiaSharp;
+using Ssit.CrossX.Games;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     public class Tileset
     {

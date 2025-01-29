@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ssit.CrossX.Games.Template;
-using Ssit.CrtossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Helpers;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public class ImagesContainer : IImagesContainer
 {

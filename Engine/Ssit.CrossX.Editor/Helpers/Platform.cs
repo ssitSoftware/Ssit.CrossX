@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     public static class Platform
     {

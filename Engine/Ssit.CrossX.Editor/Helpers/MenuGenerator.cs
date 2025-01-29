@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Avalonia.Controls;
-using Ssit.CrtossX.Editor.Models;
+using Ssit.CrossX.Editor.Models;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     public static class MenuGenerator
     {

@@ -1,4 +1,4 @@
-namespace Ssit.CrtossX.Editor.Helpers;
+namespace Ssit.CrossX.Editor.Helpers;
 
 public enum HotkeyActions
 {

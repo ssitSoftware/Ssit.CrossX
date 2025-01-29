@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public class FileService: IFileService
 {

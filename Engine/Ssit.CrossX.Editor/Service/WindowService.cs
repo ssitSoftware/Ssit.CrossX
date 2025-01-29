@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Models;
-using Ssit.CrtossX.Editor.Views;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Models;
+using Ssit.CrossX.Editor.Views;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public class WindowService: IWindowService
 {
@@ -56,7 +56,7 @@ public class WindowService: IWindowService
         var viewModel = _services.Create<TViewModel>(parameters);
 
         var windowName = typeof(TViewModel).Name.Replace("ViewModel", "");
-        windowName = "Ssit.CrtossX.Editor.Views." + windowName;
+        windowName = "Ssit.CrossX.Editor.Views." + windowName;
 
         var windowType = GetType().Assembly.GetType(windowName);
         var window = Activator.CreateInstance(windowType) as Window;

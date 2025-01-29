@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.Models.Parameters;
+namespace Ssit.CrossX.Editor.Models.Parameters;
 
 public class ParameterTargetModel : ParameterModel<int>
 {

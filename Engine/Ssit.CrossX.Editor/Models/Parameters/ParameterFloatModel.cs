@@ -1,7 +1,7 @@
 using System.Reflection;
 using Ssit.CrossX.Games.Editor;
 
-namespace Ssit.CrtossX.Editor.Models.Parameters;
+namespace Ssit.CrossX.Editor.Models.Parameters;
 
 public class ParameterFloatModel : ParameterModel<float>
 {

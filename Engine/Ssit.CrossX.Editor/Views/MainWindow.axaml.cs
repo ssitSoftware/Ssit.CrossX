@@ -1,10 +1,10 @@
 using System;
 using Avalonia.Controls;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.ViewModels;
-using Ssit.CrossX.Games;
+using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.Editor.ViewModels;
+using Ssit.CrossX.Games.Template;
 
-namespace Ssit.CrtossX.Editor.Views
+namespace Ssit.CrossX.Editor.Views
 {
     public partial class MainWindow : Window
     {

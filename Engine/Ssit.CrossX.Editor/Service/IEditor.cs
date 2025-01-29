@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Numerics;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.ViewModels;
-using Breeze.Engine;
+using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.Editor.ViewModels;
 using SkiaSharp;
-using Ssit.CrossX;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public interface IEditor
 {

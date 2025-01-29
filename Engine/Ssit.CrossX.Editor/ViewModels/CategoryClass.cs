@@ -1,8 +1,7 @@
 using System;
-using Breeze.Engine;
 using Ssit.CrossX.Games;
 
-namespace Ssit.CrtossX.Editor.ViewModels;
+namespace Ssit.CrossX.Editor.ViewModels;
 
 public class CategoryClass: BindableModel
 {

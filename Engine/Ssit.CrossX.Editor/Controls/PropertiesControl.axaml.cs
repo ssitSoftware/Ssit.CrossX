@@ -1,8 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Ssit.CrtossX.Editor.Models.Parameters;
+using Ssit.CrossX.Editor.Models.Parameters;
 
-namespace Ssit.CrtossX.Editor.Controls;
+namespace Ssit.CrossX.Editor.Controls;
 
 public partial class PropertiesControl : UserControl
 {

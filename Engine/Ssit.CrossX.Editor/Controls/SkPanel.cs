@@ -9,11 +9,11 @@ using Avalonia.Platform;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using Avalonia.Threading;
-using Ssit.CrtossX.Editor.Input;
+using Ssit.CrossX.Editor.Input;
 using SkiaSharp;
 using MouseButton = Avalonia.Input.MouseButton;
 
-namespace Ssit.CrtossX.Editor.Controls
+namespace Ssit.CrossX.Editor.Controls
 {
     public class SkPanel : UserControl
     {

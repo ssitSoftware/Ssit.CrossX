@@ -5,14 +5,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.Models;
-using Ssit.CrtossX.Editor.Service;
-using Ssit.CrtossX.Editor.Tools;
+using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Models;
+using Ssit.CrossX.Editor.Service;
+using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.ViewModels
+namespace Ssit.CrossX.Editor.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {

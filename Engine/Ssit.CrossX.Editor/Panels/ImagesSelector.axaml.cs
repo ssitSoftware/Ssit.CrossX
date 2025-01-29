@@ -2,10 +2,10 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Ssit.CrtossX.Editor.Controls;
-using Ssit.CrtossX.Editor.ViewModels;
+using Ssit.CrossX.Editor.Controls;
+using Ssit.CrossX.Editor.ViewModels;
 
-namespace Ssit.CrtossX.Editor.Panels;
+namespace Ssit.CrossX.Editor.Panels;
 
 public partial class ImagesSelector : UserControl
 {

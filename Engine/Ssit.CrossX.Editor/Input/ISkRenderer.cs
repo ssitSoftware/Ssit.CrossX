@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using SkiaSharp;
 
-namespace Ssit.CrtossX.Editor.Input
+namespace Ssit.CrossX.Editor.Input
 {
     public interface ISkRenderer
     {

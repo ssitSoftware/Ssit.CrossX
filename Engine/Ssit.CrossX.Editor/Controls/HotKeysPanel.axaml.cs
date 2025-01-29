@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Ssit.CrtossX.Editor.Controls
+namespace Ssit.CrossX.Editor.Controls
 {
     public partial class HotKeysPanel : UserControl
     {

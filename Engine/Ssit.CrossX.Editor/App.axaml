@@ -1,9 +1,9 @@
 <Application
     RequestedThemeVariant="Dark"
-    x:Class="Ssit.CrtossX.Editor.App"
+    x:Class="Ssit.CrossX.Editor.App"
     xmlns="https://github.com/avaloniaui"
-    xmlns:controls="clr-namespace:Ssit.CrtossX.Editor.Controls"
-    xmlns:converters="clr-namespace:Ssit.CrtossX.Editor.Converters"
+    xmlns:controls="clr-namespace:Ssit.CrossX.Editor.Controls"
+    xmlns:converters="clr-namespace:Ssit.CrossX.Editor.Converters"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Application.Resources>

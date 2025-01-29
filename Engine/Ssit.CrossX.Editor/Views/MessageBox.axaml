@@ -8,13 +8,13 @@
     d:DesignHeight="200"
     d:DesignWidth="400"
     mc:Ignorable="d"
-    x:Class="Ssit.CrtossX.Editor.Views.MessageBox"
+    x:Class="Ssit.CrossX.Editor.Views.MessageBox"
     x:DataType="models:MessageBoxModel"
     x:Name="Root"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:Ssit.CrtossX.Editor.Models"
+    xmlns:models="clr-namespace:Ssit.CrossX.Editor.Models"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <StackPanel

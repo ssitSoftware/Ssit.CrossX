@@ -1,13 +1,13 @@
 using Avalonia.Input;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Service;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
+using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.Tools;
+namespace Ssit.CrossX.Editor.Tools;
 
-public class SetMaterialTool: EditorTool
+public class SetMaterialTool(IEditorInstances instances) : EditorTool(Name, instances)
 {
     public new const string Name = "Set Material";
     
@@ -15,10 +15,6 @@ public class SetMaterialTool: EditorTool
 
     private bool _pushState = false;
 
-    public SetMaterialTool(IEditorInstances instances) : base(Name, instances)
-    {
-    }
-    
     public override void OnButtonDown(MouseInputInfo input)
     {
         base.OnButtonDown(input);
@@ -98,7 +94,7 @@ public class SetMaterialTool: EditorTool
             pos = Editor.MapToScreen(pos);
 
             SkPaint.IsStroke = false;
-            SkPaint.Color = Instances.Template.Materials[MaterialIndex].PreviewColor.WithAlpha(64).ToSkia();
+            SkPaint.Color = (Instances.Template.Materials[MaterialIndex].PreviewColor * 0.25f).ToSkia();
 
             skCanvas.DrawRect(pos.X, pos.Y, ts, ts, SkPaint);
         }

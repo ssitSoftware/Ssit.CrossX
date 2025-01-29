@@ -2,7 +2,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    x:Class="Ssit.CrtossX.Editor.Controls.ToggleButtonEx"
+    x:Class="Ssit.CrossX.Editor.Controls.ToggleButtonEx"
     x:Name="Root"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

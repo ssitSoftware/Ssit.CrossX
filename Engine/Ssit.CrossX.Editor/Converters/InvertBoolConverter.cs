@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace Ssit.CrtossX.Editor.Converters
+namespace Ssit.CrossX.Editor.Converters
 {
     public class InvertBoolConverter: IValueConverter
     {

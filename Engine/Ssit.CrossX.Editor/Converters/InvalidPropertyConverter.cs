@@ -2,9 +2,8 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Breeze.Engine;
 
-namespace Ssit.CrtossX.Editor.Converters;
+namespace Ssit.CrossX.Editor.Converters;
 
 public class InvalidPropertyConverter : IValueConverter
 {

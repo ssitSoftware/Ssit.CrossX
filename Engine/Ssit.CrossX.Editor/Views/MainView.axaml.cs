@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Ssit.CrtossX.Editor.Views
+namespace Ssit.CrossX.Editor.Views
 {
     public partial class MainView : UserControl
     {

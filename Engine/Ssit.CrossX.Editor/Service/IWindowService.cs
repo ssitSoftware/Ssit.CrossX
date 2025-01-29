@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Ssit.CrtossX.Editor.Service
+namespace Ssit.CrossX.Editor.Service
 {
     public enum MessageBoxType
     {

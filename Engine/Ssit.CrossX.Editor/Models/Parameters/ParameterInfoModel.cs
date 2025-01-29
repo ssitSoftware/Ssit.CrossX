@@ -1,4 +1,4 @@
-namespace Ssit.CrtossX.Editor.Models.Parameters;
+namespace Ssit.CrossX.Editor.Models.Parameters;
 
 public class ParameterInfoModel : ParameterModel
 {

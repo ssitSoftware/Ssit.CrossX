@@ -1,13 +1,12 @@
 using System;
 using System.Windows.Input;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Service;
-using Breeze.Engine;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Service;
 using CommunityToolkit.Mvvm.Input;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.ViewModels;
+namespace Ssit.CrossX.Editor.ViewModels;
 
 public class ResizeLayerDialogViewModel: BindableModel, IDialog
 {

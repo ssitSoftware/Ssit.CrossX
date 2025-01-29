@@ -2,34 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using Ssit.CrtossX.Editor.Helpers;
-using Breeze.Engine;
-using Breeze.Engine.Common;
-using Breeze.Engine.Graphics.Sprites;
-using Breeze.Engine.Graphics.Sprites.Importers;
+using Ssit.CrossX.Editor.Helpers;
 using SkiaSharp;
+using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.Graphics.Sprites.Json;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
-public class SpritesContainer : ISpritesContainer
+public class SpritesContainer(IGameTemplate gameTemplate) : ISpritesContainer
 {
-    private readonly IGameTemplate _gameTemplate;
     private readonly Dictionary<string, EditorSprite> _sprites = new();
-
-    public SpritesContainer(IGameTemplate gameTemplate)
-    {
-        _gameTemplate = gameTemplate;
-    }
 
     public void Load()
     {
-        foreach (var obj in _gameTemplate.Objects)
+        foreach (var obj in gameTemplate.Objects)
         {
             LoadSprite(obj.GameObject);
         }
         
-        foreach (var img in _gameTemplate.Images)
+        foreach (var img in gameTemplate.Images)
         {
             LoadSprite(img.GameObject);
         }
@@ -38,43 +31,18 @@ public class SpritesContainer : ISpritesContainer
     private void LoadSprite(string path)
     {
         if (_sprites.ContainsKey(path)) return;
-        
-        var imgPath = PathHelper.GetForExtension(path, ".png");
 
-        SKImage image;
-        using (var stream = _gameTemplate.AssetsProvider.Open(imgPath))
+        var go = GameObject.FromPath(path, gameTemplate.AssetsProvider);
+        if (go.HasSprite)
         {
-            image = SKImage.FromEncodedData(stream);
-        }
+            var sprite = (Sprite)JsonSpriteLoader.Load(go.ResourcePath, gameTemplate.AssetsProvider);
+            using var stream = gameTemplate.AssetsProvider.Open(sprite.SheetName);
 
-        SpriteSequence[] sequences;
-        if (Path.GetExtension(path) == ".png")
-        {
-            sequences = new[]
-            {
-                new SpriteSequence("", new[]
-                {
-                    new SpriteFrame(new Rectangle(0, 0, image.Width, image.Height), new Vector2(image.Width/2, image.Height/2), 1)
-                }, Array.Empty<SpriteEvent>())
-            };
+            using var bmp = SKBitmap.Decode(stream);
+            var image = SKImage.FromBitmap(bmp);
+                
+            _sprites.Add(path, new EditorSprite(image, go.Description.Origin, sprite.Sequences));
         }
-        else if (Path.GetExtension(path) == ".spr")
-        {
-            using (var stream = _gameTemplate.AssetsProvider.Open(path))
-            {
-                sequences = SpriteFormat.LoadSpriteSequences(new BinaryReader(stream));
-            }
-        }
-        else if (Path.GetExtension(path) == ".json")
-        {
-            using var stream = _gameTemplate.AssetsProvider.Open(path);
-            using var defStream = _gameTemplate.AssetsProvider.Open(PathHelper.GetForExtension(path, ".def.json"));
-
-            sequences = AsepriteImporter.LoadSpriteSequences(stream, defStream);
-        }
-        else throw new InvalidDataException();
-        
-        _sprites.Add(path, new EditorSprite(image, sequences));
     }
 
     public EditorSprite Get(string name)

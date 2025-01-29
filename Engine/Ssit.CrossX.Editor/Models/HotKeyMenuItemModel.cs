@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace Ssit.CrtossX.Editor.Models
+namespace Ssit.CrossX.Editor.Models
 {
     public class HotKeyMenuItemModel
     {

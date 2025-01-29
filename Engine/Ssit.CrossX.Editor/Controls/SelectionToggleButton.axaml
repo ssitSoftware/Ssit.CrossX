@@ -1,6 +1,6 @@
 <UserControl
     Padding="0"
-    x:Class="Ssit.CrtossX.Editor.Controls.SelectionToggleButton"
+    x:Class="Ssit.CrossX.Editor.Controls.SelectionToggleButton"
     x:Name="Root"
     xmlns="https://github.com/avaloniaui"
     xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"

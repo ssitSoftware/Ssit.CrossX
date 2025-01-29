@@ -1,12 +1,11 @@
 using System.Numerics;
-using Breeze.Engine;
 using SkiaSharp;
 
-namespace Ssit.CrtossX.Editor.Helpers
+namespace Ssit.CrossX.Editor.Helpers
 {
     public static class Extensions
     {
-        public static SKColor ToSkia(this RgbaColor color) => new SKColor(color.R, color.G, color.B, color.A);
+        public static SKColor ToSkia(this RgbaColor color) => new(color.R, color.G, color.B, color.A);
 
         public static SKRect ToSkia(this RectangleF rect) => SKRect.Create(rect.X, rect.Y, rect.Width, rect.Height);
         

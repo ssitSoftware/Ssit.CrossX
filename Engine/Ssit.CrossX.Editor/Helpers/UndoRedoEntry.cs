@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using Ssit.CrossX.Games.Map;
-using Ssit.CrtossX.Editor.Service;
+using Ssit.CrossX.Editor.Service;
 
-namespace Ssit.CrtossX.Editor.Helpers;
+namespace Ssit.CrossX.Editor.Helpers;
 
 public class UndoRedoEntry
 {

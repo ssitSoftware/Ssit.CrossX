@@ -2,7 +2,7 @@ using System;
 using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 
-namespace Ssit.CrtossX.Editor.ViewModels
+namespace Ssit.CrossX.Editor.ViewModels
 {
     public class ZoomViewModel: ViewModelBase
     {

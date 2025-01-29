@@ -2,7 +2,7 @@ using System.IO;
 using Avalonia.Media.Imaging;
 using SkiaSharp;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public interface IEditorBitmapsProvider
 {

@@ -1,9 +1,9 @@
 using System;
-using Ssit.CrtossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Helpers;
 using SkiaSharp;
 using Ssit.CrossX.Games.Template;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public class EditorBitmapsProvider : IEditorBitmapsProvider
 {

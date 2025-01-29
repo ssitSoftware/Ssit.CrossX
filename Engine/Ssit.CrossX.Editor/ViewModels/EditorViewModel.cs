@@ -4,14 +4,16 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Ssit.CrtossX.Editor.Helpers;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Service;
-using Ssit.CrtossX.Editor.Tools;
+using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Service;
+using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using SkiaSharp;
+using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.Games.Utils;
 
-namespace Ssit.CrtossX.Editor.ViewModels
+namespace Ssit.CrossX.Editor.ViewModels
 {
     public class EditorViewModel: ViewModelBase, ISkRenderer, IEditor
     {
@@ -62,7 +64,7 @@ namespace Ssit.CrtossX.Editor.ViewModels
             set
             {
                 var oldLayer = _selectedLayer;
-                if (SetProperty(ref _selectedLayer, value))
+                if (SetField(ref _selectedLayer, value))
                 {
                     if (oldLayer != null && _selectedLayer != null)
                     {
@@ -578,14 +580,13 @@ namespace Ssit.CrtossX.Editor.ViewModels
 
             var img = editorImg.Sprite.Get(grContext);
 
-            var origin = frame.Origin;
+            var origin = frame.Offset + editorImg.Sprite.Origin;
             var pos = position * ts + start;
 
             var rect = new RectangleF(pos.X - origin.X * scale, pos.Y - origin.Y * scale, frame.Source.Width * scale, frame.Source.Height * scale);
 
             var destRect = rect.ToSkia();
             var srcRect = SKRect.Create(frame.Source.X, frame.Source.Y, frame.Source.Width, frame.Source.Height);
-
             
             if (flipped)
             {

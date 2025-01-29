@@ -1,12 +1,12 @@
 using System;
 using System.Numerics;
 using Avalonia.Input;
-using Ssit.CrtossX.Editor.Input;
-using Ssit.CrtossX.Editor.Service;
+using Ssit.CrossX.Editor.Input;
+using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.Tools
+namespace Ssit.CrossX.Editor.Tools
 {
     public class EraserTool: EditorTool
     {

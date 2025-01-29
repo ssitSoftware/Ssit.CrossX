@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ssit.CrtossX.Editor.Helpers;
+using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Games;
 
-namespace Ssit.CrtossX.Editor.ViewModels;
+namespace Ssit.CrossX.Editor.ViewModels;
 
 public class ImageSelectorViewModel : BindableModel
 {
@@ -24,7 +24,7 @@ public class ImageSelectorViewModel : BindableModel
     public IList<EditorImage> Objects
     {
         get => _objects;
-        private set => SetProperty(ref _objects, value);
+        private set => SetField(ref _objects, value);
     }
 
     public EditorImage SelectedObject
@@ -32,7 +32,7 @@ public class ImageSelectorViewModel : BindableModel
         get => _selectedObject;
         set
         {
-            if (SetProperty(ref _selectedObject, value))
+            if (SetField(ref _selectedObject, value))
             {
                 _parameters.SelectionChanged?.Invoke(value);
             }

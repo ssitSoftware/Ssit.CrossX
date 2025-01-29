@@ -1,6 +1,6 @@
-using Ssit.CrtossX.Editor.Service;
+using Ssit.CrossX.Editor.Service;
 
-namespace Ssit.CrtossX.Editor.Tools;
+namespace Ssit.CrossX.Editor.Tools;
 
 public class EmptyTool : EditorTool
 {

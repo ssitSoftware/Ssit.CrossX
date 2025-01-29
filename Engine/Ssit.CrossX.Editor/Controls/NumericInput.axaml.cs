@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 
-namespace Ssit.CrtossX.Editor.Controls;
+namespace Ssit.CrossX.Editor.Controls;
 
 public partial class NumericInput : UserControl
 {

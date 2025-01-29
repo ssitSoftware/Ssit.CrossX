@@ -25,12 +25,12 @@ public class GameObject: IDisposable
     
     private readonly IContentManager _contentManager;
 
-    public ObjectDescription Description { get; }
-    
-    public bool HasSprite { get; }
-    public bool HasTexture { get; }
+    public readonly ObjectDescription Description;
 
-    private readonly string _resourcePath;
+    public readonly bool HasSprite;
+    public readonly bool HasTexture;
+
+    public readonly string ResourcePath;
 
     public static (ObjectDescription, string, bool, bool) Parse(string path, IFilesProvider filesProvider, OriginAlignment originAlignment = OriginAlignment.Center | OriginAlignment.VCenter)
     {
@@ -111,7 +111,7 @@ public class GameObject: IDisposable
     private GameObject( (ObjectDescription description, string resourcePath, bool hasSprite, bool hasTexture) data)
     {
         Description = data.description;
-        _resourcePath = data.resourcePath;
+        ResourcePath = data.resourcePath;
         HasSprite = data.hasSprite;
         HasTexture = data.hasTexture;
     }
@@ -125,13 +125,13 @@ public class GameObject: IDisposable
     {
         if ( _contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
         if (!HasSprite) throw new InvalidOperationException("GameObject has no sprite");
-        return new SpriteInstance(_resourcePath, Description.Origin, _contentManager);
+        return new SpriteInstance(ResourcePath, Description.Origin, _contentManager);
     }
 
     public ResourceHandle<ITexture> RequestTexture()
     {
         if ( _contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
-        return _contentManager.Get<ITexture>(_resourcePath);
+        return _contentManager.Get<ITexture>(ResourcePath);
     }
     
     void IDisposable.Dispose()

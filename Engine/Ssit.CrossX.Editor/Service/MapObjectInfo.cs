@@ -1,7 +1,6 @@
-using Breeze.Engine;
 using Ssit.CrossX.Games.Map;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public struct MapObjectInfo
 {

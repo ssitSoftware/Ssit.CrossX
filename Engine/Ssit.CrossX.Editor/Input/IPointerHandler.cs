@@ -1,4 +1,4 @@
-namespace Ssit.CrtossX.Editor.Input
+namespace Ssit.CrossX.Editor.Input
 {
     public interface IPointerHandler
     {

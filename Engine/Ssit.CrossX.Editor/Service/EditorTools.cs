@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Ssit.CrtossX.Editor.Tools;
-using Breeze.Engine;
+using Ssit.CrossX.Editor.Tools;
 using Ssit.CrossX.Games;
 
-namespace Ssit.CrtossX.Editor.Service;
+namespace Ssit.CrossX.Editor.Service;
 
 public class EditorTools: BindableModel, IEditorTools
 {

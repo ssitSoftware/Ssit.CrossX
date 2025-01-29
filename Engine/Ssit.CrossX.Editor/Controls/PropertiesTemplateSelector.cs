@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
-using Ssit.CrtossX.Editor.Models.Parameters;
+using Ssit.CrossX.Editor.Models.Parameters;
 
-namespace Ssit.CrtossX.Editor.Controls;
+namespace Ssit.CrossX.Editor.Controls;
 
 public class PropertiesTemplateSelector: IDataTemplate
 {

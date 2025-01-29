@@ -4,7 +4,7 @@
         <Nullable>disable</Nullable>
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <RootNamespace>Ssit.CrtossX.Editor</RootNamespace>
+        <RootNamespace>Ssit.CrossX.Editor</RootNamespace>
     </PropertyGroup>
 
 
@@ -28,7 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Breeze.Engine\Breeze.Engine.csproj" />
       <ProjectReference Include="..\Ssit.CrossX.Games\Ssit.CrossX.Games.csproj" />
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
     </ItemGroup>

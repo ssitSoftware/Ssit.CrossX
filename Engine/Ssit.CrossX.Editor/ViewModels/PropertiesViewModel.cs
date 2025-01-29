@@ -4,16 +4,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Ssit.CrtossX.Editor.Models.Parameters;
-using Ssit.CrtossX.Editor.Service;
-using Ssit.CrtossX.Editor.Tools;
-using Breeze.Engine;
+using Ssit.CrossX.Editor.Models.Parameters;
+using Ssit.CrossX.Editor.Service;
+using Ssit.CrossX.Editor.Tools;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Map;
 using EditorAttribute = Ssit.CrossX.Games.Editor.EditorAttribute;
 
-namespace Ssit.CrtossX.Editor.ViewModels;
+namespace Ssit.CrossX.Editor.ViewModels;
 
 public class PropertiesViewModel: BindableModel
 {

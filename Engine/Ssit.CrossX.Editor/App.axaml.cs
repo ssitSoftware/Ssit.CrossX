@@ -2,15 +2,16 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using Ssit.CrtossX.Editor.Service;
-using Ssit.CrtossX.Editor.ViewModels;
-using Ssit.CrtossX.Editor.Views;
+using Ssit.CrossX.Editor.Service;
+using Ssit.CrossX.Editor.ViewModels;
+using Ssit.CrossX.Editor.Views;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Template;
 
-namespace Ssit.CrtossX.Editor
+namespace Ssit.CrossX.Editor
 {
     public partial class App : Application
     {

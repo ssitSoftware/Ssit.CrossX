@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ssit.CrtossX.Editor.Models;
+namespace Ssit.CrossX.Editor.Models;
 
 public class StringTreeItem
 {

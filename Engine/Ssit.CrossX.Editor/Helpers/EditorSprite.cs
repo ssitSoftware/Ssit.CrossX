@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using Avalonia.Media.Imaging;
-using Ssit.CrtossX.Editor.Service;
-using Breeze.Engine.Graphics.Sprites;
+using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
 using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.Graphics.Sprites;
 
-namespace Ssit.CrtossX.Editor.Helpers;
+namespace Ssit.CrossX.Editor.Helpers;
 
 public class EditorObject: EditorImage
 {
@@ -58,14 +59,16 @@ public class EditorImage
 public class EditorSprite
 {
     private readonly SKImage _image;
+    public readonly Vector2 Origin;
     private SKImage _hardwareImage;
     
-    private readonly Dictionary<string, SpriteSequence> _sequences = new();
+    private readonly Dictionary<string, Sprite.SpriteSequence> _sequences = new();
     private readonly Dictionary<string, float> _sequenceTime = new();
 
-    public EditorSprite(SKImage image, SpriteSequence[] sequences)
+    public EditorSprite(SKImage image, Vector2 origin, Sprite.SpriteSequence[] sequences)
     {
         _image = image;
+        Origin = origin;
 
         foreach (var sequence in sequences)
         {
@@ -73,7 +76,7 @@ public class EditorSprite
 
             foreach (var frame in sequence.Frames)
             {
-                length += 1f / frame.Fps;
+                length += frame.Duration;
             }
 
             _sequenceTime.Add(sequence.Name, length);
@@ -81,7 +84,7 @@ public class EditorSprite
         }
     }
 
-    public SpriteFrame GetFrameForTime(string sequenceName, float time)
+    public Sprite.SpriteFrame GetFrameForTime(string sequenceName, float time)
     {
         if (!_sequences.TryGetValue(sequenceName, out var sequence))
         {
@@ -92,7 +95,7 @@ public class EditorSprite
 
         for (var idx = 0; idx < sequence.Frames.Length; ++idx)
         {
-            time -= 1f / sequence.Frames[idx].Fps;
+            time -= sequence.Frames[idx].Duration;
             if (time <= 0)
             {
                 return sequence.Frames[idx];

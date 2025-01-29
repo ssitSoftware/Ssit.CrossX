@@ -11,6 +11,7 @@ public static class UiBootstrapper
     public static IUiApp InitializeUi(this IIoCContainer container, InitializeUiDelegate init)
     {
         var map = new NavigationMap();
+        var handlers = new HandlerMapper();
         
         var builder = IoC.IoC.NewBuilder();
         builder.WithParent(container);
@@ -19,18 +20,19 @@ public static class UiBootstrapper
             .WithInstance(map)
             .WithSingleton<INavigation, Navigation>()
             .WithSingleton<IStylesManager, StylesManager>()
-            .WithSingleton<IHandlerMapper, HandlerMapper>()
+            .WithSingleton<IHandlerMapper, FullHandlerMapper>()
             .WithSingleton<IUiServices, UiServices>()
             .WithSingleton<IActionDispatcher, ActionDispatcher>()
             .WithSingleton<IUiApp, UiApp>();
         
-        init(map, builder);
+        init(builder, map, handlers);
         
         var services = builder.Build();
         var navigation = services.Get<INavigation>();
 
-        var handlerMapper = services.Get<IHandlerMapper>();
+        var handlerMapper = (FullHandlerMapper)services.Get<IHandlerMapper>();
         MapHandlers(handlerMapper);
+        handlerMapper.AddMappings(handlers);
         
         var app = (UiApp)services.Get<IUiApp>();
         app.Initialize((Navigation)navigation);

@@ -1,10 +1,10 @@
-using SampleGame.UI.Styles;
-using Ssit.CrossX.Common.Pages;
+using Gunslinger.Core.UI.Pages.Internal;
+using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.UI.Pages;
+namespace Gunslinger.Core.UI.Pages;
 
-public class MainPage: MenuItemsPageBase<MainPageViewModel>
+internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
 {
     protected override View CreateView()
     {
@@ -13,15 +13,9 @@ public class MainPage: MenuItemsPageBase<MainPageViewModel>
             (Translator["Start Game"], ViewModel.StartGameCommand),
             (Translator["Language"] + ": " + Translator["#LangName"], ViewModel.LanguageCommand),
             (Translator["Options"], ViewModel.OptionsCommand),
-            (Translator["Credits"], ViewModel.CreditsCommand),
-            //(Translator["Exit"], ViewModel.ExitCommand)
+            (Translator["Credits"], ViewModel.CreditsCommand)
         ]);
 
         return CreateDefaultItemsContainer(menuView);
-    }
-
-    protected override void MenuItemApplyStyle(LabelButton button)
-    {
-        button.WithDefaultStyle();
     }
 }

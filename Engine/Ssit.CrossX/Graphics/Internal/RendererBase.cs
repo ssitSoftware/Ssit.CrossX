@@ -7,6 +7,8 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
 {
     public IUnsafeRenderer Unsafe => this;
     
+    public abstract IRenderTarget CurrentRenderTarget { get; }
+    
     protected enum BatchMode
     {
         None,

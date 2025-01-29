@@ -1,4 +1,4 @@
-namespace SampleGame.UI.Pages.Internal;
+namespace Ssit.CrossX.Common.Pages;
 
 public class PageInputContext
 {

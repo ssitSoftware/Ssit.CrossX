@@ -2,4 +2,4 @@ using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.UI.Services;
 
-public delegate void InitializeUiDelegate(INavigationMap navigationMap, IIoCContainerBuilder builder);
+public delegate void InitializeUiDelegate(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper mapper);

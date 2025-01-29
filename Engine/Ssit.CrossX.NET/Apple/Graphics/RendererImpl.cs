@@ -18,6 +18,8 @@ internal class RendererImpl: RendererBase, IDisposable
     
     public override Size TargetSize => _metalDevice.TargetSize;
 
+    public override IRenderTarget CurrentRenderTarget => _metalDevice.CurrentRenderTarget;
+
     private Rectangle? _clipRect;
     
     public RendererImpl(IMetalDevice metalDevice)

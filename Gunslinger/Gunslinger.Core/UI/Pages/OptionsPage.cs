@@ -1,10 +1,10 @@
-using SampleGame.UI.Styles;
-using Ssit.CrossX.Common.Pages;
+using Gunslinger.Core.UI.Pages.Internal;
+using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.UI.Pages;
+namespace Gunslinger.Core.UI.Pages;
 
-public class OptionsPage: MenuItemsPageBase<OptionsPageViewModel>
+public class OptionsPage: MenuItemsPageBaseEx<OptionsPageViewModel>
 {
     protected override View CreateView()
     {
@@ -13,15 +13,9 @@ public class OptionsPage: MenuItemsPageBase<OptionsPageViewModel>
             (Translator["Sound Volume"] +": " + ViewModel.SoundVolumeStr, ViewModel.SoundVolumeCommand),
             (Translator["Music Volume"] + ": "+ ViewModel.MusicVolumeStr, ViewModel.MusicVolumeCommand),
             (Translator["Camera Shake"] + ": " + ViewModel.CameraShakeStr, ViewModel.CameraShakeCommand),
-            (Translator["Auto-Reload"] + ": " + ViewModel.AutoReloadStr, ViewModel.AutoReloadCommand),
             (Translator["Controls"], ViewModel.ControlsCommand)
         ]);
 
         return CreateDefaultItemsContainer(menuView);
-    }
-    
-    protected override void MenuItemApplyStyle(LabelButton button)
-    {
-        button.WithDefaultStyle();
     }
 }

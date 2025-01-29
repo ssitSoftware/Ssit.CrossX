@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Text;
 using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics;
@@ -16,7 +15,21 @@ public enum BlendMode
 /// </summary>
 public interface IRenderer
 {
+    /// <summary>
+    /// Provides access to low-level or internal rendering operations that may bypass standard safety checks.
+    /// </summary>
+    /// <value>
+    /// An instance of <see cref="IUnsafeRenderer"/> allowing advanced or experimental rendering functionality.
+    /// </value>
     IUnsafeRenderer Unsafe { get; }
+
+    /// <summary>
+    /// Gets the current render target that is being used for rendering operations.
+    /// </summary>
+    /// <value>
+    /// An object implementing <see cref="IRenderTarget"/> that represents the active render target.
+    /// </value>
+    IRenderTarget CurrentRenderTarget { get; }
     
     /// <summary>
     /// Sets the render target for subsequent rendering operations.
@@ -32,7 +45,6 @@ public interface IRenderer
     /// of the rendering target.
     /// </value>
     Size TargetSize { get; }
-
 
     /// <summary>
     /// Sets the blend mode for rendering operations.

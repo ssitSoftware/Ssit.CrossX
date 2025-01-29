@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using SampleGame.Services;
-using SampleGame.UI.Pages.Internal;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
@@ -16,6 +15,7 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
     protected ITranslator Translator => Services.Get<ITranslator>();
 
     protected abstract void MenuItemApplyStyle(LabelButton button);
+    
     protected virtual void MenuApplyStyle(VerticalStack stack)
     {
     }

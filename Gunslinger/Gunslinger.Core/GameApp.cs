@@ -1,5 +1,8 @@
 using System.Numerics;
+using Gunslinger.Core.UI.Pages;
+using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
+using Ssit.CrossX.Common;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
@@ -44,31 +47,24 @@ namespace Gunslinger.Core
                 .WithInstance<IFilesProvider>(filesProvider);
         }
 
-        private void OnInitializeUi(INavigationMap navigationMap, IIoCContainerBuilder builder)
+        private void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
         {
-            // navigationMap
-            //     .Map<MainPageViewModel, MainPage>()
-            //     .Map<OptionsPageViewModel, OptionsPage>()
-            //     .Map<GamePageViewModel, GamePage>();
-            //
-            // builder
-            //     .WithInstance(new ItemTemplates())
-            //     .WithInstance(new PageInputContext())
-            //     .WithSingleton<ITranslator, Translator>()
-            //     .WithInstance<IInputCoordinateSystem>(this);
+            builder
+                .WithInstance<IInputCoordinateSystem>(this)
+                .WithCommonUi();
+            
+            navigationMap
+                .Map<MainPageViewModel, MainPage>()
+                .Map<OptionsPageViewModel, OptionsPage>()
+                .Map<GamePageViewModel, GamePage>();
+
+            handlers.AddCommonUiMaping();
         }
 
         protected override void OnDispose(bool disposing)
         {
             base.OnDispose(disposing);
             _uiApp.Dispose();
-        }
-
-        private void MapHandlers(IHandlerMapper mapper)
-        {
-            // mapper
-            //     .AddMapping<GameView, GameViewHandler>()
-            //     .AddMapping<PointsView, PointsViewHandler>();
         }
 
         protected override void OnInitialize(IIoCContainer container)
@@ -109,8 +105,6 @@ namespace Gunslinger.Core
 
             _uiApp = container.InitializeUi(OnInitializeUi);
 
-            MapHandlers(_uiApp.Services.Get<IHandlerMapper>());
-
             _appHost = container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
             {
                 DesignSize = new Size(480, 360),
@@ -120,7 +114,7 @@ namespace Gunslinger.Core
             });
 
             OnResize(_renderer.TargetSize);
-            //_uiApp.Navigation.NavigateTo<MainPageViewModel>();
+            _uiApp.Navigation.NavigateTo<MainPageViewModel>();
         }
         
         protected override void OnUpdate(float elapsedTime)
@@ -131,7 +125,7 @@ namespace Gunslinger.Core
         protected override void OnDraw()
         {
             _renderer.Clear(RgbaColor.Black);
-            _appHost.Render( Render );
+            _appHost.Render(Render);
         }
 
         private void Render()

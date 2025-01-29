@@ -1,11 +1,11 @@
 ﻿using System.Numerics;
 using SampleGame.Services;
 using SampleGame.UI.Pages;
-using SampleGame.UI.Pages.Internal;
 using SampleGame.UI.Templates;
 using SampleGame.UI.Views;
 using Ssit.CrossX;
 using Ssit.CrossX.Common;
+using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.Content;
@@ -54,7 +54,7 @@ public class GameApp: PixelApp, IInputCoordinateSystem
             .WithSingleton<IGameSettings, GameSettings>();
     }
 
-    private void OnInitializeUi(INavigationMap navigationMap, IIoCContainerBuilder builder)
+    private void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper mapper)
     {
         navigationMap
             .Map<MainPageViewModel, MainPage>()
@@ -66,19 +66,16 @@ public class GameApp: PixelApp, IInputCoordinateSystem
             .WithInstance(new ItemTemplates())
             .WithInstance(new PageInputContext())
             .WithInstance<IInputCoordinateSystem>(this);
+        
+        mapper
+            .AddCommonUiMaping()
+            .AddMapping<PointsView, PointsViewHandler>();
     }
     
     protected override void OnDispose(bool disposing)
     {
         base.OnDispose(disposing);
         _uiApp.Dispose();
-    }
-    
-    private void MapHandlers(IHandlerMapper mapper)
-    {
-        mapper
-            .AddCommonUiMaping()
-            .AddMapping<PointsView, PointsViewHandler>();
     }
 
     protected override void OnInitialize(IIoCContainer container)
@@ -118,8 +115,6 @@ public class GameApp: PixelApp, IInputCoordinateSystem
         container.Get<IContentManager>().RegisterGameContentTypes();
 
         _uiApp = container.InitializeUi(OnInitializeUi);
-
-        MapHandlers(_uiApp.Services.Get<IHandlerMapper>());
 
         _appHost = container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
         {

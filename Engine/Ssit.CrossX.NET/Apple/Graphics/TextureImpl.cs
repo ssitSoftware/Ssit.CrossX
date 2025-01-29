@@ -76,6 +76,9 @@ public class TextureImpl: ITexture
         
         _normalTexture?.Dispose();
         _normalTexture = null;
+        
+        _glowTexture?.Dispose();
+        _glowTexture = null;
     }
 
     public Size Size { get; }
@@ -90,6 +93,9 @@ public class TextureImpl: ITexture
             
             case TextureMaps.NormalMap:
                 return _normalTexture as TTextureMap;
+            
+            case TextureMaps.GlowMap:
+                return _glowTexture as TTextureMap;
         }
 
         return null;

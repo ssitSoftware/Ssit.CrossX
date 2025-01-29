@@ -94,8 +94,8 @@ namespace Ssit.CrossX.Editor.Tools
         
             var pos = Editor.ScreenToMap(MousePosition.Value);
 
-            pos.X -= Size / 2f;
-            pos.Y -= Size / 2f;
+            pos.X -= (Size-1) / 2f;
+            pos.Y -= (Size-1) / 2f;
         
             return new SKPointI((int)pos.X, (int)pos.Y);
         }

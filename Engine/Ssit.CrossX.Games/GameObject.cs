@@ -106,7 +106,7 @@ public class GameObject: IDisposable
         return (desc, resourcePath, hasSprite, hasTexture);
     }
     
-    public static GameObject FromPath(string path, IFilesProvider filesProvider) => new(Parse(path, filesProvider));
+    public static GameObject FromPath(string path, IFilesProvider filesProvider, OriginAlignment alignment = OriginAlignment.Center | OriginAlignment.VCenter) => new(Parse(path, filesProvider, alignment));
     
     private GameObject( (ObjectDescription description, string resourcePath, bool hasSprite, bool hasTexture) data)
     {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Avalonia.Input;
 using Ssit.CrossX.Editor.Helpers;
@@ -89,8 +88,8 @@ namespace Ssit.CrossX.Editor.Tools
 
             var pos = Editor.ScreenToMap(MousePosition.Value);
 
-            pos.X -= Tiles.GetLength(0) / 2f;
-            pos.Y -= Tiles.GetLength(1) / 2f;
+            //pos.X -= (Tiles.GetLength(0)-1) / 2f;
+            //pos.Y -= (Tiles.GetLength(1)-1) / 2f;
 
             return new SKPointI((int) pos.X, (int) pos.Y);
         }

@@ -32,7 +32,8 @@ public class SpritesContainer(IGameTemplate gameTemplate) : ISpritesContainer
     {
         if (_sprites.ContainsKey(path)) return;
 
-        var go = GameObject.FromPath(path, gameTemplate.AssetsProvider);
+        var go = GameObject.FromPath(path, gameTemplate.AssetsProvider, gameTemplate.ObjectsOriginAlignment);
+        
         if (go.HasSprite)
         {
             var sprite = (Sprite)JsonSpriteLoader.Load(go.ResourcePath, gameTemplate.AssetsProvider);
@@ -43,6 +44,23 @@ public class SpritesContainer(IGameTemplate gameTemplate) : ISpritesContainer
                 
             _sprites.Add(path, new EditorSprite(image, go.Description.Origin, sprite.Sequences));
         }
+
+        if (go.HasTexture)
+        {
+            using var stream = gameTemplate.AssetsProvider.Open(go.ResourcePath);
+            using var bmp = SKBitmap.Decode(stream);
+            var image = SKImage.FromBitmap(bmp);
+            
+            var sequences = new[]
+            {
+                new Sprite.SpriteSequence("", [
+                    new Sprite.SpriteFrame(new Rectangle(0, 0, image.Width, image.Height), Vector2.Zero, 1)
+                ])
+            };
+            
+            _sprites.Add(path, new EditorSprite(image, go.Description.Origin, sequences));
+        }
+        else throw new InvalidDataException($"GameObject {path} has no sprite.");
     }
 
     public EditorSprite Get(string name)

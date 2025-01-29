@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 
 namespace Ssit.CrossX.Games.Template;
@@ -10,7 +11,7 @@ public class ImageDescription
     public readonly string Sequence;
     public readonly string FullName;
     
-    public ImageDescription(string name, string gameObject, string defaultSequence = null)
+    public ImageDescription(string name, string gameObject, string defaultSequence = "")
     {
         FullName = name;
         Tags = name.Split('/');
@@ -24,5 +25,10 @@ public class ImageDescription
         
         GameObject = gameObject;
         Sequence = defaultSequence;
+    }
+    
+    public ImageDescription(string gameObject) 
+        : this(Path.GetFileNameWithoutExtension(gameObject), gameObject)
+    {
     }
 }

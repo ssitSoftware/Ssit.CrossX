@@ -4,12 +4,12 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Engine\Ssit.CrossX.Editor\Ssit.CrossX.Editor.csproj" />
-      <ProjectReference Include="..\Gunslinger\Gunslinger.Core\Gunslinger.Core.csproj" />
+      <ProjectReference Include="..\..\Engine\Ssit.CrossX.Editor\Ssit.CrossX.Editor.csproj" />
+      <ProjectReference Include="..\Gunslinger.Core\Gunslinger.Core.csproj" />
     </ItemGroup>
 
 </Project>

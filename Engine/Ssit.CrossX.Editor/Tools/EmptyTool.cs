@@ -8,5 +8,4 @@ public class EmptyTool : EditorTool
     public EmptyTool(IEditorInstances instances) : base(Name, instances)
     {
     }
-        
 }

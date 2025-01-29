@@ -86,6 +86,7 @@
     <ItemGroup>
       <Folder Include="Music\" />
       <Folder Include="Platforms\iOS\Properties\" />
+      <Folder Include="UI\Pages\Internal\" />
     </ItemGroup>
 
 </Project>

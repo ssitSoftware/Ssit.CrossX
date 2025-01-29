@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
@@ -8,7 +9,7 @@ using Ssit.CrossX.Graphics;
 
 namespace SampleGame.Game.Logic;
 
-public class Simulation: IDisposable
+public class Simulation: ISimulation
 {
     private float _time = 0;
     public World World { get; }
@@ -67,7 +68,14 @@ public class Simulation: IDisposable
         renderer.SetTransform(null);
         renderer.SetClipRect(null);
     }
-    
+
+    public int RenderPasses => (int)RenderPass.Count;
+
+    public void Render(IRenderer renderer, RectangleF target, int renderPass, float scale)
+    {
+        Render(renderer, target, (RenderPass)renderPass, scale);
+    }
+
     public void Update(float dt)
     {
         _time += dt;

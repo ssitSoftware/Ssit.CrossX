@@ -5,6 +5,9 @@ using SampleGame.UI.Pages.Internal;
 using SampleGame.UI.Templates;
 using SampleGame.UI.Views;
 using Ssit.CrossX;
+using Ssit.CrossX.Common;
+using Ssit.CrossX.Common.Services;
+using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
@@ -59,9 +62,9 @@ public class GameApp: PixelApp, IInputCoordinateSystem
             .Map<GamePageViewModel, GamePage>();
 
         builder
+            .WithCommonUi()
             .WithInstance(new ItemTemplates())
             .WithInstance(new PageInputContext())
-            .WithSingleton<ITranslator, Translator>()
             .WithInstance<IInputCoordinateSystem>(this);
     }
     
@@ -74,7 +77,7 @@ public class GameApp: PixelApp, IInputCoordinateSystem
     private void MapHandlers(IHandlerMapper mapper)
     {
         mapper
-            .AddMapping<GameView, GameViewHandler>()
+            .AddCommonUiMaping()
             .AddMapping<PointsView, PointsViewHandler>();
     }
 

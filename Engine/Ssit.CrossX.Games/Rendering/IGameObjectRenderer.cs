@@ -1,12 +1,7 @@
 using System.Numerics;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Rendering;
-
-public delegate void AnimationEventDelegate(string eventName);
-public delegate void AnimationFinishedDelegate(string sequenceName, bool reverse);
-
 
 public interface IGameObjectRenderer
 {

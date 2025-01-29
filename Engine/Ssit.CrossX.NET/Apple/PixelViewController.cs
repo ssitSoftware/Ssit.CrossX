@@ -326,7 +326,7 @@ internal sealed class PixelViewController : UIViewController, IUIContextMenuInte
         if (_hoverGestureRecognizer.State is UIGestureRecognizerState.Began or UIGestureRecognizerState.Changed)
         {
             var pt = _hoverGestureRecognizer.LocationInView(View);
-            var position = new Vector2((float)pt.X, (float)pt.Y) * (float)UIScreen.MainScreen.NativeScale;
+            var position = new Vector2((float)pt.X, (float)pt.Y) * (float)(View?.ContentScaleFactor ?? 1f);
             _pointingDevices.UpdateHoverPosition(position);
         }
         else

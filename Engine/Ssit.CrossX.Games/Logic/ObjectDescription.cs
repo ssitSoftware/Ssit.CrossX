@@ -13,12 +13,21 @@ public class ObjectDescription
     
     public Vector2 Origin { get; }
     public SizeF Size { get; }
+    public Size SourceSize { get; }
 
-    public ObjectDescription(string json)
+    public ObjectDescription(Vector2 origin, Size sourceSize)
+    {
+        Origin = origin;
+        SourceSize = sourceSize;
+        Size = SizeF.Empty;
+    }
+    
+    public ObjectDescription(string json, Size sourceSize)
     {
         var obj = JsonConvert.DeserializeObject<Desc>(json);
         
         Origin = obj.Origin;
         Size = obj.Size;
+        SourceSize = sourceSize;
     }
 }

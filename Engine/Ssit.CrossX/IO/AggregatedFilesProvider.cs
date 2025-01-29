@@ -7,9 +7,10 @@ public class AggregatedFilesProvider: IFilesProvider
 {
     private Dictionary<string, IFilesProvider> _fileProviders = new();
 
-    public void AddProvider(string drive, IFilesProvider provider)
+    public AggregatedFilesProvider AddProvider(string drive, IFilesProvider provider)
     {
         _fileProviders.Add(drive, provider);
+        return this;
     }
     
     public Stream Open(string path)

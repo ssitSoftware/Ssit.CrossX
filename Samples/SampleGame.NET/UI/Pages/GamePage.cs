@@ -1,5 +1,6 @@
 using System;
 using SampleGame.UI.Views;
+using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;

@@ -21,15 +21,18 @@ public class Sprite: IDisposable
     }
     
     public string SheetName { get; }
+    public Size SourceSize { get; }
+    
     private readonly IReadOnlyDictionary<string, SpriteSequence> _sequences;
     
     private Sprite()
     {
     }
 
-    internal Sprite(string sheetName, IReadOnlyList<SpriteSequence> sequences)
+    internal Sprite(string sheetName, IReadOnlyList<SpriteSequence> sequences, Size sourceSize)
     {
         SheetName = sheetName;
+        SourceSize = sourceSize;
         var dict = new Dictionary<string, SpriteSequence>();
         foreach (var sequence in sequences)
         {

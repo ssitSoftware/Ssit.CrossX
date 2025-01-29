@@ -1,4 +1,6 @@
 using SampleGame.UI.Pages.Internal;
+using SampleGame.UI.Styles;
+using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.UI.Views;
 
 namespace SampleGame.UI.Pages;
@@ -17,5 +19,10 @@ public class MainPage: MenuItemsPageBase<MainPageViewModel>
         ]);
 
         return CreateDefaultItemsContainer(menuView);
+    }
+
+    protected override void MenuItemApplyStyle(LabelButton button)
+    {
+        button.WithDefaultStyle();
     }
 }

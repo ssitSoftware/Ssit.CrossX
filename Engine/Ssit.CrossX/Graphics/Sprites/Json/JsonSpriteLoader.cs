@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json;
 using Ssit.CrossX.IO;
@@ -23,12 +22,19 @@ public static class JsonSpriteLoader
         
         var dict = new Dictionary<string, List<(int, Sprite.SpriteFrame)>>();
 
+        Size sourceSize = Size.Zero;
+        
         foreach (var frame in jsonSprite.Frames)
         {
             if (!dict.TryGetValue(frame.Sequence, out var list))
             {
                 list = new List<(int, Sprite.SpriteFrame)>();
                 dict.Add(frame.Sequence, list);
+            }
+            
+            if ( sourceSize == Size.Zero)
+            {
+                sourceSize = new Size(frame.SourceSize.W, frame.SourceSize.H);
             }
             
             list.Add((frame.Index, CreateFrame(frame)));
@@ -51,7 +57,7 @@ public static class JsonSpriteLoader
         var sheetDir = Path.GetDirectoryName(path);
         var sheetFile = Path.GetFileNameWithoutExtension(path) + ".png";
         var sheetPath = Path.Combine(sheetDir ?? "", sheetFile);
-        return new Sprite(sheetPath, sequences);
+        return new Sprite(sheetPath, sequences, sourceSize);
     }
 
     private static Sprite.SpriteFrame CreateFrame(JsonFrame frame)

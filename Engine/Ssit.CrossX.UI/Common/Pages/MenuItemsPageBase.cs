@@ -1,20 +1,24 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using SampleGame.Services;
-using SampleGame.UI.Styles;
-using Ssit.CrossX;
+using SampleGame.UI.Pages.Internal;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
-namespace SampleGame.UI.Pages.Internal;
+namespace Ssit.CrossX.Common.Pages;
 
 public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TViewModel: class
 {
     private string _defaultId;
     protected ITranslator Translator => Services.Get<ITranslator>();
+
+    protected abstract void MenuItemApplyStyle(LabelButton button);
+    protected virtual void MenuApplyStyle(VerticalStack stack)
+    {
+    }
     
     protected override void OnLoad(IInputContext inputContext)
     {
@@ -42,8 +46,6 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
     protected View CreateMenuItems(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
         int defaultButtonIndex = 0, bool isMainList = true)
     {
-        var translator = Services.Get<ITranslator>();
-        
         var controls = new List<View>();
         var commandsSource = isMainList ? ViewModel as IPageCommandsSource : null;
             
@@ -61,15 +63,15 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
             {
                 prevIndex = items.Count;
             }
-            
+
             var button = new LabelButton
             {
                 Text = items[i].text,
                 UniqueId = $"{id}{i}",
                 VerticalNavigation = ($"{id}{prevIndex}", $"{id}{nextIndex}"),
                 Command = items[i].command
-            }.WithDefaultStyle();
-            
+            };
+            MenuItemApplyStyle(button);
             controls.Add(button);
         }
 
@@ -79,15 +81,16 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
             {
                 Height = 4
             });
-            
+
             var button = new LabelButton
             {
                 Text = "Back",
                 UniqueId = $"{id}{items.Count}",
-                VerticalNavigation = ($"{id}{items.Count-1}", $"{id}0"),
+                VerticalNavigation = ($"{id}{items.Count - 1}", $"{id}0"),
                 Command = commandsSource.BackCommand
-            }.WithDefaultStyle();
+            };
 
+            MenuItemApplyStyle(button);
             controls.Add(button);
         }
 
@@ -96,7 +99,7 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
             _defaultId = $"{id}{defaultButtonIndex}";
         }
 
-        return new VerticalStack
+        var stack = new VerticalStack
         {
             BackgroundColor = RgbaColor.FromNonPremultiplied(0, 0, 0, 100),
             Padding = (8, 8),
@@ -106,13 +109,16 @@ public abstract class MenuItemsPageBase<TViewModel>: Page<TViewModel> where TVie
             Width = 192,
             Children = controls.ToArray()
         };
+
+        MenuApplyStyle(stack);
+        return stack;
     }
 
-    protected View CreateDefaultItemsContainer(View itemsView)
+    protected View CreateDefaultItemsContainer(View itemsView, Thickness? padding = null)
     {
         return new Container
         {
-            Padding = (10,10),
+            Padding = padding ?? (10,10),
             Children = [
                 itemsView
             ]

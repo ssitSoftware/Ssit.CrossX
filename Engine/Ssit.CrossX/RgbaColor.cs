@@ -47,6 +47,53 @@ public struct RgbaColorF
 [DebuggerDisplay("RgbaColor = ({R}, {G}, {B}, {A})")]
 public partial struct RgbaColor : IEquatable<RgbaColor>
 {
+    /// <summary>
+    /// Represents the red component of the color in the RGBA color space.
+    /// </summary>
+    public byte R;
+
+    /// <summary>
+    /// Represents the green component of the color in the RGBA color space.
+    /// </summary>
+    public byte G;
+
+    /// <summary>
+    /// Represents the blue component of the color in the RGBA color space.
+    /// </summary>
+    public byte B;
+
+    /// <summary>
+    /// Represents the alpha component of the RGBA color,
+    /// specifying the transparency level. A value of 255
+    /// represents full opacity, while a value of 0 represents
+    /// full transparency.
+    /// </summary>
+    public byte A;
+
+    /// <summary>
+    /// Represents the normalized red component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
+    public float Rf => R / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized green component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
+    public float Gf => G / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized blue component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0.
+    /// </summary>
+    public float Bf => B / 255.0f;
+
+    /// <summary>
+    /// Represents the normalized alpha component of the color in the RGBA color space.
+    /// The value is in the range of 0.0 to 1.0, where 0.0 is full transparency and 1.0 is full opacity.
+    /// </summary>
+    public float Af => A / 255.0f;
+
     public RgbaColor(long color)
     {
         R = (byte)(color & 0xff);
@@ -104,54 +151,96 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
         long argb = (A | (B << 8) | (G << 16) | (R << 24));
         return (uint)argb;
     }
+    
+    public RgbaColor Invert() => new(255 - R, 255 - G, 255 - B, A);
 
-    /// <summary>
-    /// Represents the red component of the color in the RGBA color space.
-    /// </summary>
-    public byte R;
+    public (float h, float s, float l) ToHsl()
+    {
+        var cMax = MathF.Max(Rf, MathF.Max(Gf, Bf));
+        var cMin =  MathF.Min(Rf, MathF.Min(Gf, Bf));
+        var delta = cMax - cMin;
 
-    /// <summary>
-    /// Represents the green component of the color in the RGBA color space.
-    /// </summary>
-    public byte G;
+        var l = (cMax + cMin) / 2;
+        var s = delta != 0 ? delta / (1 - MathF.Abs(2 * l - 1)) : 0;
+        var h = 0f;
 
-    /// <summary>
-    /// Represents the blue component of the color in the RGBA color space.
-    /// </summary>
-    public byte B;
+        if (Math.Abs(cMax - Rf) < float.Epsilon)
+        {
+            h = 60 * ((Gf - Bf) / delta) % 6;
+        }
+        else if (Math.Abs(cMax - Gf) < float.Epsilon)
+        {
+            h = 60 * ((Bf - Rf) / delta) + 120;
+        }
+        else if (Math.Abs(cMax - Bf) < float.Epsilon)
+        {
+            h = 60 * ((Rf - Gf) / delta) + 240;
+        }
 
-    /// <summary>
-    /// Represents the alpha component of the RGBA color,
-    /// specifying the transparency level. A value of 255
-    /// represents full opacity, while a value of 0 represents
-    /// full transparency.
-    /// </summary>
-    public byte A;
+        return (h, s, l);
+    }
 
-    /// <summary>
-    /// Represents the normalized red component of the color in the RGBA color space.
-    /// The value is in the range of 0.0 to 1.0.
-    /// </summary>
-    public float Rf => R / 255.0f;
+    public RgbaColor FromHsl(float h, float s, float l)
+    {
+        h %= 360;
+        s = MathF.Max(0, MathF.Min(1, s));
+        l = MathF.Max(0, MathF.Min(1, l));
+        
+        var c = (1 - MathF.Abs(2 * l - 1)) * s;
+        var x = c * (1 - MathF.Abs((h / 60) % 2 - 1));
+        var m = l - c / 2;
+        
+        if (h < 60)
+        {
+            return new RgbaColor(c + m, x + m, m, 1);
+        }
+        else if (h < 120)
+        {
+            return new RgbaColor(x + m, c + m, m, 1);
+        }
+        else if (h < 180)
+        {
+            return new RgbaColor(m, c + m, x + m, 1);
+        }
+        else if (h < 240)
+        {
+            return new RgbaColor(m, x + m, c + m, 1);
+        }
+        else if ( h < 300)
+        {
+            return new RgbaColor(x + m, m, c + m, 1);
+        }
+        else
+        {
+            return new RgbaColor(c + m, m, x + m, 1);
+        }
+    }
 
-    /// <summary>
-    /// Represents the normalized green component of the color in the RGBA color space.
-    /// The value is in the range of 0.0 to 1.0.
-    /// </summary>
-    public float Gf => G / 255.0f;
+    public RgbaColor InvertHsl(bool forceDifferent = false)
+    {
+        var (h,s,l) = ToHsl();
 
-    /// <summary>
-    /// Represents the normalized blue component of the color in the RGBA color space.
-    /// The value is in the range of 0.0 to 1.0.
-    /// </summary>
-    public float Bf => B / 255.0f;
+        h %= 360;
+        s = MathF.Max(0, MathF.Min(1, s));
+        l = MathF.Max(0, MathF.Min(1, l));
 
-    /// <summary>
-    /// Represents the normalized alpha component of the color in the RGBA color space.
-    /// The value is in the range of 0.0 to 1.0, where 0.0 is full transparency and 1.0 is full opacity.
-    /// </summary>
-    public float Af => A / 255.0f;
+        var nh = 360 - h;
+        var nl  = 1 - l;
 
+        if (forceDifferent && MathF.Abs(l - 0.5f) < 0.2 && MathF.Abs(nh - h) < 30)
+        {
+            nl += 0.25f;
+            nh = (nh + 180) % 360;
+
+            if (s < 0.25f)
+            {
+                s = 0.25f;
+            }
+        }
+        
+        return FromHsl(nh, s, nl);
+    }
+    
     public static RgbaColor operator * (RgbaColor color1, RgbaColor color2)
     {
         return new(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);

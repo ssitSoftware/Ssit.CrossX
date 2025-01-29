@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
+using SampleGame.Services;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.UI.Values;
 
-namespace SampleGame.Services;
+namespace Ssit.CrossX.Common.Services;
 
-public class Translator : ITranslator
+internal class Translator : ITranslator
 {
     private readonly Dictionary<string, SharedStringValue> _strings = new();
 

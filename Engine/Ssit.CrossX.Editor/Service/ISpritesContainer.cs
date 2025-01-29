@@ -1,0 +1,8 @@
+using Ssit.CrtossX.Editor.Helpers;
+
+namespace Ssit.CrtossX.Editor.Service;
+
+public interface ISpritesContainer
+{
+    EditorSprite Get(string name);
+}

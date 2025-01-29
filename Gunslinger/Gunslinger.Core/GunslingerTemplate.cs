@@ -1,6 +1,7 @@
-using System.Numerics;
+using System;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IO;
 
 namespace Gunslinger.Core;
@@ -8,27 +9,46 @@ namespace Gunslinger.Core;
 public class GunslingerTemplate: IGameTemplate
 {
     public string Name => "Gunslinger";
-    
-    public int TileSize => 16;
-    
-    public IFilesProvider FilesProvider { get; } = new AggregatedFilesProvider()
+    public Guid Guid { get; } = Guid.Parse("b7d05cc4-a3f3-461f-8cb2-07ec58b6120a");
+
+    public IFilesProvider AssetsProvider { get; } = new AggregatedFilesProvider()
         .AddProvider("assets:", 
             new EmbeddedFilesProvider(typeof(GunslingerTemplate).Assembly, "Gunslinger.Core.Assets"));
-
-    public (string name, string path) [] Tilesets { get; } =
-    [
-        ("Forest", "assets:/Game/Tilesets/Forest.png"),
-        ("Caves", "assets:/Game/Tilesets/Caves.png")
-    ];
     
-    public (string name, string path) [] Images { get; } =
-    [
-        ("Big Tree", "assets:/Game/Images/BigTree")
-    ];
-
+    public int TileSize => 16;
+    public int TargetWidth => 640;
+    public int TargetHeight => 360;
+    
+    public RgbaColor DefaultBackground => new(0xff404040);
+    public RgbaColor EmptyColor => new(128, 128, 128);
+    
     public GameObject.OriginAlignment ObjectsOriginAlignment =>
         GameObject.OriginAlignment.Bottom | GameObject.OriginAlignment.Center;
+    
+    public LayerDescription[] Layers { get; } =
+    [
+    ];
 
-    public RgbaColor TilesBackgroundColor => new(192,96,192);
-    public RgbaColor PreviewBackgroundColor => new(64, 64, 64);
+    public ObjectDescription[] Objects { get; } =
+    [
+    ];
+
+    public string[] TileSets { get; } =
+    [
+        "assets:/Game/Tilesets/Forest.png",
+        "assets:/Game/Tilesets/Caves.png"
+    ];
+    
+    public ImageDescription[] Images { get; } =
+    [
+        new ("Big Tree", "assets:/Game/Images/BigTree")
+    ];
+
+    public MaterialInfo[] Materials { get; } =
+    [
+        
+    ];
+    
+    public int PreviewZoom => 2;
+    public decimal TilesetPanelZoom => 2;
 }

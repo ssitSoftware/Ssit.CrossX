@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Ssit.CrossX.Games;
 
 namespace Editor.ViewModels;
 
-public class ViewModelBase : ObservableObject
+public class ViewModelBase : BindableModel
 {
 }

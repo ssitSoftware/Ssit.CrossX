@@ -49,6 +49,7 @@ public partial class App : Application
 
         return builder
             .WithInstance(this)
+            .WithSingleton<IGameTemplate, GunslingerTemplate>()
             .WithInstance(new IGameTemplate[]
             {
                 new GunslingerTemplate()

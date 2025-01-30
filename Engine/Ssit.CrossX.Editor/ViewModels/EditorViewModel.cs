@@ -228,13 +228,13 @@ namespace Ssit.CrossX.Editor.ViewModels
         {
             if (!_colorFilters.TryGetValue(color.ToInt32(), out var filter))
             {
-                filter = SKColorFilter.CreateColorMatrix(new float[]
-                {
+                filter = SKColorFilter.CreateColorMatrix(
+                [
                     color.Rf, 0, 0, 0, 0,
                     0, color.Gf, 0, 0, 0,
                     0, 0, color.Bf, 0, 0,
                     0, 0, 0, color.Af, 0
-                });
+                ]);
                 _colorFilters.Add(color.ToInt32(), filter);
             }
 
@@ -254,8 +254,8 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             var ts = _instances.Template.TileSize * Zoom.Value;
         
-            var w = _instances.Template.TargetWidth * Zoom.Value;
-            var h = _instances.Template.TargetHeight * Zoom.Value;
+            var w = _instances.Template.TargetSize.Width * Zoom.Value;
+            var h = _instances.Template.TargetSize.Height * Zoom.Value;
         
             var x = (width-w) / 2;
             var y = (height-h) / 2;
@@ -287,6 +287,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 {
                     var layer = mapFile.Layers[idx];
 
+                    byte alpha = 255;
                     if (!ShowAllLayers && !IsFullscreen)
                     {
                         if (layer.HorizontalSpeed == 0 ||
@@ -294,14 +295,16 @@ namespace Ssit.CrossX.Editor.ViewModels
                         {
                             continue;
                         }
-                        _skPaint.Color = SKColors.White.WithAlpha((byte) (layer == SelectedLayer ? 255 : 128));
-                    }
 
-                    _skPaint.Color = SKColors.White;
-                    if (layer.TintColor != RgbaColor.White)
-                    {
-                        _skPaint.ColorFilter = GetFilter(layer.TintColor);
+                        if (layer != SelectedLayer)
+                        {
+                            alpha = 128;
+                        }
                     }
+                    
+                    var color = new RgbaColor(layer.TintColor.R, layer.TintColor.G, layer.TintColor.B, (byte)(alpha * layer.TintColor.A / 255));
+                    
+                    _skPaint.ColorFilter = GetFilter(color);
                     
                     RenderLayer(layer, skCanvas, grContext, width, height);
                     _skPaint.ColorFilter = null;
@@ -546,8 +549,6 @@ namespace Ssit.CrossX.Editor.ViewModels
                             
                             _skPaint.IsStroke = false;
                             skCanvas.DrawVertices(SKVertexMode.Triangles, _arrowPoints, null, _skPaint);
-                            
-                            
                         }
                     }
                 }
@@ -632,7 +633,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             var template = _instances.Template;
             var ts = template.TileSize * Zoom.Value;
             
-            position += new Vector2(template.TargetWidth / 2f, -template.TargetHeight / 2f) * Zoom.Value;
+            position += new Vector2(template.TargetSize.Width / 2f, -template.TargetSize.Height / 2f) * Zoom.Value;
             return offset + (position - _currentSize / 2) / ts;
         }
 
@@ -642,7 +643,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         {
             var template = _instances.Template;
             var ts = template.TileSize * Zoom.Value;
-            return (position - offset) * ts + _currentSize / 2 + new Vector2(-template.TargetWidth / 2f, template.TargetHeight / 2f) * Zoom.Value;
+            return (position - offset) * ts + _currentSize / 2 + new Vector2(-template.TargetSize.Width / 2f, template.TargetSize.Height / 2f) * Zoom.Value;
         }
 
         public void EnsurePanInBounds()
@@ -652,11 +653,11 @@ namespace Ssit.CrossX.Editor.ViewModels
             
             var template = _instances.Template;
 
-            var maxX = SelectedLayer.Width - (float)template.TargetWidth / template.TileSize;
+            var maxX = SelectedLayer.Width - (float)template.TargetSize.Width / template.TileSize;
             var minX = 0;
 
             var maxY = SelectedLayer.Height;// + (float)Template.TargetHeight / Template.TileSize / 4f;
-            var minY = (float)template.TargetHeight / template.TileSize;
+            var minY = (float)template.TargetSize.Height / template.TileSize;
 
             var ox = Math.Max(minX, Math.Min(maxX, Offset.X));
             var oy = Math.Max(minY, Math.Min(maxY, Offset.Y));

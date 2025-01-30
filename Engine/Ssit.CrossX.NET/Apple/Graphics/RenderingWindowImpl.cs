@@ -56,7 +56,7 @@ internal class RenderingWindowImpl : NSObject, IRenderingWindow, IMetalDevice
         _currentCommandBuffer = _commandQueue.CommandBuffer()!;
         var drawable = view.CurrentDrawable;
 
-        Renderer.SetTransform(null);
+        Renderer.StateManager.Reset();
         app.Draw();
         Renderer.Flush();
         

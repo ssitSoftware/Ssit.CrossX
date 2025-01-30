@@ -44,8 +44,7 @@ public class SpritesContainer(IGameTemplate gameTemplate) : ISpritesContainer
                 
             _sprites.Add(path, new EditorSprite(image, go.Description.Origin, sprite.Sequences));
         }
-
-        if (go.HasTexture)
+        else if (go.HasTexture)
         {
             using var stream = gameTemplate.AssetsProvider.Open(go.ResourcePath);
             using var bmp = SKBitmap.Decode(stream);

@@ -10,7 +10,6 @@
     x:DataType="viewModels:ResizeLayerDialogViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:map="clr-namespace:Breeze.Engine.Game.Map;assembly=Breeze.Engine"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Ssit.CrossX.Editor.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -46,7 +45,7 @@
             Value="{Binding Height}" />
 
         <Label
-            Content="Height: "
+            Content="Align: "
             Grid.Column="0"
             Grid.Row="4"
             VerticalAlignment="Center" />

@@ -8,7 +8,7 @@ using Ssit.CrossX.Editor.Views;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
-using Ssit.CrossX.Games;
+using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor
@@ -41,6 +41,8 @@ namespace Ssit.CrossX.Editor
             _services.Register<IObjectsContainer, ObjectsContainer>().Load();
             _services.Register<IImagesContainer, ImagesContainer>().Load();
             _services.Register<IEditorBitmapsProvider, EditorBitmapsProvider>();
+
+            _services.Register(EditorData.Load(template.Name + "Editor"));
             
             var editorInstances = _services.Register<IEditorInstances, EdtitorInstances>();
             editorInstances.Tools = _services.Register<IEditorTools, EditorTools>();

@@ -154,7 +154,27 @@ namespace Ssit.CrossX.Editor.Tools
                 var tilesets = Editor.GetTileSetImages(grContext);
 
                 SkPaint.IsStroke = false;
+                
+                if (_makeHalfOpacity)
+                {
+                    SkPaint.Color = SKColors.White.WithAlpha(16);
+                }
+                else
+                {
+                    SkPaint.Color = SKColors.White.WithAlpha(32);
+                }
+                
+                for (var x = 0; x < Tiles.GetLength(0); ++x)
+                {
+                    for (var y = 0; y < Tiles.GetLength(1); ++y)
+                    {
+                        var tile = Tiles[x, y];
+                        if (tile.IsEmpty) continue;
 
+                        skCanvas.DrawRect(SKRect.Create(pos.X + x * ts, pos.Y + y * ts, ts, ts), SkPaint);
+                    }
+                }
+                
                 if (_makeHalfOpacity)
                 {
                     SkPaint.Color = SKColors.White.WithAlpha(128);

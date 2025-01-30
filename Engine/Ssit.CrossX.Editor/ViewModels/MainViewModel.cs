@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -101,18 +100,22 @@ namespace Ssit.CrossX.Editor.ViewModels
         private string _title;
         private MapFile _mapFile;
 
+        private readonly EditorData _editorData;
+
         public MainViewModel(IServices services, 
             IEditorInstances instances, 
             IFileService fileService,
             IObjectsContainer objectsContainer,
             IImagesContainer imagesContainer,
-            IWindowService windowService)
+            IWindowService windowService,
+            EditorData editorData)
         {
             _services = services;
             _instances = instances;
             _fileService = fileService;
             _windowService = windowService;
-
+            _editorData = editorData;
+            
             ObjectsSelector = _services.Create<ImageSelectorViewModel>(new ImageSelectorViewModel.Parameters
             {
                 Categories = objectsContainer.Categories,
@@ -167,9 +170,13 @@ namespace Ssit.CrossX.Editor.ViewModels
             });
 
             EditorViewModel = _services.Create<EditorViewModel>();
-            
-            New();
-            
+
+            if (string.IsNullOrWhiteSpace(_editorData.RecentMapPath) || 
+                !LoadMap(_editorData.RecentMapPath))
+            {
+                New();
+            }
+
             TilesetSelectorViewModel = _services.Create<TilesetSelectorViewModel>();
 
             TilesetsContainer = instances.TilesetsContainer;
@@ -215,7 +222,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 new MenuItemModel("Window", null)
             };
         }
-
+        
         private async Task Open()
         {
             try
@@ -229,17 +236,8 @@ namespace Ssit.CrossX.Editor.ViewModels
                 {
                     return;
                 }
-                
-                using var stream = File.Open(path, FileMode.Open);
-                var mapFile = MapFile.FromStream(stream, _instances.Template,
-                    _instances.TilesetsContainer.TileSets.Select(o => o.Path).ToArray());
 
-                if (mapFile.TemplateId == _instances.Template.Guid)
-                {
-                    _filePath = path;
-                    MapFile = mapFile;
-                    IsModified = false;
-                }
+                LoadMap(path);
             }
             catch (OperationCanceledException)
             {
@@ -306,6 +304,33 @@ namespace Ssit.CrossX.Editor.ViewModels
 
             }
         }
+        
+        private bool LoadMap(string path)
+        {
+            try
+            {
+                using var stream = File.Open(path, FileMode.Open);
+                var mapFile = MapFile.FromStream(stream, _instances.Template,
+                    _instances.TilesetsContainer.TileSets.Select(o => o.Path).ToArray());
+
+                if (mapFile.TemplateId == _instances.Template.Guid)
+                {
+                    _filePath = path;
+                    MapFile = mapFile;
+                    IsModified = false;
+                    
+                    _editorData.RecentMapPath = path;
+                    _editorData.Save();
+                    
+                    return true;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+            }
+
+            return false;
+        }
     
         private async Task Save()
         {
@@ -325,7 +350,8 @@ namespace Ssit.CrossX.Editor.ViewModels
         private bool _forceClose = false;
         public bool CanClose()
         {
-            if (_forceClose) return true;
+            if (_forceClose)
+                return true;
             
             TryClose();
             return false;

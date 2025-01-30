@@ -15,6 +15,8 @@ public enum BlendMode
 /// </summary>
 public interface IRenderer
 {
+    RendererStateManager StateManager { get; }
+    
     /// <summary>
     /// Provides access to low-level or internal rendering operations that may bypass standard safety checks.
     /// </summary>
@@ -53,28 +55,10 @@ public interface IRenderer
     void SetBlendMode(BlendMode blendMode);
     
     /// <summary>
-    /// Sets the transformation matrix that will be used for rendering.
-    /// </summary>
-    /// <param name="matrix">The transformation matrix to apply. If null, the identity matrix will be used.</param>
-    void SetTransform(Matrix3x2? matrix);
-    
-    /// <summary>
-    /// Sets the transformation matrix that will be used for rendering.
-    /// </summary>
-    /// <param name="matrix">The transformation matrix to apply.</param>
-    void SetTransform(Matrix4x4 matrix);
-    
-    /// <summary>
     /// Clears the render target, setting it to the specified color.
     /// </summary>
     /// <param name="color">The color to use for clearing the render target.</param>
     void Clear(RgbaColor color);
-
-    /// <summary>
-    /// Sets the clipping rectangle, restricting rendering to the specified area.
-    /// </summary>
-    /// <param name="rect">The rectangle defining the clipping area, null for no clipping.</param>
-    void SetClipRect(Rectangle? rect);
     
     /// <summary>
     /// Draws text on the screen at a specified position.

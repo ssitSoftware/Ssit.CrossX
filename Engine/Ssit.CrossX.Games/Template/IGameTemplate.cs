@@ -8,9 +8,7 @@ public interface IGameTemplate
     string Name { get; }
     Guid Guid { get; }
     int TileSize { get; }
-    
-    int TargetWidth { get; }
-    int TargetHeight { get; }
+    Size TargetSize { get; }
     
     RgbaColor DefaultBackground { get; }
     

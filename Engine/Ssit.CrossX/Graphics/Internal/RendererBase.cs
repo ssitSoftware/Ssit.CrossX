@@ -6,7 +6,8 @@ namespace Ssit.CrossX.Graphics.Internal;
 public abstract class RendererBase : IRenderer, IUnsafeRenderer
 {
     public IUnsafeRenderer Unsafe => this;
-    
+
+    public RendererStateManager StateManager { get; } = new();
     public abstract IRenderTarget CurrentRenderTarget { get; }
     
     protected enum BatchMode
@@ -23,41 +24,27 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
     
     public abstract Size TargetSize { get; }
 
-    protected Matrix4x4? WorldTransform { get; set; }
+    protected Matrix4x4? WorldTransform => StateManager.WorldTransform;
 
     protected BlendMode BlendMode = BlendMode.AlphaBlend;
     
     public abstract void SetRenderTarget(IRenderTarget renderTarget);
 
+    protected RendererBase()
+    {
+        StateManager.ShouldFlush += UpdateStates;
+    }
+
+    private void UpdateStates()
+    {
+        Flush();
+        SetClipRect(StateManager.ClipRect);
+    }
+
     public void SetBlendMode(BlendMode blendMode)
     {
         Flush();
         BlendMode = blendMode;
-    }
-
-    public void SetTransform(Matrix3x2? matrix)
-    {
-        Flush();
-
-        if (matrix.HasValue)
-        {
-            var m = matrix.Value;
-            WorldTransform = new Matrix4x4(
-                m.M11, m.M12, 0, 0, 
-                m.M21, m.M22, 0, 0, 
-                0, 0, 1, 0, 
-                m.M31, m.M32, 0, 1);
-        }
-        else
-        {
-            WorldTransform = null;
-        }
-    }
-    
-    public void SetTransform(Matrix4x4 matrix)
-    {
-        Flush();
-        WorldTransform = matrix;
     }
 
     public abstract void Clear(RgbaColor color);

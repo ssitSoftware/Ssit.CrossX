@@ -40,9 +40,12 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         var r = (int)MathF.Floor(rect.Right);
         var b = (int)MathF.Floor(rect.Bottom);
         
-        renderer.SetClipRect(new Rectangle(l, t, r - l, b - t));
+        renderer.StateManager.SaveState();
+        renderer.StateManager.ClipRectangle(new Rectangle(l, t, r - l, b - t));
+        
         _contentHandler?.Draw(renderer);
-        renderer.SetClipRect(null);
+        
+        renderer.StateManager.RestoreState();
     }
 
     protected virtual void RecalculateChildrenLayouts()

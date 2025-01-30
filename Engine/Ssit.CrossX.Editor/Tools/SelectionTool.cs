@@ -200,6 +200,7 @@ namespace Ssit.CrossX.Editor.Tools
                 if (_searchedType != null && _searchedType.IsAssignableFrom(_objectsBuffer[idx].Object.Type))
                 {
                     SkPaint.IsStroke = true;
+                    SkPaint.StrokeWidth = 2;
                     SkPaint.Color = SKColors.YellowGreen.WithAlpha(192);
                     skCanvas.DrawRect(_objectsBuffer[idx].ScreenBounds.ToSkia(), SkPaint);
                     skCanvas.DrawOval(_objectsBuffer[idx].ScreenBounds.Inflate(10).ToSkia(), SkPaint);
@@ -208,10 +209,14 @@ namespace Ssit.CrossX.Editor.Tools
                 }
                 
                 SkPaint.IsStroke = true;
-                SkPaint.Color = SKColors.Pink.WithAlpha(64);
+                SkPaint.StrokeWidth = 2;
+                SkPaint.Color = SKColors.HotPink.WithAlpha(96);
                 skCanvas.DrawRect(_objectsBuffer[idx].ScreenBounds.ToSkia(), SkPaint);
             }
 
+            SkPaint.StrokeWidth = 1;
+            SkPaint.Color = SKColors.White;
+            
             if (_objectsBuffer.Count > 0)
                 return;
             
@@ -229,6 +234,7 @@ namespace Ssit.CrossX.Editor.Tools
 
                 skCanvas.DrawRect(pos.X, pos.Y, ts, ts, SkPaint);
             }
+            SkPaint.Color = SKColors.White;
         }
     }
 }

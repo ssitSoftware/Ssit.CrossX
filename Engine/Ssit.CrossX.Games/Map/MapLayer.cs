@@ -27,12 +27,12 @@ public class MapLayer: BindableModel
     private float _depth;
     private float _horizontalSpeed = 1;
     private float _verticalSpeed = 1;
-    private bool _horizontalWrap;
-    private bool _verticalWrap;
     private RgbaColor _tintColor = RgbaColor.White;
     private RgbaColor _fogColor = RgbaColor.Transparent;
     private bool _enableLighting;
 
+    public string Id { get; set; }
+    
     [Editor(typeof(LayerNameHandler))]
     public string Name
     {
@@ -96,12 +96,14 @@ public class MapLayer: BindableModel
     public int Width => Tiles.GetLength(0);
     public int Height => Tiles.GetLength(1);
 
-    public MapLayer()
+    internal MapLayer()
     {
+        
     }
 
-    public MapLayer(int width, int height)
+    public MapLayer(string id, int width, int height)
     {
+        Id = id;
         Resize(width, height);
     }
 
@@ -109,7 +111,6 @@ public class MapLayer: BindableModel
     {
         var oldWidth = Width;
         var oldHeight = Height;
-
 
         var offsetX = 0;
         var offsetY = 0;
@@ -187,6 +188,7 @@ public class MapLayer: BindableModel
 
     internal void Load(BinaryReader reader, IGameTemplate gameTemplate)
     {
+        Id = reader.ReadString();
         Name = reader.ReadString();
         Depth = reader.ReadSingle();
         HorizontalSpeed = reader.ReadSingle();
@@ -197,8 +199,8 @@ public class MapLayer: BindableModel
         var width = reader.ReadInt32();
         var height = reader.ReadInt32();
 
-        FogColor = RgbaColor.FromBgra(reader.ReadUInt32());
-        TintColor = RgbaColor.FromBgra(reader.ReadUInt32());
+        FogColor = RgbaColor.FromBgra(reader.ReadUInt32(), false);
+        TintColor = RgbaColor.FromBgra(reader.ReadUInt32(), false);
         
         EnableLighting = reader.ReadBoolean();
         
@@ -231,6 +233,7 @@ public class MapLayer: BindableModel
 
     internal void Save(BinaryWriter writer)
     {
+        writer.Write(Id);
         writer.Write(Name);
         writer.Write(Depth);
         writer.Write(HorizontalSpeed);

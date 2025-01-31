@@ -264,7 +264,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             {
                 skCanvas.Save();
                 skCanvas.ClipRect(SKRect.Create(x, y, w, h), SKClipOperation.Difference);
-                skCanvas.Clear(new SKColor(20,20,20));
+                skCanvas.Clear(IsFullscreen ? SKColors.Black : new SKColor(20,20,20));
             
                 skCanvas.Restore();
                 skCanvas.Save();
@@ -316,7 +316,6 @@ namespace Ssit.CrossX.Editor.ViewModels
                         skCanvas.DrawRect(x, y, w, h, _skPaint);
                         _skPaint.Color = SKColors.White;
                     }
-                    
                 }
             }
             else

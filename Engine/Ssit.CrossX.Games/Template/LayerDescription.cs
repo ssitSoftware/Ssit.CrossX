@@ -4,6 +4,7 @@ namespace Ssit.CrossX.Games.Template;
 
 public class LayerDescription
 {
+    public readonly string Id;
     public readonly string Name = null;
     public readonly Size Size = default;
 
@@ -15,14 +16,16 @@ public class LayerDescription
     public readonly float Depth = 0;
 
     public readonly RgbaColor Tint;
+    public readonly RgbaColor Fog;
 
     public readonly LayerAlign Anchor;
     
-    public LayerDescription(string name, Size size, 
+    public LayerDescription(string id, string name, Size size, 
         float horizontalSpeed, float verticalSpeed, 
         string initialTileset, float depth, 
-        RgbaColor tint, LayerAlign anchor)
+        RgbaColor tint, LayerAlign anchor, RgbaColor? fog = null)
     {
+        Id = id;
         Name = name;
         Size = size;
         HorizontalSpeed = horizontalSpeed;
@@ -30,6 +33,7 @@ public class LayerDescription
         InitialTileset = initialTileset;
         Depth = depth;
         Tint = tint;
+        Fog = fog ?? RgbaColor.Transparent;
         Anchor = anchor;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using Ssit.CrossX.Games.Map;
 
 namespace Ssit.CrossX.Editor.ViewModels
@@ -256,12 +258,14 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             foreach (var layer in template.Layers)
             {
-                mapFile.Layers.Add(new MapLayer(layer.Size.Width, layer.Size.Height)
+                mapFile.Layers.Add(new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
                 {
                     Name = layer.Name,
                     HorizontalSpeed = layer.HorizontalSpeed,
                     VerticalSpeed = layer.VerticalSpeed,
-                    Depth = layer.Depth
+                    Depth = layer.Depth,
+                    TintColor = layer.Tint,
+                    FogColor = layer.Fog
                 });
             }
 
@@ -317,7 +321,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 {
                     _filePath = path;
                     MapFile = mapFile;
-                    IsModified = false;
+                    IsModified = UpdateLayers();
                     
                     _editorData.RecentMapPath = path;
                     _editorData.Save();
@@ -331,7 +335,58 @@ namespace Ssit.CrossX.Editor.ViewModels
 
             return false;
         }
-    
+
+        private bool UpdateLayers()
+        {
+            var mapFile = MapFile;
+            var newLayers = new List<MapLayer>();
+            
+            for (var idx =0; idx < _instances.Template.Layers.Length; ++idx)
+            {
+                var layer = _instances.Template.Layers[idx];
+                
+                var mapLayer = mapFile.Layers.FirstOrDefault(o => string.Equals(o.Name, layer.Name, StringComparison.InvariantCultureIgnoreCase));
+                if (mapLayer is null)
+                {
+                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
+                    {
+                        Name = layer.Name,
+                        HorizontalSpeed = layer.HorizontalSpeed,
+                        VerticalSpeed = layer.VerticalSpeed,
+                        Depth = layer.Depth,
+                        TintColor = layer.Tint,
+                        FogColor = layer.Fog
+                    };
+                }
+
+                mapLayer.Id = layer.Id;
+                newLayers.Add(mapLayer);
+            }
+
+            var same = mapFile.Layers.Count == newLayers.Count;
+
+            if (same)
+            {
+                for (var idx = 0; idx < mapFile.Layers.Count; ++idx)
+                {
+                    if ( mapFile.Layers[idx].Id != newLayers[idx].Id)
+                    {
+                        same = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!same)
+            {
+                mapFile.Layers.Clear();
+                mapFile.Layers.AddRange(newLayers);
+                return true;
+            }
+
+            return false;
+        }
+
         private async Task Save()
         {
             if (_filePath is null)

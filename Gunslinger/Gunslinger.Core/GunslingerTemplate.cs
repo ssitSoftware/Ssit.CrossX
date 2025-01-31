@@ -18,7 +18,7 @@ public class GunslingerTemplate: IGameTemplate
             new EmbeddedFilesProvider(typeof(GunslingerTemplate).Assembly, "Gunslinger.Core.Assets"));
     
     public int TileSize => 16;
-    public Size TargetSize => new(480, 270);
+    public Size TargetSize => new(406, 270);
     
     public RgbaColor DefaultBackground => new(0xff404040);
     public RgbaColor EmptyColor => new(128, 128, 128);
@@ -28,15 +28,19 @@ public class GunslingerTemplate: IGameTemplate
     
     public LayerDescription[] Layers { get; } =
     [
-        new ("--- Furthest Background", new Size(30,23), 0, 0, "Sky", 1000, RgbaColor.White, LayerAlign.Top),
-        new ("-- Far Background", new Size(64,48), 0.25f, 0.25f, "Background", 250, RgbaColor.White, LayerAlign.Bottom),
-        new ("- Background", new Size(128,96), 0.5f, 0.5f, "Background", 100, RgbaColor.White, LayerAlign.Bottom),
+        new ("FFB", "--- Furthest Background", new Size(30,23), 0, 0, "Sky", 1000, RgbaColor.White, LayerAlign.Top, new RgbaColor(224,232,224,56)),
+        
+        new ("FB", "-- Far Background", new Size(64,48), 0.25f, 0.25f, "Background", 250, new RgbaColor(224,232,224), LayerAlign.Bottom),
+        new ("FBO", "-- Far Background Overlay", new Size(64,48), 0.25f, 0.25f, "Background", 250, new RgbaColor(224,232,224), LayerAlign.Bottom, new RgbaColor(224,232,224,56)),
+        
+        new ("B", "- Background", new Size(128,96), 0.5f, 0.5f, "Background", 100, new RgbaColor(224,232,224), LayerAlign.Bottom),
+        new ("BO", "- Background Overlay", new Size(128,96), 0.5f, 0.5f, "Background", 100, new RgbaColor(224,232,224), LayerAlign.Bottom, new RgbaColor(224,232,224,56)),
+        
+        new ("CB", "Close Background", new Size(512,96), 1, 1, "Main", 10, RgbaColor.White, LayerAlign.Bottom),
+        new ("MAIN", "Main", new Size(512,96), 1, 1, "Main", 0, RgbaColor.White, LayerAlign.Left),
+        new ("CF", "Close Foreground", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
 
-        new ("Close Background", new Size(512,96), 1, 1, "Main", 10, RgbaColor.White, LayerAlign.Bottom),
-        new ("Main", new Size(512,96), 1, 1, "Main", 0, RgbaColor.White, LayerAlign.Left),
-        new ("Close Foreground", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
-
-        new ("- Foreground", new Size(512,96), 2f, 2f, "Foreground", -100, RgbaColor.Black, LayerAlign.Bottom)
+        new ("FG", "- Foreground", new Size(512,96), 2f, 2f, "Foreground", -100, RgbaColor.Black, LayerAlign.Bottom)
     ];
 
     public ObjectDescription[] Objects { get; } =
@@ -60,7 +64,9 @@ public class GunslingerTemplate: IGameTemplate
         new ("Foreground/Big Tree 02", "assets:/Game/Images/BigTree02"),
         new ("Foreground/Big Tree 03", "assets:/Game/Images/BigTree03"),
         new ("Monuments/Tomb", "assets:/Game/Images/Tomb"),
-        new ("Monuments/Chapel", "assets:/Game/Images/Chapel")
+        new ("Monuments/Chapel", "assets:/Game/Images/Chapel"),
+        new ("Monuments/Blue Throne", "assets:/Game/Images/Throne", "Blue"),
+        new ("Monuments/Green Throne", "assets:/Game/Images/Throne", "Green"),
     ];
 
     public MaterialInfo[] Materials { get; } =

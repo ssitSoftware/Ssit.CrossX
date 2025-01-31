@@ -2,6 +2,7 @@ using System.Numerics;
 using Gunslinger.Core.UI.Pages;
 using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Common;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
@@ -15,12 +16,14 @@ using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core
 {
-    public class GameApp : PixelApp, IInputCoordinateSystem
+    public class GameApp : PixelApp, IInputCoordinateSystem, ISettingsProvider
     {
         private IRenderer _renderer;
         private IUiApp _uiApp;
         private PixelAppHost _appHost;
 
+        public Settings Settings { get; private set; }
+        
         public Matrix3x2 Transform
         {
             get
@@ -42,9 +45,10 @@ namespace Gunslinger.Core
             var filesProvider = new AggregatedFilesProvider();
             filesProvider.AddProvider("assets:", embeddedProvider);
             filesProvider.AddProvider("bundle:", bundleProvider);
-
+            
             builder
-                .WithInstance<IFilesProvider>(filesProvider);
+                .WithInstance<IFilesProvider>(filesProvider)
+                .WithInstance<ISettingsProvider>(this);
         }
 
         private void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
@@ -112,15 +116,17 @@ namespace Gunslinger.Core
                 Renderer = _renderer,
                 MaxScale = 2
             });
-
+            
+            Settings = Settings.Load(container.Get<IFileStorage>(), "Gunslinger/settings");
+            
+            container.Get<IMusicPlayer>().Volume = Settings.MusicVolume / 4f;
+            container.Get<ISoundManager>().MasterVolume = Settings.SoundVolume / 4f;
+            
             OnResize(_renderer.TargetSize);
             _uiApp.Navigation.NavigateTo<MainPageViewModel>();
         }
-        
-        protected override void OnUpdate(float elapsedTime)
-        {
-            _uiApp.Update(elapsedTime);
-        }
+
+        public override void OnUpdate(float elapsedTime) => _uiApp.Update(elapsedTime);
 
         protected override void OnDraw()
         {

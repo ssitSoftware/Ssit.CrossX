@@ -77,7 +77,7 @@ public abstract class PixelApp: IApp
         OnUpdate(dt);
     }
 
-    protected virtual void OnUpdate(float elapsedTime)
+    public virtual void OnUpdate(float elapsedTime)
     {
     }
 

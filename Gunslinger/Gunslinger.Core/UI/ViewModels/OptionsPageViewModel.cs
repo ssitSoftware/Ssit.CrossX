@@ -13,6 +13,7 @@ public class OptionsPageViewModel: IPageCommandsSource
     private readonly ITranslator _translator;
     private readonly ISoundManager _soundManager;
     private readonly IMusicPlayer _musicPlayer;
+    private readonly Settings _settings;
     ICommand IPageCommandsSource.MenuCommand => null;
     public ICommand BackCommand { get; }
     
@@ -24,14 +25,14 @@ public class OptionsPageViewModel: IPageCommandsSource
     public SharedStringSource SoundVolumeStr { get; } = new();
     public SharedStringSource MusicVolumeStr { get; } = new();
     public SharedStringSource CameraShakeStr { get; } = new();
-    public SharedStringSource AutoReloadStr { get; } = new();
 
     public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
-        IMusicPlayer musicPlayer)
+        IMusicPlayer musicPlayer, ISettingsProvider settingsProvider)
     {
         _translator = translator;
         _soundManager = soundManager;
         _musicPlayer = musicPlayer;
+        _settings = settingsProvider.Settings;
 
         BackCommand = new SyncCommand(navigation.NavigateBack);
     
@@ -41,7 +42,8 @@ public class OptionsPageViewModel: IPageCommandsSource
             vol++;
             vol %= 5;
             soundManager.MasterVolume = vol / 4f;
-            
+            _settings.SoundVolume = vol;
+            _settings.Save();
             UpdateStrings();
         });
         
@@ -51,13 +53,15 @@ public class OptionsPageViewModel: IPageCommandsSource
             vol++;
             vol %= 5;
             musicPlayer.Volume = vol / 4f;
-            
+            _settings.MusicVolume = vol;
+            _settings.Save();
             UpdateStrings();
         });
         
         CameraShakeCommand = new SyncCommand(o =>
         {
-            //gameSettings.CameraShake = !gameSettings.CameraShake;
+            _settings.CameraShake = !_settings.CameraShake;
+            _settings.Save();
             UpdateStrings();
         });
 
@@ -91,7 +95,6 @@ public class OptionsPageViewModel: IPageCommandsSource
             MusicVolumeStr.SetSource($"{vol}%");
         }
 
-        //CameraShakeStr.SetSource(_gameSettings.CameraShake ? _translator["Yes"] : _translator["No"]);
-        //AutoReloadStr.SetSource(_gameSettings.AutoReload ? _translator["Yes"] : _translator["No"]);
+        CameraShakeStr.SetSource(_settings.CameraShake ? _translator["Yes"] : _translator["No"]);
     }
 }

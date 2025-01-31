@@ -53,7 +53,8 @@ public class GunslingerTemplate: IGameTemplate
     [
         "assets:/Game/Tilesets/Wild.png",
         "assets:/Game/Tilesets/City.png",
-        "assets:/Game/Tilesets/Victorian.png"
+        "assets:/Game/Tilesets/Victorian.png",
+        "assets:/Game/Tilesets/Background.png"
     ];
     
     public ImageDescription[] Images { get; } =
@@ -68,6 +69,7 @@ public class GunslingerTemplate: IGameTemplate
         new ("Monuments/Chapel", "assets:/Game/Images/Chapel"),
         new ("Monuments/Blue Throne", "assets:/Game/Images/Throne", "Blue"),
         new ("Monuments/Green Throne", "assets:/Game/Images/Throne", "Green"),
+        new ("BAckground/Small Throne", "assets:/Game/Images/ThroneSmall", "Green")
     ];
 
     public MaterialInfo[] Materials { get; } =

@@ -12,6 +12,7 @@ using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {
@@ -68,8 +69,8 @@ namespace Ssit.CrossX.Editor.ViewModels
                 if (SetField(ref _mapFile, value))
                 {
                     EditorViewModel.SelectedLayer =
-                        MapFile.Layers.FirstOrDefault( o=> o.Name.ToLowerInvariant() == "main") ??
-                        MapFile.Layers.FirstOrDefault(o => o.HorizontalSpeed == 1 && o.VerticalSpeed == 1) ??
+                        MapFile.Layers.FirstOrDefault( o=> o.Id.ToLowerInvariant() == _editorData.SelectedLayer) ??
+                        MapFile.Layers.FirstOrDefault( o=> o.Id.ToLowerInvariant() == "main") ??
                         MapFile.Layers.First();
                     
                     _instances.SetMap(_mapFile);
@@ -269,6 +270,10 @@ namespace Ssit.CrossX.Editor.ViewModels
                 });
             }
 
+            _editorData.SelectedLayer = LayerDescription.MainLayerId;
+            _editorData.RecentMapPath = null;
+            _editorData.RequestSave();
+            
             MapFile = mapFile;
             IsModified = false;
         }
@@ -324,7 +329,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                     IsModified = UpdateLayers();
                     
                     _editorData.RecentMapPath = path;
-                    _editorData.Save();
+                    _editorData.RequestSave();
                     
                     return true;
                 }

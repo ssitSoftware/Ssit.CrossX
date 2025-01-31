@@ -1,14 +1,45 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor.Models;
 
-public class EditorData
+public interface IZoomData
+{
+    decimal Zoom { get; set; }
+    void RequestSave();
+}
+
+public class EditorData: IZoomData, IDisposable
 {
     [JsonProperty] public string RecentMapPath { get; set; }
+    [JsonProperty] public bool ShowAllLayers { get; set; }
+    [JsonProperty] public bool ShowGrid { get; set; } = true;
+    [JsonProperty] public bool OnionMode { get; set; }
+    [JsonProperty] public bool Animate { get; set; }
+    [JsonProperty] public decimal Zoom { get; set; } = 1;
+    [JsonProperty] public bool ShowLinks { get; set; }
+    [JsonProperty] public bool ShowObjects { get; set; } = true;
+    [JsonProperty] public bool ShowMaterials { get; set; }
+    [JsonProperty] public bool ShowCollisions { get; set; }
+    [JsonProperty] public float CameraX { get; set; } = 0;
+    [JsonProperty] public float CameraY { get; set; } = 0;
+    [JsonProperty] public string SelectedLayer { get; set; } = LayerDescription.MainLayerId;
 
     private string _appName;
+
+    private readonly Timer _timer;
+    private bool _shouldSave;
+    
+    private object _lock = new();
+
+    public EditorData()
+    {
+        _timer = new Timer(Save, null, 1000, 1000);
+    }
     
     public static EditorData Load(string appName)
     {
@@ -20,7 +51,6 @@ public class EditorData
                 _appName = appName
             };
         
-        
         using var stream = File.Open(path, FileMode.Open);
         using var streamReader = new StreamReader(stream);
         
@@ -31,16 +61,32 @@ public class EditorData
         return data;
     }
 
-    public void Save()
+    public void RequestSave()
     {
-        var json = JsonConvert.SerializeObject(this);
-        using var stream = File.Open(GetFilePath(_appName), FileMode.Create);
-        using var streamWriter = new StreamWriter(stream);
-        
-        streamWriter.Write(json);
-        streamWriter.Flush();
-        streamWriter.Close();
-        stream.Close();
+        lock (_lock)
+        {
+            _shouldSave = true;
+        }
+    }
+
+    private void Save(object _)
+    {
+        lock (_lock)
+        {
+            if (!_shouldSave)
+                return;
+
+            _shouldSave = false;
+
+            var json = JsonConvert.SerializeObject(this);
+            using var stream = File.Open(GetFilePath(_appName), FileMode.Create);
+            using var streamWriter = new StreamWriter(stream);
+
+            streamWriter.Write(json);
+            streamWriter.Flush();
+            streamWriter.Close();
+            stream.Close();
+        }
     }
 
     private static string GetFilePath(string appName)
@@ -50,5 +96,10 @@ public class EditorData
         Directory.CreateDirectory(dir);
         var path = Path.Combine(dir, "data.json");
         return path;
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }

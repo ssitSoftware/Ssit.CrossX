@@ -37,8 +37,9 @@ public class GunslingerTemplate: IGameTemplate
         new ("BO", "- Background Overlay", new Size(128,96), 0.5f, 0.5f, "Background", 100, new RgbaColor(224,232,224), LayerAlign.Bottom, new RgbaColor(224,232,224,56)),
         
         new ("CB", "Close Background", new Size(512,96), 1, 1, "Main", 10, RgbaColor.White, LayerAlign.Bottom),
-        new ("MAIN", "Main", new Size(512,96), 1, 1, "Main", 0, RgbaColor.White, LayerAlign.Left),
+        new (LayerDescription.MainLayerId, "Main", new Size(512,96), 1, 1, "Main", 0, RgbaColor.White, LayerAlign.Left),
         new ("CF", "Close Foreground", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
+        new ("CFO", "Close Foreground Overlay", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
 
         new ("FG", "- Foreground", new Size(512,96), 2f, 2f, "Foreground", -100, RgbaColor.Black, LayerAlign.Bottom)
     ];

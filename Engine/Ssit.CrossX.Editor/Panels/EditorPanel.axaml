@@ -83,7 +83,7 @@
 
                     <controls:SelectionToggleButton
                         Classes="Toolbar"
-                        Icon="mdi-ev-plug-type1"
+                        Icon="mdi-soy-sauce"
                         SelectedValue="{Binding EditorViewModel.SelectedTool, Mode=TwoWay}"
                         ToolTip.Tip="Set material"
                         Value="{x:Static tools:SetMaterialTool.Name}" />
@@ -125,8 +125,8 @@
                         Classes="Toolbar"
                         IsChecked="{Binding EditorViewModel.OnionMode}"
                         IsEnabled="{Binding EditorViewModel.ShowAllLayers, Converter={StaticResource InvertBoolConverter}}"
-                        ToolTip.Tip="Show other layers as semi transparent"
-                        i:Attached.Icon="mdi-opacity" />
+                        ToolTip.Tip="Show other matching layers&#13;as semi transparent"
+                        i:Attached.Icon="mdi-format-wrap-tight" />
 
                     <ToggleButton
                         Classes="Toolbar"
@@ -146,20 +146,20 @@
                         Classes="Toolbar"
                         IsChecked="{Binding EditorViewModel.ShowLinks}"
                         IsEnabled="{Binding EditorViewModel.ShowObjects}"
-                        ToolTip.Tip="Show objects"
-                        i:Attached.Icon="mdi-link-circle" />
+                        ToolTip.Tip="Show links"
+                        i:Attached.Icon="mdi-link-variant" />
 
                     <ToggleButton
                         Classes="Toolbar"
                         IsChecked="{Binding EditorViewModel.ShowMaterials}"
                         ToolTip.Tip="Show materials"
-                        i:Attached.Icon="mdi-ev-plug-type2" />
+                        i:Attached.Icon="mdi-soy-sauce" />
                     
                     <ToggleButton
                         Classes="Toolbar"
                         IsChecked="{Binding EditorViewModel.ShowCollisions}"
                         ToolTip.Tip="Show collisions"
-                        i:Attached.Icon="mdi-ev-plug-type2" />
+                        i:Attached.Icon="mdi-checkbox-multiple-blank-circle" />
 
                     <Border Classes="ToolbarSeparator" />
                 </StackPanel>

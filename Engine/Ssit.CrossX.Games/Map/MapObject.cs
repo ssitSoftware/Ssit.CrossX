@@ -76,7 +76,7 @@ public class MapObject
             }
             else
             {
-                paramsObj = JsonConvert.DeserializeObject(parameters, parametersType);    
+                paramsObj = JsonConvert.DeserializeObject(parameters, parametersType);
             }
         }
         

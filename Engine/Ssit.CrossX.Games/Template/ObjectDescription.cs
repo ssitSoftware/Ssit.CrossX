@@ -4,7 +4,6 @@ namespace Ssit.CrossX.Games.Template;
 
 public class ObjectDescription: ImageDescription
 {
-    
     public readonly Type TargetType;
     public readonly Type ParametersType;
 

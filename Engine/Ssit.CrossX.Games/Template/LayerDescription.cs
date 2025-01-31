@@ -4,6 +4,8 @@ namespace Ssit.CrossX.Games.Template;
 
 public class LayerDescription
 {
+    public const string MainLayerId = "MAIN";
+    
     public readonly string Id;
     public readonly string Name = null;
     public readonly Size Size = default;

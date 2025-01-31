@@ -10,6 +10,7 @@ using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using SkiaSharp;
+using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Utils;
 
@@ -19,7 +20,8 @@ namespace Ssit.CrossX.Editor.ViewModels
     {
         private readonly IEditorInstances _instances;
         private readonly IEditorBitmapsProvider _bitmapsProvider;
-    
+        private readonly EditorData _editorData;
+
         private Vector2 _offset;
         public event Action RedrawNeeded;
     
@@ -64,6 +66,10 @@ namespace Ssit.CrossX.Editor.ViewModels
             set
             {
                 var oldLayer = _selectedLayer;
+
+                if (value is null)
+                    return;
+                
                 if (SetField(ref _selectedLayer, value))
                 {
                     if (oldLayer != null && _selectedLayer != null)
@@ -73,6 +79,13 @@ namespace Ssit.CrossX.Editor.ViewModels
                     }
 
                     PropertiesView.MapFile = _instances.Map;
+
+                    if (_selectedLayer is not null)
+                    {
+                        _editorData.SelectedLayer = _selectedLayer.Id;
+                        _editorData.RequestSave();
+                    }
+
                     Redraw();
                 }
             }
@@ -114,33 +127,83 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public bool ShowLinks
         {
-            get => _showLinks;
-            set => SetFieldAndRedraw(ref _showLinks, value);
+            get => _editorData.ShowLinks;
+            set
+            {
+                if (value != _editorData.ShowLinks)
+                {
+                    _editorData.ShowLinks = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
         
         public bool ShowMaterials
         {
-            get => _showMaterials;
-            set => SetFieldAndRedraw(ref _showMaterials, value);
+            get => _editorData.ShowMaterials;
+            set
+            {
+                if (value != _editorData.ShowMaterials)
+                {
+                    _editorData.ShowMaterials = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
         
         public bool ShowCollisions
         {
-            get => _showCollisions;
-            set => SetFieldAndRedraw(ref _showCollisions, value);
+            get => _editorData.ShowCollisions;
+            set
+            {
+                if (value != _editorData.ShowCollisions)
+                {
+                    _editorData.ShowCollisions = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
         
 
         public bool ShowAllLayers
         {
-            get => _showAllLayers;
-            set => SetFieldAndRedraw(ref _showAllLayers, value);
+            get => _editorData.ShowAllLayers;
+            set
+            {
+                if (value != _editorData.ShowAllLayers)
+                {
+                    _editorData.ShowAllLayers = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
 
         public bool ShowGrid
         {
-            get => _showGrid;
-            set => SetFieldAndRedraw(ref _showGrid, value);
+            get => _editorData.ShowGrid;
+            set
+            {
+                if (value != _editorData.ShowGrid)
+                {
+                    _editorData.ShowGrid = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
 
         public ZoomViewModel Zoom { get; }
@@ -149,81 +212,115 @@ namespace Ssit.CrossX.Editor.ViewModels
     
         private Vector2 _currentSize;
         private MapLayer _selectedLayer;
-        private bool _showAllLayers;
-        private bool _showGrid = true;
-        private bool _onionMode;
-        private bool _animate;
         private bool _isFullscreen;
 
         private Dictionary<int, SKColorFilter> _colorFilters = new();
         private int _selectedObject;
-        private bool _showMaterials;
-        private bool _showLinks = true;
-        private bool _showObjects = true;
-        private bool _showCollisions = false;
 
         public Vector2 Offset
         {
-            get => _offset;
-            set => SetFieldAndRedraw(ref _offset, value);
+            get => new(_editorData.CameraX, _editorData.CameraY);
+            set
+            {
+                _editorData.CameraX = value.X;
+                _editorData.CameraY = value.Y;
+                _editorData.RequestSave();
+                
+                OnPropertyChanged();
+                Redraw();
+            }
         }
 
         public bool OnionMode
         {
-            get => _onionMode;
-            set => SetFieldAndRedraw(ref _onionMode, value);
+            get => _editorData.OnionMode;
+            set
+            {
+                if (_editorData.OnionMode != value)
+                {
+                    _editorData.OnionMode = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
 
         public bool Animate
         {
-            get => _animate;
+            get => _editorData.Animate;
             set
             {
-                if (SetField(ref _animate, value))
+                if (_editorData.Animate != value)
                 {
+                    _editorData.Animate = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
                     Redraw();
 
-                    if (value)
-                    {
-                        _stopwatch.Restart();
-                    }
-                    else
-                    {
-                        _stopwatch.Stop();
-                        _stopwatch.Reset();
-                    }
+                    EnableAnimation(value);
                 }
             }
         }
 
         public bool ShowObjects
         {
-            get => _showObjects;
-            set => SetFieldAndRedraw(ref _showObjects, value);
+            get => _editorData.ShowObjects;
+            set
+            {
+                if(value != _editorData.ShowObjects)
+                {
+                    _editorData.ShowObjects = value;
+                    _editorData.RequestSave();
+                    
+                    OnPropertyChanged();
+                    Redraw();
+                }
+            }
         }
 
-        public EditorViewModel(IEditorInstances instances, IServices services, IEditorBitmapsProvider bitmapsProvider)
+        public EditorViewModel(IEditorInstances instances, IServices services, IEditorBitmapsProvider bitmapsProvider, EditorData editorData)
         {
             _instances = instances;
             _bitmapsProvider = bitmapsProvider;
+            _editorData = editorData;
             Tools = _instances.Tools;
 
             _instances.SetEditor(this);
 
             SelectedTool = SelectionTool.Name;
             SetToolCommand = new RelayCommand<string>(s => SelectedTool = s);
-            Zoom = new ZoomViewModel(() => RedrawNeeded?.Invoke());
-
+            Zoom = new ZoomViewModel(() => RedrawNeeded?.Invoke(), editorData);
+            
             Tools.PropertyChanged += (o, e) =>
             {
                 SelectedObject = 0;
                 OnPropertyChanged(nameof(SelectedTool));
             };
+            
+            EnableAnimation(_editorData.Animate);
+            
             _backgroundColor = _instances.Template.DefaultBackground.ToSkia();
-
             PropertiesView = services.Create<PropertiesViewModel>(this);
+            
+            
         }
 
+        private void EnableAnimation(bool value)
+        {
+            if (value)
+            {
+                _stopwatch.Restart();
+            }
+            else
+            {
+                _stopwatch.Stop();
+                _stopwatch.Reset();
+            }
+        }
+        
         private SKColorFilter GetFilter(RgbaColor color)
         {
             if (!_colorFilters.TryGetValue(color.ToInt32(), out var filter))
@@ -294,6 +391,15 @@ namespace Ssit.CrossX.Editor.ViewModels
                             layer.VerticalSpeed == 0)
                         {
                             continue;
+                        }
+
+                        if (OnionMode)
+                        {
+                            if ( Math.Abs(layer.HorizontalSpeed - SelectedLayer.HorizontalSpeed) > float.Epsilon ||
+                                Math.Abs(layer.VerticalSpeed - SelectedLayer.VerticalSpeed) > float.Epsilon)
+                            {
+                                continue;
+                            }
                         }
 
                         if (layer != SelectedLayer)
@@ -661,6 +767,16 @@ namespace Ssit.CrossX.Editor.ViewModels
             var ox = Math.Max(minX, Math.Min(maxX, Offset.X));
             var oy = Math.Max(minY, Math.Min(maxY, Offset.Y));
 
+            if (float.IsNaN(ox))
+            {
+                ox = (minX + maxX) / 2;
+            }
+            
+            if (float.IsNaN(oy))
+            {
+                oy = (minY + maxY) / 2;
+            }
+            
             Offset = new Vector2(ox, oy);
         }
     
@@ -695,12 +811,15 @@ namespace Ssit.CrossX.Editor.ViewModels
         {
         }
     
-        private void SetFieldAndRedraw<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private bool SetFieldAndRedraw<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (SetField(ref field, value, propertyName))
             {
                 RedrawNeeded?.Invoke();
+                return true;
             }
+
+            return false;
         }
     }
 }

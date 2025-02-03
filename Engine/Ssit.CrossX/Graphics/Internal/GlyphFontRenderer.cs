@@ -231,7 +231,7 @@ internal static class GlyphFontRenderer
 
                 posX += glyph.GetKerning(previousCharacter) * scale;
             
-                var target = new Rectangle( (int)(posX + glyph.Offset.X), (int)(posY + glyph.Offset.Y), (int)(glyph.Source.Width * scale), (int)(glyph.Source.Height * scale));
+                var target = new Rectangle( (int)(posX + glyph.Offset.X * scale), (int)(posY + glyph.Offset.Y * scale), (int)(glyph.Source.Width * scale), (int)(glyph.Source.Height * scale));
                 drawDelegate(texture, target, glyph.Source, color: color, depth: depth);
 
                 posX += (glyph.Advance + additionalSpacing) * scale;

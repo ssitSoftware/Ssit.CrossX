@@ -82,7 +82,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
 
             var button = new LabelButton
             {
-                Text = "Back",
+                Text = Translator["Back"],
                 UniqueId = $"{id}{items.Count}",
                 VerticalNavigation = ($"{id}{items.Count - 1}", $"{id}0"),
                 Command = commandsSource.BackCommand

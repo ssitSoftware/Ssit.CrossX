@@ -31,7 +31,7 @@ public class PointingDevicesImpl : PointingDevicesBase
 
     protected override void ShowPointer(bool show)
     {
-        //NSCursor.SetHiddenUntilMouseMoves(!show);
+        NSCursor.SetHiddenUntilMouseMoves(!show);
     }
 #endif
 }

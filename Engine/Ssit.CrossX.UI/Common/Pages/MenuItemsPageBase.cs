@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
@@ -46,31 +47,44 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
     {
         var controls = new List<View>();
         var commandsSource = isMainList ? ViewModel as IPageCommandsSource : null;
-            
+
+        int navId = 0;
+        int navCount = items.Count(o=>o.text != null);
+        
         for (var i = 0; i < items.Count; i++)
         {
-            var nextIndex = i + 1;
-            var prevIndex = i - 1;
-
+            if (items[i].text == null)
+            {
+                controls.Add(new Background
+                {
+                    Height = 4
+                });
+                continue;
+            }
+            
+            var nextIndex = navId + 1;
+            var prevIndex = navId - 1;
+            
             if (commandsSource is null)
             {
-                nextIndex %= items.Count;
-                prevIndex = (prevIndex + items.Count) % items.Count;
+                nextIndex %= navCount;
+                prevIndex = (prevIndex + navCount) % navCount;
             }
             else if(prevIndex < 0)
             {
-                prevIndex = items.Count;
+                prevIndex = navCount;
             }
 
             var button = new LabelButton
             {
                 Text = items[i].text,
-                UniqueId = $"{id}{i}",
+                UniqueId = $"{id}{navId}",
                 VerticalNavigation = ($"{id}{prevIndex}", $"{id}{nextIndex}"),
                 Command = items[i].command
             };
             MenuItemApplyStyle(button);
             controls.Add(button);
+            navId++;
         }
 
         if (commandsSource is not null)
@@ -83,8 +97,8 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
             var button = new LabelButton
             {
                 Text = Translator["Back"],
-                UniqueId = $"{id}{items.Count}",
-                VerticalNavigation = ($"{id}{items.Count - 1}", $"{id}0"),
+                UniqueId = $"{id}{navCount}",
+                VerticalNavigation = ($"{id}{navCount - 1}", $"{id}0"),
                 Command = commandsSource.BackCommand
             };
 
@@ -97,19 +111,21 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
             _defaultId = $"{id}{defaultButtonIndex}";
         }
 
-        var stack = new VerticalStack
-        {
-            BackgroundColor = RgbaColor.FromNonPremultiplied(0, 0, 0, 100),
-            Padding = (8, 8),
-            Spacing = 8,
-            VerticalAlign = Align.Center,
-            HorizontalAlign = Align.Center,
-            Width = 192,
-            Children = controls.ToArray()
-        };
+        var stack = CreateVerticalStack();
+        stack.Children = controls.ToArray();
 
         MenuApplyStyle(stack);
         return stack;
+    }
+
+    protected virtual VerticalStack CreateVerticalStack()
+    {
+        return new VerticalStack
+        {
+            Padding = (8, 8),
+            VerticalAlign = Align.Center,
+            HorizontalAlign = Align.Fill
+        };
     }
 
     protected View CreateDefaultItemsContainer(View itemsView, Thickness? padding = null)

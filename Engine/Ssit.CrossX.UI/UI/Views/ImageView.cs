@@ -10,4 +10,5 @@ public class ImageView: Background
     public RgbaColor? TintColor { get; set; }
     public ImageScalingMode? Scaling { get; set; }
     public ImageTransform? Transform { get; set; }
+    public TextureFilter? Filter { get; set; }
 }

@@ -10,4 +10,10 @@ public abstract class MenuItemsPageBaseEx<TViewModel> : MenuItemsPageBase<TViewM
     {
         button.WithDefaultStyle();
     }
+
+    protected override void MenuApplyStyle(VerticalStack stack)
+    {
+        base.MenuApplyStyle(stack);
+        stack.Spacing = 4;
+    }
 }

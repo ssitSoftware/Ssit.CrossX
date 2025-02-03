@@ -160,10 +160,10 @@ public sealed class ImageSource: IDisposable
         ResourceHandle<ITexture> result = null;
         lock (_lock)
         {
-            if (_resourceUri is not null)
+            if (_resourcePath is not null)
             {
-                _resourcePath = null;
                 result = container.Get<IContentManager>().Get<ITexture>(_resourcePath);
+                _resourcePath = null;
             }
         }
 

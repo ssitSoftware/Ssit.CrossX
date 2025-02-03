@@ -5,6 +5,7 @@ using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Common;
+using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
@@ -80,26 +81,17 @@ namespace Gunslinger.Core
             var mapper = inputMappings.Mapper(0);
 
             mapper.MapAxis("Horizontal", GameControllerAxis.LeftX);
-            mapper.MapAxis("Vertical", GameControllerAxis.LeftY);
             mapper.MapAxis("Horizontal", GameControllerButton.DPadLeft, GameControllerButton.DPadRight);
-            mapper.MapAxis("Vertical", GameControllerButton.DPadUp, GameControllerButton.DPadDown);
-            mapper.MapAxis("Horizontal", Key.A, Key.D);
-            mapper.MapAxis("Vertical", Key.W, Key.S);
+            mapper.MapAxis("Horizontal", Key.Left, Key.Right);
 
-            mapper.MapAxis("AimX", GameControllerAxis.RightX);
-            mapper.MapAxis("AimY", GameControllerAxis.RightY);
-
-            mapper.MapButton("Shoot", GameControllerButton.RightShoulder);
-            mapper.MapButton("Shoot", Key.MouseLeft);
+            mapper.MapButton("Shoot", GameControllerButton.B);
+            mapper.MapButton("Shoot", Key.Z);
 
             mapper.MapButton("Melee", GameControllerButton.X);
-            mapper.MapButton("Melee", Key.MouseRight);
+            mapper.MapButton("Melee", Key.X);
 
-            mapper.MapButton("Roll", GameControllerButton.A);
-            mapper.MapButton("Roll", Key.Space);
-
-            mapper.MapButton("Reload", GameControllerButton.Y);
-            mapper.MapButton("Reload", Key.R);
+            mapper.MapButton("Jump", GameControllerButton.A);
+            mapper.MapButton("Jump", Key.C);
 
             var fontsManager = container.Get<IFontsManager>();
             fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
@@ -107,6 +99,8 @@ namespace Gunslinger.Core
             container.Get<IContentManager>().RegisterGameContentTypes();
             
             _uiApp = container.InitializeUi(OnInitializeUi);
+            _uiApp.Services.Get<PageInputContext>().AlwaysShowFocus = true;
+            _uiApp.Services.Get<IPointingDevices>().Enable = false;
             
             Settings = Settings.Load(container.Get<IFileStorage>(), "Gunslinger/settings");
             Settings.PropertyChanged += UpdateSettings;
@@ -119,8 +113,7 @@ namespace Gunslinger.Core
                 Renderer = _renderer,
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
-                MaxScale = 4,
-                Optimize = Settings.Optimize
+                MaxScale = 4
             };
             
             _appHost = container.IoCConstruct<PixelAppHost>(_appHostParameters);
@@ -140,11 +133,6 @@ namespace Gunslinger.Core
                 case nameof(Settings.SoundVolume):
                     _uiApp.Services.Get<ISoundManager>().MasterVolume = Settings.SoundVolume / 4f;
                     break;
-
-                // case nameof(Settings.Optimize):
-                //     _appHostParameters.Optimize = Settings.Optimize;
-                //     OnResize(_renderer.TargetSize);
-                //     break;
             }
         }
 
@@ -158,7 +146,7 @@ namespace Gunslinger.Core
 
         private void Render()
         {
-            _renderer.Clear(RgbaColor.FromBgra(0xff513a3d));
+            _renderer.Clear(RgbaColor.FromBgra(0xff101010));
             _uiApp.Draw(_renderer);
         }
 

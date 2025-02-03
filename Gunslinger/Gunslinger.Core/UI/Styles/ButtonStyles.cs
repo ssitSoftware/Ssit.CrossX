@@ -14,16 +14,17 @@ public static class ButtonStyles
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Center;
         button.HorizontalAlign = Align.Fill;
-        button.Height = 20;
-        button.Font = ("Default", 12);
+        button.Height = 22;
+        button.Font = ("Default", 18);
         button.Padding = (2, 2);
+        
         button.TextColors = new ButtonStateColors
         {
-            Normal = RgbaColor.DarkGray,
-            Hover = RgbaColor.LightGray,
-            Focused = RgbaColor.White,
-            Pushed = RgbaColor.Orange,
-            Disabled = new(0xff494949)
+            Normal = RgbaColor.Gray,
+            Hover = RgbaColor.White.Mix(RgbaColor.FromBgra(0xff7ebfc6), 0.5f),
+            Focused =  RgbaColor.FromBgra(0xff7ebfc6),
+            Pushed = RgbaColor.FromBgra(0xff60969c),
+            Disabled = RgbaColor.FromBgra(0xff494949)
         };
         button.TextOutlineColors = new ButtonStateColors
         {
@@ -31,7 +32,7 @@ public static class ButtonStyles
             Hover = RgbaColor.Black,
             Focused = RgbaColor.Black,
             Pushed = RgbaColor.Black,
-            Disabled = new(0xff494949)
+            Disabled = RgbaColor.Transparent
         };
         // button.BackgroundColors = new ButtonStateColors
         // {

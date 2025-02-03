@@ -124,12 +124,13 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         }
 
         CalculateTargetRects(texture.Resource, out var targetRect, out var sourceRect);
-        renderer.DrawTexture(texture.Resource, targetRect, sourceRect, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None);
+        renderer.DrawTexture(texture.Resource, targetRect, sourceRect, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView.Filter ?? TextureFilter.Nearest);
     }
 
     private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out Rectangle sourceRect)
     {
         var size = texture.Size;
+        
         if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
         {
             size = new Size(size.Height, size.Width);
@@ -146,7 +147,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
 
                 var width = size.Width * scale;
                 var height = size.Height * scale;
-                
+
                 targetSize = new SizeF(width, height);
             }
             break;
@@ -167,8 +168,8 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
                 targetSize = ScreenBounds.Size;
                 break;
             
-             case ImageScalingMode.None: 
-                targetSize = new SizeF(size.Width, size.Height);
+             case ImageScalingMode.None:
+                targetSize = new SizeF(size.Width, size.Height) * CurrentScale;
                 break;
         }
         

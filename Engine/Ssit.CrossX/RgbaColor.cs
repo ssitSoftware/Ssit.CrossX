@@ -45,22 +45,22 @@ public struct RgbaColorF
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 [DebuggerDisplay("RgbaColor = ({R}, {G}, {B}, {A})")]
-public partial struct RgbaColor : IEquatable<RgbaColor>
+public readonly partial struct RgbaColor : IEquatable<RgbaColor>
 {
     /// <summary>
     /// Represents the red component of the color in the RGBA color space.
     /// </summary>
-    public byte R;
+    public readonly byte R;
 
     /// <summary>
     /// Represents the green component of the color in the RGBA color space.
     /// </summary>
-    public byte G;
+    public readonly byte G;
 
     /// <summary>
     /// Represents the blue component of the color in the RGBA color space.
     /// </summary>
-    public byte B;
+    public readonly byte B;
 
     /// <summary>
     /// Represents the alpha component of the RGBA color,
@@ -68,7 +68,7 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     /// represents full opacity, while a value of 0 represents
     /// full transparency.
     /// </summary>
-    public byte A;
+    public readonly byte A;
 
     /// <summary>
     /// Represents the normalized red component of the color in the RGBA color space.
@@ -318,7 +318,7 @@ public partial struct RgbaColor : IEquatable<RgbaColor>
     /// <returns>
     /// A System.Drawing.Color object representing the same color as this RgbaColor instance.
     /// </returns>
-    public readonly Color ToDrawingColor() => Color.FromArgb(A, R, G, B);
+    public Color ToDrawingColor() => Color.FromArgb(A, R, G, B);
 
     /// <summary>
     /// Implicitly converts a RgbaColor instance to a System.Drawing.Color instance.

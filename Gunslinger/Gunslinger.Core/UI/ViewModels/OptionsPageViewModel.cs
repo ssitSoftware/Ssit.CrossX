@@ -14,19 +14,19 @@ public class OptionsPageViewModel: IPageCommandsSource
     private readonly ISoundManager _soundManager;
     private readonly IMusicPlayer _musicPlayer;
     private readonly Settings _settings;
-    ICommand IPageCommandsSource.MenuCommand => null;
-    public ICommand BackCommand { get; }
     
+    ICommand IPageCommandsSource.MenuCommand => null;
+    
+    public ICommand BackCommand { get; }
     public ICommand SoundVolumeCommand { get; }
     public ICommand MusicVolumeCommand { get; }
     public ICommand CameraShakeCommand { get; }
-    public ICommand OptimizeCommand { get; }
     public ICommand ControlsCommand { get; }
+    public ICommand LanguageCommand { get; }
     
     public SharedStringSource SoundVolumeStr { get; } = new();
     public SharedStringSource MusicVolumeStr { get; } = new();
     public SharedStringSource CameraShakeStr { get; } = new();
-    public SharedStringSource OptimizeStr { get; } = new();
 
     public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
         IMusicPlayer musicPlayer, ISettingsProvider settingsProvider)
@@ -65,12 +65,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             UpdateStrings();
         });
         
-        OptimizeCommand = new SyncCommand(o =>
-        {
-            _settings.Optimize = !_settings.Optimize;
-            _settings.Save();
-            UpdateStrings();
-        });
+        LanguageCommand = new SyncCommand(translator.ToggleLanguage);
 
         ControlsCommand = new SyncCommand(() => { });
         UpdateStrings();
@@ -103,6 +98,5 @@ public class OptionsPageViewModel: IPageCommandsSource
         }
 
         CameraShakeStr.SetSource(_settings.CameraShake ? _translator["Yes"] : _translator["No"]);
-        OptimizeStr.SetSource(_settings.Optimize ? _translator["Yes"] : _translator["No"]);
     }
 }

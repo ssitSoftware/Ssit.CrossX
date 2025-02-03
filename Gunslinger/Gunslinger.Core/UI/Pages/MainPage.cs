@@ -1,5 +1,8 @@
 using Gunslinger.Core.UI.Pages.Internal;
 using Gunslinger.Core.UI.ViewModels;
+using Ssit.CrossX;
+using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace Gunslinger.Core.UI.Pages;
@@ -11,11 +14,46 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
         var menuView = CreateMenuItems("MainMenu",
         [
             (Translator["Start Game"], ViewModel.StartGameCommand),
-            (Translator["Language"] + ": " + Translator["#LangName"], ViewModel.LanguageCommand),
             (Translator["Options"], ViewModel.OptionsCommand),
             (Translator["Credits"], ViewModel.CreditsCommand)
         ]);
 
-        return CreateDefaultItemsContainer(menuView);
+        menuView.AnchorY = "50%+20";
+
+        return new Container
+        {
+            Children = [
+                new ImageView
+                {
+                  Source  = "assets:/UI/Logo.png",
+                  AnchorX = "50%",
+                  HorizontalAlign = Align.Center,
+                  VerticalAlign = Align.Start,
+                  AnchorY = 10,
+                  Scaling = ImageScalingMode.None,
+                  Width = Length.Auto,
+                  Height = Length.Auto
+                },
+                menuView,
+                new Label
+                {
+                    Text = "© 2025 ebatianoGames™ Sebastian Sejud.\n" + Translator["All rights reserved."],
+                    AnchorX = "50%",
+                    AnchorY = "100%-10",
+                    HorizontalAlign = Align.Center,
+                    VerticalAlign = Align.End,
+                    Font = ("Default", 12),
+                    TextColor = RgbaColor.Gray,
+                    PixelScaling = true
+                }
+            ]
+        };
+    }
+
+    protected override void MenuItemApplyStyle(LabelButton button)
+    {
+        base.MenuItemApplyStyle(button);
+        button.Font = ("Default", 22);
+        button.Height = 26;
     }
 }

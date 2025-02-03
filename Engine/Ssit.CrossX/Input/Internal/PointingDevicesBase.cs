@@ -5,6 +5,7 @@ namespace Ssit.CrossX.Input.Internal;
 
 public class PointingDevicesBase: IPointingDevices, ITouchClient
 {
+    public bool Enable { get; set; } = true;
     private readonly List<Pointer> _pointers = new();
 
     public readonly TouchProcessor TouchProcessor;
@@ -21,8 +22,11 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
         TouchProcessor = new TouchProcessor(this);
     }
     
-    protected void SetPointer(int id, ButtonState state, Vector2? position)
+    private void SetPointer(int id, ButtonState state, Vector2? position)
     {
+        if (!Enable)
+            return;
+        
         var pointer = GetPointer(id);
         if (pointer == null)
         {
@@ -74,12 +78,18 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
 
     public bool OnDown(ITouchEntity entity)
     {
+        if (!Enable)
+            return false;
+        
         SetPointer(entity.Id, ButtonState.JustPressed, entity.Position);
         return true;
     }
 
     public bool OnMove(ITouchEntity entity)
     {
+        if (!Enable)
+            return false;
+        
         SetPointer(entity.Id, ButtonState.Down, entity.Position);
         return true;
     }
@@ -104,6 +114,12 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     
     public void UpdateHoverPosition(Vector2? position)
     {
+        if (!Enable)
+        {
+            ShowPointer(!position.HasValue);
+            return;
+        }
+
         HoverPosition = position;
         
         if (ShowHoverPointer)
@@ -122,7 +138,6 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
 
     public virtual void SetHoverPosition(Vector2 position)
     {
-        
     }
 
     public void PushTransform(Matrix3x2 transform)

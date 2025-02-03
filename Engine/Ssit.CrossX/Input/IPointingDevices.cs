@@ -5,6 +5,7 @@ namespace Ssit.CrossX.Input;
 
 public interface IPointingDevices
 {
+    bool Enable { get; set; }
     IReadOnlyList<Pointer> Pointers { get; }
     Pointer GetPointer(int id);
     Vector2? HoverPosition { get; }

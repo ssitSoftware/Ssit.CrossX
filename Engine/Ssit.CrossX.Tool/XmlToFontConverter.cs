@@ -24,13 +24,15 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         Polish = 2,
         German = 4,
         French = 8,
-        Spanish = 16
+        Spanish = 16,
+        Special = 32
     }
 
     private const string PolishCharacters = "ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
     private const string GermanCharacters = "ÄäÖöÜüẞß";
     private const string FrenchCharacters = "ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜèéêëîïôœùûüàâäæç";
     private const string SpanishCharacters = "ÁÉÍÑÓÚáéíñóú";
+    private const string SpecialCharacters = "®©™€§£";
     
     public async Task Generate()
     {
@@ -356,6 +358,14 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         if (charsets.HasFlag(CharSets.Spanish))
         {
             foreach (var c in SpanishCharacters)
+            {
+                set.Add(c);
+            }
+        }
+        
+        if (charsets.HasFlag(CharSets.Special))
+        {
+            foreach (var c in SpecialCharacters)
             {
                 set.Add(c);
             }

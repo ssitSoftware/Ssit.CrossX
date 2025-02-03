@@ -3,17 +3,11 @@ using Ssit.CrossX.Utils;
 
 namespace Gunslinger.Core;
 
-public interface ISettingsProvider
-{
-    Settings Settings { get; }
-}
-
 public class Settings: AppSettingsBase<Settings>
 {
     private bool _cameraShake;
     private int _musicVolume;
     private int _soundVolume;
-    private bool _optimize;
 
     [JsonProperty]
     public bool CameraShake
@@ -34,12 +28,5 @@ public class Settings: AppSettingsBase<Settings>
     {
         get => _soundVolume;
         set => SetField(ref _soundVolume, value);
-    }
-
-    [JsonProperty]
-    public bool Optimize
-    {
-        get => _optimize;
-        set => SetField(ref _optimize, value);
     }
 }

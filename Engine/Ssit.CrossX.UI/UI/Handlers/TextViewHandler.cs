@@ -75,13 +75,13 @@ public class TextViewHandler : TextBaseHandler<TextView>
     {
         base.SetBounds(rectangleF);
 
-        var oldWidth = TextRenderingContext.Width;
-        var oldHeight = TextRenderingContext.Height;
+        var oldWidth = TextRenderingContext.Width * TextScale;
+        var oldHeight = TextRenderingContext.Height * TextScale;
         
         UpdateText();
 
-        var newWidth = TextRenderingContext.Width;
-        var newHeight = TextRenderingContext.Height;
+        var newWidth = TextRenderingContext.Width * TextScale;
+        var newHeight = TextRenderingContext.Height * TextScale;
 
         if (AttachedView.Text.Length > 0 && TextRectangle.Height < 1)
         {
@@ -97,7 +97,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     public override void Update(float dt)
     {
         base.Update(dt);
-        if (AttachedView.Text.Length > 0 && MathF.Ceiling(TextRectangle.Height) < MathF.Max(1, TextRenderingContext.Height))
+        if (AttachedView.Text.Length > 0 && MathF.Ceiling(TextRectangle.Height) < MathF.Max(1, TextRenderingContext.Height * TextScale))
         {
            Parent?.RecalculateLayout(AttachedView);
         }
@@ -111,6 +111,9 @@ public class TextViewHandler : TextBaseHandler<TextView>
         {
             RecalculateVertices();
         }
+
+        if (_vertexBuffers is null)
+            return;
 
         var font = (IGlyphFont)GetFont();
 
@@ -143,6 +146,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
         
         _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle, 
             AttachedView.TextAlign ?? ContentAlign.Left,
+            TextScale,
             AttachedView.TextSpacing ?? TextSpacing.Normal,
             paragraphSpacing, 0, TextRenderingContext, _vertexBuffers);
     }

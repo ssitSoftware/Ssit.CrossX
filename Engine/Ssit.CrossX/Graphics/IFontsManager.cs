@@ -2,6 +2,13 @@ using System.IO;
 
 namespace Ssit.CrossX.Graphics;
 
+public enum ScaleMode
+{
+    None,
+    Integer,
+    Float,
+}
+
 /// <summary>
 /// Service managing fonts in the application.
 /// </summary>
@@ -18,6 +25,7 @@ public interface IFontsManager
     /// </summary>
     /// <param name="name">The name of the font to retrieve.</param>
     /// <param name="size">The size of the font to retrieve.</param>
-    /// <returns>An <see cref="IFont"/> instance corresponding to the specified name and size, or null if not found.</returns>
+    /// <param name="scaleMode">Mode for scaling</param>
+    /// <returns>Pair of an <see cref="IFont"/> instance corresponding to the specified name and size, or null if not found and scaling factor.</returns>
     IFont GetFont(string name, int size);
 }

@@ -10,6 +10,7 @@ public static class ButtonStyles
 {
     public static LabelButton WithDefaultStyle(this LabelButton button)
     {
+        button.PixelScaling = true;
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Center;
         button.HorizontalAlign = Align.Fill;
@@ -32,14 +33,14 @@ public static class ButtonStyles
             Pushed = RgbaColor.Black,
             Disabled = new(0xff494949)
         };
-        // button.BackgroundColors = new ButtonStateColors
-        // {
-        //     Normal = RgbaColor.FromNonPremultiplied(255,255,255,20),
-        //     Hover = RgbaColor.FromNonPremultiplied(255,255,255,30),
-        //     Focused = RgbaColor.FromNonPremultiplied(255,255,255,45),
-        //     Pushed = RgbaColor.FromNonPremultiplied(255,235,215,60),
-        //     Disabled = RgbaColor.FromNonPremultiplied(0,0,0,10),
-        // };
+        button.BackgroundColors = new ButtonStateColors
+        {
+            Normal = RgbaColor.FromNonPremultiplied(255,255,255,20),
+            Hover = RgbaColor.FromNonPremultiplied(255,255,255,30),
+            Focused = RgbaColor.FromNonPremultiplied(255,255,255,45),
+            Pushed = RgbaColor.FromNonPremultiplied(255,235,215,60),
+            Disabled = RgbaColor.FromNonPremultiplied(0,0,0,10),
+        };
         return button;
     }
 }

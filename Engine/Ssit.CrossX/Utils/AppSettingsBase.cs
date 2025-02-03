@@ -3,7 +3,7 @@ using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.Utils;
 
-public abstract class AppSettingsBase<TSettings> where TSettings: AppSettingsBase<TSettings>, new()
+public abstract class AppSettingsBase<TSettings>: BindableModel where TSettings: AppSettingsBase<TSettings>, new()
 {
     private IFileStorage _storage;
     private string _path;

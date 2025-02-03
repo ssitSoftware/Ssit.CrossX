@@ -31,11 +31,11 @@ public static class RendererExtensions
     }
 
     public static IVertexBuffer[] CreateMultilineTextPrimitives(this IGlyphFont font, IIoCContainer container , TextSource text, RectangleF target,
-        ContentAlign align, TextSpacing spacing, float paragraphSpacing, float depth = 0, TextRenderingContext context = null, IVertexBuffer[] oldBuffers = null)
+        ContentAlign align, float scale, TextSpacing spacing, float paragraphSpacing, float depth = 0, TextRenderingContext context = null, IVertexBuffer[] oldBuffers = null)
     {
         const int maxBufferSize = 60000;
         
-        context = CalculateMultilineText(font, text, spacing, target.Width, paragraphSpacing, context);
+        context = CalculateMultilineText(font, text, spacing, target.Width / scale, paragraphSpacing, context);
         
         var list = new List<VertexPositionColorTexture>();
         
@@ -77,7 +77,7 @@ public static class RendererExtensions
             list.Add(new VertexPositionColorTexture(new Vector3(targetRect.X + targetRect.Width, targetRect.Y, depth0), color, t10));
         }
         
-        GlyphFontRenderer.RenderText(DrawAction, font.FontSheet, context.Font, context.Lines, position, align, RgbaColor.White, spacing, context.TargetWidth, context.Height, depth);
+        GlyphFontRenderer.RenderText(DrawAction, font.FontSheet, context.Font, context.Lines, position, align, scale, RgbaColor.White, spacing, context.TargetWidth, context.Height, depth);
 
         var buffers = (int)Math.Ceiling(list.Count / (double)maxBufferSize);
 

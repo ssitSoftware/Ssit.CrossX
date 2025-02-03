@@ -8,10 +8,12 @@ namespace Ssit.CrossX.UI.Handlers;
 public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> where TTextView: Label
 {
     private readonly IFontsManager _fontsManager;
-    protected TextRenderingContext TextRenderingContext = new ();
+    protected readonly TextRenderingContext TextRenderingContext = new ();
 
     protected virtual RgbaColor? TextColor => AttachedView.TextColor;
     protected virtual RgbaColor? TextOutlineColor => AttachedView.TextOutlineColor;
+    
+    protected float TextScale => AttachedView.PixelScaling ? CurrentScale : 1;
     
     protected RectangleF TextRectangle
     {
@@ -65,7 +67,14 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
 
     protected IFont GetFont()
     {
-        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", (int)MathF.Ceiling((AttachedView.Font?.FontSize ?? 12) * CurrentScale));
+        var size = AttachedView.Font?.FontSize ?? 12;
+
+        if (!AttachedView.PixelScaling)
+        {
+            size = (int)MathF.Ceiling(size * CurrentScale);
+        }
+        
+        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", size);
     }
     
     protected virtual void OnTextChanged()
@@ -119,13 +128,13 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         
         if (width.IsAuto)
         {
-            width = new Length(pixels: TextRenderingContext.Width);
+            width = new Length(pixels: TextRenderingContext.Width * TextScale);
             width = CalculateLengthWithPadding(width, AttachedView.Padding?.Left, AttachedView.Padding?.Right);
         }
 
         if (height.IsAuto)
         {
-            height = new Length(pixels: TextRenderingContext.Height);
+            height = new Length(pixels: TextRenderingContext.Height * TextScale);
             height = CalculateLengthWithPadding(height, AttachedView.Padding?.Top, AttachedView.Padding?.Bottom);
         }
     }

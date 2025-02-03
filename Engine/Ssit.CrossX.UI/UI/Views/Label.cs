@@ -6,7 +6,6 @@ namespace Ssit.CrossX.UI.Views;
 public class Label: Background
 {
     public SharedString Text { get; set; }
-    
     public RgbaColor? TextColor { get; set; }
     public RgbaColor? TextOutlineColor { get; set; }
     
@@ -16,4 +15,5 @@ public class Label: Background
     public FontDesc? Font { get; set; }
     
     public Thickness? Padding { get; set; }
+    public bool PixelScaling { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Numerics;
 using Gunslinger.Core.UI.Pages;
 using Gunslinger.Core.UI.ViewModels;
@@ -7,6 +8,7 @@ using Ssit.CrossX.Common;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
@@ -21,7 +23,8 @@ namespace Gunslinger.Core
         private IRenderer _renderer;
         private IUiApp _uiApp;
         private PixelAppHost _appHost;
-
+        private readonly IGameTemplate _template = new GunslingerTemplate();
+        private PixelAppHost.Parameters _appHostParameters;
         public Settings Settings { get; private set; }
         
         public Matrix3x2 Transform
@@ -39,16 +42,12 @@ namespace Gunslinger.Core
 
         protected override void OnInitializeServices(IIoCContainerBuilder builder)
         {
-            var bundleProvider = new BundleFilesProvider();
-            var embeddedProvider = new EmbeddedFilesProvider(typeof(GameApp).Assembly, "Gunslinger.Core.Assets");
+            var filesProvider = _template.AssetsProvider;
 
-            var filesProvider = new AggregatedFilesProvider();
-            filesProvider.AddProvider("assets:", embeddedProvider);
-            filesProvider.AddProvider("bundle:", bundleProvider);
-            
             builder
-                .WithInstance<IFilesProvider>(filesProvider)
-                .WithInstance<ISettingsProvider>(this);
+                .WithInstance(filesProvider)
+                .WithInstance<ISettingsProvider>(this)
+                .WithInstance(_template);
         }
 
         private void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
@@ -106,24 +105,47 @@ namespace Gunslinger.Core
             fontsManager.LoadFonts("assets:/Fonts/Fonts.json");
 
             container.Get<IContentManager>().RegisterGameContentTypes();
-
+            
             _uiApp = container.InitializeUi(OnInitializeUi);
-
-            _appHost = container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
-            {
-                DesignSize = new Size(480, 360),
-                Mode = PixelAppHost.Mode.Height,
-                Renderer = _renderer,
-                MaxScale = 2
-            });
             
             Settings = Settings.Load(container.Get<IFileStorage>(), "Gunslinger/settings");
+            Settings.PropertyChanged += UpdateSettings;
             
-            container.Get<IMusicPlayer>().Volume = Settings.MusicVolume / 4f;
-            container.Get<ISoundManager>().MasterVolume = Settings.SoundVolume / 4f;
+            UpdateSettings(this, new PropertyChangedEventArgs(nameof(Settings.MusicVolume)));
+            UpdateSettings(this, new PropertyChangedEventArgs(nameof(Settings.SoundVolume)));
+            
+            _appHostParameters = new PixelAppHost.Parameters
+            {
+                Renderer = _renderer,
+                DesignSize = _template.TargetSize,
+                Mode = PixelAppHost.Mode.Height,
+                MaxScale = 4,
+                Optimize = Settings.Optimize
+            };
+            
+            _appHost = container.IoCConstruct<PixelAppHost>(_appHostParameters);
             
             OnResize(_renderer.TargetSize);
             _uiApp.Navigation.NavigateTo<MainPageViewModel>();
+        }
+
+        private void UpdateSettings(object sender, PropertyChangedEventArgs args)
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(Settings.MusicVolume):
+                    _uiApp.Services.Get<IMusicPlayer>().Volume = Settings.MusicVolume / 4f;
+                    break;
+                
+                case nameof(Settings.SoundVolume):
+                    _uiApp.Services.Get<ISoundManager>().MasterVolume = Settings.SoundVolume / 4f;
+                    break;
+
+                // case nameof(Settings.Optimize):
+                //     _appHostParameters.Optimize = Settings.Optimize;
+                //     OnResize(_renderer.TargetSize);
+                //     break;
+            }
         }
 
         public override void OnUpdate(float elapsedTime) => _uiApp.Update(elapsedTime);

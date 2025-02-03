@@ -13,6 +13,7 @@ public class OptionsPage: MenuItemsPageBaseEx<OptionsPageViewModel>
             (Translator["Sound Volume"] +": " + ViewModel.SoundVolumeStr, ViewModel.SoundVolumeCommand),
             (Translator["Music Volume"] + ": "+ ViewModel.MusicVolumeStr, ViewModel.MusicVolumeCommand),
             (Translator["Camera Shake"] + ": " + ViewModel.CameraShakeStr, ViewModel.CameraShakeCommand),
+            //(Translator["Optimize Display"] + ": " + ViewModel.OptimizeStr, ViewModel.OptimizeCommand),
             (Translator["Controls"], ViewModel.ControlsCommand)
         ]);
 

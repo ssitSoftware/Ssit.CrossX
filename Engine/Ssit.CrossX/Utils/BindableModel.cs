@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Ssit.CrossX.Games;
+namespace Ssit.CrossX.Utils;
 
 public class BindableModel: INotifyPropertyChanged
 {

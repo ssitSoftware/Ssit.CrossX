@@ -36,14 +36,14 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
     {
         base.SetBounds(rectangleF);
 
-        var oldWidth = TextRenderingContext.Width;
-        var oldHeight = TextRenderingContext.Height;
+        var oldWidth = TextRenderingContext.Width * TextScale;
+        var oldHeight = TextRenderingContext.Height * TextScale;
         
         var font = GetFont();
         font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
 
-        var newWidth = TextRenderingContext.Width;
-        var newHeight = TextRenderingContext.Height;
+        var newWidth = TextRenderingContext.Width * TextScale;
+        var newHeight = TextRenderingContext.Height * TextScale;
 
         if (AttachedView.Text.Length > 0 && TextRectangle.Height < 1)
         {
@@ -69,6 +69,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
                 text: AttachedView.Text,
                 position: TextRectangle,
                 align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
+                scale: TextScale,
                 color: TextColor ?? RgbaColor.Transparent,
                 spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
                 outlineColor: TextOutlineColor ?? RgbaColor.Transparent,

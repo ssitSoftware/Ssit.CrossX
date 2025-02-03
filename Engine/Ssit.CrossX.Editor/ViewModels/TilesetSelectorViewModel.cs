@@ -10,6 +10,7 @@ using SkiaSharp;
 using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {

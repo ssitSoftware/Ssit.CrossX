@@ -14,11 +14,12 @@ public class GunslingerTemplate: IGameTemplate
     public Guid Guid { get; } = Guid.Parse("b7d05cc4-a3f3-461f-8cb2-07ec58b6120a");
 
     public IFilesProvider AssetsProvider { get; } = new AggregatedFilesProvider()
-        .AddProvider("assets:", 
-            new EmbeddedFilesProvider(typeof(GunslingerTemplate).Assembly, "Gunslinger.Core.Assets"));
+        .AddProvider("assets:",
+            new EmbeddedFilesProvider(typeof(GunslingerTemplate).Assembly, "Gunslinger.Core.Assets"))
+        .AddProvider("bundle:", new BundleFilesProvider());
     
     public int TileSize => 16;
-    public Size TargetSize => new(406, 270);
+    public Size TargetSize => new(512, 288);
     
     public RgbaColor DefaultBackground => new(0xff404040);
     public RgbaColor EmptyColor => new(128, 128, 128);

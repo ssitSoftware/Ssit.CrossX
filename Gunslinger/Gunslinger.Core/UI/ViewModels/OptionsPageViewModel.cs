@@ -20,11 +20,13 @@ public class OptionsPageViewModel: IPageCommandsSource
     public ICommand SoundVolumeCommand { get; }
     public ICommand MusicVolumeCommand { get; }
     public ICommand CameraShakeCommand { get; }
+    public ICommand OptimizeCommand { get; }
     public ICommand ControlsCommand { get; }
     
     public SharedStringSource SoundVolumeStr { get; } = new();
     public SharedStringSource MusicVolumeStr { get; } = new();
     public SharedStringSource CameraShakeStr { get; } = new();
+    public SharedStringSource OptimizeStr { get; } = new();
 
     public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
         IMusicPlayer musicPlayer, ISettingsProvider settingsProvider)
@@ -41,7 +43,6 @@ public class OptionsPageViewModel: IPageCommandsSource
             int vol = (int)(soundManager.MasterVolume * 4);
             vol++;
             vol %= 5;
-            soundManager.MasterVolume = vol / 4f;
             _settings.SoundVolume = vol;
             _settings.Save();
             UpdateStrings();
@@ -52,7 +53,6 @@ public class OptionsPageViewModel: IPageCommandsSource
             int vol = (int)(musicPlayer.Volume * 4);
             vol++;
             vol %= 5;
-            musicPlayer.Volume = vol / 4f;
             _settings.MusicVolume = vol;
             _settings.Save();
             UpdateStrings();
@@ -61,6 +61,13 @@ public class OptionsPageViewModel: IPageCommandsSource
         CameraShakeCommand = new SyncCommand(o =>
         {
             _settings.CameraShake = !_settings.CameraShake;
+            _settings.Save();
+            UpdateStrings();
+        });
+        
+        OptimizeCommand = new SyncCommand(o =>
+        {
+            _settings.Optimize = !_settings.Optimize;
             _settings.Save();
             UpdateStrings();
         });
@@ -96,5 +103,6 @@ public class OptionsPageViewModel: IPageCommandsSource
         }
 
         CameraShakeStr.SetSource(_settings.CameraShake ? _translator["Yes"] : _translator["No"]);
+        OptimizeStr.SetSource(_settings.Optimize ? _translator["Yes"] : _translator["No"]);
     }
 }

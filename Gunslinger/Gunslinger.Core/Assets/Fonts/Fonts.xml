@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Fonts>
-    <Font Name="Default" Family="Roboto"
+    <Font Name="Default" Family="Krungthep"
           Sizes="12,18,22" 
           Weight="Normal" 
           Italic="false"
-          Antialiasing="true" 
+          Antialiasing="false" 
           CharSets="Ascii, Polish, German, French, Spanish, Special"
-          Outline="3"
+          Outline="4"
           Spacing="25%"
           SheetWidthFactor="16.0"/>
 </Fonts>

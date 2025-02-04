@@ -410,6 +410,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                     
                     var color = new RgbaColor(layer.TintColor.R, layer.TintColor.G, layer.TintColor.B, (byte)(alpha * layer.TintColor.A / 255));
                     
+                    _skPaint.Color = SKColors.White;
                     _skPaint.ColorFilter = GetFilter(color);
                     
                     RenderLayer(layer, skCanvas, grContext, width, height);
@@ -596,7 +597,10 @@ namespace Ssit.CrossX.Editor.ViewModels
                 var obj = layer.Objects[idx];
 
                 if (obj.HasLogic && !showObjects)
+                {
+                    ++idx;
                     continue;
+                }
 
                 try
                 {
@@ -714,20 +718,30 @@ namespace Ssit.CrossX.Editor.ViewModels
                 skCanvas.DrawImage(img, srcRect, destRect, skPaint);
             }
 
-            skPaint.ColorFilter = oldFilter;
-
             if (SelectedObject == mapObject?.Id)
             {
-                _skPaint.Color = SKColors.Orange.WithAlpha(192);
-                _skPaint.IsStroke = true;
+                skPaint.ColorFilter = null;
+                skPaint.Color = SKColors.Orange.WithAlpha(192);
+                skPaint.IsStroke = true;
                 
-                skCanvas.DrawRect(rect.ToSkia(), _skPaint);
+                skCanvas.DrawRect(rect.ToSkia(), skPaint);
                 
-                _skPaint.Color = SKColors.GreenYellow.WithAlpha(192);
-                skCanvas.DrawLine(pos.X + 10, pos.Y + 10, pos.X - 10, pos.Y - 10, _skPaint);
-                skCanvas.DrawLine(pos.X + 10, pos.Y - 10, pos.X - 10, pos.Y + 10, _skPaint);
+                skPaint.Color = SKColors.GreenYellow.WithAlpha(192);
+                skCanvas.DrawLine(pos.X + 10, pos.Y + 10, pos.X - 10, pos.Y - 10, skPaint);
+                skCanvas.DrawLine(pos.X + 10, pos.Y - 10, pos.X - 10, pos.Y + 10, skPaint);
             }
-
+            else if ( layer == SelectedLayer && !IsFullscreen)
+            {
+                skPaint.ColorFilter = null;
+                skPaint.Color = SKColors.Orange.WithAlpha(64);
+                skPaint.IsStroke = true;
+                
+                skCanvas.DrawRect(rect.ToSkia(), skPaint);
+            }
+            
+            skPaint.Color = SKColors.White;
+            skPaint.ColorFilter = oldFilter;
+            
             return rect;
         }
 
@@ -767,7 +781,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             var maxX = SelectedLayer.Width - (float)template.TargetSize.Width / template.TileSize;
             var minX = 0;
 
-            var maxY = SelectedLayer.Height;// + (float)Template.TargetHeight / Template.TileSize / 4f;
+            var maxY = SelectedLayer.Height;
             var minY = (float)template.TargetSize.Height / template.TileSize;
 
             var ox = Math.Max(minX, Math.Min(maxX, Offset.X));

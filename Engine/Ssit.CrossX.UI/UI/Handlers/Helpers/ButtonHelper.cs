@@ -24,6 +24,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     public bool IsExecutingCommand => _isExecutingDelayedCommand;
 
     private readonly TViewHandler _viewHandler;
+    private readonly IUiSounds _uiSounds;
     private TView AttachedView => (TView)_viewHandler.View;
     
     private int? _currentPointerId;
@@ -31,10 +32,11 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     private bool _isExecutingDelayedCommand = false;
     private bool _isEnabled;
 
-    public ButtonHelper(TViewHandler viewHandler)
+    public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds)
     {
         _viewHandler = viewHandler;
-        
+        _uiSounds = uiSounds;
+
         if (AttachedView.Command is not null)
         {
             AttachedView.Command.CanExecuteChanged += CommandOnCanExecuteChanged;
@@ -168,7 +170,9 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             {
                 if (!focusable.SkipNavigation)
                 {
+                    
                     context.Focus(focusable, _viewHandler);
+                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
                     return true;
                 }
                 

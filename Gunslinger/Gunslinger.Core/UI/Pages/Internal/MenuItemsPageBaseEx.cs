@@ -1,4 +1,5 @@
 using Gunslinger.Core.UI.Styles;
+using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.UI.Views;
 
@@ -9,6 +10,12 @@ public abstract class MenuItemsPageBaseEx<TViewModel> : MenuItemsPageBase<TViewM
     protected override void MenuItemApplyStyle(LabelButton button)
     {
         button.WithDefaultStyle();
+
+        if (button is LabelButtonEx labelButtonEx)
+        {
+            labelButtonEx.FocusWaveAmplitude = (labelButtonEx.Font?.FontSize ?? 12) / 6;
+            labelButtonEx.FocusWaveFrequency = 2;
+        }
     }
 
     protected override void MenuApplyStyle(VerticalStack stack)

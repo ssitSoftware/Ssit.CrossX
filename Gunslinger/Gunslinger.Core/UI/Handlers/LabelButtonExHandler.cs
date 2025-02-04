@@ -1,0 +1,57 @@
+using System;
+using System.Numerics;
+using Gunslinger.Core.UI.Views;
+using Ssit.CrossX.Graphics;
+using Ssit.CrossX.UI.Handlers;
+using Ssit.CrossX.UI.Services;
+
+namespace Gunslinger.Core.UI.Handlers;
+
+public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
+{
+    private float _time = 0;
+    private float _waveAmplitude;
+    
+    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) 
+        : base(parameters, fontsManager, actionDispatcher, uiSounds)
+    {
+    }
+
+    public override void Update(float dt)
+    {
+        base.Update(dt);
+        
+        _time += dt;
+        _time %= 1;
+        
+        var amplitude = (AttachedView.FocusWaveAmplitude ?? 0).Calculate(CurrentScale, 0);
+        var targetAmplitude = Focused ? amplitude : 0;
+
+        if (_waveAmplitude < targetAmplitude)
+        {
+            _waveAmplitude += dt * amplitude * 4;
+            _waveAmplitude = MathF.Min(_waveAmplitude, targetAmplitude);
+        }
+        else if (_waveAmplitude > targetAmplitude)
+        {
+            _waveAmplitude -= dt * amplitude * 4;
+            _waveAmplitude = MathF.Max(_waveAmplitude, targetAmplitude);
+        }
+    }
+
+    public override void Draw(IRenderer renderer)
+    {
+        var offset = _waveAmplitude * (float) Math.Sin(_time * 2 * Math.PI);
+
+        if (MathF.Abs(offset) > float.Epsilon)
+        {
+            renderer.StateManager.SaveState();
+            renderer.StateManager.Transform(Matrix3x2.CreateTranslation(new Vector2(offset, 0)));
+            base.Draw(renderer);
+            renderer.StateManager.RestoreState();
+            return;
+        }
+        
+        base.Draw(renderer);
+    }
+}

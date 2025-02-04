@@ -47,7 +47,11 @@ public class MusicPlaylist: IEnumerable<Song>, IPlaylist
     /// Adds the specified song to the playlist.
     /// </summary>
     /// <param name="song">The song to add to the playlist.</param>
-    public void Add(Song song) => _playlist.Add(song);
+    public MusicPlaylist Add(Song song)
+    {
+        _playlist.Add(song);
+        return this;
+    }
 
     /// <summary>
     /// Returns an enumerator that iterates through the playlist.

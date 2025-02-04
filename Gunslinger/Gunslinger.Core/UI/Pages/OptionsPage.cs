@@ -1,5 +1,6 @@
 using Gunslinger.Core.UI.Pages.Internal;
 using Gunslinger.Core.UI.ViewModels;
+using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.UI.Views;
 
 namespace Gunslinger.Core.UI.Pages;
@@ -8,7 +9,7 @@ public class OptionsPage: MenuItemsPageBaseEx<OptionsPageViewModel>
 {
     protected override View CreateView()
     {
-        var menuView = CreateMenuItems("Options",
+        var menuView = CreateMenuItems<LabelButtonEx>("Options",
         [
             (Translator["Sound Volume"] +": " + ViewModel.SoundVolumeStr, ViewModel.SoundVolumeCommand),
             (Translator["Music Volume"] + ": "+ ViewModel.MusicVolumeStr, ViewModel.MusicVolumeCommand),

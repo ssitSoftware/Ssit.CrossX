@@ -65,4 +65,13 @@
       <ProjectReference Include="..\Gunslinger.Core\Gunslinger.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Music\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Music\Menu.ogg" />
+      <BundleResource Include="Music\Menu.ogg" />
+    </ItemGroup>
+
 </Project>

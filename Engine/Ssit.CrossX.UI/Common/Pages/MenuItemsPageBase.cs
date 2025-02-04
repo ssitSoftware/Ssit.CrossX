@@ -42,8 +42,8 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
         return base.OnUiButton(button, inputContext);
     }
 
-    protected View CreateMenuItems(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
-        int defaultButtonIndex = 0, bool isMainList = true)
+    protected View CreateMenuItems<TButton>(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
+        int defaultButtonIndex = 0, bool isMainList = true) where TButton: LabelButton, new()
     {
         var controls = new List<View>();
         var commandsSource = isMainList ? ViewModel as IPageCommandsSource : null;
@@ -75,7 +75,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
                 prevIndex = navCount;
             }
 
-            var button = new LabelButton
+            var button = new TButton
             {
                 Text = items[i].text,
                 UniqueId = $"{id}{navId}",
@@ -94,7 +94,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
                 Height = 4
             });
 
-            var button = new LabelButton
+            var button = new TButton
             {
                 Text = Translator["Back"],
                 UniqueId = $"{id}{navCount}",

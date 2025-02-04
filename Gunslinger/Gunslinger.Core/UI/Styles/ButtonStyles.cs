@@ -1,3 +1,4 @@
+using System;
 using Ssit.CrossX;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
@@ -17,6 +18,7 @@ public static class ButtonStyles
         button.Height = 22;
         button.Font = ("Default", 18);
         button.Padding = (2, 2);
+        button.KeyCommandDelay = TimeSpan.FromMilliseconds(180);
         
         button.TextColors = new ButtonStateColors
         {

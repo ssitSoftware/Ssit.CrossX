@@ -34,9 +34,10 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
         _eventSource.Updating += EventSourceOnUpdating;
     }
     
-    public void RegisterPlaylist(string name, MusicPlaylist playlist)
+    public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
     {
         _playlists.Add(name, playlist);
+        return this;
     }
 
     public void ChangePlaylist(string name, int fadeTimeMs = 0, bool resetProgress = false)

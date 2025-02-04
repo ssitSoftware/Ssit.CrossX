@@ -16,7 +16,7 @@ public interface IMusicPlayer
     /// <summary>Registers a new music playlist with the specified name.</summary>
     /// <param name="name">The name of the playlist to register.</param>
     /// <param name="playlist">The playlist object containing the songs.</param>
-    void RegisterPlaylist(string name, MusicPlaylist playlist);
+    IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist);
 
     /// <summary>Changes the current music playlist to the specified one.</summary>
     /// <param name="name">The name of the playlist to switch to.</param>

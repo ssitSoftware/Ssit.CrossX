@@ -29,14 +29,18 @@ public class OptionsPageViewModel: IPageCommandsSource
     public SharedStringSource CameraShakeStr { get; } = new();
 
     public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
-        IMusicPlayer musicPlayer, ISettingsProvider settingsProvider)
+        IMusicPlayer musicPlayer, ISettingsProvider settingsProvider, IUiSounds sounds)
     {
         _translator = translator;
         _soundManager = soundManager;
         _musicPlayer = musicPlayer;
         _settings = settingsProvider.Settings;
 
-        BackCommand = new SyncCommand(navigation.NavigateBack);
+        BackCommand = new SyncCommand( () =>
+        {
+            sounds[UiSounds.NavigateBackSound]?.PlayOnce();
+            navigation.NavigateBack();
+        });
     
         SoundVolumeCommand = new SyncCommand(o =>
         {
@@ -45,6 +49,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             vol %= 5;
             _settings.SoundVolume = vol;
             _settings.Save();
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             UpdateStrings();
         });
         
@@ -55,6 +60,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             vol %= 5;
             _settings.MusicVolume = vol;
             _settings.Save();
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             UpdateStrings();
         });
         
@@ -62,12 +68,20 @@ public class OptionsPageViewModel: IPageCommandsSource
         {
             _settings.CameraShake = !_settings.CameraShake;
             _settings.Save();
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             UpdateStrings();
         });
         
-        LanguageCommand = new SyncCommand(translator.ToggleLanguage);
+        LanguageCommand = new SyncCommand( ()=>
+        {
+            translator.ToggleLanguage();
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
+        });
 
-        ControlsCommand = new SyncCommand(() => { });
+        ControlsCommand = new SyncCommand(() =>
+        {
+            sounds[UiSounds.NavigateToSound]?.PlayOnce();
+        });
         UpdateStrings();
     }
     

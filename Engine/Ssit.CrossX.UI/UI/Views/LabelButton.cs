@@ -19,4 +19,6 @@ public class LabelButton: Label, IButtonView
     public string UniqueId { get; set; }
     public (string left, string right) HorizontalNavigation { get; set; }
     public (string up, string down) VerticalNavigation { get; set; }
+    
+    public string CommandSoundId { get; set; }
 }

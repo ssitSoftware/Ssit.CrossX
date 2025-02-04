@@ -24,9 +24,9 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher) : base(parameters, fontsManager, actionDispatcher)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) : base(parameters, fontsManager, actionDispatcher)
     {
-        _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this);
+        _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, uiSounds);
     }
 
     public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context) => _buttonHelper.ProcessHover(hoverPosition, matchingPointerId, context);

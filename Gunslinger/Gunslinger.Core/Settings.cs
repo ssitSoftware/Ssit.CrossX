@@ -8,6 +8,7 @@ public class Settings: AppSettingsBase<Settings>
     private bool _cameraShake;
     private int _musicVolume;
     private int _soundVolume;
+    private int _language;
 
     [JsonProperty]
     public bool CameraShake
@@ -28,5 +29,12 @@ public class Settings: AppSettingsBase<Settings>
     {
         get => _soundVolume;
         set => SetField(ref _soundVolume, value);
+    }
+
+    [JsonProperty]
+    public int Language
+    {
+        get => _language;
+        set => SetField(ref _language, value);
     }
 }

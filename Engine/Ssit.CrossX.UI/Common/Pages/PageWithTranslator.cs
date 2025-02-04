@@ -1,4 +1,4 @@
-using SampleGame.Services;
+using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.UI;
 
 namespace Ssit.CrossX.Common.Pages;

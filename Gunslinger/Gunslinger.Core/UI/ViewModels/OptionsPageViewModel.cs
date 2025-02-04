@@ -1,7 +1,7 @@
 using System.Windows.Input;
-using SampleGame.Services;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Commands;
+using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -75,6 +75,8 @@ public class OptionsPageViewModel: IPageCommandsSource
         LanguageCommand = new SyncCommand( ()=>
         {
             translator.ToggleLanguage();
+            _settings.Language = translator.CurrentLanguage;
+            _settings.Save();
             sounds[UiSounds.ChangeValueSound]?.PlayOnce();
         });
 

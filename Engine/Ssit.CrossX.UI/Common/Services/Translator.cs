@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using SampleGame.Services;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.UI.Values;
 
@@ -12,6 +11,16 @@ internal class Translator : ITranslator
 
     private readonly Dictionary<string, string>[] _languages;
     private int _language = 0;
+    
+    public int CurrentLanguage
+    {
+        get => _language;
+        set
+        {
+            _language = value % _languages.Length;
+            UpdateLanguage(_languages[_language]);
+        }
+    }
     
     public Translator(IFilesProvider filesProvider)
     {
@@ -51,7 +60,7 @@ internal class Translator : ITranslator
 
     public void ToggleLanguage()
     {
-        _language = (_language + 1) % 2;
+        _language = (_language + 1) % _languages.Length;
         UpdateLanguage(_languages[_language]);
     }
 

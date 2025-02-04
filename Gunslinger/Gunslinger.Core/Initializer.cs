@@ -5,6 +5,7 @@ using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Common;
 using Ssit.CrossX.Common.Pages;
+using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Graphics;
@@ -74,7 +75,8 @@ public static class Initializer
             
         uiApp.Services.Get<PageInputContext>().AlwaysShowFocus = true;
         uiApp.Services.Get<IPointingDevices>().Enable = false;
-
+        uiApp.Services.Get<ITranslator>().CurrentLanguage = uiApp.Services.Get<ISettingsProvider>().Settings.Language;
+        
         return uiApp;
     }
 

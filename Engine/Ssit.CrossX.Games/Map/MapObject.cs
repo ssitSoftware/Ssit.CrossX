@@ -14,9 +14,6 @@ public class StaticObjectParameters
 {
     [EditorInt(0, 5000, 10)]
     public int AnimationTimeOffsetInMs { get; set; }
-
-    [Editor]
-    public RgbaColor TintColor { get; set; } = RgbaColor.White;
 }
 
 public class MapObject

@@ -558,7 +558,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 _skPaint.Color = SKColors.White;
             }
             
-            if (current && ShowMaterials && !IsFullscreen)
+            if (current && ShowMaterials && !IsFullscreen && layer == _instances.Map.MainLayer)
             {
                 for (var x = 0; x < layer.Width; ++x)
                 {
@@ -591,27 +591,38 @@ namespace Ssit.CrossX.Editor.ViewModels
                 }
             }
 
-            for (var idx = 0; idx < layer.Objects.Count; ++idx)
+            for (var idx = 0; idx < layer.Objects.Count; )
             {
                 var obj = layer.Objects[idx];
 
                 if (obj.HasLogic && !showObjects)
                     continue;
-                
-                var editorImg = obj.HasLogic
-                    ? _instances.ObjectsContainer.Get(obj.TypeId)
-                    : _instances.ImagesContainer.Get(obj.TypeId);
-                
-                var rect = DrawObject(obj, editorImg, obj.Flipped, obj.Position, start, skCanvas, grContext, _skPaint, layer);
 
-                if (current)
+                try
                 {
-                    _currentObjects.Add(new MapObjectInfo
+                    var editorImg = obj.HasLogic
+                        ? _instances.ObjectsContainer.Get(obj.TypeId)
+                        : _instances.ImagesContainer.Get(obj.TypeId);
+
+                    var rect = DrawObject(obj, editorImg, obj.Flipped, obj.Position, start, skCanvas, grContext,
+                        _skPaint, layer);
+
+                    if (current)
                     {
-                        Object =  obj,
-                        ScreenBounds = rect
-                    });
+                        _currentObjects.Add(new MapObjectInfo
+                        {
+                            Object = obj,
+                            ScreenBounds = rect
+                        });
+                    }
                 }
+                catch (KeyNotFoundException)
+                {
+                    layer.Objects.RemoveAt(idx);
+                    continue;
+                }
+
+                ++idx;
             }
             
             if (!IsFullscreen && current && layer == _instances.Map.MainLayer && ShowLinks && showObjects)
@@ -674,11 +685,6 @@ namespace Ssit.CrossX.Editor.ViewModels
             if (mapObject?.ParametersObject is StaticObjectParameters sop)
             {
                 timeOffset = sop.AnimationTimeOffsetInMs / 1000f;
-
-                if (sop.TintColor != RgbaColor.White)
-                {
-                    skPaint.ColorFilter = GetFilter(layer.TintColor * sop.TintColor);
-                }
             }
             
             var time = Animate ? (float) (_stopwatch.Elapsed.TotalSeconds + timeOffset) : 0;

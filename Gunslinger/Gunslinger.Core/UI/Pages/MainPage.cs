@@ -61,6 +61,6 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
     protected override void MenuApplyStyle(VerticalStack stack)
     {
         base.MenuApplyStyle(stack);
-        stack.AnchorY = "50%+30";
+        stack.AnchorY = "50%+20";
     }
 }

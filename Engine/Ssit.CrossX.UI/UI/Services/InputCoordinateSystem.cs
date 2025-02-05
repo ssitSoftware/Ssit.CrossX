@@ -1,10 +1,9 @@
 using System.Numerics;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.UI.Services;
 
-namespace Gunslinger.Core;
+namespace Ssit.CrossX.UI.Services;
 
-public class InputCoordinateSystem(PixelAppHost appHost): IInputCoordinateSystem
+internal class InputCoordinateSystem(IAppHost appHost): IInputCoordinateSystem
 {
     public Matrix3x2 Transform
     {

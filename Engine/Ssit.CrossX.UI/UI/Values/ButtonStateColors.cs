@@ -1,3 +1,5 @@
+using Ssit.CrossX.Graphics;
+
 namespace Ssit.CrossX.UI.Values;
 
 public class ButtonStateColors
@@ -7,9 +9,20 @@ public class ButtonStateColors
     public RgbaColor? Focused;
     public RgbaColor? Pushed;
     public RgbaColor? Disabled;
+    
+    public RgbaColor? NormalGlow;
+    public RgbaColor? HoverGlow;
+    public RgbaColor? FocusedGlow;
+    public RgbaColor? PushedGlow;
+    public RgbaColor? DisabledGlow;
 
-    public RgbaColor? GetColor(bool hover, bool focused, bool pushed, bool enabled)
+    public RgbaColor? GetColor(RenderMode mode, bool hover, bool focused, bool pushed, bool enabled)
     {
+        if (mode == RenderMode.Glow)
+        {
+            return GetColorGlow(hover, focused, pushed, enabled);
+        }
+        
         if (!enabled)
         {
             return Disabled ?? Normal;
@@ -31,5 +44,30 @@ public class ButtonStateColors
         }
 
         return Normal;
+    }
+    
+    private RgbaColor? GetColorGlow(bool hover, bool focused, bool pushed, bool enabled)
+    {
+        if (!enabled)
+        {
+            return DisabledGlow ?? (Disabled?.A > 0 ? RgbaColor.Black : null);
+        }
+
+        if (pushed)
+        {
+            return PushedGlow ?? (Pushed?.A > 0 ? RgbaColor.Black : null);
+        }
+
+        if (hover)
+        {
+            return HoverGlow ?? (Hover?.A > 0 ? RgbaColor.Black : null);
+        }
+
+        if (focused)
+        {
+            return FocusedGlow ?? (Focused?.A > 0 ? RgbaColor.Black : null);
+        }
+
+        return NormalGlow ?? (Normal?.A > 0 ? RgbaColor.Black : null);
     }
 }

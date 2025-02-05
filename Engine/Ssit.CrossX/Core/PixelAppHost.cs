@@ -5,7 +5,7 @@ using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.Core;
 
-public class PixelAppHost: IDisposable
+public class PixelAppHost: IAppHost
 {
     public enum Mode
     {
@@ -19,13 +19,13 @@ public class PixelAppHost: IDisposable
     {
         public Size DesignSize = new(360, 180);
         public Mode Mode = Mode.WidthAndHeight;
-        public IRenderer Renderer;
         public int MaxScale = 2;
         public bool Optimize = false;
     }
 
     private readonly Parameters _parameters;
     private readonly IIoCContainer _iocContainer;
+    private readonly IRenderer _renderer;
     private IRenderTarget _renderTarget;
     private IRenderTarget _postRenderTarget;
 
@@ -37,10 +37,11 @@ public class PixelAppHost: IDisposable
 
     public Matrix3x2 Transform { get; private set; } = Matrix3x2.Identity;
     
-    public PixelAppHost(Parameters parameters, IIoCContainer iocContainer)
+    public PixelAppHost(Parameters parameters, IIoCContainer iocContainer, IRenderingWindow renderingWindow)
     {
         _parameters = parameters;
         _iocContainer = iocContainer;
+        _renderer = renderingWindow.Renderer;
     }
 
     public void Resize(Size size)
@@ -49,13 +50,12 @@ public class PixelAppHost: IDisposable
         ResizeInternal(targetSize);
     }
 
-    public void Render(Action renderAction)
+    public void Render(Action<RenderMode> renderAction)
     {
         BeginRender();
         try
         {
-            
-            renderAction();
+            renderAction(RenderMode.Normal);
         }
         finally
         {
@@ -67,10 +67,10 @@ public class PixelAppHost: IDisposable
     {
         if (_renderTarget is null)
         {
-            Resize(_parameters.Renderer.TargetSize);
+            Resize(_renderer.TargetSize);
         }
         
-        _parameters.Renderer.SetRenderTarget(_renderTarget);
+        _renderer.SetRenderTarget(_renderTarget);
     }
     
     private void EndRender()
@@ -78,26 +78,26 @@ public class PixelAppHost: IDisposable
         var sourceTexture = _renderTarget;
         if (_postRenderTarget is not null)
         {
-            _parameters.Renderer.SetRenderTarget(_postRenderTarget);
-            _parameters.Renderer.DrawTexture(_renderTarget,
+            _renderer.SetRenderTarget(_postRenderTarget);
+            _renderer.DrawTexture(_renderTarget,
                 new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
                 filter: TextureFilter.Nearest);
 
             sourceTexture = _postRenderTarget;
         }
 
-        _parameters.Renderer.SetRenderTarget(null);
+        _renderer.SetRenderTarget(null);
         
-        var scale = MathF.Min((float)_parameters.Renderer.TargetSize.Width / sourceTexture.Size.Width,
-            (float)_parameters.Renderer.TargetSize.Height / sourceTexture.Size.Height);
+        var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
+            (float)_renderer.TargetSize.Height / sourceTexture.Size.Height);
 
         var targetSize = sourceTexture.Size.ToVector() * scale;
-        var targetRect = new RectangleF((_parameters.Renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
+        var targetRect = new RectangleF((_renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
         
-        scale = MathF.Min((float)_parameters.Renderer.TargetSize.Width / _renderTarget.Size.Width,
-            (float)_parameters.Renderer.TargetSize.Height / _renderTarget.Size.Height);
+        scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
+            (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
         
-        _parameters.Renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Linear);
+        _renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Linear);
         Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
     }
 

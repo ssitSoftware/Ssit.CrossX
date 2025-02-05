@@ -7,11 +7,6 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Services;
 
-public interface IInputCoordinateSystem
-{
-    Matrix3x2 Transform { get; }
-}
-
 internal sealed class InputProcessor: IInputContext
 {
     private readonly IKeyboard _keyboard;

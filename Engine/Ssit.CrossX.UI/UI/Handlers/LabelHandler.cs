@@ -10,7 +10,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
     private readonly IActionDispatcher _actionDispatcher;
 
-    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher) : base(parameters, fontsManager)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IRenderModeProvider renderModeProvider) : base(parameters, fontsManager, renderModeProvider)
     {
         _actionDispatcher = actionDispatcher;
         OnTextChanged();

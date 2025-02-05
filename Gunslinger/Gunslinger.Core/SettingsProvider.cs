@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Ssit.CrossX.Audio;
-using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.IO;
 
 namespace Gunslinger.Core;
@@ -9,7 +8,6 @@ public class SettingsProvider : ISettingsProvider
 {
     private readonly IMusicPlayer _musicPlayer;
     private readonly ISoundManager _soundManager;
-    private readonly ITranslator _translator;
 
     public Settings Settings { get; }
     

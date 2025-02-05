@@ -12,7 +12,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     private IVertexBuffer[] _vertexBuffers;
     private bool _recalculateVertices;
     
-    public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container) : base(parameters, fontsManager)
+    public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container, IRenderModeProvider renderModeProvider) : base(parameters, fontsManager, renderModeProvider)
     {
         _container = container;
         OnTextChanged();

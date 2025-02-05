@@ -12,8 +12,8 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     private float _time = 0;
     private float _waveAmplitude;
     
-    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) 
-        : base(parameters, fontsManager, actionDispatcher, uiSounds)
+    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IRenderModeProvider renderModeProvider) 
+        : base(parameters, fontsManager, actionDispatcher, uiSounds, renderModeProvider)
     {
     }
 

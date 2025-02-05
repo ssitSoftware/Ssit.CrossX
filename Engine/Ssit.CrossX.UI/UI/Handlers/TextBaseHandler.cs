@@ -1,17 +1,23 @@
 using System;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
 public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> where TTextView: Label
 {
+    protected IRenderModeProvider RenderModeProvider { get; }
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
-    protected virtual RgbaColor? TextColor => AttachedView.TextColor;
-    protected virtual RgbaColor? TextOutlineColor => AttachedView.TextOutlineColor;
+    protected virtual RgbaColor? TextColor =>
+        RenderModeProvider.RenderMode == RenderMode.Normal ? AttachedView.TextColor : RgbaColor.Black;
+
+    protected virtual RgbaColor? TextOutlineColor => RenderModeProvider.RenderMode == RenderMode.Normal
+        ? AttachedView.TextOutlineColor
+        : RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f);
     
     protected float TextScale => AttachedView.PixelScaling ? CurrentScale : 1;
     
@@ -51,8 +57,10 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         }
     }
     
-    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters)
+    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IRenderModeProvider renderModeProvider) : base(parameters)
     {
+        RenderModeProvider = renderModeProvider;
+        
         _fontsManager = fontsManager;
         if (AttachedView.Text is not null)
         {

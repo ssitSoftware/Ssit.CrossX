@@ -1,9 +1,4 @@
-using Gunslinger.Core.UI.Handlers;
-using Gunslinger.Core.UI.Pages;
-using Gunslinger.Core.UI.ViewModels;
-using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Audio;
-using Ssit.CrossX.Common;
 using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Content;
@@ -11,7 +6,6 @@ using Ssit.CrossX.Games;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
-using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core;
@@ -68,9 +62,8 @@ public static class Initializer
         return container;
     }
 
-    public static IUiApp InitializeUi(this IIoCContainer container, IInputCoordinateSystem inputCoordinateSystem)
+    public static IUiApp Initialize(this IUiApp uiApp)
     {
-        var uiApp = container.InitializeUi((b, m, h) => OnInitializeUi(b, m, h, inputCoordinateSystem));
         uiApp.InitializeUiSounds();
             
         uiApp.Services.Get<PageInputContext>().AlwaysShowFocus = true;
@@ -86,19 +79,5 @@ public static class Initializer
         return container;
     }
     
-    private static void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers, IInputCoordinateSystem inputCoordinateSystem)
-    {
-        builder
-            .WithInstance(inputCoordinateSystem)
-            .WithCommonUi();
-            
-        navigationMap
-            .Map<MainPageViewModel, MainPage>()
-            .Map<OptionsPageViewModel, OptionsPage>()
-            .Map<GamePageViewModel, GamePage>();
-
-        handlers
-            .AddCommonUiMaping()
-            .AddMapping<LabelButtonEx, LabelButtonExHandler>();
-    }
+    
 }

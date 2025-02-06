@@ -16,7 +16,6 @@ public abstract class ViewHandler: IDisposable
     
     public View View { get; }
     public Type ViewType { get; }
-    protected IRenderModeProvider RenderModeProvider { get; }
 
     public IViewParent Parent { get; }
 
@@ -26,12 +25,11 @@ public abstract class ViewHandler: IDisposable
 
     protected float CurrentScale => Parent.GetParent<IPage>().Scale;
     
-    protected ViewHandler(Type type, CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider)
+    protected ViewHandler(Type type, CreateHandlerParameters parameters)
     {
         View = parameters.View;
         Parent = parameters.Parent;
         ViewType = type;
-        RenderModeProvider = renderModeProvider;
 
         if (((IHandlerView)View).Handler != null) throw new InvalidOperationException();
         View.Handler = this;
@@ -85,15 +83,15 @@ public abstract class ViewHandler: IDisposable
         ScreenBounds = new RectangleF(offset + Bounds.TopLeft, Bounds.Size);
     }
     
-    public virtual void Draw(IRenderer renderer)
+    public virtual void Draw(IRenderer renderer, RenderMode mode)
     {
-        if (RenderModeProvider.RenderMode == RenderMode.Debug)
+        if (mode == RenderMode.Debug)
         {
             OnDrawDebug(renderer);
         }
         else
         {
-            OnDraw(renderer);
+            OnDraw(renderer, mode);
         }
     }
 
@@ -107,7 +105,7 @@ public abstract class ViewHandler: IDisposable
         
     }
 
-    protected virtual void OnDraw(IRenderer renderer)
+    protected virtual void OnDraw(IRenderer renderer, RenderMode mode)
     {
         
     }
@@ -154,8 +152,8 @@ public abstract class ViewHandler: IDisposable
     }
 }
 
-public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider)
-    : ViewHandler(typeof(TView), parameters, renderModeProvider)
+public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters parameters)
+    : ViewHandler(typeof(TView), parameters)
     where TView : View
 {
     protected TView AttachedView => (TView)View;

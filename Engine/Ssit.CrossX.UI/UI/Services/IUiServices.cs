@@ -8,5 +8,4 @@ public interface IUiServices
     public IIoCContainer IoCContainer { get; }
     public IStylesManager StylesManager { get; }
     public IHandlerMapper HandlerMapper { get; }
-    public IRenderModeProvider RenderModeProvider { get; }
 }

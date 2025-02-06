@@ -111,7 +111,7 @@ public class TextRenderingContext
         _textHashCode = text.GetHashCode();
     }
 
-    private bool IsTextEqual(TextSource text)
+    private bool IsTextEqualQuick(TextSource text)
     {
         if (_text is null)
         {
@@ -119,6 +119,16 @@ public class TextRenderingContext
         }
         
         if (text.Length != _text.Count)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsTextEqual(TextSource text)
+    {
+        if (!IsTextEqualQuick(text))
         {
             return false;
         }
@@ -173,7 +183,14 @@ public class TextRenderingContext
             return false;
         }
         
-        if (FullStringCheckEnabled && !IsTextEqual(text))
+        if (FullStringCheckEnabled)
+        {
+            if (!IsTextEqual(text))
+            {
+                return false;
+            }
+        }
+        else if (!IsTextEqualQuick(text))
         {
             return false;
         }

@@ -10,7 +10,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
     private readonly IActionDispatcher _actionDispatcher;
 
-    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IRenderModeProvider renderModeProvider) : base(parameters, fontsManager, renderModeProvider)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher) : base(parameters, fontsManager)
     {
         _actionDispatcher = actionDispatcher;
         OnTextChanged();
@@ -24,7 +24,6 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 
         CalculateSizeInternal(out var width, out var height);
         CalculateAlign(out var ha, out var va);
-        
         
         if (width.IsAuto && ha != Align.Fill || height.IsAuto && va != Align.Fill)
         {
@@ -47,18 +46,24 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 
         if (AttachedView.Text.Length > 0 && TextRectangle.Height < 1)
         {
+            TextRenderingContext.Reset();
+            OnTextChanged();
+            
             Parent?.RecalculateLayout(AttachedView);
         }
         
         if (MathF.Abs(oldWidth - newWidth) > float.Epsilon || MathF.Abs(oldHeight - newHeight) > float.Epsilon)
         {
+            TextRenderingContext.Reset();
+            OnTextChanged();
+            
             Parent?.RecalculateLayout(AttachedView);
         }
     }
     
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
         
         var font = GetFont();
 
@@ -70,12 +75,12 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
                 position: TextRectangle,
                 align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
                 scale: TextScale,
-                color: TextColor ?? RgbaColor.Transparent,
+                color: TextColor(mode) ?? RgbaColor.Transparent,
                 spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
-                outlineColor: TextOutlineColor ?? RgbaColor.Transparent,
+                outlineColor: TextOutlineColor(mode) ?? RgbaColor.Transparent,
                 context: TextRenderingContext);
         }
-        catch(Exception ex)
+        catch(Exception)
         {
             TextRenderingContext.Reset();
             _actionDispatcher.Enqueue(OnTextChanged);

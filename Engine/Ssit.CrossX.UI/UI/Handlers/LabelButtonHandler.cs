@@ -11,9 +11,9 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInputConsumer, IFocusable where TLabelButton: LabelButton
 {
-    protected override RgbaColor? BackgroundColor => AttachedView.BackgroundColors?.GetColor( RenderModeProvider.RenderMode, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextColor => AttachedView.TextColors?.GetColor( RenderModeProvider.RenderMode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextOutlineColor => AttachedView.TextOutlineColors?.GetColor( RenderModeProvider.RenderMode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? BackgroundColor(RenderMode mode) => AttachedView.BackgroundColors?.GetColor(mode, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextColor(RenderMode mode) => AttachedView.TextColors?.GetColor(mode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextOutlineColor(RenderMode mode) => AttachedView.TextOutlineColors?.GetColor(mode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
     
     public bool Enabled => _buttonHelper.IsEnabled;
     public bool DisableAllInput => _buttonHelper.IsExecutingCommand;
@@ -24,7 +24,7 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IRenderModeProvider renderModeProvider) : base(parameters, fontsManager, actionDispatcher, renderModeProvider)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) : base(parameters, fontsManager, actionDispatcher)
     {
         _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, uiSounds);
     }

@@ -3,19 +3,22 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider) : ViewHandler<TBackground>(parameters, renderModeProvider) where TBackground: Background
+public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters) : ViewHandler<TBackground>(parameters) where TBackground: Background
 {
-    protected virtual RgbaColor? BackgroundColor => AttachedView.BackgroundColor;
+    protected virtual RgbaColor? BackgroundColor(RenderMode mode) => mode == RenderMode.Normal
+        ? AttachedView.BackgroundColor
+        : RgbaColor.Black * (AttachedView.BackgroundColor?.Af ?? 1f);
     
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        if (BackgroundColor.HasValue)
+        var bgColor = BackgroundColor(mode);
+        if (bgColor.HasValue)
         {
-            renderer.FillRectangle(ScreenBounds, BackgroundColor.Value);
+            renderer.FillRectangle(ScreenBounds, bgColor.Value);
         }
     }
 }
 
-public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider) : BackgroundHandler<Background>(parameters, renderModeProvider)
+public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters) : BackgroundHandler<Background>(parameters)
 {
 }

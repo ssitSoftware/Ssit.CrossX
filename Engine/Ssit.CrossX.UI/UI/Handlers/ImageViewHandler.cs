@@ -16,7 +16,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     private ImageScalingMode ScalingMode => AttachedView.Scaling ?? ImageScalingMode.None;
     private ContentAlign ContentAlign => AttachedView.ContentAlign ?? ContentAlign.Center | ContentAlign.VCenter;
     
-    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
+    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container) : base(parameters)
     {
         if (AttachedView.Source is null)
         {
@@ -113,9 +113,9 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         AttachedView.Source.ImageChanged += OnImageChanged;
     }
 
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
         var texture = AttachedView.Source?.GetTexture(_container);
         
         if (texture is null)
@@ -124,7 +124,17 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         }
 
         CalculateTargetRects(texture.Resource, out var targetRect, out var sourceRect);
-        renderer.DrawTexture(texture.Resource, targetRect, sourceRect, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView.Filter ?? TextureFilter.Nearest);
+
+        switch (mode)
+        {
+            case RenderMode.Normal:
+                renderer.DrawTexture(texture.Resource, targetRect, sourceRect, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView?.Filter ?? TextureFilter.Nearest);
+                break;
+            
+            case RenderMode.Glow:
+                renderer.DrawTexture(texture.Resource, targetRect, sourceRect, RgbaColor.Black * (AttachedView?.TintColor?.Af ?? 1f), AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView?.Filter ?? TextureFilter.Nearest);
+                break;
+        }
     }
 
     private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out Rectangle sourceRect)

@@ -6,8 +6,8 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IRenderModeProvider renderModeProvider)
-    : ChildrenContainerHandler<TVerticalStack>(parameters, handlerMapper, renderModeProvider) where TVerticalStack: VerticalStack
+public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper)
+    : ChildrenContainerHandler<TVerticalStack>(parameters, handlerMapper) where TVerticalStack: VerticalStack
 {
     protected override void RecalculateChildrenLayouts()
     {

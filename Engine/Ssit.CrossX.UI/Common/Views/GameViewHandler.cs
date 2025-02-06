@@ -3,17 +3,16 @@ using Ssit.CrossX.UI.Handlers;
 
 namespace Ssit.CrossX.Common.Views;
 
-internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider) : BackgroundHandler<GameView>(parameters, renderModeProvider)
+internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters) : BackgroundHandler<GameView>(parameters)
 {
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
         
         var simulation = AttachedView.Simulation;
-
         for (var pass = 0; pass < simulation.RenderPasses; pass++)
         {
-            simulation.Render(renderer, ScreenBounds, pass, CurrentScale);
+            simulation.Render(renderer, mode, ScreenBounds, pass, CurrentScale);
         }
     }
 

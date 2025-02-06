@@ -10,7 +10,7 @@ internal interface IPage: IViewParent, IDisposable
 {
     void Load(IUiServices services, IInputContext inputContext, object viewModel);
     void Update(float dt);
-    void Draw(IRenderer renderer);
+    void Draw(IRenderer renderer, RenderMode mode);
     void SetBounds(RectangleF bounds, float scale);
     ViewHandler RootHandler { get; }
     bool OnUiButton(UiButton button, IInputContext inputProcessor);

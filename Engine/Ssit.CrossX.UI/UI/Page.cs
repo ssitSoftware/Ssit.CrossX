@@ -151,7 +151,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         return false;
     }
 
-    void IPage.Draw(IRenderer renderer) => OnDraw(renderer);
+    void IPage.Draw(IRenderer renderer, RenderMode mode) => OnDraw(renderer, mode);
     
     void IPage.SetBounds(RectangleF bounds, float scale) => SetBounds(bounds, scale);
 
@@ -170,9 +170,9 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         }
     }
 
-    protected virtual void OnDraw(IRenderer renderer)
+    protected virtual void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        _rootHandler.Draw(renderer);
+        _rootHandler.Draw(renderer, mode);
     }
     
     protected TContainer GetContainer<TContainer>() where TContainer : TemplatesContainer

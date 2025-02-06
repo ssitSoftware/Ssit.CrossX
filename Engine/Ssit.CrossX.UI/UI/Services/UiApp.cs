@@ -32,26 +32,26 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
         Navigation.Update(dt);
     }
 
-    public void Draw(IRenderer renderer, RgbaColor? clearColor = null)
+    public void Draw(IRenderer renderer, RenderMode mode, RgbaColor? clearColor = null)
     {
-        if (clearColor?.A > 0)
+        if (clearColor?.A > 0 && mode == RenderMode.Normal)
         {
             renderer.Clear(clearColor.Value);
         }
         
-        if (!Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
+        if (!Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null && mode != RenderMode.Debug)
         {
-            Navigation.PreviousPage.Draw(renderer);
+            Navigation.PreviousPage.Draw(renderer, mode);
         }
         
         if (Navigation.CurrentPage is not null)
         {
-            Navigation.CurrentPage.Draw(renderer);
+            Navigation.CurrentPage.Draw(renderer, mode);
         }
         
-        if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
+        if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null && mode != RenderMode.Debug)
         {
-            Navigation.PreviousPage.Draw(renderer);
+            Navigation.PreviousPage.Draw(renderer, mode);
         }
     }
 

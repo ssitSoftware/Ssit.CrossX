@@ -12,8 +12,8 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     private float _time = 0;
     private float _waveAmplitude;
     
-    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IRenderModeProvider renderModeProvider) 
-        : base(parameters, fontsManager, actionDispatcher, uiSounds, renderModeProvider)
+    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) 
+        : base(parameters, fontsManager, actionDispatcher, uiSounds)
     {
     }
 
@@ -39,7 +39,7 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         }
     }
 
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
         var offset = _waveAmplitude * (float) Math.Sin(_time * 2 * Math.PI);
 
@@ -47,11 +47,11 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         {
             renderer.StateManager.SaveState();
             renderer.StateManager.Transform(Matrix3x2.CreateTranslation(new Vector2(offset, 0)));
-            base.OnDraw(renderer);
+            base.OnDraw(renderer, mode);
             renderer.StateManager.RestoreState();
             return;
         }
         
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
     }
 }

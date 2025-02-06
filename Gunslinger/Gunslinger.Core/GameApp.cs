@@ -61,8 +61,7 @@ namespace Gunslinger.Core
             {
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
-                MaxScale = 4,
-                EnableDebug = true
+                MaxScale = 4
             });
     }
 }

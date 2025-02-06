@@ -98,9 +98,6 @@ public class SharedStringJoin : SharedString
 
     private void OnTextChanged()
     {
-        lock (this)
-        {
-            RaiseTextChanged();
-        }
+        RaiseTextChanged();
     }
 }

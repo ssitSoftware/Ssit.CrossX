@@ -12,7 +12,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
     private IVertexBuffer[] _vertexBuffers;
     private bool _recalculateVertices;
     
-    public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container, IRenderModeProvider renderModeProvider) : base(parameters, fontsManager, renderModeProvider)
+    public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container) : base(parameters, fontsManager)
     {
         _container = container;
         OnTextChanged();
@@ -53,8 +53,8 @@ public class TextViewHandler : TextBaseHandler<TextView>
     protected sealed override void OnTextChanged()
     {
         UpdateText();
-        
         CalculateAlign(out var ha, out var va);
+        
         if ((AttachedView.Width?.IsAuto ?? true) && ha != Align.Fill || (AttachedView.Height?.IsAuto ?? true) && va != Align.Fill)
         {
             Parent?.RecalculateLayout(AttachedView);
@@ -103,9 +103,9 @@ public class TextViewHandler : TextBaseHandler<TextView>
         }
     }
 
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
         
         if ( _recalculateVertices || _vertexBuffers == null)
         {
@@ -117,8 +117,8 @@ public class TextViewHandler : TextBaseHandler<TextView>
 
         var font = (IGlyphFont)GetFont();
 
-        var textColor = TextColor ?? RgbaColor.Transparent;
-        var outlineColor = TextOutlineColor ?? RgbaColor.Transparent;
+        var textColor = TextColor(mode) ?? RgbaColor.Transparent;
+        var outlineColor = TextOutlineColor(mode) ?? RgbaColor.Transparent;
 
         if (textColor.A > 0)
         {

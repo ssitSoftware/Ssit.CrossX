@@ -49,7 +49,7 @@ public abstract class ChildrenContainerHandler<TContainer>
         return new RectangleF(left, top, bounds.Width - right - left, bounds.Height - bottom - top);
     }
     
-    protected ChildrenContainerHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
+    protected ChildrenContainerHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper) : base(parameters)
     {
         _handlerMapper = handlerMapper;
         
@@ -66,28 +66,28 @@ public abstract class ChildrenContainerHandler<TContainer>
         UpdateCollection(true, false);
     }
 
-    protected override void OnDraw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer, RenderMode mode)
     {
-        base.OnDraw(renderer);
+        base.OnDraw(renderer, mode);
         RecalculateChildrenLayouts();
 
-        DrawChildren(renderer);
+        DrawChildren(renderer, mode);
     }
     
-    private void DrawChildren(IRenderer renderer)
+    private void DrawChildren(IRenderer renderer, RenderMode mode)
     {
         for (var idx = 0; idx < AttachedView.Children.Count; idx++)
         {
             var child = AttachedView.Children[idx];
             var handlerView = (IHandlerView)child;
-            handlerView.Handler.Draw(renderer);
+            handlerView.Handler.Draw(renderer, mode);
         }
     }
 
     protected override void OnDrawDebug(IRenderer renderer)
     {
         base.OnDrawDebug(renderer);
-        DrawChildren(renderer);
+        DrawChildren(renderer, RenderMode.Debug);
     }
 
     public override void Update(float dt)

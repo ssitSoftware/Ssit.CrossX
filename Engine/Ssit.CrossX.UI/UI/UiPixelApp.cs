@@ -7,13 +7,11 @@ using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI;
 
-public abstract class UiPixelApp : PixelApp, IRenderModeProvider
+public abstract class UiPixelApp : PixelApp
 {
     protected IUiApp UiApp { get; private set; }
     private IAppHost _appHost;
     private IRenderer _renderer;
-    
-    public RenderMode RenderMode { get; private set; }
         
     protected abstract RgbaColor BackgroundColor { get; }
         
@@ -29,12 +27,6 @@ public abstract class UiPixelApp : PixelApp, IRenderModeProvider
             _appHost?.Dispose();
             _appHost = null;
         }
-    }
-
-    protected override void OnInitializeServices(IIoCContainerBuilder builder)
-    {
-        base.OnInitializeServices(builder);
-        builder.WithInstance<IRenderModeProvider>(this);
     }
 
     protected override void OnInitialize(IIoCContainer container)
@@ -71,14 +63,7 @@ public abstract class UiPixelApp : PixelApp, IRenderModeProvider
 
     private void Render(RenderMode mode)
     {
-        RenderMode = mode;
-
-        if (mode == RenderMode.Normal)
-        {
-            _renderer.Clear(BackgroundColor);
-        }
-        
-        UiApp.Draw(_renderer);
+        UiApp.Draw(_renderer, mode, BackgroundColor);
     }
 
     public override void OnUpdate(float elapsedTime) => UiApp.Update(elapsedTime);

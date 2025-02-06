@@ -5,8 +5,8 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IRenderModeProvider renderModeProvider)
-    : ChildrenContainerHandler<Container>(parameters, handlerMapper, renderModeProvider)
+public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper)
+    : ChildrenContainerHandler<Container>(parameters, handlerMapper)
 {
     protected override void RecalculateChildrenLayouts()
     {

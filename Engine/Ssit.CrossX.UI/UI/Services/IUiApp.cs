@@ -10,6 +10,6 @@ public interface IUiApp: IDisposable
     public INavigation Navigation { get; }
 
     void Update(float dt);
-    void Draw(IRenderer renderer, RgbaColor? clearColor = null);
+    void Draw(IRenderer renderer, RenderMode mode, RgbaColor? clearColor = null);
     void SetBounds(RectangleF bounds, float scale);
 }

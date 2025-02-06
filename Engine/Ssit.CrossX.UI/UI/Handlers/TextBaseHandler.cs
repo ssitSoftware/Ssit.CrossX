@@ -10,10 +10,10 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
-    protected virtual RgbaColor? TextColor =>
-        RenderModeProvider.RenderMode == RenderMode.Normal ? AttachedView.TextColor : RgbaColor.Black;
+    protected virtual RgbaColor? TextColor(RenderMode mode) =>
+        mode == RenderMode.Normal ? AttachedView.TextColor : RgbaColor.Black;
 
-    protected virtual RgbaColor? TextOutlineColor => RenderModeProvider.RenderMode == RenderMode.Normal
+    protected virtual RgbaColor? TextOutlineColor(RenderMode mode) => mode == RenderMode.Normal
         ? AttachedView.TextOutlineColor
         : RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f);
     
@@ -55,7 +55,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         }
     }
     
-    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
+    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters)
     {
         _fontsManager = fontsManager;
         if (AttachedView.Text is not null)

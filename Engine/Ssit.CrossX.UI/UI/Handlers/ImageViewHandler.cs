@@ -16,7 +16,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     private ImageScalingMode ScalingMode => AttachedView.Scaling ?? ImageScalingMode.None;
     private ContentAlign ContentAlign => AttachedView.ContentAlign ?? ContentAlign.Center | ContentAlign.VCenter;
     
-    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container) : base(parameters)
+    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
     {
         if (AttachedView.Source is null)
         {
@@ -113,9 +113,9 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         AttachedView.Source.ImageChanged += OnImageChanged;
     }
 
-    public override void Draw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer)
     {
-        base.Draw(renderer);
+        base.OnDraw(renderer);
         var texture = AttachedView.Source?.GetTexture(_container);
         
         if (texture is null)

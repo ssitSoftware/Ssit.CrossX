@@ -16,7 +16,12 @@ public class Simulation(IRenderModeProvider renderModeProvider) : ISimulation
         
         Render(renderer, target, renderModeProvider.RenderMode, scale);
     }
-    
+
+    public void RenderDebug(IRenderer renderer, RectangleF target, float scale)
+    {
+        
+    }
+
     void ISimulation.Update(float deltaTime) => Update(deltaTime);
 
     public event Action Updated;

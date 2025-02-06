@@ -11,7 +11,7 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     private bool _recalculateLayout;
     private ViewHandler _contentHandler;
 
-    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper) : base(parameters)
+    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
     {
         _contentHandler = handlerMapper.Create(AttachedView.ContentView, this);
         _recalculateLayout = true;
@@ -29,9 +29,9 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         RecalculateChildrenLayouts();
     }
 
-    public override void Draw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer)
     {
-        base.Draw(renderer);
+        base.OnDraw(renderer);
 
         var rect = ScreenBounds;
         var l = (int)MathF.Ceiling(rect.X);

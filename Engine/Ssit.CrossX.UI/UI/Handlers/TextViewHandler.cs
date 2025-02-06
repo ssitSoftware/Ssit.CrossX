@@ -103,9 +103,9 @@ public class TextViewHandler : TextBaseHandler<TextView>
         }
     }
 
-    public override void Draw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer)
     {
-        base.Draw(renderer);
+        base.OnDraw(renderer);
         
         if ( _recalculateVertices || _vertexBuffers == null)
         {

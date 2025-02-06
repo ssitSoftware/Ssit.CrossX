@@ -1,14 +1,12 @@
 using System;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
-using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
 public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> where TTextView: Label
 {
-    protected IRenderModeProvider RenderModeProvider { get; }
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
@@ -57,10 +55,8 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         }
     }
     
-    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IRenderModeProvider renderModeProvider) : base(parameters)
+    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IRenderModeProvider renderModeProvider) : base(parameters, renderModeProvider)
     {
-        RenderModeProvider = renderModeProvider;
-        
         _fontsManager = fontsManager;
         if (AttachedView.Text is not null)
         {

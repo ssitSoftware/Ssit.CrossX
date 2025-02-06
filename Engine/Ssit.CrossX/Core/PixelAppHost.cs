@@ -20,13 +20,20 @@ public class PixelAppHost: IAppHost
         public Size DesignSize = new(360, 180);
         public Mode Mode = Mode.WidthAndHeight;
         public int MaxScale = 2;
-        public bool Optimize = false;
+        public GlowParameters GlowParameters;
+        public bool EnableDebug = false;
+    }
+
+    public class GlowParameters
+    {
+        
     }
 
     private readonly Parameters _parameters;
     private readonly IIoCContainer _iocContainer;
     private readonly IRenderer _renderer;
     private IRenderTarget _renderTarget;
+    private IRenderTarget _glowRenderTarget;
     private IRenderTarget _postRenderTarget;
 
     public int Scale { get; private set; } = 1;
@@ -56,10 +63,17 @@ public class PixelAppHost: IAppHost
         try
         {
             renderAction(RenderMode.Normal);
+
+            if (_glowRenderTarget != null)
+            {
+                _renderer.SetRenderTarget(_glowRenderTarget);
+                _renderer.Clear(RgbaColor.Black);
+                renderAction(RenderMode.Glow);
+            }
         }
         finally
         {
-            EndRender();
+            EndRender(renderAction);
         }
     }
 
@@ -73,19 +87,22 @@ public class PixelAppHost: IAppHost
         _renderer.SetRenderTarget(_renderTarget);
     }
     
-    private void EndRender()
+    private void EndRender(Action<RenderMode> renderAction)
     {
-        var sourceTexture = _renderTarget;
-        if (_postRenderTarget is not null)
-        {
-            _renderer.SetRenderTarget(_postRenderTarget);
-            _renderer.DrawTexture(_renderTarget,
-                new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
-                filter: TextureFilter.Nearest);
+        _renderer.SetRenderTarget(_postRenderTarget);
+        _renderer.DrawTexture(_renderTarget,
+            new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
+            filter: TextureFilter.Nearest);
 
-            sourceTexture = _postRenderTarget;
+        if (_glowRenderTarget != null)
+        {
+            _renderer.DrawTexture(_glowRenderTarget,
+                new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
+                filter: TextureFilter.Nearest, color: RgbaColor.White * 0.5f);
         }
 
+        var sourceTexture = _postRenderTarget;
+                  
         _renderer.SetRenderTarget(null);
         
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
@@ -99,6 +116,17 @@ public class PixelAppHost: IAppHost
         
         _renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Linear);
         Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
+
+        if (_parameters.EnableDebug)
+        {
+            _renderer.StateManager.Reset();
+            _renderer.StateManager.ClipRectangle(targetRect);
+            _renderer.StateManager.Transform(Transform);
+            
+            renderAction(RenderMode.Debug);
+            
+            _renderer.StateManager.Reset();
+        }
     }
 
     private (int, int, Size) CalculateScaleAndSize(Size size)
@@ -149,9 +177,8 @@ public class PixelAppHost: IAppHost
     private void ResizeInternal(Size size)
     {
         var targetScale = (int)Math.Ceiling((float)_finalScale / Scale);
-        var optimize = _parameters.Optimize;// || targetScale == 1;
         
-        var postRenderSize = _postRenderTarget?.Size ?? (optimize ? size * targetScale : Size.Zero);
+        var postRenderSize = _postRenderTarget?.Size ?? Size.Zero;
         
         if (_renderTarget?.Size == size && postRenderSize == size * targetScale)
         {
@@ -160,15 +187,21 @@ public class PixelAppHost: IAppHost
         
         _renderTarget?.Dispose();
         _postRenderTarget?.Dispose();
-        _postRenderTarget = null;
+        _glowRenderTarget?.Dispose();
+        _glowRenderTarget = null;
 
         _renderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
             Size = size
         });
 
-        if (optimize)
-            return;
+        if (_parameters.GlowParameters is not null)
+        {
+            _glowRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
+            {
+                Size = size
+            });
+        }
         
         _postRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
@@ -180,6 +213,9 @@ public class PixelAppHost: IAppHost
     {
         _renderTarget?.Dispose();
         _renderTarget = null;
+        
+        _glowRenderTarget?.Dispose();
+        _glowRenderTarget = null;
         
         _postRenderTarget?.Dispose();
         _postRenderTarget = null;

@@ -56,9 +56,9 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         }
     }
     
-    public override void Draw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer)
     {
-        base.Draw(renderer);
+        base.OnDraw(renderer);
         
         var font = GetFont();
 

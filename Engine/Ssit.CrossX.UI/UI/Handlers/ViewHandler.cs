@@ -16,20 +16,22 @@ public abstract class ViewHandler: IDisposable
     
     public View View { get; }
     public Type ViewType { get; }
+    protected IRenderModeProvider RenderModeProvider { get; }
 
     public IViewParent Parent { get; }
 
-    public RectangleF Bounds { get; private set; }
+    protected RectangleF Bounds { get; private set; }
 
     public RectangleF ScreenBounds { get; private set; }
 
     protected float CurrentScale => Parent.GetParent<IPage>().Scale;
     
-    protected ViewHandler(Type type, CreateHandlerParameters parameters)
+    protected ViewHandler(Type type, CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider)
     {
         View = parameters.View;
         Parent = parameters.Parent;
         ViewType = type;
+        RenderModeProvider = renderModeProvider;
 
         if (((IHandlerView)View).Handler != null) throw new InvalidOperationException();
         View.Handler = this;
@@ -85,10 +87,27 @@ public abstract class ViewHandler: IDisposable
     
     public virtual void Draw(IRenderer renderer)
     {
-        
+        if (RenderModeProvider.RenderMode == RenderMode.Debug)
+        {
+            OnDrawDebug(renderer);
+        }
+        else
+        {
+            OnDraw(renderer);
+        }
+    }
+
+    protected virtual void OnDrawDebug(IRenderer renderer)
+    {
+        renderer.FillRectangle(ScreenBounds, RgbaColor.Magenta * 0.2f);
     }
 
     public virtual void Update(float dt)
+    {
+        
+    }
+
+    protected virtual void OnDraw(IRenderer renderer)
     {
         
     }
@@ -135,8 +154,8 @@ public abstract class ViewHandler: IDisposable
     }
 }
 
-public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters parameters)
-    : ViewHandler(typeof(TView), parameters)
+public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters parameters, IRenderModeProvider renderModeProvider)
+    : ViewHandler(typeof(TView), parameters, renderModeProvider)
     where TView : View
 {
     protected TView AttachedView => (TView)View;

@@ -39,7 +39,7 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         }
     }
 
-    public override void Draw(IRenderer renderer)
+    protected override void OnDraw(IRenderer renderer)
     {
         var offset = _waveAmplitude * (float) Math.Sin(_time * 2 * Math.PI);
 
@@ -47,11 +47,11 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         {
             renderer.StateManager.SaveState();
             renderer.StateManager.Transform(Matrix3x2.CreateTranslation(new Vector2(offset, 0)));
-            base.Draw(renderer);
+            base.OnDraw(renderer);
             renderer.StateManager.RestoreState();
             return;
         }
         
-        base.Draw(renderer);
+        base.OnDraw(renderer);
     }
 }

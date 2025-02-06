@@ -71,15 +71,16 @@ public abstract class UiPixelApp : PixelApp, IRenderModeProvider
 
     private void Render(RenderMode mode)
     {
-        if (mode != RenderMode.Normal)
-            return;
-
         RenderMode = mode;
+
+        if (mode == RenderMode.Normal)
+        {
+            _renderer.Clear(BackgroundColor);
+        }
         
-        _renderer.Clear(BackgroundColor);
         UiApp.Draw(_renderer);
     }
-        
+
     public override void OnUpdate(float elapsedTime) => UiApp.Update(elapsedTime);
 
     protected abstract IAppHost CreateAppHost(IIoCContainer container);

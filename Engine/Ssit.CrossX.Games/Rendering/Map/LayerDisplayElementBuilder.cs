@@ -54,7 +54,7 @@ public class LayerDisplayElementBuilder
         var segmentWidth = (int)MathF.Ceiling((float)_targetSize.Width / _tileSize);
         var segmentHeight = (int)MathF.Ceiling((float)_targetSize.Height / _tileSize);
 
-        for (var oy = 0; oy < segmentHeight; oy += segmentHeight)
+        for (var oy = 0; oy < _layer.Height; oy += segmentHeight)
         {
             var height = Math.Min(segmentHeight, _layer.Height - oy);
             for (var ox = 0; ox < _layer.Width; ox += segmentWidth)
@@ -71,15 +71,13 @@ public class LayerDisplayElementBuilder
 
     private TilesDisplaySegment[] GenerateSegment(Rectangle rect)
     {
-        var builder = new TilesDisplaySegmentBuilder();
-
-        builder
+        var builder = new TilesDisplaySegmentBuilder()
             .WithServices(_container, _contentManager)
             .WithBounds(rect)
             .WithMap(_file)
             .WithLayer(_layer)
             .WithTileSize(_tileSize);
 
-        return builder.Build().ToArray();
+        return builder.Build();
     }
 }

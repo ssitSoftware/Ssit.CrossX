@@ -140,7 +140,7 @@ internal class RenderStateManager: IDisposable
         {
             renderPassDescriptor = _offscreenDescriptor;
             
-            renderPassDescriptor.ColorAttachments[0].Texture =
+            renderPassDescriptor.ColorAttachments[(IntPtr)0].Texture =
                 _metalDevice.CurrentRenderTarget.GetMap<IMTLTexture>(TextureMaps.Diffuse);
             
             renderPassDescriptor.DepthAttachment!.Texture =
@@ -155,10 +155,10 @@ internal class RenderStateManager: IDisposable
         
         if (renderPassDescriptor != null)
         {
-            renderPassDescriptor.ColorAttachments[0].ClearColor =
+            renderPassDescriptor.ColorAttachments[(IntPtr)0].ClearColor =
                 clearColor?.ToMetal() ?? new MTLClearColor(0, 0, 0, 0);
 
-            renderPassDescriptor.ColorAttachments[0].LoadAction =
+            renderPassDescriptor.ColorAttachments[(IntPtr)0].LoadAction =
                 clearColor.HasValue ? MTLLoadAction.Clear : MTLLoadAction.Load;
             
             renderPassDescriptor.DepthAttachment!.LoadAction = clearColor.HasValue ? MTLLoadAction.Clear : MTLLoadAction.Load;

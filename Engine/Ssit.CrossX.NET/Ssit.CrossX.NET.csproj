@@ -52,8 +52,4 @@
       <None Remove="libSDL2.dylib" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Core\" />
-    </ItemGroup>
-
 </Project>

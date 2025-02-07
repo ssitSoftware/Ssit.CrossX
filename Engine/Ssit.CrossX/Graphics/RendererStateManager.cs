@@ -59,9 +59,11 @@ public class RendererStateManager
     
     public void Transform(Matrix4x4 matrix)
     {
+        ShouldFlush?.Invoke();
+        
         if (WorldTransform.HasValue)
         {
-            WorldTransform = WorldTransform.Value * matrix;
+            WorldTransform = matrix * WorldTransform.Value;
         }
         else
         {
@@ -71,6 +73,7 @@ public class RendererStateManager
 
     public void ClipRectangle(RectangleF rect)
     {
+        ShouldFlush?.Invoke();
         rect = TransformRect(rect);
         
         if (_clipRect.HasValue)

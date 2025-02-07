@@ -7,21 +7,11 @@ namespace Ssit.CrossX.Games.Utils;
 
 public static class LayerOffsetCalculator
 {
-    public static Vector2 CalculateLayerOffset(Vector2 layerSpeed, Size layerSize, Size mainLayerSize, Vector2 globalOffset)
-    {
-        float offX = globalOffset.X * layerSpeed.X;
-        
-        float vertSpeed = layerSpeed.Y;
-        var offY = globalOffset.Y * vertSpeed - mainLayerSize.Height * vertSpeed + layerSize.Height;
-
-        return new(offX, offY);
-    }
-    
     public static Vector2 CalculateLayerOffset(MapLayer layer, MapLayer mainLayer, Vector2 globalOffset)
     {
-        float offX = globalOffset.X * (float)layer.HorizontalSpeed;
+        float offX = globalOffset.X * layer.HorizontalSpeed;
         
-        float vertSpeed = MathF.Max(0.0001f, (float) layer.VerticalSpeed);
+        float vertSpeed = MathF.Max(0.0001f, layer.VerticalSpeed);
         var offY = globalOffset.Y * vertSpeed - mainLayer.Height * vertSpeed + layer.Height;
 
         return new(offX, offY);

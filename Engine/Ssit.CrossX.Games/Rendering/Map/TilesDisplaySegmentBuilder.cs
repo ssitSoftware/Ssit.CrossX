@@ -67,8 +67,10 @@ public class TilesDisplaySegmentBuilder
         return this;
     }
 
-    public IEnumerable<TilesDisplaySegment> Build()
+    public TilesDisplaySegment[] Build()
     {
+        var list = new List<TilesDisplaySegment>();
+        
         var textures = 
             _tileSets.Select(tileset => _contentManager.Get<ITexture>(tileset)).ToArray();
 
@@ -94,12 +96,11 @@ public class TilesDisplaySegmentBuilder
                     var xox = (float)_tileSize / textures[tile.TileSet].Resource.Size.Width;
                     var xoy = (float)_tileSize / textures[tile.TileSet].Resource.Size.Height;
 
-                    var xtl = new Vector2((float)tile.X * _tileSize / textures[tile.TileSet].Resource.Size.Width,
-                        (float)tile.Y * _tileSize / textures[tile.TileSet].Resource.Size.Height);
+                    var xtl = new Vector2(tile.X * xox, tile.Y * xoy);
 
-                    var xtr = tl + new Vector2(xox, 0);
-                    var xbr = tl + new Vector2(xox, xoy);
-                    var xbl = tl + new Vector2(0, xoy);
+                    var xtr = xtl + new Vector2(xox, 0);
+                    var xbr = xtl + new Vector2(xox, xoy);
+                    var xbl = xtl + new Vector2(0, xoy);
 
                     if (!_verticesMap.TryGetValue(tile.TileSet, out List<VertexPositionColorTexture> vertices))
                     {
@@ -121,12 +122,13 @@ public class TilesDisplaySegmentBuilder
             {
                 var texture = _tileSets[key];
 
-                yield return _container.IoCConstruct<TilesDisplaySegment>(new TilesDisplaySegment.Parameters
+                list.Add(_container.IoCConstruct<TilesDisplaySegment>(new TilesDisplaySegment.Parameters
                 {
                     Vertices = vertices.ToArray(),
                     TexturePath = texture
-                });
+                }));
             }
+            return list.ToArray();
         }
         finally
         {

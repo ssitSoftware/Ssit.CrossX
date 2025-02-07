@@ -18,8 +18,13 @@ public static class Initializer
         var mapper = inputMappings.Mapper(0);
 
         mapper.MapAxis("Horizontal", GameControllerAxis.LeftX);
+        mapper.MapAxis("Vertical", GameControllerAxis.LeftY);
+        
         mapper.MapAxis("Horizontal", GameControllerButton.DPadLeft, GameControllerButton.DPadRight);
         mapper.MapAxis("Horizontal", Key.Left, Key.Right);
+        
+        mapper.MapAxis("Vertical", GameControllerButton.DPadUp, GameControllerButton.DPadDown);
+        mapper.MapAxis("Vertical", Key.Up, Key.Down);
 
         mapper.MapButton("Shoot", GameControllerButton.B);
         mapper.MapButton("Shoot", Key.Z);

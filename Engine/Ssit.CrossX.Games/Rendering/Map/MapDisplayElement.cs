@@ -12,6 +12,14 @@ public class MapDisplayElement: IDisposable
     {
         _layers = layers;
     }
+
+    public void Update(float dt)
+    {
+        foreach (var layer in _layers)
+        {
+            layer.Update(dt);
+        }
+    }
     
     public void Dispose()
     {

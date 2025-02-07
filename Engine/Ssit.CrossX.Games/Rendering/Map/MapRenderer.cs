@@ -18,15 +18,17 @@ public static class MapRenderer
         var globalOffset = cameraLookAt - screenSizeNormalized / 2;
         
         globalOffset.X = MathF.Min(MathF.Max(0, globalOffset.X), mainLayer.SourceSize.Width - screenSizeNormalized.X);
-        globalOffset.Y = MathF.Min(MathF.Max(0, globalOffset.Y), mainLayer.SourceSize.Height - screenSizeNormalized.Y);
+        globalOffset.Y = MathF.Min(MathF.Max(screenSizeNormalized.Y, globalOffset.Y), mainLayer.SourceSize.Height);
         
         foreach (var layer in map.Layers)
         {
             var offset = LayerOffsetCalculator.CalculateLayerOffset(layer, mainLayer, globalOffset);
-            var visibleBounds = new RectangleF(offset.X, offset.Y, (float)targetSize.Width / tileSize, (float)targetSize.Height / tileSize);
+            
+            offset = -offset * tileSize + targetSize.ToVector() / 2 + new Vector2(-targetSize.Width / 2f, targetSize.Height / 2f);
+            var visibleBounds = new RectangleF(-offset.X / tileSize, -offset.Y / tileSize, (float)targetSize.Width / tileSize, (float)targetSize.Height / tileSize);
             
             renderer.StateManager.SaveState();
-            renderer.StateManager.Transform(Matrix3x2.CreateTranslation(-offset * tileSize));
+            renderer.StateManager.Transform(Matrix3x2.CreateTranslation(offset));
             
             RenderLayer(renderer, layer, visibleBounds, mode);
 

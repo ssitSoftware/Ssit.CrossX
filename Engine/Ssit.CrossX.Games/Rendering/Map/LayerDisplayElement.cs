@@ -34,4 +34,8 @@ public class LayerDisplayElement: IDisposable
         }
         _tiles.Clear();
     }
+
+    public void Update(float dt)
+    {
+    }
 }

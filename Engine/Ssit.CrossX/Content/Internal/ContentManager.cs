@@ -39,7 +39,7 @@ internal class ContentManager: IContentManager
         path = PathHelper.NormalizePath(path);
         
         var key = GetKey<TResource>(path);
-
+        
         if (!_resources.TryGetValue(key, out var resource))
         {
             var obj = LoadResource<TResource>(path);
@@ -63,7 +63,13 @@ internal class ContentManager: IContentManager
             }
         }
 
-        var handle = new ResourceHandleManaged<TResource>((TResource) resource.Object, key, g =>
+        return FromResourceInstance<TResource>(key, resource);
+    }
+
+    private ResourceHandleManaged<TResource> FromResourceInstance<TResource>(string key, ResourceInstance resource)
+        where TResource : class, IDisposable
+    {
+        var handle = new ResourceHandleManaged<TResource>((TResource)resource.Object, key, g =>
         {
             resource.Users.Remove(g);
             if (resource.Users.Count == 0)
@@ -71,7 +77,7 @@ internal class ContentManager: IContentManager
                 resource.Object.Dispose();
                 _resources.Remove(key);
             }
-        });
+        }, () => FromResourceInstance<TResource>(key, resource));
 
         resource.Users.Add(handle.Guid);
         return handle;

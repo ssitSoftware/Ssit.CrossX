@@ -226,10 +226,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                 Transform xfA = new Transform();
                 Transform xfB = new Transform();
-                xfA.q.Set(aA);
-                xfB.q.Set(aB);
-                xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
-                xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
+                xfA.Q.Set(aA);
+                xfB.Q.Set(aB);
+                xfA.P = cA - MathUtils.Mul(xfA.Q, localCenterA);
+                xfB.P = cB - MathUtils.Mul(xfB.Q, localCenterB);
 
                 Vector2 normal;
                 FixedArray2<Vector2> points;
@@ -290,8 +290,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
                     if (k11 * k11 < k_maxConditionNumber * (k11 * k22 - k12 * k12))
                     {
                         // K is safe to invert.
-                        vc.K.ex = new Vector2(k11, k12);
-                        vc.K.ey = new Vector2(k12, k22);
+                        vc.K.Ex = new Vector2(k11, k12);
+                        vc.K.Ey = new Vector2(k12, k22);
                         vc.normalMass = vc.K.Inverse;
                     }
                     else
@@ -537,7 +537,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
                         x.X = -cp1.normalMass * b.X;
                         x.Y = 0.0f;
                         vn1 = 0.0f;
-                        vn2 = vc.K.ex.Y * x.X + b.Y;
+                        vn2 = vc.K.Ex.Y * x.X + b.Y;
 
                         if (x.X >= 0.0f && vn2 >= 0.0f)
                         {
@@ -578,7 +578,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
                         //
                         x.X = 0.0f;
                         x.Y = -cp2.normalMass * b.Y;
-                        vn1 = vc.K.ey.X * x.Y + b.X;
+                        vn1 = vc.K.Ey.X * x.Y + b.X;
                         vn2 = 0.0f;
 
                         if (x.Y >= 0.0f && vn1 >= 0.0f)
@@ -702,10 +702,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
                 {
                     Transform xfA = new Transform();
                     Transform xfB = new Transform();
-                    xfA.q.Set(aA);
-                    xfB.q.Set(aB);
-                    xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
-                    xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
+                    xfA.Q.Set(aA);
+                    xfB.Q.Set(aB);
+                    xfA.P = cA - MathUtils.Mul(xfA.Q, localCenterA);
+                    xfB.P = cB - MathUtils.Mul(xfB.Q, localCenterB);
 
                     Vector2 normal;
                     Vector2 point;
@@ -793,10 +793,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
                 {
                     Transform xfA = new Transform();
                     Transform xfB = new Transform();
-                    xfA.q.Set(aA);
-                    xfB.q.Set(aB);
-                    xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
-                    xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
+                    xfA.Q.Set(aA);
+                    xfB.Q.Set(aB);
+                    xfA.P = cA - MathUtils.Mul(xfA.Q, localCenterA);
+                    xfB.P = cB - MathUtils.Mul(xfB.Q, localCenterB);
 
                     Vector2 normal;
                     Vector2 point;
@@ -887,7 +887,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     case ManifoldType.FaceA:
                         {
-                            normal = MathUtils.Mul(xfA.q, manifold.LocalNormal);
+                            normal = MathUtils.Mul(xfA.Q, manifold.LocalNormal);
                             Vector2 planePoint = MathUtils.Mul(ref xfA, manifold.LocalPoint);
 
                             for (int i = 0; i < manifold.PointCount; ++i)
@@ -902,7 +902,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     case ManifoldType.FaceB:
                         {
-                            normal = MathUtils.Mul(xfB.q, manifold.LocalNormal);
+                            normal = MathUtils.Mul(xfB.Q, manifold.LocalNormal);
                             Vector2 planePoint = MathUtils.Mul(ref xfB, manifold.LocalPoint);
 
                             for (int i = 0; i < manifold.PointCount; ++i)
@@ -948,7 +948,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     case ManifoldType.FaceA:
                         {
-                            normal = MathUtils.Mul(xfA.q, pc.localNormal);
+                            normal = MathUtils.Mul(xfA.Q, pc.localNormal);
                             Vector2 planePoint = MathUtils.Mul(ref xfA, pc.localPoint);
 
                             Vector2 clipPoint = MathUtils.Mul(ref xfB, pc.localPoints[index]);
@@ -959,7 +959,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     case ManifoldType.FaceB:
                         {
-                            normal = MathUtils.Mul(xfB.q, pc.localNormal);
+                            normal = MathUtils.Mul(xfB.Q, pc.localNormal);
                             Vector2 planePoint = MathUtils.Mul(ref xfB, pc.localPoint);
 
                             Vector2 clipPoint = MathUtils.Mul(ref xfA, pc.localPoints[index]);

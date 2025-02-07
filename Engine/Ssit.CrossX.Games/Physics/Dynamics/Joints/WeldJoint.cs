@@ -188,15 +188,15 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float iA = _invIA, iB = _invIB;
 
             Mat33 K = new Mat33();
-            K.ex.X = mA + mB + _rA.Y * _rA.Y * iA + _rB.Y * _rB.Y * iB;
-            K.ey.X = -_rA.Y * _rA.X * iA - _rB.Y * _rB.X * iB;
-            K.ez.X = -_rA.Y * iA - _rB.Y * iB;
-            K.ex.Y = K.ey.X;
-            K.ey.Y = mA + mB + _rA.X * _rA.X * iA + _rB.X * _rB.X * iB;
-            K.ez.Y = _rA.X * iA + _rB.X * iB;
-            K.ex.Z = K.ez.X;
-            K.ey.Z = K.ez.Y;
-            K.ez.Z = iA + iB;
+            K.Ex.X = mA + mB + _rA.Y * _rA.Y * iA + _rB.Y * _rB.Y * iB;
+            K.Ey.X = -_rA.Y * _rA.X * iA - _rB.Y * _rB.X * iB;
+            K.Ez.X = -_rA.Y * iA - _rB.Y * iB;
+            K.Ex.Y = K.Ey.X;
+            K.Ey.Y = mA + mB + _rA.X * _rA.X * iA + _rB.X * _rB.X * iB;
+            K.Ez.Y = _rA.X * iA + _rB.X * iB;
+            K.Ex.Z = K.Ez.X;
+            K.Ey.Z = K.Ez.Y;
+            K.Ez.Z = iA + iB;
 
             if (FrequencyHz > 0.0f)
             {
@@ -223,7 +223,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 _bias = C * h * k * _gamma;
 
                 invM += _gamma;
-                _mass.ez.Z = invM != 0.0f ? 1.0f / invM : 0.0f;
+                _mass.Ez.Z = invM != 0.0f ? 1.0f / invM : 0.0f;
             }
             else
             {
@@ -270,7 +270,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             {
                 float Cdot2 = wB - wA;
 
-                float impulse2 = -_mass.ez.Z * (Cdot2 + _bias + _gamma * _impulse.Z);
+                float impulse2 = -_mass.Ez.Z * (Cdot2 + _bias + _gamma * _impulse.Z);
                 _impulse.Z += impulse2;
 
                 wA -= iA * impulse2;
@@ -332,15 +332,15 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float positionError, angularError;
 
             Mat33 K = new Mat33();
-            K.ex.X = mA + mB + rA.Y * rA.Y * iA + rB.Y * rB.Y * iB;
-            K.ey.X = -rA.Y * rA.X * iA - rB.Y * rB.X * iB;
-            K.ez.X = -rA.Y * iA - rB.Y * iB;
-            K.ex.Y = K.ey.X;
-            K.ey.Y = mA + mB + rA.X * rA.X * iA + rB.X * rB.X * iB;
-            K.ez.Y = rA.X * iA + rB.X * iB;
-            K.ex.Z = K.ez.X;
-            K.ey.Z = K.ez.Y;
-            K.ez.Z = iA + iB;
+            K.Ex.X = mA + mB + rA.Y * rA.Y * iA + rB.Y * rB.Y * iB;
+            K.Ey.X = -rA.Y * rA.X * iA - rB.Y * rB.X * iB;
+            K.Ez.X = -rA.Y * iA - rB.Y * iB;
+            K.Ex.Y = K.Ey.X;
+            K.Ey.Y = mA + mB + rA.X * rA.X * iA + rB.X * rB.X * iB;
+            K.Ez.Y = rA.X * iA + rB.X * iB;
+            K.Ex.Z = K.Ez.X;
+            K.Ey.Z = K.Ez.Y;
+            K.Ez.Z = iA + iB;
 
             if (FrequencyHz > 0.0f)
             {

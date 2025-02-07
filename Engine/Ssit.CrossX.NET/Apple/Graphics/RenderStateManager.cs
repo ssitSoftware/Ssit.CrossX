@@ -40,6 +40,8 @@ internal class RenderStateManager: IDisposable
         StencilAttachment = new MTLRenderPassStencilAttachmentDescriptor(),
     };
 
+    private bool _glow;
+
     public RenderStateManager(IMetalDevice metalDevice)
     {
         _metalDevice = metalDevice;
@@ -83,7 +85,8 @@ internal class RenderStateManager: IDisposable
         Matrix4x4? worldTransform,
         Rectangle? scissorRect,
         RgbaColor? blendColor = null,
-        RgbaColor? clearColor = null)
+        RgbaColor? clearColor = null,
+        bool glow = false)
     {
         var changeState = clearColor.HasValue;
         changeState |= _currentEncoder is null;
@@ -96,6 +99,7 @@ internal class RenderStateManager: IDisposable
         changeState |= blendMode != _currentBlendMode;
         changeState |= blendColor != _currentBlendColor;
         changeState |= _currentScissorRect != scissorRect;
+        changeState |= glow != _glow;
         
         if (!changeState)
         {
@@ -114,6 +118,7 @@ internal class RenderStateManager: IDisposable
         _currentBlendMode = blendMode;
         _currentBlendColor = blendColor;
         _currentScissorRect = scissorRect;
+        _glow = glow;
 
         var shaderEffect = (effect as IMetalShaderEffect) ?? ((vertexMode & VertexMode.Texture) != 0 ? _basicEffectPCT : _basicEffectPC);
         
@@ -144,8 +149,8 @@ internal class RenderStateManager: IDisposable
             renderPassDescriptor.StencilAttachment!.Texture =
                 _metalDevice.CurrentRenderTarget.GetMap<IMTLTexture>(TextureMaps.DepthBuffer);
             
-            renderPassDescriptor.RenderTargetWidth = (uint)_metalDevice.CurrentRenderTarget.Size.Width;
-            renderPassDescriptor.RenderTargetHeight = (uint)_metalDevice.CurrentRenderTarget.Size.Height;
+            renderPassDescriptor.RenderTargetWidth = (UIntPtr)_metalDevice.CurrentRenderTarget.Size.Width;
+            renderPassDescriptor.RenderTargetHeight = (UIntPtr)_metalDevice.CurrentRenderTarget.Size.Height;
         }
         
         if (renderPassDescriptor != null)
@@ -161,6 +166,24 @@ internal class RenderStateManager: IDisposable
             
             _currentEncoder = commandBuffer.CreateRenderCommandEncoder(renderPassDescriptor);
 
+            IMTLTexture sourceTexture = null;
+            if (texture is not null)
+            {
+                sourceTexture = texture.GetMap<IMTLTexture>(TextureMaps.Diffuse);
+                if (glow)
+                {
+                    var glowTexture = texture.GetMap<IMTLTexture>(TextureMaps.GlowMap);
+                    if (glowTexture is null)
+                    {
+                        blendColor = RgbaColor.Black;
+                    }
+                    else
+                    {
+                        sourceTexture = glowTexture;
+                    }
+                }
+            }
+
             shaderEffect.Apply(_currentEncoder, worldTransform, blendColor);
             
             _currentEncoder.SetDepthStencilState(_depthStencilState);
@@ -168,7 +191,7 @@ internal class RenderStateManager: IDisposable
             if (texture is not null)
             {
                 _currentEncoder.SetFragmentSamplerState(_currentTextureFilter == TextureFilter.Nearest ? _nearestSamplerState : _linearSamplerState, 0);
-                _currentEncoder.SetFragmentTexture(texture.GetMap<IMTLTexture>(TextureMaps.Diffuse), 0);
+                _currentEncoder.SetFragmentTexture(sourceTexture, 0);
             }
 
             if (_currentScissorRect.HasValue)

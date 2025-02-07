@@ -74,7 +74,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
         private float _localHeight;
         private int _xnum;
         private int _ynum;
-        private AABB _dirtyArea;
+        private Aabb _dirtyArea;
         private Vector2 _topLeft;
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
         /// </summary>
         /// <param name="world">The World</param>
         /// <param name="area">The area of the terrain.</param>
-        public Terrain(World world, AABB area)
+        public Terrain(World world, Aabb area)
         {
             World = world;
             Width = area.Width;
@@ -132,7 +132,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
             _bodyMap = new List<Body>[_xnum, _ynum];
 
             // make sure to mark the dirty area to an infinitely small box
-            _dirtyArea = new AABB(new Vector2(float.MaxValue, float.MaxValue), new Vector2(float.MinValue, float.MinValue));
+            _dirtyArea = new Aabb(new Vector2(float.MaxValue, float.MaxValue), new Vector2(float.MinValue, float.MinValue));
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
 
             RemoveOldData(xStart, xEnd, yStart, yEnd);
 
-            _dirtyArea = new AABB(new Vector2(float.MaxValue, float.MaxValue), new Vector2(float.MinValue, float.MinValue));
+            _dirtyArea = new Aabb(new Vector2(float.MaxValue, float.MaxValue), new Vector2(float.MinValue, float.MinValue));
         }
 
         private void RemoveOldData(int xStart, int xEnd, int yStart, int yEnd)
@@ -235,7 +235,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
             float ax = gx * CellSize;
             float ay = gy * CellSize;
 
-            List<Vertices> polys = MarchingSquares.DetectSquares(new AABB(new Vector2(ax, ay), new Vector2(ax + CellSize, ay + CellSize)), SubCellSize, SubCellSize, _terrainMap, Iterations, true);
+            List<Vertices> polys = MarchingSquares.DetectSquares(new Aabb(new Vector2(ax, ay), new Vector2(ax + CellSize, ay + CellSize)), SubCellSize, SubCellSize, _terrainMap, Iterations, true);
             if (polys.Count == 0) return;
 
             _bodyMap[gx, gy] = new List<Body>();

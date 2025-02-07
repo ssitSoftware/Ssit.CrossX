@@ -279,7 +279,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="point1">The first point of the line segment to test</param>
         /// <param name="point2">The second point of the line segment to test.</param>
         /// <param name="aabb">The AABB that is used for testing intersection.</param>
-        public static Vertices LineSegmentAABBIntersect(ref Vector2 point1, ref Vector2 point2, AABB aabb)
+        public static Vertices LineSegmentAABBIntersect(ref Vector2 point1, ref Vector2 point2, Aabb aabb)
         {
             return LineSegmentVerticesIntersect(ref point1, ref point2, aabb.Vertices);
         }

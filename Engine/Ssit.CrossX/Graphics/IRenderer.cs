@@ -146,9 +146,10 @@ public interface IRenderer
     /// <param name="filter">Sampler filter for texture rendering.</param>
     /// <param name="transform">Transform matrix for this render.</param>
     /// <param name="effect">The optional effect to apply to the rendering. If not provided, no effect will be applied.</param>
+    /// <param name="renderMode">Rendering mode.</param>
     void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null,
         RgbaColor? color = null, TextureFilter filter = TextureFilter.Nearest, Matrix4x4? transform = null, 
-        IEffect effect = null);
+        IEffect effect = null, RenderMode renderMode = RenderMode.Normal);
 
     void Flush();
 }

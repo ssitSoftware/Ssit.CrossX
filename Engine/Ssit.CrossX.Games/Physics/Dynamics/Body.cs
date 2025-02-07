@@ -114,14 +114,14 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             GravityScale = 1.0f;
             BodyType = bodyType;
 
-            _xf.q.Set(rotation);
+            _xf.Q.Set(rotation);
 
             //FPE: optimization
             if (position != Vector2.Zero)
             {
-                _xf.p = position;
-                _sweep.C0 = _xf.p;
-                _sweep.C = _xf.p;
+                _xf.P = position;
+                _sweep.C0 = _xf.P;
+                _sweep.C = _xf.P;
             }
 
             //FPE: optimization
@@ -493,7 +493,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <returns>Return the world position of the body's origin.</returns>
         public Vector2 Position
         {
-            get { return _xf.p; }
+            get { return _xf.P; }
             set
             {
                 Debug.Assert(!float.IsNaN(value.X) && !float.IsNaN(value.Y));
@@ -513,7 +513,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             {
                 Debug.Assert(!float.IsNaN(value));
 
-                SetTransform(ref _xf.p, value);
+                SetTransform(ref _xf.P, value);
             }
         }
 
@@ -853,10 +853,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <param name="angle">The angle.</param>
         public void SetTransformIgnoreContacts(ref Vector2 position, float angle)
         {
-            var oldPosition = _xf.p;
+            var oldPosition = _xf.P;
             
-            _xf.q.Set(angle);
-            _xf.p = position;
+            _xf.Q.Set(angle);
+            _xf.P = position;
 
             _sweep.C = MathUtils.Mul(ref _xf, _sweep.LocalCenter);
             _sweep.A = angle;
@@ -870,7 +870,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 FixtureList[i].Synchronize(broadPhase, ref _xf, ref _xf);
             }
             
-            Moved?.Invoke(_xf.p - oldPosition);
+            Moved?.Invoke(_xf.P - oldPosition);
         }
 
         /// <summary>
@@ -900,7 +900,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <param name="force">The force.</param>
         public void ApplyForce(ref Vector2 force)
         {
-            ApplyForce(ref force, ref _xf.p);
+            ApplyForce(ref force, ref _xf.P);
         }
 
         /// <summary>
@@ -909,7 +909,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <param name="force">The force.</param>
         public void ApplyForce(Vector2 force)
         {
-            ApplyForce(ref force, ref _xf.p);
+            ApplyForce(ref force, ref _xf.P);
         }
 
         /// <summary>
@@ -1052,8 +1052,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             // Kinematic bodies have zero mass.
             if (BodyType == BodyType.Kinematic)
             {
-                _sweep.C0 = _xf.p;
-                _sweep.C = _xf.p;
+                _sweep.C0 = _xf.P;
+                _sweep.C = _xf.P;
                 _sweep.A0 = _sweep.A;
                 return;
             }
@@ -1078,7 +1078,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             //FPE: Static bodies only have mass, they don't have other properties. A little hacky tho...
             if (BodyType == BodyType.Static)
             {
-                _sweep.C0 = _sweep.C = _xf.p;
+                _sweep.C0 = _sweep.C = _xf.P;
                 return;
             }
 
@@ -1147,7 +1147,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <returns>The same vector expressed in world coordinates.</returns>
         public Vector2 GetWorldVector(ref Vector2 localVector)
         {
-            return MathUtils.Mul(_xf.q, localVector);
+            return MathUtils.Mul(_xf.Q, localVector);
         }
 
         /// <summary>
@@ -1189,7 +1189,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <returns>The corresponding local vector.</returns>
         public Vector2 GetLocalVector(ref Vector2 worldVector)
         {
-            return MathUtils.MulT(_xf.q, worldVector);
+            return MathUtils.MulT(_xf.Q, worldVector);
         }
 
         /// <summary>
@@ -1248,8 +1248,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         internal void SynchronizeFixtures()
         {
             Transform xf1 = new Transform();
-            xf1.q.Set(_sweep.A0);
-            xf1.p = _sweep.C0 - MathUtils.Mul(xf1.q, _sweep.LocalCenter);
+            xf1.Q.Set(_sweep.A0);
+            xf1.P = _sweep.C0 - MathUtils.Mul(xf1.Q, _sweep.LocalCenter);
 
             IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
             for (int i = 0; i < FixtureList.Count; i++)
@@ -1260,12 +1260,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         internal void SynchronizeTransform()
         {
-            var oldPosition = _xf.p;
+            var oldPosition = _xf.P;
             
-            _xf.q.Set(_sweep.A);
-            _xf.p = _sweep.C - MathUtils.Mul(_xf.q, _sweep.LocalCenter);
+            _xf.Q.Set(_sweep.A);
+            _xf.P = _sweep.C - MathUtils.Mul(_xf.Q, _sweep.LocalCenter);
 
-            Moved?.Invoke(_xf.p - oldPosition);
+            Moved?.Invoke(_xf.P - oldPosition);
         }
 
         /// <summary>
@@ -1299,16 +1299,16 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         internal void Advance(float alpha)
         {
-            var oldPosition = _xf.p;
+            var oldPosition = _xf.P;
             
             // Advance to the new safe time. This doesn't sync the broad-phase.
             _sweep.Advance(alpha);
             _sweep.C = _sweep.C0;
             _sweep.A = _sweep.A0;
-            _xf.q.Set(_sweep.A);
-            _xf.p = _sweep.C - MathUtils.Mul(_xf.q, _sweep.LocalCenter);
+            _xf.Q.Set(_sweep.A);
+            _xf.P = _sweep.C - MathUtils.Mul(_xf.Q, _sweep.LocalCenter);
             
-            Moved?.Invoke(_xf.p - oldPosition);
+            Moved?.Invoke(_xf.P - oldPosition);
         }
 
         public event OnCollisionEventHandler OnCollision

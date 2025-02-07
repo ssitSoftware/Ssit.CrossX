@@ -24,7 +24,7 @@ namespace Ssit.CrossX.Editor.Helpers
             Meta = meta;
             _image = image;
 
-            foreach (var col in meta.Collissions)
+            foreach (var col in meta.Collisions)
             {
                 _collissions.Add(col.Key, (col.Value.Item1.Select(o => o.ToSkia()).ToArray(), new SKPoint[col.Value.Item1.Length+1]));
             }

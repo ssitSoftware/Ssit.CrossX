@@ -13,3 +13,9 @@ public interface IGameObjectRenderer
     void Animate(float dt, bool reverse);
     void Render(IRenderer renderer, Vector2 position, RenderPass renderPass);
 }
+
+public interface IGameObjectRenderer2
+{
+    RectangleF Bounds { get; }
+    void Render(IRenderer renderer, RenderMode mode);
+}

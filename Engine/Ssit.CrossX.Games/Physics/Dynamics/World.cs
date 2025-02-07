@@ -1295,7 +1295,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// </summary>
         /// <param name="callback">A user implemented callback class.</param>
         /// <param name="aabb">The aabb query box.</param>
-        public void QueryAABB(Func<Fixture, bool> callback, ref AABB aabb)
+        public void QueryAABB(Func<Fixture, bool> callback, ref Aabb aabb)
         {
             _queryAABBCallback = callback;
             ContactManager.BroadPhase.Query(_queryAABBCallbackWrapper, ref aabb);
@@ -1308,7 +1308,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// </summary>
         /// <param name="aabb">The aabb query box.</param>
         /// <returns>A list of fixtures that were in the affected area.</returns>
-        public List<Fixture> QueryAABB(ref AABB aabb)
+        public List<Fixture> QueryAABB(ref Aabb aabb)
         {
             List<Fixture> affected = new List<Fixture>();
 
@@ -1400,7 +1400,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         public Fixture TestPoint(Vector2 point)
         {
-            AABB aabb;
+            Aabb aabb;
             Vector2 d = new Vector2(Settings.Epsilon, Settings.Epsilon);
             aabb.LowerBound = point - d;
             aabb.UpperBound = point + d;
@@ -1434,7 +1434,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <returns></returns>
         public List<Fixture> TestPointAll(Vector2 point)
         {
-            AABB aabb;
+            Aabb aabb;
             Vector2 d = new Vector2(Settings.Epsilon, Settings.Epsilon);
             aabb.LowerBound = point - d;
             aabb.UpperBound = point + d;
@@ -1466,7 +1466,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         {
             foreach (Body b in BodyList)
             {
-                b._xf.p -= newOrigin;
+                b._xf.P -= newOrigin;
                 b._sweep.C0 -= newOrigin;
                 b._sweep.C -= newOrigin;
             }

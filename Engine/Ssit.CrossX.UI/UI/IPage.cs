@@ -19,4 +19,5 @@ internal interface IPage: IViewParent, IDisposable
     float TransitionProgress { get; set; }
     float Scale { get; }
     void SignalRecalculationPending();
+    void InvalidateRendering();
 }

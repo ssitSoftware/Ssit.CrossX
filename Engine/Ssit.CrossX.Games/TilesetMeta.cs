@@ -6,26 +6,19 @@ using System.Numerics;
 
 namespace Ssit.CrossX.Games;
 
-public class TilesetMeta
+public class TilesetMeta(Dictionary<(int, int), (Vector2[], string)> collisions)
 {
-    public IReadOnlyDictionary<(int, int), (Vector2[], string)> Collissions => _collissions;
-    
-    private readonly Dictionary<(int, int), (Vector2[], string)> _collissions;
+    public IReadOnlyDictionary<(int, int), (Vector2[], string)> Collisions => collisions;
 
-    public TilesetMeta(Dictionary<(int, int), (Vector2[], string)> collissions)
+    public Vector2[] GetCollisionPolygon(int x, int y)
     {
-        _collissions = collissions;
-    }
-
-    public Vector2[] GetCollissionPolygon(int x, int y)
-    {
-        _collissions.TryGetValue((x, y), out var polygon);
+        collisions.TryGetValue((x, y), out var polygon);
         return polygon.Item1;
     }
 
     public string GetMaterial(int x, int y)
     {
-        _collissions.TryGetValue((x, y), out var polygon);
+        collisions.TryGetValue((x, y), out var polygon);
         return polygon.Item2;
     }
 

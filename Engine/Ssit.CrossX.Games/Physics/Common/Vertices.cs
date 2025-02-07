@@ -182,9 +182,9 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <summary>
         /// Returns an AABB that fully contains this polygon.
         /// </summary>
-        public AABB GetAABB()
+        public Aabb GetAABB()
         {
-            AABB aabb;
+            Aabb aabb;
             Vector2 lowerBound = new Vector2(float.MaxValue, float.MaxValue);
             Vector2 upperBound = new Vector2(float.MinValue, float.MinValue);
 

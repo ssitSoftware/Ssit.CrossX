@@ -35,7 +35,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
         {
             HashSet<Body> affectedBodies = new HashSet<Body>();
 
-            AABB aabb;
+            Aabb aabb;
             aabb.LowerBound = pos - new Vector2(radius);
             aabb.UpperBound = pos + new Vector2(radius);
 

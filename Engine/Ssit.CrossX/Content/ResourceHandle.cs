@@ -28,6 +28,8 @@ public abstract class ResourceHandle<TResource> : IDisposable where TResource : 
     protected abstract void OnDispose();
     
     public static implicit operator TResource( ResourceHandle<TResource> handle ) => handle.Resource;
+
+    public abstract ResourceHandle<TResource> Clone();
 }
 
 /// <summary>
@@ -39,11 +41,13 @@ public class ResourceHandleManaged<TResource> : ResourceHandle<TResource> where 
     internal Guid Guid { get; } = Guid.NewGuid();
 
     private readonly Action<Guid> _onDispose;
-    
-    internal ResourceHandleManaged(TResource resource, string name, Action<Guid> onDispose):
+    private readonly Func<ResourceHandle<TResource>> _cloneDelegate;
+
+    internal ResourceHandleManaged(TResource resource, string name, Action<Guid> onDispose, Func<ResourceHandle<TResource>> cloneDelegate):
         base(resource, name)
     {
         _onDispose = onDispose;
+        _cloneDelegate = cloneDelegate;
     }
     
     /// <summary>
@@ -53,6 +57,8 @@ public class ResourceHandleManaged<TResource> : ResourceHandle<TResource> where 
     {
         _onDispose?.Invoke(Guid);
     }
+
+    public override ResourceHandle<TResource> Clone() => _cloneDelegate();
 }
 
 public class ResourceHandleUnmanaged<TResource>(TResource resource, string name)
@@ -68,5 +74,10 @@ public class ResourceHandleUnmanaged<TResource>(TResource resource, string name)
         
         Resource?.Dispose();
         _isDisposed = true;
+    }
+
+    public override ResourceHandle<TResource> Clone()
+    {
+        return this;
     }
 }

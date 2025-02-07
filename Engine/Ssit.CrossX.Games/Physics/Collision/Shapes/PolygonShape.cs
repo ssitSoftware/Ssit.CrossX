@@ -217,7 +217,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
 
         public override bool TestPoint(ref Transform transform, ref Vector2 point)
         {
-            Vector2 pLocal = MathUtils.MulT(transform.q, point - transform.p);
+            Vector2 pLocal = MathUtils.MulT(transform.Q, point - transform.P);
 
             for (int i = 0; i < Vertices.Count; ++i)
             {
@@ -236,8 +236,8 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             output = new RayCastOutput();
 
             // Put the ray into the polygon's frame of reference.
-            Vector2 p1 = MathUtils.MulT(transform.q, input.Point1 - transform.p);
-            Vector2 p2 = MathUtils.MulT(transform.q, input.Point2 - transform.p);
+            Vector2 p1 = MathUtils.MulT(transform.Q, input.Point1 - transform.P);
+            Vector2 p2 = MathUtils.MulT(transform.Q, input.Point2 - transform.P);
             Vector2 d = p2 - p1;
 
             float lower = 0.0f, upper = input.MaxFraction;
@@ -295,7 +295,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             if (index >= 0)
             {
                 output.Fraction = lower;
-                output.Normal = MathUtils.Mul(transform.q, Normals[index]);
+                output.Normal = MathUtils.Mul(transform.Q, Normals[index]);
                 return true;
             }
 
@@ -308,7 +308,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
         /// <param name="aabb">The aabb results.</param>
         /// <param name="transform">The world transform of the shape.</param>
         /// <param name="childIndex">The child shape index.</param>
-        public override void ComputeAABB(out AABB aabb, ref Transform transform, int childIndex)
+        public override void ComputeAABB(out Aabb aabb, ref Transform transform, int childIndex)
         {
             Vector2 lower = MathUtils.Mul(ref transform, Vertices[0]);
             Vector2 upper = lower;
@@ -330,8 +330,8 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             sc = Vector2.Zero;
 
             //Transform plane into shape co-ordinates
-            Vector2 normalL = MathUtils.MulT(xf.q, normal);
-            float offsetL = offset - Vector2.Dot(normal, xf.p);
+            Vector2 normalL = MathUtils.MulT(xf.Q, normal);
+            float offsetL = offset - Vector2.Dot(normal, xf.P);
 
             float[] depths = new float[Settings.MaxPolygonVertices];
             int diveCount = 0;

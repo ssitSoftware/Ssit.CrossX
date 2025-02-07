@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-namespace Breeze.Engine.Game.Utils;
+namespace Ssit.CrossX.Games.Utils;
 
 public static class PolygonMerge
 {

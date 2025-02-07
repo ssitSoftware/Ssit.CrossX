@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.Games.Rendering.Map;
 
 namespace Ssit.CrossX.Games.Utils;
 
@@ -22,6 +23,16 @@ public static class LayerOffsetCalculator
         
         float vertSpeed = MathF.Max(0.0001f, (float) layer.VerticalSpeed);
         var offY = globalOffset.Y * vertSpeed - mainLayer.Height * vertSpeed + layer.Height;
+
+        return new(offX, offY);
+    }
+    
+    public static Vector2 CalculateLayerOffset(LayerDisplayElement layer, LayerDisplayElement mainLayer, Vector2 globalOffset)
+    {
+        float offX = globalOffset.X * layer.Speed.X;
+        
+        float vertSpeed = MathF.Max(0.000001f, layer.Speed.Y);
+        var offY = globalOffset.Y * vertSpeed - mainLayer.SourceSize.Height * vertSpeed + layer.SourceSize.Height;
 
         return new(offX, offY);
     }

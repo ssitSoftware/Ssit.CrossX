@@ -60,100 +60,93 @@ namespace Ssit.CrossX.Games.Physics.Common
             return new Vector2(Math.Abs(v.X), Math.Abs(v.Y));
         }
 
-        public static Vector2 Mul(ref Mat22 A, Vector2 v)
+        public static Vector2 Mul(ref Mat22 a, Vector2 v)
         {
-            return Mul(ref A, ref v);
+            return Mul(ref a, ref v);
         }
 
-        public static Vector2 Mul(ref Mat22 A, ref Vector2 v)
+        public static Vector2 Mul(ref Mat22 a, ref Vector2 v)
         {
-            return new Vector2(A.ex.X * v.X + A.ey.X * v.Y, A.ex.Y * v.X + A.ey.Y * v.Y);
+            return new Vector2(a.Ex.X * v.X + a.Ey.X * v.Y, a.Ex.Y * v.X + a.Ey.Y * v.Y);
         }
 
-        public static Vector2 Mul(ref Transform T, Vector2 v)
+        public static Vector2 Mul(ref Transform t, Vector2 v)
         {
-            return Mul(ref T, ref v);
+            return Mul(ref t, ref v);
         }
 
-        public static Vector2 Mul(ref Transform T, ref Vector2 v)
+        public static Vector2 Mul(ref Transform t, ref Vector2 v)
         {
-            float x = (T.q.c * v.X - T.q.s * v.Y) + T.p.X;
-            float y = (T.q.s * v.X + T.q.c * v.Y) + T.p.Y;
+            float x = (t.Q.C * v.X - t.Q.S * v.Y) + t.P.X;
+            float y = (t.Q.S * v.X + t.Q.C * v.Y) + t.P.Y;
 
             return new Vector2(x, y);
         }
 
-        public static Vector2 MulT(ref Mat22 A, Vector2 v)
+        public static Vector2 MulT(ref Mat22 a, Vector2 v)
         {
-            return MulT(ref A, ref v);
+            return MulT(ref a, ref v);
         }
 
-        public static Vector2 MulT(ref Mat22 A, ref Vector2 v)
+        public static Vector2 MulT(ref Mat22 a, ref Vector2 v)
         {
-            return new Vector2(v.X * A.ex.X + v.Y * A.ex.Y, v.X * A.ey.X + v.Y * A.ey.Y);
+            return new Vector2(v.X * a.Ex.X + v.Y * a.Ex.Y, v.X * a.Ey.X + v.Y * a.Ey.Y);
         }
 
-        public static Vector2 MulT(ref Transform T, Vector2 v)
+        public static Vector2 MulT(ref Transform t, Vector2 v)
         {
-            return MulT(ref T, ref v);
+            return MulT(ref t, ref v);
         }
 
-        public static Vector2 MulT(ref Transform T, ref Vector2 v)
+        public static Vector2 MulT(ref Transform t, ref Vector2 v)
         {
-            float px = v.X - T.p.X;
-            float py = v.Y - T.p.Y;
-            float x = (T.q.c * px + T.q.s * py);
-            float y = (-T.q.s * px + T.q.c * py);
+            float px = v.X - t.P.X;
+            float py = v.Y - t.P.Y;
+            float x = (t.Q.C * px + t.Q.S * py);
+            float y = (-t.Q.S * px + t.Q.C * py);
 
             return new Vector2(x, y);
         }
 
         // A^T * B
-        public static void MulT(ref Mat22 A, ref Mat22 B, out Mat22 C)
+        public static void MulT(ref Mat22 a, ref Mat22 b, out Mat22 c)
         {
-            C = new Mat22();
-            C.ex.X = A.ex.X * B.ex.X + A.ex.Y * B.ex.Y;
-            C.ex.Y = A.ey.X * B.ex.X + A.ey.Y * B.ex.Y;
-            C.ey.X = A.ex.X * B.ey.X + A.ex.Y * B.ey.Y;
-            C.ey.Y = A.ey.X * B.ey.X + A.ey.Y * B.ey.Y;
+            c = new Mat22();
+            c.Ex.X = a.Ex.X * b.Ex.X + a.Ex.Y * b.Ex.Y;
+            c.Ex.Y = a.Ey.X * b.Ex.X + a.Ey.Y * b.Ex.Y;
+            c.Ey.X = a.Ex.X * b.Ey.X + a.Ex.Y * b.Ey.Y;
+            c.Ey.Y = a.Ey.X * b.Ey.X + a.Ey.Y * b.Ey.Y;
         }
 
         /// Multiply a matrix times a vector.
-        public static Vector3 Mul(Mat33 A, Vector3 v)
+        public static Vector3 Mul(Mat33 a, Vector3 v)
         {
-            return v.X * A.ex + v.Y * A.ey + v.Z * A.ez;
+            return v.X * a.Ex + v.Y * a.Ey + v.Z * a.Ez;
         }
 
         // v2 = A.q.Rot(B.q.Rot(v1) + B.p) + A.p
         //    = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
-        public static Transform Mul(Transform A, Transform B)
+        public static Transform Mul(Transform a, Transform b)
         {
-            Transform C = new Transform();
-            C.q = Mul(A.q, B.q);
-            C.p = Mul(A.q, B.p) + A.p;
-            return C;
+            Transform c = new Transform();
+            c.Q = Mul(a.Q, b.Q);
+            c.P = Mul(a.Q, b.P) + a.P;
+            return c;
         }
 
         // v2 = A.q' * (B.q * v1 + B.p - A.p)
         //    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
-        public static void MulT(ref Transform A, ref Transform B, out Transform C)
+        public static void MulT(ref Transform a, ref Transform b, out Transform c)
         {
-            C = new Transform();
-            C.q = MulT(A.q, B.q);
-            C.p = MulT(A.q, B.p - A.p);
-        }
-
-        public static void Swap<T>(ref T a, ref T b)
-        {
-            T tmp = a;
-            a = b;
-            b = tmp;
+            c = new Transform();
+            c.Q = MulT(a.Q, b.Q);
+            c.P = MulT(a.Q, b.P - a.P);
         }
 
         /// Multiply a matrix times a vector.
-        public static Vector2 Mul22(Mat33 A, Vector2 v)
+        public static Vector2 Mul22(Mat33 a, Vector2 v)
         {
-            return new Vector2(A.ex.X * v.X + A.ey.X * v.Y, A.ex.Y * v.X + A.ey.Y * v.Y);
+            return new Vector2(a.Ex.X * v.X + a.Ey.X * v.Y, a.Ex.Y * v.X + a.Ey.Y * v.Y);
         }
 
         /// Multiply two rotations: q * r
@@ -164,17 +157,17 @@ namespace Ssit.CrossX.Games.Physics.Common
             // s = qs * rc + qc * rs
             // c = qc * rc - qs * rs
             Rot qr;
-            qr.s = q.s * r.c + q.c * r.s;
-            qr.c = q.c * r.c - q.s * r.s;
+            qr.S = q.S * r.C + q.C * r.S;
+            qr.C = q.C * r.C - q.S * r.S;
             return qr;
         }
 
-        public static Vector2 MulT(Transform T, Vector2 v)
+        public static Vector2 MulT(Transform t, Vector2 v)
         {
-            float px = v.X - T.p.X;
-            float py = v.Y - T.p.Y;
-            float x = (T.q.c * px + T.q.s * py);
-            float y = (-T.q.s * px + T.q.c * py);
+            float px = v.X - t.P.X;
+            float py = v.Y - t.P.Y;
+            float x = (t.Q.C * px + t.Q.S * py);
+            float y = (-t.Q.S * px + t.Q.C * py);
 
             return new Vector2(x, y);
         }
@@ -187,31 +180,31 @@ namespace Ssit.CrossX.Games.Physics.Common
             // s = qc * rs - qs * rc
             // c = qc * rc + qs * rs
             Rot qr;
-            qr.s = q.c * r.s - q.s * r.c;
-            qr.c = q.c * r.c + q.s * r.s;
+            qr.S = q.C * r.S - q.S * r.C;
+            qr.C = q.C * r.C + q.S * r.S;
             return qr;
         }
 
         // v2 = A.q' * (B.q * v1 + B.p - A.p)
         //    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
-        public static Transform MulT(Transform A, Transform B)
+        public static Transform MulT(Transform a, Transform b)
         {
-            Transform C = new Transform();
-            C.q = MulT(A.q, B.q);
-            C.p = MulT(A.q, B.p - A.p);
-            return C;
+            Transform c = new Transform();
+            c.Q = MulT(a.Q, b.Q);
+            c.P = MulT(a.Q, b.P - a.P);
+            return c;
         }
 
         /// Rotate a vector
         public static Vector2 Mul(Rot q, Vector2 v)
         {
-            return new Vector2(q.c * v.X - q.s * v.Y, q.s * v.X + q.c * v.Y);
+            return new Vector2(q.C * v.X - q.S * v.Y, q.S * v.X + q.C * v.Y);
         }
 
         /// Inverse rotate a vector
         public static Vector2 MulT(Rot q, Vector2 v)
         {
-            return new Vector2(q.c * v.X + q.s * v.Y, -q.s * v.X + q.c * v.Y);
+            return new Vector2(q.C * v.X + q.S * v.Y, -q.S * v.X + q.C * v.Y);
         }
 
         /// Get the skew vector such that dot(skew_vec, other) == cross(vec, other)
@@ -408,7 +401,7 @@ namespace Ssit.CrossX.Games.Physics.Common
     /// </summary>
     public struct Mat22
     {
-        public Vector2 ex, ey;
+        public Vector2 Ex, Ey;
 
         /// <summary>
         /// Construct this matrix using columns.
@@ -417,8 +410,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="c2">The c2.</param>
         public Mat22(Vector2 c1, Vector2 c2)
         {
-            ex = c1;
-            ey = c2;
+            Ex = c1;
+            Ey = c2;
         }
 
         /// <summary>
@@ -430,15 +423,15 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="a22">The a22.</param>
         public Mat22(float a11, float a12, float a21, float a22)
         {
-            ex = new Vector2(a11, a21);
-            ey = new Vector2(a12, a22);
+            Ex = new Vector2(a11, a21);
+            Ey = new Vector2(a12, a22);
         }
 
         public Mat22 Inverse
         {
             get
             {
-                float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
+                float a = Ex.X, b = Ey.X, c = Ex.Y, d = Ey.Y;
                 float det = a * d - b * c;
                 if (det != 0.0f)
                 {
@@ -446,11 +439,11 @@ namespace Ssit.CrossX.Games.Physics.Common
                 }
 
                 Mat22 result = new Mat22();
-                result.ex.X = det * d;
-                result.ex.Y = -det * c;
+                result.Ex.X = det * d;
+                result.Ex.Y = -det * c;
 
-                result.ey.X = -det * b;
-                result.ey.Y = det * a;
+                result.Ey.X = -det * b;
+                result.Ey.Y = det * a;
 
                 return result;
             }
@@ -463,8 +456,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="c2">The c2.</param>
         public void Set(Vector2 c1, Vector2 c2)
         {
-            ex = c1;
-            ey = c2;
+            Ex = c1;
+            Ey = c2;
         }
 
         /// <summary>
@@ -472,10 +465,10 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public void SetIdentity()
         {
-            ex.X = 1.0f;
-            ey.X = 0.0f;
-            ex.Y = 0.0f;
-            ey.Y = 1.0f;
+            Ex.X = 1.0f;
+            Ey.X = 0.0f;
+            Ex.Y = 0.0f;
+            Ey.Y = 1.0f;
         }
 
         /// <summary>
@@ -483,10 +476,10 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public void SetZero()
         {
-            ex.X = 0.0f;
-            ey.X = 0.0f;
-            ex.Y = 0.0f;
-            ey.Y = 0.0f;
+            Ex.X = 0.0f;
+            Ey.X = 0.0f;
+            Ex.Y = 0.0f;
+            Ey.Y = 0.0f;
         }
 
         /// <summary>
@@ -497,7 +490,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <returns></returns>
         public Vector2 Solve(Vector2 b)
         {
-            float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
+            float a11 = Ex.X, a12 = Ey.X, a21 = Ex.Y, a22 = Ey.Y;
             float det = a11 * a22 - a12 * a21;
             if (det != 0.0f)
             {
@@ -507,10 +500,10 @@ namespace Ssit.CrossX.Games.Physics.Common
             return new Vector2(det * (a22 * b.X - a12 * b.Y), det * (a11 * b.Y - a21 * b.X));
         }
 
-        public static void Add(ref Mat22 A, ref Mat22 B, out Mat22 R)
+        public static void Add(ref Mat22 a, ref Mat22 b, out Mat22 r)
         {
-            R.ex = A.ex + B.ex;
-            R.ey = A.ey + B.ey;
+            r.Ex = a.Ex + b.Ex;
+            r.Ey = a.Ey + b.Ey;
         }
     }
 
@@ -519,7 +512,7 @@ namespace Ssit.CrossX.Games.Physics.Common
     /// </summary>
     public struct Mat33
     {
-        public Vector3 ex, ey, ez;
+        public Vector3 Ex, Ey, Ez;
 
         /// <summary>
         /// Construct this matrix using columns.
@@ -529,9 +522,9 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="c3">The c3.</param>
         public Mat33(Vector3 c1, Vector3 c2, Vector3 c3)
         {
-            ex = c1;
-            ey = c2;
-            ez = c3;
+            Ex = c1;
+            Ey = c2;
+            Ez = c3;
         }
 
         /// <summary>
@@ -539,9 +532,9 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public void SetZero()
         {
-            ex = Vector3.Zero;
-            ey = Vector3.Zero;
-            ez = Vector3.Zero;
+            Ex = Vector3.Zero;
+            Ey = Vector3.Zero;
+            Ez = Vector3.Zero;
         }
 
         /// <summary>
@@ -552,13 +545,13 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <returns></returns>
         public Vector3 Solve33(Vector3 b)
         {
-            float det = Vector3.Dot(ex, Vector3.Cross(ey, ez));
+            float det = Vector3.Dot(Ex, Vector3.Cross(Ey, Ez));
             if (det != 0.0f)
             {
                 det = 1.0f / det;
             }
 
-            return new Vector3(det * Vector3.Dot(b, Vector3.Cross(ey, ez)), det * Vector3.Dot(ex, Vector3.Cross(b, ez)), det * Vector3.Dot(ex, Vector3.Cross(ey, b)));
+            return new Vector3(det * Vector3.Dot(b, Vector3.Cross(Ey, Ez)), det * Vector3.Dot(Ex, Vector3.Cross(b, Ez)), det * Vector3.Dot(Ex, Vector3.Cross(Ey, b)));
         }
 
         /// <summary>
@@ -570,7 +563,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <returns></returns>
         public Vector2 Solve22(Vector2 b)
         {
-            float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
+            float a11 = Ex.X, a12 = Ey.X, a21 = Ex.Y, a22 = Ey.Y;
             float det = a11 * a22 - a12 * a21;
 
             if (det != 0.0f)
@@ -583,45 +576,45 @@ namespace Ssit.CrossX.Games.Physics.Common
 
         /// Get the inverse of this matrix as a 2-by-2.
         /// Returns the zero matrix if singular.
-        public void GetInverse22(ref Mat33 M)
+        public void GetInverse22(ref Mat33 m)
         {
-            float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
+            float a = Ex.X, b = Ey.X, c = Ex.Y, d = Ey.Y;
             float det = a * d - b * c;
             if (det != 0.0f)
             {
                 det = 1.0f / det;
             }
 
-            M.ex.X = det * d; M.ey.X = -det * b; M.ex.Z = 0.0f;
-            M.ex.Y = -det * c; M.ey.Y = det * a; M.ey.Z = 0.0f;
-            M.ez.X = 0.0f; M.ez.Y = 0.0f; M.ez.Z = 0.0f;
+            m.Ex.X = det * d; m.Ey.X = -det * b; m.Ex.Z = 0.0f;
+            m.Ex.Y = -det * c; m.Ey.Y = det * a; m.Ey.Z = 0.0f;
+            m.Ez.X = 0.0f; m.Ez.Y = 0.0f; m.Ez.Z = 0.0f;
         }
 
         /// Get the symmetric inverse of this matrix as a 3-by-3.
         /// Returns the zero matrix if singular.
-        public void GetSymInverse33(ref Mat33 M)
+        public void GetSymInverse33(ref Mat33 m)
         {
-            float det = MathUtils.Dot(ex, MathUtils.Cross(ey, ez));
+            float det = MathUtils.Dot(Ex, MathUtils.Cross(Ey, Ez));
             if (det != 0.0f)
             {
                 det = 1.0f / det;
             }
 
-            float a11 = ex.X, a12 = ey.X, a13 = ez.X;
-            float a22 = ey.Y, a23 = ez.Y;
-            float a33 = ez.Z;
+            float a11 = Ex.X, a12 = Ey.X, a13 = Ez.X;
+            float a22 = Ey.Y, a23 = Ez.Y;
+            float a33 = Ez.Z;
 
-            M.ex.X = det * (a22 * a33 - a23 * a23);
-            M.ex.Y = det * (a13 * a23 - a12 * a33);
-            M.ex.Z = det * (a12 * a23 - a13 * a22);
+            m.Ex.X = det * (a22 * a33 - a23 * a23);
+            m.Ex.Y = det * (a13 * a23 - a12 * a33);
+            m.Ex.Z = det * (a12 * a23 - a13 * a22);
 
-            M.ey.X = M.ex.Y;
-            M.ey.Y = det * (a11 * a33 - a13 * a13);
-            M.ey.Z = det * (a13 * a12 - a11 * a23);
+            m.Ey.X = m.Ex.Y;
+            m.Ey.Y = det * (a11 * a33 - a13 * a13);
+            m.Ey.Z = det * (a13 * a12 - a11 * a23);
 
-            M.ez.X = M.ex.Z;
-            M.ez.Y = M.ey.Z;
-            M.ez.Z = det * (a11 * a22 - a12 * a12);
+            m.Ez.X = m.Ex.Z;
+            m.Ez.Y = m.Ey.Z;
+            m.Ez.Z = det * (a11 * a22 - a12 * a12);
         }
     }
 
@@ -631,7 +624,7 @@ namespace Ssit.CrossX.Games.Physics.Common
     public struct Rot
     {
         /// Sine and cosine
-        public float s, c;
+        public float S, C;
 
         /// <summary>
         /// Initialize from an angle in radians
@@ -640,8 +633,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         public Rot(float angle)
         {
             // TODO_ERIN optimize
-            s = (float)Math.Sin(angle);
-            c = (float)Math.Cos(angle);
+            S = (float)Math.Sin(angle);
+            C = (float)Math.Cos(angle);
         }
 
         /// <summary>
@@ -653,14 +646,14 @@ namespace Ssit.CrossX.Games.Physics.Common
             //FPE: Optimization
             if (angle == 0)
             {
-                s = 0;
-                c = 1;
+                S = 0;
+                C = 1;
             }
             else
             {
                 // TODO_ERIN optimize
-                s = (float)Math.Sin(angle);
-                c = (float)Math.Cos(angle);
+                S = (float)Math.Sin(angle);
+                C = (float)Math.Cos(angle);
             }
         }
 
@@ -669,8 +662,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public void SetIdentity()
         {
-            s = 0.0f;
-            c = 1.0f;
+            S = 0.0f;
+            C = 1.0f;
         }
 
         /// <summary>
@@ -678,7 +671,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public float GetAngle()
         {
-            return (float)Math.Atan2(s, c);
+            return (float)Math.Atan2(S, C);
         }
 
         /// <summary>
@@ -686,7 +679,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public Vector2 GetXAxis()
         {
-            return new Vector2(c, s);
+            return new Vector2(C, S);
         }
 
         /// <summary>
@@ -694,7 +687,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public Vector2 GetYAxis()
         {
-            return new Vector2(-s, c);
+            return new Vector2(-S, C);
         }
     }
 
@@ -704,8 +697,8 @@ namespace Ssit.CrossX.Games.Physics.Common
     /// </summary>
     public struct Transform
     {
-        public Vector2 p;
-        public Rot q;
+        public Vector2 P;
+        public Rot Q;
 
         /// <summary>
         /// Initialize using a position vector and a rotation matrix.
@@ -714,8 +707,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="rotation">The r.</param>
         public Transform(ref Vector2 position, ref Rot rotation)
         {
-            p = position;
-            q = rotation;
+            P = position;
+            Q = rotation;
         }
 
         /// <summary>
@@ -723,8 +716,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// </summary>
         public void SetIdentity()
         {
-            p = Vector2.Zero;
-            q.SetIdentity();
+            P = Vector2.Zero;
+            Q.SetIdentity();
         }
 
         /// <summary>
@@ -734,8 +727,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="angle">The angle.</param>
         public void Set(Vector2 position, float angle)
         {
-            p = position;
-            q.Set(angle);
+            P = position;
+            Q.Set(angle);
         }
     }
 
@@ -780,13 +773,13 @@ namespace Ssit.CrossX.Games.Physics.Common
         public void GetTransform(out Transform xfb, float beta)
         {
             xfb = new Transform();
-            xfb.p.X = (1.0f - beta) * C0.X + beta * C.X;
-            xfb.p.Y = (1.0f - beta) * C0.Y + beta * C.Y;
+            xfb.P.X = (1.0f - beta) * C0.X + beta * C.X;
+            xfb.P.Y = (1.0f - beta) * C0.Y + beta * C.Y;
             float angle = (1.0f - beta) * A0 + beta * A;
-            xfb.q.Set(angle);
+            xfb.Q.Set(angle);
 
             // Shift to origin
-            xfb.p -= MathUtils.Mul(xfb.q, LocalCenter);
+            xfb.P -= MathUtils.Mul(xfb.Q, LocalCenter);
         }
 
         /// <summary>

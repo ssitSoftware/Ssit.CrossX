@@ -196,7 +196,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             return _edgeShape.RayCast(out output, ref input, ref transform, 0);
         }
 
-        public override void ComputeAABB(out AABB aabb, ref Transform transform, int childIndex)
+        public override void ComputeAABB(out Aabb aabb, ref Transform transform, int childIndex)
         {
             Debug.Assert(childIndex < Vertices.Count);
 

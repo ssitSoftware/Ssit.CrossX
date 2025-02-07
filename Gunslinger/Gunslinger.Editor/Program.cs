@@ -1,6 +1,8 @@
 ﻿using Gunslinger.Core;
 using Ssit.CrossX.Editor;
 
+namespace Gunslinger.Editor;
+
 class Program
 {
     [STAThread]

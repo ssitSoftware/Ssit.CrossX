@@ -266,5 +266,5 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
 
     public abstract void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount,
         ITexture texture = null, RgbaColor? color = null, 
-        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null);
+        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null, RenderMode renderMode = RenderMode.Normal);
 }

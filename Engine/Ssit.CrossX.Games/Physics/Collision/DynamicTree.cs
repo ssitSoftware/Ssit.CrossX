@@ -36,7 +36,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
         /// <summary>
         /// Enlarged AABB
         /// </summary>
-        internal AABB AABB;
+        internal Aabb AABB;
 
         internal int Child1;
         internal int Child2;
@@ -180,7 +180,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
         /// <param name="aabb">The aabb.</param>
         /// <param name="userData">The user data.</param>
         /// <returns>Index of the created proxy</returns>
-        public int AddProxy(ref AABB aabb, T userData)
+        public int AddProxy(ref Aabb aabb, T userData)
         {
             int proxyId = AllocateNode();
 
@@ -218,7 +218,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
         /// <param name="aabb">The aabb.</param>
         /// <param name="displacement">The displacement.</param>
         /// <returns>true if the proxy was re-inserted.</returns>
-        public bool MoveProxy(int proxyId, ref AABB aabb, Vector2 displacement)
+        public bool MoveProxy(int proxyId, ref Aabb aabb, Vector2 displacement)
         {
             Debug.Assert(0 <= proxyId && proxyId < _nodeCapacity);
 
@@ -232,7 +232,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             RemoveLeaf(proxyId);
 
             // Extend AABB.
-            AABB b = aabb;
+            Aabb b = aabb;
             Vector2 r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
             b.LowerBound = b.LowerBound - r;
             b.UpperBound = b.UpperBound + r;
@@ -281,7 +281,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
         /// </summary>
         /// <param name="proxyId">The proxy id.</param>
         /// <param name="fatAABB">The fat AABB.</param>
-        public void GetFatAABB(int proxyId, out AABB fatAABB)
+        public void GetFatAABB(int proxyId, out Aabb fatAABB)
         {
             Debug.Assert(0 <= proxyId && proxyId < _nodeCapacity);
             fatAABB = _nodes[proxyId].AABB;
@@ -293,7 +293,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
         /// </summary>
         /// <param name="callback">The callback.</param>
         /// <param name="aabb">The aabb.</param>
-        public void Query(Func<int, bool> callback, ref AABB aabb)
+        public void Query(Func<int, bool> callback, ref Aabb aabb)
         {
             _queryStack.Clear();
             _queryStack.Push(_root);
@@ -308,7 +308,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 TreeNode<T> node = _nodes[nodeId];
 
-                if (AABB.TestOverlap(ref node.AABB, ref aabb))
+                if (Aabb.TestOverlap(ref node.AABB, ref aabb))
                 {
                     if (node.IsLeaf())
                     {
@@ -353,7 +353,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             float maxFraction = input.MaxFraction;
 
             // Build a bounding box for the segment.
-            AABB segmentAABB = new AABB();
+            Aabb segmentAABB = new Aabb();
             {
                 Vector2 t = p1 + maxFraction * (p2 - p1);
                 segmentAABB.LowerBound = new Vector2(Math.Min(p1.X, t.X), Math.Min(p1.Y, t.Y));
@@ -373,7 +373,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 TreeNode<T> node = _nodes[nodeId];
 
-                if (AABB.TestOverlap(ref node.AABB, ref segmentAABB) == false)
+                if (Aabb.TestOverlap(ref node.AABB, ref segmentAABB) == false)
                 {
                     continue;
                 }
@@ -479,7 +479,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             }
 
             // Find the best sibling for this node
-            AABB leafAABB = _nodes[leaf].AABB;
+            Aabb leafAABB = _nodes[leaf].AABB;
             int index = _root;
             while (_nodes[index].IsLeaf() == false)
             {
@@ -488,7 +488,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 float area = _nodes[index].AABB.Perimeter;
 
-                AABB combinedAABB = new AABB();
+                Aabb combinedAABB = new Aabb();
                 combinedAABB.Combine(ref _nodes[index].AABB, ref leafAABB);
                 float combinedArea = combinedAABB.Perimeter;
 
@@ -502,13 +502,13 @@ namespace Ssit.CrossX.Games.Physics.Collision
                 float cost1;
                 if (_nodes[child1].IsLeaf())
                 {
-                    AABB aabb = new AABB();
+                    Aabb aabb = new Aabb();
                     aabb.Combine(ref leafAABB, ref _nodes[child1].AABB);
                     cost1 = aabb.Perimeter + inheritanceCost;
                 }
                 else
                 {
-                    AABB aabb = new AABB();
+                    Aabb aabb = new Aabb();
                     aabb.Combine(ref leafAABB, ref _nodes[child1].AABB);
                     float oldArea = _nodes[child1].AABB.Perimeter;
                     float newArea = aabb.Perimeter;
@@ -519,13 +519,13 @@ namespace Ssit.CrossX.Games.Physics.Collision
                 float cost2;
                 if (_nodes[child2].IsLeaf())
                 {
-                    AABB aabb = new AABB();
+                    Aabb aabb = new Aabb();
                     aabb.Combine(ref leafAABB, ref _nodes[child2].AABB);
                     cost2 = aabb.Perimeter + inheritanceCost;
                 }
                 else
                 {
-                    AABB aabb = new AABB();
+                    Aabb aabb = new Aabb();
                     aabb.Combine(ref leafAABB, ref _nodes[child2].AABB);
                     float oldArea = _nodes[child2].AABB.Perimeter;
                     float newArea = aabb.Perimeter;
@@ -907,7 +907,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             int height = 1 + Math.Max(height1, height2);
             Debug.Assert(node.Height == height);
 
-            AABB AABB = new AABB();
+            Aabb AABB = new Aabb();
             AABB.Combine(ref _nodes[child1].AABB, ref _nodes[child2].AABB);
 
             Debug.Assert(AABB.LowerBound == node.AABB.LowerBound);
@@ -974,12 +974,12 @@ namespace Ssit.CrossX.Games.Physics.Collision
                 int iMin = -1, jMin = -1;
                 for (int i = 0; i < count; ++i)
                 {
-                    AABB AABBi = _nodes[nodes[i]].AABB;
+                    Aabb AABBi = _nodes[nodes[i]].AABB;
 
                     for (int j = i + 1; j < count; ++j)
                     {
-                        AABB AABBj = _nodes[nodes[j]].AABB;
-                        AABB b = new AABB();
+                        Aabb AABBj = _nodes[nodes[j]].AABB;
+                        Aabb b = new Aabb();
                         b.Combine(ref AABBi, ref AABBj);
                         float cost = b.Perimeter;
                         if (cost < minCost)

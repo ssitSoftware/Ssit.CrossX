@@ -148,7 +148,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 _localAxisC = prismatic.LocalXAxis;
 
                 Vector2 pC = _localAnchorC;
-                Vector2 pA = MathUtils.MulT(xfC.q, MathUtils.Mul(xfA.q, _localAnchorA) + (xfA.p - xfC.p));
+                Vector2 pA = MathUtils.MulT(xfC.Q, MathUtils.Mul(xfA.Q, _localAnchorA) + (xfA.P - xfC.P));
                 coordinateA = Vector2.Dot(pA - pC, _localAxisC);
             }
 
@@ -180,7 +180,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 _localAxisD = prismatic.LocalXAxis;
 
                 Vector2 pD = _localAnchorD;
-                Vector2 pB = MathUtils.MulT(xfD.q, MathUtils.Mul(xfB.q, _localAnchorB) + (xfB.p - xfD.p));
+                Vector2 pB = MathUtils.MulT(xfD.Q, MathUtils.Mul(xfB.Q, _localAnchorB) + (xfB.P - xfD.P));
                 coordinateB = Vector2.Dot(pB - pD, _localAxisD);
             }
 

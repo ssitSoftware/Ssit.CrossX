@@ -143,8 +143,8 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             output = new RayCastOutput();
 
             // Put the ray into the edge's frame of reference.
-            Vector2 p1 = MathUtils.MulT(transform.q, input.Point1 - transform.p);
-            Vector2 p2 = MathUtils.MulT(transform.q, input.Point2 - transform.p);
+            Vector2 p1 = MathUtils.MulT(transform.Q, input.Point1 - transform.P);
+            Vector2 p2 = MathUtils.MulT(transform.Q, input.Point2 - transform.P);
             Vector2 d = p2 - p1;
 
             Vector2 v1 = _vertex1;
@@ -198,7 +198,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             return true;
         }
 
-        public override void ComputeAABB(out AABB aabb, ref Transform transform, int childIndex)
+        public override void ComputeAABB(out Aabb aabb, ref Transform transform, int childIndex)
         {
             Vector2 v1 = MathUtils.Mul(ref transform, _vertex1);
             Vector2 v2 = MathUtils.Mul(ref transform, _vertex2);

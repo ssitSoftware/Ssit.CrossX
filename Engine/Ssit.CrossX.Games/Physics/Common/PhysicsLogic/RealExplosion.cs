@@ -114,7 +114,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
         /// <returns>A list of bodies and the amount of force that was applied to them.</returns>
         public Dictionary<Fixture, Vector2> Activate(Vector2 pos, float radius, float maxForce)
         {
-            AABB aabb;
+            Aabb aabb;
             aabb.LowerBound = pos + new Vector2(-radius, -radius);
             aabb.UpperBound = pos + new Vector2(radius, radius);
             Fixture[] shapes = new Fixture[MaxShapes];

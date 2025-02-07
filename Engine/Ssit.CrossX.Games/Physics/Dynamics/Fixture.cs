@@ -75,7 +75,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
     /// </summary>
     public struct FixtureProxy
     {
-        public AABB AABB;
+        public Aabb AABB;
         public int ChildIndex;
         public Fixture Fixture;
         public int ProxyId;
@@ -450,7 +450,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// </summary>
         /// <param name="aabb">The aabb.</param>
         /// <param name="childIndex">Index of the child.</param>
-        public void GetAABB(out AABB aabb, int childIndex)
+        public void GetAABB(out Aabb aabb, int childIndex)
         {
             Debug.Assert(0 <= childIndex && childIndex < ProxyCount);
             aabb = Proxies[childIndex].AABB;
@@ -535,13 +535,13 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 FixtureProxy proxy = Proxies[i];
 
                 // Compute an AABB that covers the swept Shape (may miss some rotation effect).
-                AABB aabb1, aabb2;
+                Aabb aabb1, aabb2;
                 Shape.ComputeAABB(out aabb1, ref transform1, proxy.ChildIndex);
                 Shape.ComputeAABB(out aabb2, ref transform2, proxy.ChildIndex);
 
                 proxy.AABB.Combine(ref aabb1, ref aabb2);
 
-                Vector2 displacement = transform2.p - transform1.p;
+                Vector2 displacement = transform2.P - transform1.P;
 
                 broadPhase.MoveProxy(proxy.ProxyId, ref proxy.AABB, displacement);
             }

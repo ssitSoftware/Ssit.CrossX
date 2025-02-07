@@ -84,6 +84,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         {
             TextRenderingContext.Reset();
             _actionDispatcher.Enqueue(OnTextChanged);
+            Parent?.GetParent<IPage>().InvalidateRendering();
         }
     }
 }

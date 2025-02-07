@@ -225,8 +225,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 BodyA.GetTransform(out xf1);
                 BodyB.GetTransform(out xf2);
 
-                Vector2 r1 = MathUtils.Mul(ref xf1.q, LocalAnchorA - BodyA.LocalCenter);
-                Vector2 r2 = MathUtils.Mul(ref xf2.q, LocalAnchorB - BodyB.LocalCenter);
+                Vector2 r1 = MathUtils.Mul(ref xf1.Q, LocalAnchorA - BodyA.LocalCenter);
+                Vector2 r2 = MathUtils.Mul(ref xf2.Q, LocalAnchorB - BodyB.LocalCenter);
                 Vector2 p1 = BodyA._sweep.C + r1;
                 Vector2 p2 = BodyB._sweep.C + r2;
                 Vector2 d = p2 - p1;
@@ -468,9 +468,9 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 float k23 = iA * _a1 + iB * _a2;
                 float k33 = mA + mB + iA * _a1 * _a1 + iB * _a2 * _a2;
 
-                _K.ex = new Vector3(k11, k12, k13);
-                _K.ey = new Vector3(k12, k22, k23);
-                _K.ez = new Vector3(k13, k23, k33);
+                _K.Ex = new Vector3(k11, k12, k13);
+                _K.Ey = new Vector3(k12, k22, k23);
+                _K.Ez = new Vector3(k13, k23, k33);
             }
 
             // Compute motor and limit terms.
@@ -598,7 +598,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 }
 
                 // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
-                Vector2 b = -Cdot1 - (_impulse.Z - f1.Z) * new Vector2(_K.ez.X, _K.ez.Y);
+                Vector2 b = -Cdot1 - (_impulse.Z - f1.Z) * new Vector2(_K.Ez.X, _K.Ez.Y);
                 Vector2 f2r = _K.Solve22(b) + new Vector2(f1.X, f1.Y);
                 _impulse.X = f2r.X;
                 _impulse.Y = f2r.Y;
@@ -715,9 +715,9 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 float k33 = mA + mB + iA * a1 * a1 + iB * a2 * a2;
 
                 Mat33 K = new Mat33();
-                K.ex = new Vector3(k11, k12, k13);
-                K.ey = new Vector3(k12, k22, k23);
-                K.ez = new Vector3(k13, k23, k33);
+                K.Ex = new Vector3(k11, k12, k13);
+                K.Ey = new Vector3(k12, k22, k23);
+                K.Ez = new Vector3(k13, k23, k33);
 
                 Vector3 C = new Vector3();
                 C.X = C1.X;
@@ -737,8 +737,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 }
 
                 Mat22 K = new Mat22();
-                K.ex = new Vector2(k11, k12);
-                K.ey = new Vector2(k12, k22);
+                K.Ex = new Vector2(k11, k12);
+                K.Ey = new Vector2(k12, k22);
 
                 Vector2 impulse1 = K.Solve(-C1);
                 impulse = new Vector3();

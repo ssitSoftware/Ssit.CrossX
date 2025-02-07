@@ -109,7 +109,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 Vector2 a = localPointB2 - localPointB1;
                 _axis = Vector2.Normalize(new Vector2(a.Y, -a.X));
-                Vector2 normal = MathUtils.Mul(ref xfB.q, _axis);
+                Vector2 normal = MathUtils.Mul(ref xfB.Q, _axis);
 
                 _localPoint = 0.5f * (localPointB1 + localPointB2);
                 Vector2 pointB = MathUtils.Mul(ref xfB, _localPoint);
@@ -132,7 +132,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 Vector2 a = localPointA2 - localPointA1;
                 _axis = Vector2.Normalize(new Vector2(a.Y, -a.X));
-                Vector2 normal = MathUtils.Mul(ref xfA.q, _axis);
+                Vector2 normal = MathUtils.Mul(ref xfA.Q, _axis);
 
                 _localPoint = 0.5f * (localPointA1 + localPointA2);
                 Vector2 pointA = MathUtils.Mul(ref xfA, _localPoint);
@@ -160,8 +160,8 @@ namespace Ssit.CrossX.Games.Physics.Collision
             {
                 case SeparationFunctionType.Points:
                     {
-                        Vector2 axisA = MathUtils.MulT(ref xfA.q, _axis);
-                        Vector2 axisB = MathUtils.MulT(ref xfB.q, -_axis);
+                        Vector2 axisA = MathUtils.MulT(ref xfA.Q, _axis);
+                        Vector2 axisB = MathUtils.MulT(ref xfB.Q, -_axis);
 
                         indexA = _proxyA.GetSupport(axisA);
                         indexB = _proxyB.GetSupport(axisB);
@@ -178,10 +178,10 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 case SeparationFunctionType.FaceA:
                     {
-                        Vector2 normal = MathUtils.Mul(ref xfA.q, _axis);
+                        Vector2 normal = MathUtils.Mul(ref xfA.Q, _axis);
                         Vector2 pointA = MathUtils.Mul(ref xfA, _localPoint);
 
-                        Vector2 axisB = MathUtils.MulT(ref xfB.q, -normal);
+                        Vector2 axisB = MathUtils.MulT(ref xfB.Q, -normal);
 
                         indexA = -1;
                         indexB = _proxyB.GetSupport(axisB);
@@ -195,10 +195,10 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
                 case SeparationFunctionType.FaceB:
                     {
-                        Vector2 normal = MathUtils.Mul(ref xfB.q, _axis);
+                        Vector2 normal = MathUtils.Mul(ref xfB.Q, _axis);
                         Vector2 pointB = MathUtils.Mul(ref xfB, _localPoint);
 
-                        Vector2 axisA = MathUtils.MulT(ref xfA.q, -normal);
+                        Vector2 axisA = MathUtils.MulT(ref xfA.Q, -normal);
 
                         indexB = -1;
                         indexA = _proxyA.GetSupport(axisA);
@@ -239,7 +239,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
                     }
                 case SeparationFunctionType.FaceA:
                     {
-                        Vector2 normal = MathUtils.Mul(ref xfA.q, _axis);
+                        Vector2 normal = MathUtils.Mul(ref xfA.Q, _axis);
                         Vector2 pointA = MathUtils.Mul(ref xfA, _localPoint);
 
                         Vector2 localPointB = _proxyB.Vertices[indexB];
@@ -250,7 +250,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
                     }
                 case SeparationFunctionType.FaceB:
                     {
-                        Vector2 normal = MathUtils.Mul(ref xfB.q, _axis);
+                        Vector2 normal = MathUtils.Mul(ref xfB.Q, _axis);
                         Vector2 pointB = MathUtils.Mul(ref xfB, _localPoint);
 
                         Vector2 localPointA = _proxyA.Vertices[indexA];

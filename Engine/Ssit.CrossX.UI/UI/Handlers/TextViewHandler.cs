@@ -43,7 +43,7 @@ public class TextViewHandler : TextBaseHandler<TextView>
                 return;
             }
             
-            font.CalculateMultilineText(AttachedView.Text, AttachedView?.TextSpacing ?? TextSpacing.Normal, 
+            font.CalculateMultilineText(AttachedView.Text, AttachedView?.TextSpacing ?? TextSpacing.Normal,
                 maxWidth, paragraphSpacing, TextRenderingContext);
         }
 

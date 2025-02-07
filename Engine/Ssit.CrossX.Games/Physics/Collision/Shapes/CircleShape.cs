@@ -78,7 +78,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
 
         public override bool TestPoint(ref Transform transform, ref Vector2 point)
         {
-            Vector2 center = transform.p + MathUtils.Mul(transform.q, Position);
+            Vector2 center = transform.P + MathUtils.Mul(transform.Q, Position);
             Vector2 d = point - center;
             return Vector2.Dot(d, d) <= _2radius;
         }
@@ -92,7 +92,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
 
             output = new RayCastOutput();
 
-            Vector2 position = transform.p + MathUtils.Mul(transform.q, Position);
+            Vector2 position = transform.P + MathUtils.Mul(transform.Q, Position);
             Vector2 s = input.Point1 - position;
             float b = Vector2.Dot(s, s) - _2radius;
 
@@ -125,9 +125,9 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             return false;
         }
 
-        public override void ComputeAABB(out AABB aabb, ref Transform transform, int childIndex)
+        public override void ComputeAABB(out Aabb aabb, ref Transform transform, int childIndex)
         {
-            Vector2 p = transform.p + MathUtils.Mul(transform.q, Position);
+            Vector2 p = transform.P + MathUtils.Mul(transform.Q, Position);
             aabb.LowerBound = new Vector2(p.X - Radius, p.Y - Radius);
             aabb.UpperBound = new Vector2(p.X + Radius, p.Y + Radius);
         }

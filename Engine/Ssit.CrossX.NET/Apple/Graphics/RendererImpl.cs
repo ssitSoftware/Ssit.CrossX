@@ -113,7 +113,7 @@ internal class RendererImpl: RendererBase, IDisposable
     }
 
     public override void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
-        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null)
+        TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null, RenderMode renderMode = RenderMode.Normal)
     {
         if (CurrentBatchMode != BatchMode.None)
         {
@@ -128,7 +128,7 @@ internal class RendererImpl: RendererBase, IDisposable
         }
         
         var mtlBuffer = vertexBuffer.Get<IMTLBuffer>();
-        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, BlendMode, Flush, transform, _clipRect, color);
+        var encoder = _renderStateManager.PrepareRenderState(texture, effect, vertexBuffer.VertexMode, textureFilter, BlendMode, Flush, transform, _clipRect, color, glow: renderMode == RenderMode.Glow);
         
         encoder.SetVertexBuffer(mtlBuffer, (UIntPtr)0, (UIntPtr)0);
         encoder.DrawPrimitives(vertexBuffer.PrimitiveType.ToMetal(), (UIntPtr)vertexStart, (UIntPtr)vertexCount);

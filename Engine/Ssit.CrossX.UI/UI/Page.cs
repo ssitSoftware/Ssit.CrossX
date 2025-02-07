@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IoC;
+using Ssit.CrossX.UI.Exceptions;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -19,6 +20,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private RectangleF _screenBounds;
     private bool _recalculateLayout;
     private bool _recalculationNeeded = false;
+    private bool _renderingInvalid = false;
+    
     private RectangleF _bounds;
     protected IIoCContainer Services => _iocContainer;
     
@@ -33,6 +36,11 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     {
         get => FocusedElement;
         set => FocusedElement = value;
+    }
+
+    void IPage.InvalidateRendering()
+    {
+        _renderingInvalid = true;
     }
 
     float IPage.Scale => Scale;
@@ -173,6 +181,12 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     protected virtual void OnDraw(IRenderer renderer, RenderMode mode)
     {
         _rootHandler.Draw(renderer, mode);
+
+        if (_renderingInvalid)
+        {
+            _renderingInvalid = false;
+            throw new InvalidRenderingException();
+        }
     }
     
     protected TContainer GetContainer<TContainer>() where TContainer : TemplatesContainer

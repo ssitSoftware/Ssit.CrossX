@@ -30,7 +30,7 @@ namespace Ssit.CrossX.Games.Physics.Controllers
         /// </summary>
         public Vector2 Velocity;
 
-        private AABB _container;
+        private Aabb _container;
 
         private Vector2 _gravity;
         private Vector2 _normal;
@@ -45,7 +45,7 @@ namespace Ssit.CrossX.Games.Physics.Controllers
         /// <param name="linearDragCoefficient">Linear drag coefficient of the fluid</param>
         /// <param name="rotationalDragCoefficient">Rotational drag coefficient of the fluid</param>
         /// <param name="gravity">The direction gravity acts. Buoyancy force will act in opposite direction of gravity.</param>
-        public BuoyancyController(AABB container, float density, float linearDragCoefficient, float rotationalDragCoefficient, Vector2 gravity)
+        public BuoyancyController(Aabb container, float density, float linearDragCoefficient, float rotationalDragCoefficient, Vector2 gravity)
             : base(ControllerType.BuoyancyController)
         {
             Container = container;
@@ -56,7 +56,7 @@ namespace Ssit.CrossX.Games.Physics.Controllers
             _gravity = gravity;
         }
 
-        public AABB Container
+        public Aabb Container
         {
             get { return _container; }
             set

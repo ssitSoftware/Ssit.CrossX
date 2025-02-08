@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 
@@ -58,6 +60,25 @@ public static class MapRenderer
                     renderer.DrawPrimitives(segment.VertexBuffer, 0, segment.VertexBuffer.Length, segment.Texture.Resource, renderMode: mode);
                 }
             }
+        }
+
+        foreach (var obj in layer.DisplayObjects)
+        {
+            DrawObject(renderer, mode, bounds, obj);
+        }
+    }
+
+    private static void DrawObject(IRenderer renderer, RenderMode mode, RectangleF bounds, MapDisplayObject obj)
+    {
+        // TODO: Filter invisible elements
+        if (obj.Texture is not null)
+        {
+            renderer.DrawTexture(obj.Texture, obj.Position, null, obj.Origin, color: obj.TintColor,  depth: obj.Depth, imageTransform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None, mode: mode);
+        }
+
+        if (obj.SpriteInstance is not null)
+        {
+            renderer.DrawSprite(obj.SpriteInstance, obj.Position, color: obj.TintColor, transform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
         }
     }
 

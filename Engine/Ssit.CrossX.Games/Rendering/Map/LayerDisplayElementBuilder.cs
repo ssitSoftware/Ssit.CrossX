@@ -50,9 +50,10 @@ public class LayerDisplayElementBuilder
     public LayerDisplayElement Build()
     {
         var list = new List<(RectangleF bounds, TilesDisplaySegment[] segments)>();
-
-        var segmentWidth = (int)MathF.Ceiling((float)_targetSize.Width / _tileSize);
-        var segmentHeight = (int)MathF.Ceiling((float)_targetSize.Height / _tileSize);
+        var objects = new List<MapDisplayObject>();
+        
+        var segmentWidth = (int)MathF.Ceiling((float)_targetSize.Width * 2 / _tileSize);
+        var segmentHeight = (int)MathF.Ceiling((float)_targetSize.Height * 2 / _tileSize);
 
         for (var oy = 0; oy < _layer.Height; oy += segmentHeight)
         {
@@ -65,8 +66,19 @@ public class LayerDisplayElementBuilder
                 list.Add((bounds, segments));
             }
         }
+
+        foreach (var obj in _layer.Objects)
+        {
+            if (!obj.HasLogic)
+            {
+                var dispObj = _container.IoCConstruct<MapDisplayObject>(obj);
+                dispObj.Depth = _layer.Depth;
+                dispObj.TintColor = _layer.TintColor.AsPremultiplied();
+                objects.Add(dispObj);
+            }
+        }
         
-        return new LayerDisplayElement(list, new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed), _layer.FogColor.AsPremultiplied(), _layer.Size, _layer == _file.MainLayer);
+        return new LayerDisplayElement(list, objects.OrderBy( o=>o.Name).ToList(), new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed), _layer.FogColor.AsPremultiplied(), _layer.Size, _layer == _file.MainLayer);
     }
 
     private TilesDisplaySegment[] GenerateSegment(Rectangle rect)

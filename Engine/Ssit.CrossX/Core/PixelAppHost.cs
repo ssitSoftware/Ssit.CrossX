@@ -26,7 +26,6 @@ public class PixelAppHost: IAppHost
 
     public class GlowParameters
     {
-        
     }
 
     private readonly Parameters _parameters;
@@ -67,7 +66,6 @@ public class PixelAppHost: IAppHost
             if (_glowRenderTarget != null)
             {
                 _renderer.SetRenderTarget(_glowRenderTarget);
-                _renderer.Clear(RgbaColor.Black);
                 renderAction(RenderMode.Glow);
             }
         }
@@ -89,17 +87,21 @@ public class PixelAppHost: IAppHost
     
     private void EndRender(Action<RenderMode> renderAction)
     {
-        _renderer.SetRenderTarget(_postRenderTarget);
-        _renderer.DrawTexture(_renderTarget,
-            new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
-            filter: TextureFilter.Nearest);
-
         if (_glowRenderTarget != null)
         {
+            _renderer.SetRenderTarget(_renderTarget);
+            _renderer.SetBlendMode(BlendMode.Additive);
             _renderer.DrawTexture(_glowRenderTarget,
-                new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
-                filter: TextureFilter.Nearest, color: RgbaColor.White * 0.5f);
+                new RectangleF(Scale / 2f, Scale / 2f, _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
+                filter: TextureFilter.Nearest);
+            _renderer.SetBlendMode(BlendMode.AlphaBlend);
         }
+        
+        // _renderer.SetRenderTarget(_postRenderTarget);
+        //
+        // _renderer.DrawTexture(_renderTarget,
+        //     new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
+        //     filter: TextureFilter.Nearest);
 
         var sourceTexture = _postRenderTarget;
                   
@@ -114,7 +116,7 @@ public class PixelAppHost: IAppHost
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
         
-        _renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Linear);
+        _renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Nearest);
         Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
 
         if (_parameters.EnableDebug)

@@ -38,6 +38,7 @@ internal class RendererImpl: RendererBase, IDisposable
 
     public override void Clear(RgbaColor color)
     {
+        DrawCalls = 0;
         _renderStateManager.PrepareRenderState(null, null, VertexMode.Invalid, TextureFilter.Nearest, BlendMode, Flush, WorldTransform, _clipRect, null, color);
         Flush();
     }
@@ -89,11 +90,13 @@ internal class RendererImpl: RendererBase, IDisposable
         }
     }
 
-    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter)
-        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, BlendMode, Flush, WorldTransform, _clipRect);
+    protected override void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode, TextureFilter textureFilter, RenderMode renderMode)
+        => _renderStateManager.PrepareRenderState(texture, effect, vertexMode, textureFilter, BlendMode, Flush, WorldTransform, _clipRect, glow: renderMode == RenderMode.Glow);
 
     private void DrawColorBuffer()
     {
+        //DrawCalls++;
+        
         ColorVertexBuffer.CopyDataTo(_mtlColorVertexBuffer.Contents, (int)_mtlColorVertexBuffer.Length);
 
         var encoder = _renderStateManager.CurrentEncoder;
@@ -104,6 +107,8 @@ internal class RendererImpl: RendererBase, IDisposable
 
     private void DrawTextureBuffer()
     {
+        //DrawCalls++;
+        
         TextureVertexBuffer.CopyDataTo(_mtlTextureVertexBuffer.Contents, (int)_mtlTextureVertexBuffer.Length);
 
         var encoder = _renderStateManager.CurrentEncoder;
@@ -115,6 +120,8 @@ internal class RendererImpl: RendererBase, IDisposable
     public override void DrawPrimitives(IVertexBuffer vertexBuffer, int vertexStart, int vertexCount, ITexture texture = null, RgbaColor? color = null,
         TextureFilter textureFilter = TextureFilter.Nearest, Matrix4x4? transform = null, IEffect effect = null, RenderMode renderMode = RenderMode.Normal)
     {
+        DrawCalls++;
+        
         if (CurrentBatchMode != BatchMode.None)
         {
             Flush();

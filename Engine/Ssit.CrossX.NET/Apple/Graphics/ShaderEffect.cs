@@ -19,6 +19,7 @@ public abstract class ShaderEffect: IMetalShaderEffect
 
     private IMTLLibrary _library;
     private IMTLRenderPipelineState _pipelineState;
+    private IMTLRenderPipelineState _pipelineStateAdd;
     
     private int _constBufferSize;
 
@@ -59,11 +60,18 @@ public abstract class ShaderEffect: IMetalShaderEffect
         pipelineDescriptor.ColorAttachments[0].PixelFormat = device.MetalView.ColorPixelFormat;
         
         _pipelineState = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var _);
+        
+        pipelineDescriptor.ColorAttachments[0].SourceAlphaBlendFactor      = MTLBlendFactor.One;
+        
+        pipelineDescriptor.ColorAttachments[0].DestinationRgbBlendFactor   = MTLBlendFactor.One;
+        pipelineDescriptor.ColorAttachments[0].DestinationAlphaBlendFactor = MTLBlendFactor.One;
+        
+        _pipelineStateAdd = device.MetalView.Device.CreateRenderPipelineState(pipelineDescriptor, out var _);
     }
 
     protected void CreateConstantBuffer(int size)
     {
-        _constantBuffer = _device.MetalView.Device!.CreateBuffer((uint)size, MTLResourceOptions.CpuCacheModeDefault);
+        _constantBuffer = _device.MetalView.Device!.CreateBuffer((uint)size, MTLResourceOptions.CpuCacheModeWriteCombined);
         _constBufferSize = size;
     }
     
@@ -86,9 +94,9 @@ public abstract class ShaderEffect: IMetalShaderEffect
         return new StreamReader(stream!).ReadToEnd();
     }
 
-    public void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? world = null, RgbaColor? blendColor = null)
+    public void Apply(IMTLRenderCommandEncoder encoder, Matrix4x4? world = null, RgbaColor? blendColor = null, bool additive = false)
     {
-        encoder.SetRenderPipelineState(_pipelineState);
+        encoder.SetRenderPipelineState(additive ? _pipelineStateAdd : _pipelineState);
         
         var transform = Matrix4x4.CreateOrthographicOffCenter(0, _device.TargetSize.Width, _device.TargetSize.Height, 0, 1000, -1000);
 

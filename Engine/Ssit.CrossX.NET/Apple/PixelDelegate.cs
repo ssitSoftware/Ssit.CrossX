@@ -79,13 +79,11 @@ public class PixelDelegate<TApp>: UIApplicationDelegate, IMTKViewDelegate where 
             AutoresizingMask = UIViewAutoresizing.All,
             SampleCount = (UIntPtr)1,
             DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8,
-            ColorPixelFormat = MTLPixelFormat.BGRA8Unorm,
-            PreferredFramesPerSecond = (IntPtr)60,
+            ColorPixelFormat = MTLPixelFormat.RGBA8Unorm,
+            PreferredFramesPerSecond = (IntPtr)240,
             ClearColor = new MTLClearColor(0.0f, 0.0f, 0.0f, 1.0f),
             Delegate = this
         };
-        
-        
         
         _pixelViewController = new PixelViewController(_metalView);
         _pixelViewController.View!.AddSubview(_metalView);

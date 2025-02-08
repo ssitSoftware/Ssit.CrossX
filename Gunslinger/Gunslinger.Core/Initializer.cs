@@ -80,7 +80,7 @@ public static class Initializer
 
     public static IIoCContainer InitializeGame(this IIoCContainer container)
     {
-        container.Get<IContentManager>().RegisterGameContentTypes();
+        container.Get<IContentManager>().RegisterGameContentTypes(GameObject.OriginAlignment.Center | GameObject.OriginAlignment.Bottom);
         return container;
     }
     

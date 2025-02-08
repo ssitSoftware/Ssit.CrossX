@@ -5,6 +5,8 @@ using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
+using MetalPerformanceShaders;
+using SkiaSharp;
 using Ssit.CrossX.Graphics;
 
 namespace Ssit.CrossX.NET.Apple.Graphics;
@@ -56,16 +58,38 @@ public class TextureImpl: ITexture
         {
             return null;
         }
+
+        using var bmp = SKBitmap.Decode(stream);
+        var colors = bmp.Pixels;
+
+        for (var idx = 0; idx < colors.Length; idx++)
+        {
+            var af = colors[idx].Alpha / 255f;
+
+            var r = (byte)(colors[idx].Red * af);
+            var g = (byte)(colors[idx].Green * af);
+            var b = (byte)(colors[idx].Blue * af);
+            
+            colors[idx] = new SKColor(r, g, b, colors[idx].Alpha);
+        }
+
+        bmp.Pixels = colors;
         
-        using var data = NSData.FromStream(stream);
+        using var memoryStream = new MemoryStream();
+        bmp.Encode(memoryStream, SKEncodedImageFormat.Png, 100);
+        
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        using var data = NSData.FromStream(memoryStream);
         
         if (data is null)
         {
             return null;
         }
-
-        using var cgImage = CGImage.FromPNG(new CGDataProvider(data), null, false, CGColorRenderingIntent.Default);
-        var texture = textureLoader.FromCGImage(cgImage!, new MTKTextureLoaderOptions(), out var error);
+        
+        var texture = textureLoader.FromData(data!, new MTKTextureLoaderOptions
+        {
+            Srgb = false
+        }, out var error);
         return texture;
     }
 

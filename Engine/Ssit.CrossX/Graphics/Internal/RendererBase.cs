@@ -5,6 +5,8 @@ namespace Ssit.CrossX.Graphics.Internal;
 
 public abstract class RendererBase : IRenderer, IUnsafeRenderer
 {
+    public int DrawCalls { get; protected set; }
+    
     public IUnsafeRenderer Unsafe => this;
 
     public RendererStateManager StateManager { get; } = new();
@@ -54,7 +56,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
     public abstract void SetClipRect(Rectangle? rect);
 
     protected abstract void PrepareRendering(ITexture texture, IEffect effect, VertexMode vertexMode,
-        TextureFilter filter);
+        TextureFilter filter, RenderMode renderMode);
 
     public void DrawText(IFont font, TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left, float scale = 1, RgbaColor? color = null,
         TextSpacing spacing = TextSpacing.Normal, float depth = 0, RgbaColor? outlineColor = null, TextRenderingContext context = null)
@@ -90,7 +92,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             Flush();
         }
         
-        PrepareRendering(texture, null, VertexPositionColorTexture.Mode, textureFilter);
+        PrepareRendering(texture, null, VertexPositionColorTexture.Mode, textureFilter, RenderMode.Normal);
         
         CurrentBatchMode = BatchMode.TextureBuffer;
     }
@@ -131,7 +133,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             Flush();
         }
         
-        PrepareRendering(texture, effect, VertexPositionColorTexture.Mode, textureFilter);
+        PrepareRendering(texture, effect, VertexPositionColorTexture.Mode, textureFilter, RenderMode.Normal);
 
         CurrentBatchMode = BatchMode.TextureBuffer;
 
@@ -189,7 +191,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
         float rotation = 0, float scale = 1, RgbaColor? color = null,
         ImageTransform imageTransform = ImageTransform.None,
         TextureFilter textureFilter = TextureFilter.Nearest,
-        IEffect effect = null, float depth = 0)
+        IEffect effect = null, float depth = 0, RenderMode mode = RenderMode.Normal)
     {
         if (CurrentBatchMode != BatchMode.TextureBuffer)
         {
@@ -201,7 +203,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             Flush();
         }
         
-        PrepareRendering(texture, effect, VertexPositionColorTexture.Mode, textureFilter);
+        PrepareRendering(texture, effect, VertexPositionColorTexture.Mode, textureFilter, mode);
 
         CurrentBatchMode = BatchMode.TextureBuffer;
 
@@ -251,7 +253,7 @@ public abstract class RendererBase : IRenderer, IUnsafeRenderer
             Flush();
         }
         
-        PrepareRendering(null, null, VertexPositionColor.Mode, TextureFilter.Nearest);
+        PrepareRendering(null, null, VertexPositionColor.Mode, TextureFilter.Nearest, RenderMode.Normal);
         
         CurrentBatchMode = BatchMode.ColorBuffer;
         

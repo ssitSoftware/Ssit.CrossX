@@ -41,9 +41,5 @@ fragment float4 fragment_pct(ColorInOut in [[stage_in]],
 {
     float4 sampledColor = diffuseTexture.sample(samplr, in.tex);
     
-    sampledColor.r *= sampledColor.a;
-    sampledColor.g *= sampledColor.a;
-    sampledColor.b *= sampledColor.a;
-    
     return sampledColor * in.color;
 }

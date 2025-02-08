@@ -116,7 +116,7 @@ public class GameObject: IDisposable
         HasTexture = data.hasTexture;
     }
     
-    internal GameObject(string path, IContentManager contentManager): this(Parse(path, contentManager.FilesProvider))
+    internal GameObject(string path, IContentManager contentManager, OriginAlignment alignment): this(Parse(path, contentManager.FilesProvider, alignment))
     {
         _contentManager = contentManager;
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -10,7 +11,10 @@ namespace Ssit.CrossX.Games.Rendering.Map;
 
 public class TilesDisplaySegmentBuilder
 {
+    private const int MergeSize = 32;
+    
     private readonly Dictionary<int, List<VertexPositionColorTexture>> _verticesMap = new();
+    private Tile?[,] _temp = new Tile?[MergeSize, MergeSize];
     
     private string[] _tileSets;
     private int _startX;
@@ -73,7 +77,7 @@ public class TilesDisplaySegmentBuilder
         
         var textures = 
             _tileSets.Select(tileset => _contentManager.Get<ITexture>(tileset)).ToArray();
-
+        
         try
         {
             _verticesMap.Clear();
@@ -82,25 +86,25 @@ public class TilesDisplaySegmentBuilder
             {
                 for (var yy = _startY; yy < _endY; yy++)
                 {
-                    var tile = _tiles[xx, yy];
+                    var tile = GetTile(_tiles, xx, yy, out var w, out var h);
                     if (tile.IsEmpty)
                     {
                         continue;
                     }
 
                     var tl = new Vector2(xx * _tileSize, yy * _tileSize);
-                    var tr = tl + new Vector2(_tileSize, 0);
-                    var br = tl + new Vector2(_tileSize, _tileSize);
-                    var bl = tl + new Vector2(0, _tileSize);
+                    var tr = tl + new Vector2(_tileSize * w, 0);
+                    var br = tl + new Vector2(_tileSize * w, _tileSize * h);
+                    var bl = tl + new Vector2(0, _tileSize * h);
 
                     var xox = (float)_tileSize / textures[tile.TileSet].Resource.Size.Width;
                     var xoy = (float)_tileSize / textures[tile.TileSet].Resource.Size.Height;
 
                     var xtl = new Vector2(tile.X * xox, tile.Y * xoy);
 
-                    var xtr = xtl + new Vector2(xox, 0);
-                    var xbr = xtl + new Vector2(xox, xoy);
-                    var xbl = xtl + new Vector2(0, xoy);
+                    var xtr = xtl + new Vector2(xox * w, 0);
+                    var xbr = xtl + new Vector2(xox * w, xoy * h);
+                    var xbl = xtl + new Vector2(0, xoy * h);
 
                     if (!_verticesMap.TryGetValue(tile.TileSet, out List<VertexPositionColorTexture> vertices))
                     {
@@ -138,5 +142,84 @@ public class TilesDisplaySegmentBuilder
                 tex.Dispose();
             }
         }
+    }
+
+    private Tile GetTile(Tile[,] tiles, int xx, int yy, out int width, out int height)
+    {
+        var maxX = Math.Min(xx + MergeSize, _endX);
+        var maxY = Math.Min(yy + MergeSize, _endY);
+        
+        var countX = maxX - xx;
+        var countY = maxY - yy;
+        
+        var tile = tiles[xx, yy];
+        width = 0;
+        height = 0;
+        
+        if (tile.IsEmpty) return tile;
+        
+        var tileset = tile.TileSet;
+        
+        for(var idx = xx; idx < maxX; ++idx)
+        {
+            for (var idy = yy; idy < maxY; ++idy)
+            {
+                var tile2 = tiles[idx, idy];
+                if (tile2.TileSet != tileset)
+                {
+                    _temp[idx - xx, idy - yy] = null;
+                    continue;
+                }
+
+                if (tile2.X != tile.X + idx - xx || tile2.Y != tile.Y + idy - yy)
+                {
+                    _temp[idx - xx, idy - yy] = null;
+                    continue;
+                }
+                
+                _temp[idx-xx, idy-yy] = tile2;
+            }
+        }
+
+        width = 1;
+        height = 1;
+
+        for (var idx = 0; idx < 8; ++idx)
+        {
+            int left = 2;
+            if (CheckFilled(width+1, height))
+            {
+                width++;
+                left--;
+            }
+            
+            if (CheckFilled(width, height+1))
+            {
+                height++;
+                left--;
+            }
+
+            if (left == 2)
+                break;
+        }
+
+        return tile;
+    }
+
+    private bool CheckFilled(int width, int height)
+    {
+        if (width > MergeSize || height > MergeSize)
+            return false;
+        
+        for(var idx =0; idx < width; ++idx)
+        {
+            for (var idy = 0; idy < height; ++idy)
+            {
+                if (!_temp[idx, idy].HasValue)
+                    return false;
+            }
+        }
+
+        return true;
     }
 }

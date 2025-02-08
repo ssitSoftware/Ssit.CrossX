@@ -48,12 +48,12 @@ public class MapObject
         var flipped = reader.ReadBoolean();
         var zOrder = reader.ReadInt32();
         
-        Type parametersType = null;
+        Type parametersType;
         Type type = null;
         
         if (hasLogic)
         {
-            var obj = gameTemplate.Objects.FirstOrDefault(o => o.FullName == typeId);
+            var obj = gameTemplate.Objects.First(o => o.FullName == typeId);
             parametersType = obj.ParametersType;
             
             type = obj.TargetType;

@@ -51,8 +51,8 @@ internal class RenderStateManager: IDisposable
         
         var depthStateDesc = new MTLDepthStencilDescriptor
         {
-            DepthCompareFunction = MTLCompareFunction.LessEqual,
-            DepthWriteEnabled = true
+            DepthCompareFunction = MTLCompareFunction.Always,
+            DepthWriteEnabled = false
         };
 
         _depthStencilState = metalDevice.MetalView.Device!.CreateDepthStencilState(depthStateDesc);
@@ -184,7 +184,7 @@ internal class RenderStateManager: IDisposable
                 }
             }
 
-            shaderEffect.Apply(_currentEncoder, worldTransform, blendColor);
+            shaderEffect.Apply(_currentEncoder, worldTransform, blendColor, blendMode == BlendMode.Additive);
             
             _currentEncoder.SetDepthStencilState(_depthStencilState);
 

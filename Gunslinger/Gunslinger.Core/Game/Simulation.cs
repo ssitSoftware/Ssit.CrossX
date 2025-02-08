@@ -60,6 +60,16 @@ public class Simulation : ISimulation
     private void Render(IRenderer renderer, RectangleF target, RenderMode renderMode, float scale)
     {
         renderer.StateManager.SaveState();
+
+        if (renderMode == RenderMode.Normal)
+        {
+            renderer.FillRectangle(target, _gameTemplate.DefaultBackground);
+        }
+        else
+        {
+            renderer.FillRectangle(target, RgbaColor.Black);
+        }
+        
         renderer.StateManager.Transform(Matrix3x2.CreateTranslation(target.TopLeft));
         renderer.StateManager.Transform(Matrix3x2.CreateScale(scale));
 
@@ -76,6 +86,8 @@ public class Simulation : ISimulation
     {
         _position.X += _inputMappings[0].GetAxis("Horizontal") * deltaTime * 10;
         _position.Y += _inputMappings[0].GetAxis("Vertical") * deltaTime * 10;
+        
+        _mapDisplayElement.Update(deltaTime);
         Updated?.Invoke();
     }
     

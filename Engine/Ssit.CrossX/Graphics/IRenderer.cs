@@ -15,6 +15,8 @@ public enum BlendMode
 /// </summary>
 public interface IRenderer
 {
+    int DrawCalls { get; }
+
     RendererStateManager StateManager { get; }
     
     /// <summary>
@@ -125,7 +127,7 @@ public interface IRenderer
         Vector2? origin = null, float rotation = 0, float scale = 1, RgbaColor? color = null,
         ImageTransform imageTransform = ImageTransform.None,
         TextureFilter filter = TextureFilter.Nearest,
-        IEffect effect = null, float depth = 0);
+        IEffect effect = null, float depth = 0, RenderMode mode = RenderMode.Normal);
 
     /// <summary>
     /// Fills a rectangle on the screen with the specified color.

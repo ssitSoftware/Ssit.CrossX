@@ -1,7 +1,6 @@
-using System.Text;
 using Ssit.CrossX.Text;
 
-namespace Ssit.CrossX.Graphics;
+namespace Ssit.CrossX.Graphics.Font;
 
 /// <summary>
 /// IFont interface defines the properties and methods required for handling font details and text measurement.

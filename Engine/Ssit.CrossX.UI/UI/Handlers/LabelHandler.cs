@@ -1,5 +1,6 @@
 using System;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;

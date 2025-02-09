@@ -30,7 +30,13 @@ public abstract class ShaderEffect: IMetalShaderEffect
         _device = device;
         
         _library =
-            device.MetalView.Device!.CreateLibrary(LoadShaderSrc(path), new MTLCompileOptions(), out var _);
+            device.MetalView.Device!.CreateLibrary(LoadShaderSrc(path), new MTLCompileOptions
+            {
+                EnableLogging = false,
+                FastMathEnabled = true,
+                MathMode = MTLMathMode.Fast,
+                OptimizationLevel = MTLLibraryOptimizationLevel.Default
+            }, out var _);
         
         _vertexShader = _library.CreateFunction(vsName);
         _fragmentShader = _library.CreateFunction(fsName);

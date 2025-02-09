@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
 

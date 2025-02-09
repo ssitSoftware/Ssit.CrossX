@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics;

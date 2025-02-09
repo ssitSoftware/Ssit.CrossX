@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Handlers.Helpers;
 using Ssit.CrossX.UI.Services;

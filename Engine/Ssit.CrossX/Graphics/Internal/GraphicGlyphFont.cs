@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.Text;

@@ -1,12 +1,10 @@
-using System.IO;
-
-namespace Ssit.CrossX.Graphics;
+namespace Ssit.CrossX.Graphics.Font;
 
 public enum ScaleMode
 {
     None,
     Integer,
-    Float,
+    Float
 }
 
 /// <summary>

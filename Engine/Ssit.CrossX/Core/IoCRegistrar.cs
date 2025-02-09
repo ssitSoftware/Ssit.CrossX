@@ -3,6 +3,7 @@ using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Content.Internal;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Internal;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;

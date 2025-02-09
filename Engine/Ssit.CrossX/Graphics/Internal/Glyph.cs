@@ -6,13 +6,11 @@ namespace Ssit.CrossX.Graphics.Internal;
 
 public class Glyph(char c, Rectangle source, Vector2 offset, float advance, Dictionary<char, float> kerning = null)
 {
-    private readonly Dictionary<char, float> _kerning = kerning;
-    
     public char Char { get; } = c;
     public Rectangle Source { get; set; } = source;
     public Vector2 Offset { get; } = offset;
     public float Advance { get; } = advance;
-    public float GetKerning(char previousCharacter) => _kerning?.GetValueOrDefault(previousCharacter, 0) ?? 0;
+    public float GetKerning(char previousCharacter) => kerning?.GetValueOrDefault(previousCharacter, 0) ?? 0;
     
     internal void Save(BinaryWriter writer)
     {
@@ -25,11 +23,11 @@ public class Glyph(char c, Rectangle source, Vector2 offset, float advance, Dict
         writer.Write(Offset.Y);
         writer.Write(Advance);
 
-        writer.Write(_kerning?.Count ?? 0);
+        writer.Write(kerning?.Count ?? 0);
 
-        if (_kerning?.Count > 0)
+        if (kerning?.Count > 0)
         {
-            foreach (var kvp in _kerning)
+            foreach (var kvp in kerning)
             {
                 writer.Write(kvp.Key);
                 writer.Write(kvp.Value);

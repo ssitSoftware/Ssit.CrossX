@@ -95,6 +95,4 @@ internal class SoundManagerImpl: ISoundManager
             _device = ALDevice.Null;
         }
     }
-
-    
 }

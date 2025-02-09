@@ -5,7 +5,7 @@ namespace Ssit.CrossX.IO;
 
 public class AggregatedFilesProvider: IFilesProvider
 {
-    private Dictionary<string, IFilesProvider> _fileProviders = new();
+    private readonly Dictionary<string, IFilesProvider> _fileProviders = new();
 
     public AggregatedFilesProvider AddProvider(string drive, IFilesProvider provider)
     {

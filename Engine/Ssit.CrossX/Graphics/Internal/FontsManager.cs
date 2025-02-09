@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
 

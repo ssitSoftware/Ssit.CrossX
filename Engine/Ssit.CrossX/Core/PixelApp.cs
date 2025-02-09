@@ -17,6 +17,8 @@ public abstract class PixelApp: IApp
     
     void IApp.InitializeServices(IIoCContainerBuilder builder) => OnInitializeServices(builder);
 
+    void IApp.Update(float dt) => OnUpdate(dt);
+    
     void IApp.Start(object args)
     {
         OnStart(args);

@@ -9,6 +9,8 @@ public class Settings: AppSettingsBase<Settings>
     private int _musicVolume;
     private int _soundVolume;
     private int _language;
+    private bool _fullscreen;
+    private int _scale = 1;
 
     [JsonProperty]
     public bool CameraShake
@@ -36,5 +38,26 @@ public class Settings: AppSettingsBase<Settings>
     {
         get => _language;
         set => SetField(ref _language, value);
+    }
+    
+    [JsonProperty]
+    public bool Fullscreen
+    {
+        get => _fullscreen;
+        set => SetField(ref _fullscreen, value);
+    }
+    
+    [JsonProperty]
+    public int Scale
+    {
+        get => _scale;
+        set
+        {
+            if (value > 4)
+            {
+                value = 1;
+            }
+            SetField(ref _scale, value);
+        }
     }
 }

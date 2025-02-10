@@ -17,7 +17,6 @@ namespace Gunslinger.Core
         protected override RgbaColor BackgroundColor { get; } = RgbaColor.FromBgra(0xff101010);
         
         private readonly IGameTemplate _template = new GunslingerTemplate();
-        private IAppWindowManager _windowManager;
         
         protected override void OnInitializeServices(IIoCContainerBuilder builder)
         {
@@ -42,8 +41,6 @@ namespace Gunslinger.Core
             
             base.OnInitialize(container);
             
-            _windowManager = container.Get<IAppWindowManager>();
-            _windowManager.SetWindowed(_template.TargetSize * 2);
             UiApp.Initialize();
             UiApp.Navigation.NavigateTo<MainPageViewModel>();
         }

@@ -23,10 +23,16 @@ public class OptionsPageViewModel: IPageCommandsSource
     public ICommand CameraShakeCommand { get; }
     public ICommand ControlsCommand { get; }
     public ICommand LanguageCommand { get; }
+    public ICommand FullScreenCommand { get; }
+    public SyncCommand ScaleCommand { get; }
     
     public SharedStringSource SoundVolumeStr { get; } = new();
     public SharedStringSource MusicVolumeStr { get; } = new();
     public SharedStringSource CameraShakeStr { get; } = new();
+    
+    public SharedStringSource FullscreenStr { get; } = new();
+    
+    public SharedStringSource ScaleStr { get; } = new();
 
     public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
         IMusicPlayer musicPlayer, ISettingsProvider settingsProvider, IUiSounds sounds)
@@ -84,6 +90,23 @@ public class OptionsPageViewModel: IPageCommandsSource
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
         });
+
+        FullScreenCommand = new SyncCommand(o =>
+        {
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
+            _settings.Fullscreen = !_settings.Fullscreen;
+            _settings.Save();
+            UpdateStrings();
+        });
+
+        ScaleCommand = new SyncCommand(o =>
+        {
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
+            _settings.Scale += 1;
+            _settings.Save();
+            UpdateStrings();
+        }, o => !_settings.Fullscreen);
+        
         UpdateStrings();
     }
     
@@ -114,5 +137,9 @@ public class OptionsPageViewModel: IPageCommandsSource
         }
 
         CameraShakeStr.SetSource(_settings.CameraShake ? _translator["Yes"] : _translator["No"]);
+        FullscreenStr.SetSource(_settings.Fullscreen ? _translator["Yes"] : _translator["No"]);
+        ScaleStr.SetSource($"{_settings.Scale}x");
+        
+        ScaleCommand.RaiseCanExecuteChanged();
     }
 }

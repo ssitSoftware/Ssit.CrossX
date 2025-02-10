@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using Ssit.CrossX.Audio;
+using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IO;
 
 namespace Gunslinger.Core;
@@ -8,19 +10,35 @@ public class SettingsProvider : ISettingsProvider
 {
     private readonly IMusicPlayer _musicPlayer;
     private readonly ISoundManager _soundManager;
+    private readonly IGameTemplate _gameTemplate;
+    private readonly IAppWindowManager _windowManager;
 
     public Settings Settings { get; }
     
-    public SettingsProvider(IMusicPlayer musicPlayer, ISoundManager soundManager, IFileStorage fileStorage)
+    public SettingsProvider(IMusicPlayer musicPlayer, ISoundManager soundManager, IFileStorage fileStorage, IGameTemplate gameTemplate, IAppWindowManager windowManager, IActionScheduler actionScheduler)
     {
         _musicPlayer = musicPlayer;
         _soundManager = soundManager;
+        _gameTemplate = gameTemplate;
+        _windowManager = windowManager;
 
         Settings = Settings.Load(fileStorage, "settings");
         Settings.PropertyChanged += UpdateSettings;
         
         UpdateSettings(this, new PropertyChangedEventArgs(nameof(Settings.MusicVolume)));
         UpdateSettings(this, new PropertyChangedEventArgs(nameof(Settings.SoundVolume)));
+
+        actionScheduler.Schedule(() =>
+        {
+            if (Settings.Fullscreen)
+            {
+                _windowManager.SetFullscreen();
+            }
+            else
+            {
+                _windowManager.SetWindowed(_gameTemplate.TargetSize * Settings.Scale);
+            }
+        });
     }
     
     private void UpdateSettings(object sender, PropertyChangedEventArgs args)
@@ -33,6 +51,18 @@ public class SettingsProvider : ISettingsProvider
                 
             case nameof(Settings.SoundVolume):
                 _soundManager.MasterVolume = Settings.SoundVolume / 4f;
+                break;
+            
+            case nameof(Settings.Fullscreen):
+            case nameof(Settings.Scale):
+                if (Settings.Fullscreen)
+                {
+                    _windowManager.SetFullscreen();
+                }
+                else
+                {
+                    _windowManager.SetWindowed(_gameTemplate.TargetSize * Settings.Scale);
+                }
                 break;
         }
     }

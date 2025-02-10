@@ -47,11 +47,11 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
         using var app = new TApp();
         
-        var window = SDL_CreateWindow(CString.FromIntPtr(0), 800, 600, SDL_WINDOW_RESIZABLE);
-        var appWindowManager = new AppWindowManager(window);
-        
+        var window = SDL_CreateWindow(CString.FromIntPtr(0), 800, 600, 0);
         var renderer = SDL_CreateRenderer(window, null);
         SDL_SetRenderVSync(renderer, 1);
+        
+        var appWindowManager = new AppWindowManager(window, renderer);
         
         var sdlRenderer = new SdlRenderer(renderer);
 
@@ -63,6 +63,9 @@ public static class AppRunner<TApp> where TApp : IApp, new()
         app.InitializeServices(builder);
         
         using var services = builder.Build();
+        
+        appWindowManager.Initialize(services.Get<IActionScheduler>());
+        
         app.Initialize(services);
         app.Start(args);
 
@@ -99,6 +102,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                         SDL_Rect vp = new() { x = 0, y = 0, w = w, h = h };
                         SDL_SetRenderViewport(renderer, &vp);
                         app.Resize(new Size(w, h));
+                        appWindowManager.EnsureWindowSize();
                         break;
                     }
                 }

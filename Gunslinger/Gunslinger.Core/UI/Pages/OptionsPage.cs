@@ -11,6 +11,8 @@ public class OptionsPage: MenuItemsPageBaseEx<OptionsPageViewModel>
     {
         var menuView = CreateMenuItems<LabelButtonEx>("Options",
         [
+            (Translator["Fullscreen"] +": " + ViewModel.FullscreenStr, ViewModel.FullScreenCommand),
+            (Translator["Scale"] +": " + ViewModel.ScaleStr, ViewModel.ScaleCommand),
             (Translator["Sound Volume"] +": " + ViewModel.SoundVolumeStr, ViewModel.SoundVolumeCommand),
             (Translator["Music Volume"] + ": "+ ViewModel.MusicVolumeStr, ViewModel.MusicVolumeCommand),
             (null, null),

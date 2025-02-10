@@ -4,11 +4,19 @@ using static bottlenoselabs.Interop.SDL;
 
 namespace Ssit.CrossX.SDL3.Services;
 
-internal unsafe class AppWindowManager(SDL_Window* window): IAppWindowManager
+internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* renderer): IAppWindowManager
 {
+    private IActionScheduler _actionScheduler;
     public bool ShouldContinue { get; private set; } = true;
+
+    private Size _windowSize = new Size(800, 600);
     
     public event Action<WindowClosingEventArgs> Closing;
+
+    public void Initialize(IActionScheduler actionScheduler)
+    {
+        _actionScheduler = actionScheduler;
+    }
     
     public void Close()
     {
@@ -17,13 +25,48 @@ internal unsafe class AppWindowManager(SDL_Window* window): IAppWindowManager
 
     public void SetFullscreen()
     {
-        SDL_SetWindowFullscreen(window, CBool.FromBoolean(true));
+        _actionScheduler.Schedule(() =>
+            {
+                var flags = SDL_GetWindowFlags(window);
+                if ((flags.Data & SDL_WINDOW_FULLSCREEN) == 0)
+                {
+                    SDL_SetWindowFullscreen(window, CBool.FromBoolean(true));
+                }
+            }
+        );
     }
 
     public void SetWindowed(Size size)
     {
-        SDL_SetWindowFullscreen(window, CBool.FromBoolean(false));
-        SDL_SetWindowSize(window, size.Width, size.Height);
+        _actionScheduler.Schedule(() =>
+        {
+            var flags = SDL_GetWindowFlags(window);
+            if ((flags.Data & SDL_WINDOW_FULLSCREEN) != 0)
+            {
+                SDL_SetWindowFullscreen(window, CBool.FromBoolean(false));
+            }
+
+            _windowSize = size;
+            SDL_SetWindowSize(window, size.Width, size.Height);
+        });
+    }
+
+    public void EnsureWindowSize()
+    {
+        var flags = SDL_GetWindowFlags(window);
+        if ((flags.Data & SDL_WINDOW_FULLSCREEN) != 0)
+        {
+            return;
+        }
+        
+        int w, h;
+        SDL_GetRenderOutputSize(renderer, &w, &h);
+
+        if (w != _windowSize.Width || h != _windowSize.Height)
+        {
+            SDL_SetWindowSize(window, _windowSize.Width, _windowSize.Height);
+            SDL_SetWindowPosition(window, (int)SDL_WINDOWPOS_CENTERED, (int)SDL_WINDOWPOS_CENTERED);
+        }
     }
 
     public void  SetTitle(string title)

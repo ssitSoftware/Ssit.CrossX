@@ -7,6 +7,8 @@ namespace Ssit.CrossX.SDL3.Graphics;
 public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider)
     : IQuadsRenderer
 {
+    public int QuadsRendered { get; private set; }
+
     public void Draw(ITexture texture, RectangleF target, Rectangle? nullableSource = null, RgbaColor? colorAttr = null)
     {
         var scale = renderStateProvider.Scale;
@@ -40,6 +42,8 @@ public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvide
         SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
         SDL_RenderTexture(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect);
+
+        QuadsRendered++;
     }
 
     public void Draw(ITexture texture, IReadOnlyList<Quad> quads, RgbaColor colorAttr)
@@ -75,5 +79,9 @@ public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvide
             SDL_RenderTexture(renderer, textureHandle.Pointer,
                 &sourceRect, &targetRect);
         }
+        
+        QuadsRendered += quads.Count;
     }
+    
+    public void ResetStats() => QuadsRendered = 0;
 }

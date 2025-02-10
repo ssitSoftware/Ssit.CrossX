@@ -1,6 +1,7 @@
 using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Common.Views;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
@@ -23,22 +24,14 @@ public class GamePage: Page<GamePageViewModel>
                 new Label
                 {
                     Text = ViewModel.Fps,
-                    AnchorX = 10,
-                    AnchorY = 10,
+                    AnchorX = 4,
+                    AnchorY = 4,
                     VerticalAlign = Align.Start,
                     HorizontalAlign = Align.Start,
+                    TextAlign = ContentAlign.Left | ContentAlign.Top,
                     Font = ("Default", 12),
-                    TextColor = RgbaColor.White
-                },
-                new Label
-                {
-                    Text = ViewModel.DrawCalls,
-                    AnchorX = 10,
-                    AnchorY = 30,
-                    VerticalAlign = Align.Start,
-                    HorizontalAlign = Align.Start,
-                    Font = ("Default", 12),
-                    TextColor = RgbaColor.White
+                    TextColor = RgbaColor.White,
+                    PixelScaling = true
                 }
             ]
         };

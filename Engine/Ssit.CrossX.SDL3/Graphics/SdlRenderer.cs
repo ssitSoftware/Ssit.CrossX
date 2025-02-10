@@ -8,7 +8,10 @@ namespace Ssit.CrossX.SDL3.Graphics;
 public unsafe class SdlRenderer: IRenderer2
 {
     private readonly SDL_Renderer* _renderer;
-    
+    private readonly SdlQuadsRenderer _quadsRenderer;
+    private readonly SdlSpriteRenderer _spriteRenderer;
+    private readonly SdlGeometryRenderer _geometryRenderer;
+
     public Size TargetSize
     {
         get
@@ -21,9 +24,13 @@ public unsafe class SdlRenderer: IRenderer2
     
     public IStateManager StateManager { get; }
     public IRenderStateProvider StateProvider { get; }
-    public IQuadsRenderer QuadsRenderer { get; }
-    public ISpriteRenderer SpriteRenderer { get; }
-    public IGeometryRenderer GeometryRenderer { get; }
+
+    public IQuadsRenderer QuadsRenderer => _quadsRenderer;
+
+    public ISpriteRenderer SpriteRenderer => _spriteRenderer;
+
+    public IGeometryRenderer GeometryRenderer => _geometryRenderer;
+
     public ITextRenderer TextRenderer { get; }
 
     public SdlRenderer(SDL_Renderer* renderer)
@@ -34,9 +41,9 @@ public unsafe class SdlRenderer: IRenderer2
         StateManager = stateManager;
         StateProvider = stateManager;
         
-        QuadsRenderer = new SdlQuadsRenderer(_renderer, stateManager);
-        GeometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
-        SpriteRenderer = new SdlSpriteRenderer(_renderer, stateManager);
+        _quadsRenderer = new SdlQuadsRenderer(_renderer, stateManager);
+        _geometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
+        _spriteRenderer = new SdlSpriteRenderer(_renderer, stateManager);
         TextRenderer = new TextRenderer(QuadsRenderer);
 
         stateManager.UpdateBlendMode += UpdateBendMode;
@@ -62,5 +69,12 @@ public unsafe class SdlRenderer: IRenderer2
             return;
         }
         SDL_SetRenderTarget(_renderer, renderTarget.GetMap<SdlHandle<SDL_Texture>>(TextureMaps.Diffuse).Pointer);
+    }
+
+    public void ResetStats()
+    {
+        _quadsRenderer.ResetStats();
+        _geometryRenderer.ResetStats();
+        _spriteRenderer.ResetStats();
     }
 }

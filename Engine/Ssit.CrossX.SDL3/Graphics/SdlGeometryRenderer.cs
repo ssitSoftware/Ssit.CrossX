@@ -5,9 +5,12 @@ using static bottlenoselabs.Interop.SDL;
 
 namespace Ssit.CrossX.SDL3.Graphics;
 
-public unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider)
+internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider)
     : IGeometryRenderer
 {
+    public int LinesRendered { get; private set; }
+    public int RectanglesFilled { get; private set; }
+    
     public void DrawLine(Vector2 v1, Vector2 v2, RgbaColor color)
     {
         var scale = renderStateProvider.Scale;
@@ -18,6 +21,8 @@ public unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStateProv
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
         SDL_RenderLine(renderer, v1.X, v1.Y, v2.X, v2.Y);
+
+        LinesRendered++;
     }
 
     public void DrawRectangle(RectangleF rect, RgbaColor color)
@@ -35,7 +40,8 @@ public unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStateProv
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
         SDL_RenderRect(renderer, &targetRect);
-        
+
+        LinesRendered += 4;
     }
 
     public void FillRectangle(RectangleF rect, RgbaColor color)
@@ -53,5 +59,13 @@ public unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStateProv
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
         SDL_RenderFillRect(renderer, &targetRect);
+        
+        RectanglesFilled++;
+    }
+
+    public void ResetStats()
+    {
+        RectanglesFilled = 0;
+        LinesRendered = 0;
     }
 }

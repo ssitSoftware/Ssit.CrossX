@@ -102,6 +102,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                         break;
                     }
                 }
+                
+                gameControllers.ProcessEvent(@event);
             }
             
             var ticks = SDL_GetTicksNS();
@@ -113,6 +115,10 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             eventSource.OnUpdate((float)dt);
             app.Update((float)dt);
             eventSource.OnUpdated();
+            gameControllers.PostUpdate();
+            
+            sdlRenderer.ResetStats();
+            
             app.Draw(sdlRenderer);
             SDL_RenderPresent(renderer);
             

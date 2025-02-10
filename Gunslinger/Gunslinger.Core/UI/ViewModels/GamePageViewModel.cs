@@ -15,6 +15,7 @@ namespace Gunslinger.Core.UI.ViewModels;
 public class GamePageViewModel: IPageCommandsSource, IDisposable
 {
     private readonly IEventSource _eventSource;
+    private readonly IRenderer2 _renderer;
     ICommand IPageCommandsSource.MenuCommand => _backCommand;
     ICommand IPageCommandsSource.BackCommand => null;
     
@@ -23,13 +24,13 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     public SharedStringValue Fps { get; } = new();
 
     public ISimulation Simulation { get; }
-    public SharedStringValue DrawCalls { get; } = new();
 
     private double _fps = 60;
 
-    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource)
+    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer)
     {
         _eventSource = eventSource;
+        _renderer = renderer;
         _backCommand = new SyncCommand(navigation.NavigateBack);
         
         Simulation = container.IoCConstruct<Simulation>("assets:/Game/Maps/Map1.map");
@@ -46,7 +47,16 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     {
         var fps = 1.0 / Math.Max(0.00000001, dt);
         _fps = (fps * 2 + _fps * 8) / 10.0;
-        Fps.FormatText("{0}", (int)Math.Round(_fps));
+        Fps.FormatText("FPS: {0}\n" +
+                       "Quads Rendered: {1}\n" +
+                       "Sprites Rendered {2}\n" +
+                       "Lines Rendered: {3}\n" +
+                       "Rectangles Filled: {4}", 
+            (int)Math.Round(_fps),
+            _renderer.QuadsRenderer.QuadsRendered,
+            _renderer.SpriteRenderer.SpritesRendered,
+            _renderer.GeometryRenderer.LinesRendered,
+            _renderer.GeometryRenderer.RectanglesFilled);
     }
 
     public void Dispose()

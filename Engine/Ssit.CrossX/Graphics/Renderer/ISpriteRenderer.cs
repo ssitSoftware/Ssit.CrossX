@@ -5,6 +5,8 @@ namespace Ssit.CrossX.Graphics.Renderer;
 
 public interface ISpriteRenderer
 {
+    int SpritesRendered { get; }
+    
     void Draw(ITexture texture, RectangleF target, RectangleF? sourceRectangle = null, Vector2? origin = null,
         RgbaColor? nullableColor = null, ImageTransform imageTransform = ImageTransform.None);
     

@@ -8,6 +8,8 @@ namespace Ssit.CrossX.SDL3.Graphics;
 
 public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider) : ISpriteRenderer
 {
+    public int SpritesRendered { get; private set; }
+
     public void Draw(ITexture texture, RectangleF target, RectangleF? sourceRectangle = null, Vector2? nullableOrigin = null,
         RgbaColor? nullableColor = null, ImageTransform imageTransform = ImageTransform.None)
     {
@@ -77,6 +79,8 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
         SDL_RenderTextureRotated(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect, angle, &center, flip);
+
+        SpritesRendered++;
     }
 
     public void Draw(ITexture texture, Vector2 position, RectangleF? sourceRectangle = null, Vector2? origin = null,
@@ -96,4 +100,6 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
     {
         Draw(sprite.SpriteSheet, position, sprite.Source, sprite.Origin, scale, color, transform);
     }
+    
+    public void ResetStats() => SpritesRendered = 0;
 }

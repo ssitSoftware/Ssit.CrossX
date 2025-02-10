@@ -2,19 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics.Font;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Text;
 
 namespace Ssit.CrossX.Graphics.Internal;
 
 public delegate void DrawTextureQuadDelegate(ITexture texture,
-    Rectangle target, Rectangle source, RgbaColor color, float depth = 0);
+    RectangleF target, Rectangle source, RgbaColor color);
 
 internal static class GlyphFontRenderer
 {
     private static readonly TextRenderingContext TempContext = new();
     
-    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, Vector2 position, ContentAlign align, float scale,
-        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float depth, TextRenderingContext context)
+    public static void RenderText(IQuadsRenderer quadsRenderer, IGlyphFont font, TextSource text, Vector2 position, ContentAlign align, float scale,
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, TextRenderingContext context)
     {
         if (context is null)
         {
@@ -25,27 +26,22 @@ internal static class GlyphFontRenderer
         {
             CalculateText(font, text, spacing, context);
         }
-
-        var internalRenderer = renderer.Unsafe;
-        if (internalRenderer is null) return;
         
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
-            internalRenderer.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawQuad, font.OutlineSheet, font, context.Lines, position, align, scale,
-                outlineColor, spacing, context.Width, context.Height, depth);
+            RenderText(quadsRenderer.Draw, font.OutlineSheet, font, context.Lines, position, align, scale,
+                outlineColor, spacing, context.Width, context.Height);
         }
 
         if (color.A > 0)
         {
-            internalRenderer.BeginRender(font.FontSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawQuad, font.FontSheet, font, context.Lines, position, align, scale, 
-                color, spacing, context.Width, context.Height, depth);
+            RenderText(quadsRenderer.Draw, font.FontSheet, font, context.Lines, position, align, scale, 
+                color, spacing, context.Width, context.Height);
         }
     }
 
-    public static void RenderText(IRenderer renderer, IGlyphFont font, TextSource text, RectangleF target, ContentAlign align, float scale,
-        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, float depth, TextRenderingContext context)
+    public static void RenderText(IQuadsRenderer quadsRenderer, IGlyphFont font, TextSource text, RectangleF target, ContentAlign align, float scale,
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, TextRenderingContext context)
     {
         if (context is null)
         {
@@ -78,22 +74,17 @@ internal static class GlyphFontRenderer
         {
             position.Y = target.Bottom;
         }
-
-        var internalRenderer = renderer.Unsafe;
-        if (internalRenderer is null) return;
         
         if (font.OutlineSheet is not null && outlineColor.A > 0)
         {
-            internalRenderer.BeginRender(font.OutlineSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawQuad, font.OutlineSheet, font, context.Lines, position, align, scale,
-                outlineColor, spacing, context.Width, context.Height, depth);
+            RenderText(quadsRenderer.Draw, font.OutlineSheet, font, context.Lines, position, align, scale,
+                outlineColor, spacing, context.Width, context.Height);
         }
 
         if (color.A > 0)
         {
-            internalRenderer.BeginRender(font.FontSheet, TextureFilter.Nearest);
-            RenderText(internalRenderer.FastDrawQuad, font.FontSheet, font, context.Lines, position, align, scale,
-                color, spacing, context.Width, context.Height, depth);
+            RenderText(quadsRenderer.Draw, font.FontSheet, font, context.Lines, position, align, scale,
+                color, spacing, context.Width, context.Height);
         }
     }
 
@@ -198,7 +189,7 @@ internal static class GlyphFontRenderer
     }
 
     internal static void RenderText(DrawTextureQuadDelegate drawDelegate, ITexture texture, IGlyphFont font, IReadOnlyList<TextRenderingContext.LineDefinition> lines, 
-        Vector2 position, ContentAlign align, float scale, RgbaColor color, TextSpacing spacing, float justifyWidth, float height, float depth)
+        Vector2 position, ContentAlign align, float scale, RgbaColor color, TextSpacing spacing, float justifyWidth, float height)
     {
         var additionalSpacing = (int)(spacing - 50) * font.Metrics.WhitespaceWidth / 50f;
         var posY = CalculateYPosition(font, position.Y, height, align, scale);
@@ -232,8 +223,8 @@ internal static class GlyphFontRenderer
 
                 posX += glyph.GetKerning(previousCharacter) * scale;
             
-                var target = new Rectangle( (int)(posX + glyph.Offset.X * scale), (int)(posY + glyph.Offset.Y * scale), (int)(glyph.Source.Width * scale), (int)(glyph.Source.Height * scale));
-                drawDelegate(texture, target, glyph.Source, color: color, depth: depth);
+                var target = new RectangleF(posX + glyph.Offset.X * scale, posY + glyph.Offset.Y * scale, glyph.Source.Width * scale, glyph.Source.Height * scale);
+                drawDelegate(texture, target, glyph.Source, color: color);
 
                 posX += (glyph.Advance + additionalSpacing) * scale;
                 previousCharacter = c;

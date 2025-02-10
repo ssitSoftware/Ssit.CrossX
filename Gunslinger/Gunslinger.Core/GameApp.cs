@@ -6,7 +6,6 @@ using Ssit.CrossX;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IoC;
-using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core

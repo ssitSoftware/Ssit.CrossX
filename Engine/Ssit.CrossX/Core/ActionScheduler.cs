@@ -12,7 +12,7 @@ internal class ActionScheduler: IActionScheduler
         eventSource.Updating += OnUpdating;
     }
     
-    public void OnUpdating(float _)
+    private void OnUpdating(float _)
     {
         while (_actionQueue.TryDequeue(out var action))
         {

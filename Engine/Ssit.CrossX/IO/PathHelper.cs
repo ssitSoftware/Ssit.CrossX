@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 
 namespace Ssit.CrossX.IO;
@@ -43,5 +44,13 @@ public static class PathHelper
         var parts = path.Split('/');
         newPath = string.Join('/', parts.Skip(1));
         drive = parts[0];
+    }
+
+    public static string GetPathWithExtension(string path, string extension)
+    {
+        var dir = Path.GetDirectoryName(path);
+        var name = Path.GetFileNameWithoutExtension(path);
+        
+        return Path.Combine(dir!, $"{name}.{extension}");
     }
 }

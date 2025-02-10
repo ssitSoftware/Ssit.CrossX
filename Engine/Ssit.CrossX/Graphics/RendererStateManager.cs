@@ -14,10 +14,10 @@ public class RendererStateManager
     
     private readonly Stack<RendererState> _states = new();
     
-    internal event Action ShouldFlush;
-    internal Matrix4x4? WorldTransform { get; private set; }
+    public event Action ShouldFlush;
+    public Matrix4x4? WorldTransform { get; private set; }
 
-    internal Rectangle? ClipRect
+    public Rectangle? ClipRect
     {
         get
         {

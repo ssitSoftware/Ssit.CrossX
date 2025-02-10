@@ -145,10 +145,10 @@ public class TextViewHandler : TextBaseHandler<TextView>
         var font = (IGlyphFont)GetFont();
         var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(CurrentScale, font.LineSize) ?? 0;
         
-        _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle, 
-            AttachedView.TextAlign ?? ContentAlign.Left,
-            TextScale,
-            AttachedView.TextSpacing ?? TextSpacing.Normal,
-            paragraphSpacing, 0, TextRenderingContext, _vertexBuffers);
+        // _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle, 
+        //     AttachedView.TextAlign ?? ContentAlign.Left,
+        //     TextScale,
+        //     AttachedView.TextSpacing ?? TextSpacing.Normal,
+        //     paragraphSpacing, 0, TextRenderingContext, _vertexBuffers);
     }
 }

@@ -10,6 +10,7 @@ public static class IoCRegistrar
     {
         return builder
             .WithSingleton<ISoundManager, SoundManagerImpl>()
+            .WithImplementation<ISoundEffect, SoundEffectImpl>()
             .WithImplementation<ISingleMusicPlayer, SingleMusicPlayerImpl>();
     }
 }

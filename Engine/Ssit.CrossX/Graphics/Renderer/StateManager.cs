@@ -7,14 +7,15 @@ namespace Ssit.CrossX.Graphics.Renderer;
 public class StateManager : IStateManager, IRenderStateProvider
 {
     public event Action<BlendMode> UpdateBlendMode;
-    
-    private readonly struct State(float scale, Vector2 offset, bool useGlowTextures, BlendMode blendMode)
+
+    private readonly struct State(float scale, Vector2 offset, bool useGlowTextures, BlendMode blendMode, TextureFilter textureFilter)
     {
         public readonly float Scale = scale;
         public readonly Vector2 Offset = offset;
         public readonly bool UseGlowTextures = useGlowTextures;
         public readonly BlendMode BlendMode = blendMode;
-    }
+        public readonly TextureFilter TextureFilter = textureFilter;
+}
     
     private readonly Stack<State> _savedStates = new ();
     
@@ -37,36 +38,43 @@ public class StateManager : IStateManager, IRenderStateProvider
     public void Reset()
     {
         _savedStates.Clear();
-        _state = new State(1, Vector2.Zero, false, BlendMode.AlphaBlend);
-    }
-
-    public void PushScale(float scale)
-    {
-        _state = new State(_state.Scale * scale, _state.Offset, _state.UseGlowTextures, _state.BlendMode);
-    }
-
-    public void PushOffset(Vector2 offset)
-    {
-        _state = new State(_state.Scale, _state.Offset + offset * _state.Scale, _state.UseGlowTextures, _state.BlendMode);
-    }
-    
-    public void PushBlendMode( BlendMode blendMode)
-    {
-        if(_state.BlendMode == blendMode) return;
-        
-        _state = new State(_state.Scale, _state.Offset, _state.UseGlowTextures, blendMode);
+        _state = new State(1, Vector2.Zero, false, BlendMode.AlphaBlend, TextureFilter.Nearest);
         UpdateBlendMode?.Invoke(_state.BlendMode);
     }
 
-    public void PushUseGlowTextures(bool useGlowTextures)
+    public void Scale(float scale)
     {
-        _state = new State(_state.Scale, _state.Offset, useGlowTextures, _state.BlendMode);
+        _state = new State(_state.Scale * scale, _state.Offset, _state.UseGlowTextures, _state.BlendMode, _state.TextureFilter);
     }
 
-    private State _state = new(1, Vector2.Zero, false, BlendMode.AlphaBlend);
+    public void Translate(Vector2 offset)
+    {
+        _state = new State(_state.Scale, _state.Offset + offset * _state.Scale, _state.UseGlowTextures, _state.BlendMode, _state.TextureFilter);
+    }
+    
+    public void SetBlendMode( BlendMode blendMode)
+    {
+        if(_state.BlendMode == blendMode) return;
+        
+        _state = new State(_state.Scale, _state.Offset, _state.UseGlowTextures, blendMode, _state.TextureFilter);
+        UpdateBlendMode?.Invoke(_state.BlendMode);
+    }
 
-    public float Scale => _state.Scale;
-    public Vector2 Offset => _state.Offset;
+    public void SetTextureFilter(TextureFilter filter)
+    {
+        _state = new State(_state.Scale, _state.Offset, _state.UseGlowTextures, _state.BlendMode, filter);
+    }
+
+    public void SetGlowMode(bool useGlowTextures)
+    {
+        _state = new State(_state.Scale, _state.Offset, useGlowTextures, _state.BlendMode, _state.TextureFilter);
+    }
+
+    private State _state = new(1, Vector2.Zero, false, BlendMode.AlphaBlend, TextureFilter.Nearest);
+
+    float IRenderStateProvider.Scale => _state.Scale;
+    Vector2 IRenderStateProvider.Offset => _state.Offset;
     public bool UseGlowTextures => _state.UseGlowTextures;
     public BlendMode BlendMode => _state.BlendMode;
+    public TextureFilter TextureFilter => _state.TextureFilter;
 }

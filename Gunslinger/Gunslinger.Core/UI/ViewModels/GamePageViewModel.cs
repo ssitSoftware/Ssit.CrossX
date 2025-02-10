@@ -4,6 +4,7 @@ using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
@@ -23,13 +24,11 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     public ISimulation Simulation { get; }
     public SharedStringValue DrawCalls { get; } = new();
-    
-    private readonly IRenderer _renderer;
 
-    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderingWindow renderingWindow)
+    private double _fps = 60;
+
+    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource)
     {
-        _renderer = renderingWindow.Renderer;
-        
         _eventSource = eventSource;
         _backCommand = new SyncCommand(navigation.NavigateBack);
         
@@ -41,13 +40,13 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     private void OnRenderFinished()
     {
-        DrawCalls.FormatText("{0}", _renderer.DrawCalls);
     }
 
     private void OnUpdating(float dt)
     {
-        var fps = (int)MathF.Round(1f / MathF.Max(0.00000001f, dt));
-        Fps.FormatText("{0}", fps);
+        var fps = 1.0 / Math.Max(0.00000001, dt);
+        _fps = (fps * 2 + _fps * 8) / 10.0;
+        Fps.FormatText("{0}", (int)Math.Round(_fps));
     }
 
     public void Dispose()

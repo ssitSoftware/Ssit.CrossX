@@ -1,27 +1,58 @@
-using bottlenoselabs.Interop;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.SDL3.Common;
+using static bottlenoselabs.Interop.SDL;
 
 namespace Ssit.CrossX.SDL3.Graphics;
 
 public static class SdlRendererExtensions
 {
-    public static (SdlHandle<SDL.SDL_Texture>, RgbaColor) GetProperTextureAndColor(this IRenderStateProvider renderStateProvider, ITexture texture, RgbaColor? color)
+    public static (SdlHandle<SDL_Texture>, RgbaColor) GetProperTextureAndColor(this IRenderStateProvider renderStateProvider, ITexture texture, RgbaColor? color)
     {
         if (renderStateProvider.UseGlowTextures)
         {
-            var map = texture.GetMap<SdlHandle<SDL.SDL_Texture>>(TextureMaps.GlowMap);
+            var map = texture.GetMap<SdlHandle<SDL_Texture>>(TextureMaps.GlowMap);
             color = color ?? RgbaColor.White;
             
             if (map is null)
             {
-                map = texture.GetMap<SdlHandle<SDL.SDL_Texture>>(TextureMaps.Diffuse);
+                map = texture.GetMap<SdlHandle<SDL_Texture>>(TextureMaps.Diffuse);
                 color = RgbaColor.Black;
             }
             return (map, color.Value);
         }
         
-        return (texture.GetMap<SdlHandle<SDL.SDL_Texture>>(TextureMaps.Diffuse), color ?? RgbaColor.White);
+        return (texture.GetMap<SdlHandle<SDL_Texture>>(TextureMaps.Diffuse), color ?? RgbaColor.White);
+    }
+
+    public static SDL_BlendMode ToSdlBlendMode(this BlendMode mode)
+    {
+        switch (mode)
+        {
+            case BlendMode.None:
+                return SDL_BLENDMODE_NONE;
+            
+            case BlendMode.AlphaBlend:
+                return SDL_BLENDMODE_BLEND_PREMULTIPLIED;
+            
+            case BlendMode.Additive:
+                return SDL_BLENDMODE_ADD_PREMULTIPLIED;
+        }
+        return SDL_BLENDMODE_NONE;
+    }
+
+    public static SDL_ScaleMode ToSdlScaleMode(this TextureFilter filter)
+    {
+        switch (filter)
+        {
+            case TextureFilter.Linear:
+                return SDL_ScaleMode.SDL_SCALEMODE_LINEAR;
+            
+            case TextureFilter.Nearest:
+                return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;
+        }
+
+        return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;
     }
 }

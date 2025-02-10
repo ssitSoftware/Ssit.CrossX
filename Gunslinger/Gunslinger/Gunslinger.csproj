@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Engine\Ssit.CrossX.SDL3\Ssit.CrossX.SDL3.csproj" />
+      <ProjectReference Include="..\Gunslinger.Core\Gunslinger.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Music\Menu.ogg" />
+      <Content Include="Music\Menu.ogg">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

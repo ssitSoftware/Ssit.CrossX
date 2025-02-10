@@ -17,20 +17,19 @@ public unsafe class SdlTexture: ITexture
     public Size Size { get; }
     public TextureMaps TextureMaps { get; }
 
-    public SdlTexture(SdlHandles handles, IFilesProvider filesProvider, string path)
+    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters)
     {
-        if (filesProvider.FileExists(path))
+        if (parameters.DiffuseMapStream is not null)
         {
-            var (texture, width, height) = LoadTexture(filesProvider.Open(path), handles.Renderer);
+            var (texture, width, height) = LoadTexture(parameters.DiffuseMapStream, handles.Renderer);
             Size = new Size(width, height);
             TextureMaps = TextureMaps.Diffuse;
             _textureDiff = texture;
         }
         
-        var glowPath = PathHelper.GetPathWithExtension(path, ".glow.png");
-        if (filesProvider.FileExists(glowPath))
+        if (parameters.GlowMapStream is not null)
         {
-            var (texture, width, height) = LoadTexture(filesProvider.Open(glowPath), handles.Renderer);
+            var (texture, width, height) = LoadTexture(parameters.GlowMapStream, handles.Renderer);
             if (Size == Size.Zero)
             {
                 Size = new Size(width, height);
@@ -50,7 +49,6 @@ public unsafe class SdlTexture: ITexture
     {
         var memoryStream = new MemoryStream();
         stream.CopyTo(memoryStream);
-        stream.Close();
         
         SDL_Surface* surface;
         
@@ -62,8 +60,35 @@ public unsafe class SdlTexture: ITexture
             surface = IMG_Load_IO(io, CBool.FromBoolean(true));
         }
 
-        SDL_PremultiplySurfaceAlpha(surface, CBool.FromBoolean(true));
+        if (surface->format != SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888)
+        {
+            var newSurface = SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
+            SDL_DestroySurface(surface);
+            surface = newSurface;
+        }
+
+        byte* pixels = (byte*)surface->pixels;
         
+        for (var y = 0; y < surface->h; y++)
+        {
+            for (var x = 0; x < surface->w; x++)
+            {
+                var a = pixels[x * 4 + 3];
+                var b = pixels[x * 4 + 0];
+                var g = pixels[x * 4 + 1];
+                var r = pixels[x * 4 + 2];
+                
+                r = (byte)(r * a / 255);
+                g = (byte)(g * a / 255);
+                b = (byte)(b * a / 255);
+                
+                pixels[x * 4 + 2] = r;
+                pixels[x * 4 + 1] = g;
+                pixels[x * 4 + 0] = b;
+            }
+            pixels += surface->pitch;
+        }
+
         var width = surface->w;
         var height = surface->h;
         

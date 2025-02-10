@@ -8,6 +8,9 @@ public interface IStateManager
     void RestoreState();
     void Reset();
 
-    void PushScale(float scale);
-    void PushOffset(Vector2 offset);
+    void Scale(float scale);
+    void Translate(Vector2 offset);
+    void SetBlendMode(BlendMode blendMode);
+    void SetTextureFilter(TextureFilter filter);
+    void SetGlowMode(bool glowMode);
 }

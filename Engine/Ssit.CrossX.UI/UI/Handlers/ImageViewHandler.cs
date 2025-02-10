@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
@@ -113,9 +114,9 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         AttachedView.Source.ImageChanged += OnImageChanged;
     }
 
-    protected override void OnDraw(IRenderer renderer, RenderMode mode)
+    protected override void OnDraw(IRenderer2 renderer)
     {
-        base.OnDraw(renderer, mode);
+        base.OnDraw(renderer);
         var texture = AttachedView.Source?.GetTexture(_container);
         
         if (texture is null)
@@ -125,19 +126,18 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
 
         CalculateTargetRects(texture.Resource, out var targetRect, out var sourceRect);
 
-        switch (mode)
+        if (renderer.StateProvider.UseGlowTextures)
         {
-            case RenderMode.Normal:
-                renderer.DrawTexture(texture.Resource, targetRect, sourceRect, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView?.Filter ?? TextureFilter.Nearest);
-                break;
-            
-            case RenderMode.Glow:
-                renderer.DrawTexture(texture.Resource, targetRect, sourceRect, RgbaColor.Black * (AttachedView?.TintColor?.Af ?? 1f), AttachedView?.Transform ?? ImageTransform.None, filter: AttachedView?.Filter ?? TextureFilter.Nearest);
-                break;
+            var color = RgbaColor.Black * (AttachedView?.TintColor?.Af ?? 1f);
+            renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, color, AttachedView?.Transform ?? ImageTransform.None);
+        }
+        else
+        {
+            renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None);
         }
     }
 
-    private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out Rectangle sourceRect)
+    private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out RectangleF sourceRect)
     {
         var size = texture.Size;
         
@@ -232,7 +232,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         
         if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
         {
-            sourceRect = new Rectangle(sourceRect.Y, sourceRect.X, sourceRect.Height, sourceRect.Width);
+            sourceRect = new RectangleF(sourceRect.Y, sourceRect.X, sourceRect.Height, sourceRect.Width);
         }
 
         targetRect = targetRect.Offset(ScreenBounds.TopLeft);

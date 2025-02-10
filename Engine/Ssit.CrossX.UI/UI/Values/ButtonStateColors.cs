@@ -1,4 +1,5 @@
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 
 namespace Ssit.CrossX.UI.Values;
 
@@ -16,9 +17,9 @@ public class ButtonStateColors
     public RgbaColor? PushedGlow;
     public RgbaColor? DisabledGlow;
 
-    public RgbaColor? GetColor(RenderMode mode, bool hover, bool focused, bool pushed, bool enabled)
+    public RgbaColor? GetColor(IRenderer2 renderer, bool hover, bool focused, bool pushed, bool enabled)
     {
-        if (mode == RenderMode.Glow)
+        if (renderer.StateProvider.UseGlowTextures)
         {
             return GetColorGlow(hover, focused, pushed, enabled);
         }

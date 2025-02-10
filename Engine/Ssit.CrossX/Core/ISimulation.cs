@@ -1,12 +1,12 @@
 using System;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 
 namespace Ssit.CrossX.Core;
 
 public interface ISimulation: IDisposable
 {
     int RenderPasses { get; }
-    void Render(IRenderer renderer, RenderMode mode, RectangleF target, int renderPass, float scale);
-    void RenderDebug(IRenderer renderer, RectangleF target, float scale);
+    void Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale);
     void Update(float deltaTime);
 }

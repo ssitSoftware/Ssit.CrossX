@@ -1,5 +1,6 @@
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 
 namespace Ssit.CrossX.Games.Rendering;
 
@@ -11,11 +12,11 @@ public interface IGameObjectRenderer
     float Scale { get; set; }
     void UpdateRenderState(string stateName, ImageTransform transform);
     void Animate(float dt, bool reverse);
-    void Render(IRenderer renderer, Vector2 position, RenderPass renderPass);
+    void Render(IRenderer2 renderer, Vector2 position, RenderPass renderPass);
 }
 
 public interface IGameObjectRenderer2
 {
     RectangleF Bounds { get; }
-    void Render(IRenderer renderer, RenderMode mode);
+    void Render(IRenderer2 renderer);
 }

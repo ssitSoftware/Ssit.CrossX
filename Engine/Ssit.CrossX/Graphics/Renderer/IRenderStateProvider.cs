@@ -7,4 +7,6 @@ public interface IRenderStateProvider
     float Scale { get; }
     Vector2 Offset { get; }
     bool UseGlowTextures { get; }
+    BlendMode BlendMode { get; }
+    TextureFilter TextureFilter { get; }
 }

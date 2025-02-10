@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Handlers.Helpers;
 using Ssit.CrossX.UI.Services;
@@ -12,9 +13,9 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInputConsumer, IFocusable where TLabelButton: LabelButton
 {
-    protected override RgbaColor? BackgroundColor(RenderMode mode) => AttachedView.BackgroundColors?.GetColor(mode, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextColor(RenderMode mode) => AttachedView.TextColors?.GetColor(mode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextOutlineColor(RenderMode mode) => AttachedView.TextOutlineColors?.GetColor(mode,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColors?.GetColor(renderer, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextColor(IRenderer2 renderer) => AttachedView.TextColors?.GetColor(renderer,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColors?.GetColor(renderer,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
     
     public bool Enabled => _buttonHelper.IsEnabled;
     public bool DisableAllInput => _buttonHelper.IsExecutingCommand;

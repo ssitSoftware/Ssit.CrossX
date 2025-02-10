@@ -1,6 +1,7 @@
 using System;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
@@ -62,23 +63,23 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         }
     }
     
-    protected override void OnDraw(IRenderer renderer, RenderMode mode)
+    protected override void OnDraw(IRenderer2 renderer)
     {
-        base.OnDraw(renderer, mode);
+        base.OnDraw(renderer);
         
         var font = GetFont();
 
         try
         {
-            renderer.DrawText(
+            renderer.TextRenderer.DrawText(
                 font: font,
                 text: AttachedView.Text,
                 position: TextRectangle,
                 align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
                 scale: TextScale,
-                color: TextColor(mode) ?? RgbaColor.Transparent,
+                color: TextColor(renderer) ?? RgbaColor.Transparent,
                 spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
-                outlineColor: TextOutlineColor(mode) ?? RgbaColor.Transparent,
+                outlineColor: TextOutlineColor(renderer) ?? RgbaColor.Transparent,
                 context: TextRenderingContext);
         }
         catch(Exception)

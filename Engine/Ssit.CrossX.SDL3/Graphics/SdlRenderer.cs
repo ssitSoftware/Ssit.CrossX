@@ -20,6 +20,7 @@ public unsafe class SdlRenderer: IRenderer2
     }
     
     public IStateManager StateManager { get; }
+    public IRenderStateProvider StateProvider { get; }
     public IQuadsRenderer QuadsRenderer { get; }
     public ISpriteRenderer SpriteRenderer { get; }
     public IGeometryRenderer GeometryRenderer { get; }
@@ -31,6 +32,7 @@ public unsafe class SdlRenderer: IRenderer2
         
         var stateManager = new StateManager();
         StateManager = stateManager;
+        StateProvider = stateManager;
         
         QuadsRenderer = new SdlQuadsRenderer(_renderer, stateManager);
         GeometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
@@ -43,20 +45,7 @@ public unsafe class SdlRenderer: IRenderer2
 
     private void UpdateBendMode(BlendMode mode)
     {
-        switch (mode)
-        {
-            case BlendMode.None:
-                SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
-                break;
-            
-            case BlendMode.AlphaBlend:
-                SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND_PREMULTIPLIED);
-                break;
-            
-            case BlendMode.Additive:
-                SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_ADD_PREMULTIPLIED);
-                break;
-        }
+        SDL_SetRenderDrawBlendMode(_renderer, mode.ToSdlBlendMode());
     }
 
     public void Clear(RgbaColor color)

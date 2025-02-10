@@ -8,7 +8,7 @@ using Ssit.CrossX.Text;
 namespace Ssit.CrossX.Graphics.Internal;
 
 public delegate void DrawTextureQuadDelegate(ITexture texture,
-    RectangleF target, Rectangle source, RgbaColor color);
+    RectangleF target, Rectangle? source, RgbaColor? color);
 
 internal static class GlyphFontRenderer
 {

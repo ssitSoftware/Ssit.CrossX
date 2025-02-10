@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Views;
 
@@ -83,21 +84,9 @@ public abstract class ViewHandler: IDisposable
         ScreenBounds = new RectangleF(offset + Bounds.TopLeft, Bounds.Size);
     }
     
-    public virtual void Draw(IRenderer renderer, RenderMode mode)
+    public virtual void Draw(IRenderer2 renderer)
     {
-        if (mode == RenderMode.Debug)
-        {
-            OnDrawDebug(renderer);
-        }
-        else
-        {
-            OnDraw(renderer, mode);
-        }
-    }
-
-    protected virtual void OnDrawDebug(IRenderer renderer)
-    {
-        renderer.FillRectangle(ScreenBounds, RgbaColor.Magenta * 0.2f);
+        OnDraw(renderer);
     }
 
     public virtual void Update(float dt)
@@ -105,7 +94,7 @@ public abstract class ViewHandler: IDisposable
         
     }
 
-    protected virtual void OnDraw(IRenderer renderer, RenderMode mode)
+    protected virtual void OnDraw(IRenderer2 renderer)
     {
         
     }

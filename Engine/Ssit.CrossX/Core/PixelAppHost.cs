@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.Core;
@@ -30,7 +31,7 @@ public class PixelAppHost: IAppHost
 
     private readonly Parameters _parameters;
     private readonly IIoCContainer _iocContainer;
-    private readonly IRenderer _renderer;
+    private readonly IRenderer2 _renderer;
     private IRenderTarget _renderTarget;
     private IRenderTarget _glowRenderTarget;
     private IRenderTarget _postRenderTarget;
@@ -43,11 +44,11 @@ public class PixelAppHost: IAppHost
 
     public Matrix3x2 Transform { get; private set; } = Matrix3x2.Identity;
     
-    public PixelAppHost(Parameters parameters, IIoCContainer iocContainer, IRenderingWindow renderingWindow)
+    public PixelAppHost(Parameters parameters, IIoCContainer iocContainer, IRenderer2 renderer)
     {
         _parameters = parameters;
         _iocContainer = iocContainer;
-        _renderer = renderingWindow.Renderer;
+        _renderer = renderer;
     }
 
     public void Resize(Size size)
@@ -56,22 +57,25 @@ public class PixelAppHost: IAppHost
         ResizeInternal(targetSize);
     }
 
-    public void Render(Action<RenderMode> renderAction)
+    public void Render(Action renderAction)
     {
         BeginRender();
         try
         {
-            renderAction(RenderMode.Normal);
+            _renderer.StateManager.Reset();
+            _renderer.StateManager.SetGlowMode(false);
+            renderAction();
 
             if (_glowRenderTarget != null)
             {
                 _renderer.SetRenderTarget(_glowRenderTarget);
-                renderAction(RenderMode.Glow);
+                _renderer.StateManager.SetGlowMode(true);
+                renderAction();
             }
         }
         finally
         {
-            EndRender(renderAction);
+            EndRender();
         }
     }
 
@@ -85,26 +89,19 @@ public class PixelAppHost: IAppHost
         _renderer.SetRenderTarget(_renderTarget);
     }
     
-    private void EndRender(Action<RenderMode> renderAction)
+    private void EndRender()
     {
         if (_glowRenderTarget != null)
         {
             _renderer.SetRenderTarget(_renderTarget);
-            _renderer.SetBlendMode(BlendMode.Additive);
-            _renderer.DrawTexture(_glowRenderTarget,
-                new RectangleF(Scale / 2f, Scale / 2f, _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
-                filter: TextureFilter.Nearest);
-            _renderer.SetBlendMode(BlendMode.AlphaBlend);
+            _renderer.StateManager.SetBlendMode(BlendMode.Additive);
+            _renderer.QuadsRenderer.Draw(_glowRenderTarget,
+                new RectangleF(Scale / 2f, Scale / 2f, _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height));
+            _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
         }
-        
-        // _renderer.SetRenderTarget(_postRenderTarget);
-        //
-        // _renderer.DrawTexture(_renderTarget,
-        //     new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height),
-        //     filter: TextureFilter.Nearest);
 
         var sourceTexture = _postRenderTarget;
-                  
+
         _renderer.SetRenderTarget(null);
         
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
@@ -112,23 +109,12 @@ public class PixelAppHost: IAppHost
 
         var targetSize = sourceTexture.Size.ToVector() * scale;
         var targetRect = new RectangleF((_renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
-        
+
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
-        
-        _renderer.DrawTexture(_renderTarget, targetRect,filter: TextureFilter.Nearest);
-        Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
 
-        if (_parameters.EnableDebug)
-        {
-            _renderer.StateManager.Reset();
-            _renderer.StateManager.ClipRectangle(targetRect);
-            _renderer.StateManager.Transform(Transform);
-            
-            renderAction(RenderMode.Debug);
-            
-            _renderer.StateManager.Reset();
-        }
+        _renderer.QuadsRenderer.Draw(_renderTarget, targetRect);
+        Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
     }
 
     private (int, int, Size) CalculateScaleAndSize(Size size)

@@ -7,6 +7,7 @@ using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Rendering.Map;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
 
@@ -22,12 +23,12 @@ public class Simulation : ISimulation
 
     private Vector2 _position = new Vector2(0, 10000); 
 
-    void ISimulation.Render(IRenderer renderer, RenderMode mode, RectangleF target, int renderPass, float scale)
+    void ISimulation.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
     {
         if (renderPass != 0)
             return;
         
-        Render(renderer, target, mode, scale);
+        Render(renderer, target, scale);
     }
 
     public Simulation(IIoCContainer container, IContentManager contentManager, IGameTemplate gameTemplate, IInputMappings inputMappings, string path)
@@ -48,36 +49,24 @@ public class Simulation : ISimulation
 
         _mapDisplayElement = builder.Build();
     }
-    
-    public void RenderDebug(IRenderer renderer, RectangleF target, float scale)
-    {
-    }
 
     void ISimulation.Update(float deltaTime) => Update(deltaTime);
 
     public event Action Updated;
 
-    private void Render(IRenderer renderer, RectangleF target, RenderMode renderMode, float scale)
+    private void Render(IRenderer2 renderer, RectangleF target, float scale)
     {
         renderer.StateManager.SaveState();
-
-        if (renderMode == RenderMode.Normal)
-        {
-            renderer.FillRectangle(target, _gameTemplate.DefaultBackground);
-        }
-        else
-        {
-            renderer.FillRectangle(target, RgbaColor.Black);
-        }
+        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _gameTemplate.DefaultBackground);
         
-        renderer.StateManager.Transform(Matrix3x2.CreateTranslation(target.TopLeft));
-        renderer.StateManager.Transform(Matrix3x2.CreateScale(scale));
+        renderer.StateManager.Translate(target.TopLeft);
+        renderer.StateManager.Scale(scale);
 
         var size = target.Size.ToVector() / scale;
         
         MapRenderer.Render(renderer, _mapDisplayElement, null, _position,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
-            _gameTemplate.TileSize, renderMode);
+            _gameTemplate.TileSize);
 
         renderer.StateManager.RestoreState();
     }

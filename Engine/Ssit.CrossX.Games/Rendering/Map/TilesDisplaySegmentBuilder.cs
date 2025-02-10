@@ -5,6 +5,7 @@ using System.Numerics;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
@@ -13,7 +14,7 @@ public class TilesDisplaySegmentBuilder
 {
     private const int MergeSize = 32;
     
-    private readonly Dictionary<int, List<VertexPositionColorTexture>> _verticesMap = new();
+    private readonly Dictionary<int, List<Quad>> _verticesMap = new();
     private Tile?[,] _temp = new Tile?[MergeSize, MergeSize];
     
     private string[] _tileSets;
@@ -93,43 +94,33 @@ public class TilesDisplaySegmentBuilder
                     }
 
                     var tl = new Vector2(xx * _tileSize, yy * _tileSize);
-                    var tr = tl + new Vector2(_tileSize * w, 0);
                     var br = tl + new Vector2(_tileSize * w, _tileSize * h);
-                    var bl = tl + new Vector2(0, _tileSize * h);
 
-                    var xox = (float)_tileSize / textures[tile.TileSet].Resource.Size.Width;
-                    var xoy = (float)_tileSize / textures[tile.TileSet].Resource.Size.Height;
+                    var xox = (float)_tileSize;
+                    var xoy = (float)_tileSize;
 
                     var xtl = new Vector2(tile.X * xox, tile.Y * xoy);
-
-                    var xtr = xtl + new Vector2(xox * w, 0);
                     var xbr = xtl + new Vector2(xox * w, xoy * h);
-                    var xbl = xtl + new Vector2(0, xoy * h);
 
-                    if (!_verticesMap.TryGetValue(tile.TileSet, out List<VertexPositionColorTexture> vertices))
+                    if (!_verticesMap.TryGetValue(tile.TileSet, out List<Quad> quads))
                     {
-                        vertices = new List<VertexPositionColorTexture>();
-                        _verticesMap.Add(tile.TileSet, vertices);
+                        quads = new List<Quad>();
+                        _verticesMap.Add(tile.TileSet, quads);
                     }
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(tl, _depth), _tintColor, xtl));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(bl, _depth), _tintColor, xbl));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(tr, _depth), _tintColor, xtr));
-
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(tr, _depth), _tintColor, xtr));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(bl, _depth), _tintColor, xbl));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(br, _depth), _tintColor, xbr));
+                    quads.Add(new Quad(new RectangleF(tl, br - tl), new RectangleF(xtl, xbr - xtl)));
                 }
             }
 
-            foreach (var (key, vertices) in _verticesMap)
+            foreach (var (key, quads) in _verticesMap)
             {
                 var texture = _tileSets[key];
 
                 list.Add(_container.IoCConstruct<TilesDisplaySegment>(new TilesDisplaySegment.Parameters
                 {
-                    Vertices = vertices.ToArray(),
-                    TexturePath = texture
+                    Quads = quads.ToArray(),
+                    TexturePath = texture,
+                    TintColor = _tintColor,
                 }));
             }
             return list.ToArray();

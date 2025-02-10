@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
@@ -66,28 +67,22 @@ public abstract class ChildrenContainerHandler<TContainer>
         UpdateCollection(true, false);
     }
 
-    protected override void OnDraw(IRenderer renderer, RenderMode mode)
+    protected override void OnDraw(IRenderer2 renderer)
     {
-        base.OnDraw(renderer, mode);
+        base.OnDraw(renderer);
         RecalculateChildrenLayouts();
 
-        DrawChildren(renderer, mode);
+        DrawChildren(renderer);
     }
     
-    private void DrawChildren(IRenderer renderer, RenderMode mode)
+    private void DrawChildren(IRenderer2 renderer)
     {
         for (var idx = 0; idx < AttachedView.Children.Count; idx++)
         {
             var child = AttachedView.Children[idx];
             var handlerView = (IHandlerView)child;
-            handlerView.Handler.Draw(renderer, mode);
+            handlerView.Handler.Draw(renderer);
         }
-    }
-
-    protected override void OnDrawDebug(IRenderer renderer)
-    {
-        base.OnDrawDebug(renderer);
-        DrawChildren(renderer, RenderMode.Debug);
     }
 
     public override void Update(float dt)

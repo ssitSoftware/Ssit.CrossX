@@ -1,10 +1,10 @@
-using System;
 using Ssit.CrossX.Commands;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
-internal class MainPageViewModel(INavigation navigation, IUiSounds sounds)
+internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager)
 {
     public SyncCommand StartGameCommand { get; } = new(() =>
     {
@@ -18,8 +18,9 @@ internal class MainPageViewModel(INavigation navigation, IUiSounds sounds)
         navigation.NavigateTo<OptionsPageViewModel>();
     });
     
-    public SyncCommand CreditsCommand { get; } = new(() =>
+    public SyncCommand ExitCommand { get; } = new( () =>
     {
         sounds[UiSounds.NavigateToSound]?.PlayOnce();
+        windowManager.Close();
     });
 }

@@ -16,7 +16,7 @@ public class SettingsProvider : ISettingsProvider
         _musicPlayer = musicPlayer;
         _soundManager = soundManager;
 
-        Settings = Settings.Load(fileStorage, "Gunslinger/settings");
+        Settings = Settings.Load(fileStorage, "settings");
         Settings.PropertyChanged += UpdateSettings;
         
         UpdateSettings(this, new PropertyChangedEventArgs(nameof(Settings.MusicVolume)));

@@ -16,7 +16,7 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
         [
             (Translator["Start Game"], ViewModel.StartGameCommand),
             (Translator["Options"], ViewModel.OptionsCommand),
-            (Translator["Credits"], ViewModel.CreditsCommand)
+            (Translator["Exit"], ViewModel.ExitCommand)
         ]);
 
         return new Container

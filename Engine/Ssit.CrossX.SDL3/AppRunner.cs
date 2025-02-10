@@ -1,8 +1,10 @@
 using Interop.Runtime;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
+using Ssit.CrossX.SDL3.Audio;
 using Ssit.CrossX.SDL3.Common;
 using Ssit.CrossX.SDL3.Graphics;
 using Ssit.CrossX.SDL3.Input;
@@ -36,16 +38,21 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             .WithInstance<IKeyboard>(keyboard)
             .WithInstance<IPointingDevices>(pointingDevices)
             .WithInstance<IGameControllers>(gameControllers)
-            .WithPixelCore();
+            .WithImplementation<ITexture, SdlTexture>()
+            .WithImplementation<IRenderTarget, SdlRenderTarget>()
+            .WithPixelCore()
+            .WithOpenAl();
         
         initializeServicesDelegate?.Invoke(builder);
 
         using var app = new TApp();
         
-        var window = SDL_CreateWindow(CString.FromIntPtr(0), 800, 600, 0);
+        var window = SDL_CreateWindow(CString.FromIntPtr(0), 800, 600, SDL_WINDOW_RESIZABLE);
         var appWindowManager = new AppWindowManager(window);
         
         var renderer = SDL_CreateRenderer(window, null);
+        SDL_SetRenderVSync(renderer, 1);
+        
         var sdlRenderer = new SdlRenderer(renderer);
 
         builder
@@ -89,6 +96,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                     {
                         int w, h;
                         SDL_GetRenderOutputSize(renderer, &w, &h);
+                        SDL_Rect vp = new() { x = 0, y = 0, w = w, h = h };
+                        SDL_SetRenderViewport(renderer, &vp);
                         app.Resize(new Size(w, h));
                         break;
                     }

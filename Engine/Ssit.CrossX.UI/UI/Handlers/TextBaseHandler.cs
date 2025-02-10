@@ -1,6 +1,7 @@
 using System;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Views;
 
@@ -11,12 +12,12 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
-    protected virtual RgbaColor? TextColor(RenderMode mode) =>
-        mode == RenderMode.Normal ? AttachedView.TextColor : RgbaColor.Black;
+    protected virtual RgbaColor? TextColor(IRenderer2 renderer) =>
+        renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : AttachedView.TextColor;
 
-    protected virtual RgbaColor? TextOutlineColor(RenderMode mode) => mode == RenderMode.Normal
-        ? AttachedView.TextOutlineColor
-        : RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f);
+    protected virtual RgbaColor? TextOutlineColor(IRenderer2 renderer) => renderer.StateProvider.UseGlowTextures
+        ? RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f)
+        : AttachedView.TextOutlineColor;
     
     protected float TextScale => AttachedView.PixelScaling ? CurrentScale : 1;
     

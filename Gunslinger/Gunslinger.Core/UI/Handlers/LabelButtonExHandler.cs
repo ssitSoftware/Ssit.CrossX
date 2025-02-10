@@ -3,6 +3,7 @@ using System.Numerics;
 using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
 
@@ -40,19 +41,19 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         }
     }
 
-    protected override void OnDraw(IRenderer renderer, RenderMode mode)
+    protected override void OnDraw(IRenderer2 renderer)
     {
         var offset = _waveAmplitude * (float) Math.Sin(_time * 2 * Math.PI);
 
         if (MathF.Abs(offset) > float.Epsilon)
         {
             renderer.StateManager.SaveState();
-            renderer.StateManager.Transform(Matrix3x2.CreateTranslation(new Vector2(offset, 0)));
-            base.OnDraw(renderer, mode);
+            renderer.StateManager.Translate(new Vector2(offset, 0));
+            base.OnDraw(renderer);
             renderer.StateManager.RestoreState();
             return;
         }
         
-        base.OnDraw(renderer, mode);
+        base.OnDraw(renderer);
     }
 }

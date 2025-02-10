@@ -1,4 +1,5 @@
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Exceptions;
 
@@ -33,13 +34,13 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
         Navigation.Update(dt);
     }
 
-    public void Draw(IRenderer renderer, RenderMode mode, RgbaColor? clearColor = null)
+    public void Draw(IRenderer2 renderer,RgbaColor? clearColor = null)
     {
         for (var idx = 0; idx < 8; ++idx)
         {
             try
             {
-                InternalDraw(renderer, mode, clearColor);
+                InternalDraw(renderer, clearColor);
                 break;
             }
             catch (InvalidRenderingException)
@@ -53,26 +54,30 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
         }
     }
 
-    private void InternalDraw(IRenderer renderer, RenderMode mode, RgbaColor? clearColor = null)
+    private void InternalDraw(IRenderer2 renderer, RgbaColor? clearColor = null)
     {
-        if (clearColor?.A > 0 && mode == RenderMode.Normal)
+        if (renderer.StateProvider.UseGlowTextures)
+        {
+            renderer.Clear(RgbaColor.Black);
+        }
+        else if(clearColor?.A > 0)
         {
             renderer.Clear(clearColor.Value);
         }
         
-        if (!Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null && mode != RenderMode.Debug)
+        if (!Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
         {
-            Navigation.PreviousPage.Draw(renderer, mode);
+            Navigation.PreviousPage.Draw(renderer);
         }
 
         if (Navigation.CurrentPage is not null)
         {
-            Navigation.CurrentPage.Draw(renderer, mode);
+            Navigation.CurrentPage.Draw(renderer);
         }
 
-        if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null && mode != RenderMode.Debug)
+        if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)
         {
-            Navigation.PreviousPage.Draw(renderer, mode);
+            Navigation.PreviousPage.Draw(renderer);
         }
     }
 

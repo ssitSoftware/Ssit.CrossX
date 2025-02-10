@@ -8,7 +8,7 @@ namespace Ssit.CrossX.SDL3.Graphics;
 
 public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider) : ISpriteRenderer
 {
-    public void Draw(ITexture texture, RectangleF target, Rectangle? sourceRectangle = null, Vector2? nullableOrigin = null,
+    public void Draw(ITexture texture, RectangleF target, RectangleF? sourceRectangle = null, Vector2? nullableOrigin = null,
         RgbaColor? nullableColor = null, ImageTransform imageTransform = ImageTransform.None)
     {
         var scale = renderStateProvider.Scale;
@@ -16,16 +16,16 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
 
         var (textureHandle, color) = renderStateProvider.GetProperTextureAndColor(texture, nullableColor);
         
-        var source = sourceRectangle ?? new Rectangle(0, 0, texture.Size.Width, texture.Size.Height);
+        var source = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);
         
         var origin = nullableOrigin ?? new Vector2(texture.Size.Width / 2f, texture.Size.Height / 2f);
         
         SDL_FRect sourceRect = new()
         {
-            x = source.X * scale + offset.X,
-            y = source.Y * scale + offset.Y,
-            w = source.Width * scale,
-            h = source.Height * scale
+            x = source.X,
+            y = source.Y,
+            w = source.Width,
+            h = source.Height
         };
 
         SDL_FRect targetRect = new()
@@ -41,8 +41,8 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
 
         SDL_FPoint center = new()
         {
-            x = targetRect.x + origin.X * scaleX * scale,
-            y = targetRect.y + origin.Y * scaleY * scale
+            x = targetRect.x + origin.X * scaleX,
+            y = targetRect.y + origin.Y * scaleY
         };
 
         var flip = SDL_FlipMode.SDL_FLIP_NONE;
@@ -71,18 +71,23 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
                 break;
         }
         
-        SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetTextureBlendMode(textureHandle.Pointer, renderStateProvider.BlendMode.ToSdlBlendMode());
+        SDL_SetTextureColorMod(textureHandle.Pointer, color.R, color.G, color.B);
+        SDL_SetTextureAlphaMod(textureHandle.Pointer, color.A);
+        SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
         SDL_RenderTextureRotated(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect, angle, &center, flip);
     }
 
-    public void Draw(ITexture texture, Vector2 position, Rectangle? sourceRectangle = null, Vector2? origin = null,
+    public void Draw(ITexture texture, Vector2 position, RectangleF? sourceRectangle = null, Vector2? origin = null,
         float scale = 1, RgbaColor? color = null, ImageTransform imageTransform = ImageTransform.None)
     {
         var offset = origin ?? Vector2.Zero;
         position -= offset * scale;
         
-        var targetRect = new RectangleF((int)position.X, (int)position.Y, texture.Size.Width * scale, texture.Size.Height * scale);
+        var sourceRect = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);
+        
+        var targetRect = new RectangleF((int)position.X, (int)position.Y, sourceRect.Width * scale, sourceRect.Height * scale);
         Draw(texture, targetRect, sourceRectangle, origin, color, imageTransform);
     }
 

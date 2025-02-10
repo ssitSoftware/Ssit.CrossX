@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Exceptions;
 using Ssit.CrossX.UI.Handlers;
@@ -159,7 +160,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         return false;
     }
 
-    void IPage.Draw(IRenderer renderer, RenderMode mode) => OnDraw(renderer, mode);
+    void IPage.Draw(IRenderer2 renderer) => OnDraw(renderer);
     
     void IPage.SetBounds(RectangleF bounds, float scale) => SetBounds(bounds, scale);
 
@@ -178,9 +179,9 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         }
     }
 
-    protected virtual void OnDraw(IRenderer renderer, RenderMode mode)
+    protected virtual void OnDraw(IRenderer2 renderer)
     {
-        _rootHandler.Draw(renderer, mode);
+        _rootHandler.Draw(renderer);
 
         if (_renderingInvalid)
         {

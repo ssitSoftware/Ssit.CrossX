@@ -1,5 +1,6 @@
 using System;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
@@ -29,9 +30,9 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         RecalculateChildrenLayouts();
     }
 
-    protected override void OnDraw(IRenderer renderer, RenderMode mode)
+    protected override void OnDraw(IRenderer2 renderer)
     {
-        base.OnDraw(renderer, mode);
+        base.OnDraw(renderer);
 
         var rect = ScreenBounds;
         var l = (int)MathF.Ceiling(rect.X);
@@ -41,9 +42,11 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         var b = (int)MathF.Floor(rect.Bottom);
         
         renderer.StateManager.SaveState();
-        renderer.StateManager.ClipRectangle(new Rectangle(l, t, r - l, b - t));
         
-        _contentHandler?.Draw(renderer, mode);
+        // TODO: Clipping
+        //renderer.StateManager.ClipRectangle(new Rectangle(l, t, r - l, b - t));
+        
+        _contentHandler?.Draw(renderer);
         
         renderer.StateManager.RestoreState();
     }

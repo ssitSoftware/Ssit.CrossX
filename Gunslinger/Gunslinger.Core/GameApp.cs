@@ -5,7 +5,9 @@ using Gunslinger.Core.UI.Views;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.IO;
 using Ssit.CrossX.IoC;
+using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core
@@ -15,7 +17,8 @@ namespace Gunslinger.Core
         protected override RgbaColor BackgroundColor { get; } = RgbaColor.FromBgra(0xff101010);
         
         private readonly IGameTemplate _template = new GunslingerTemplate();
-
+        private IAppWindowManager _windowManager;
+        
         protected override void OnInitializeServices(IIoCContainerBuilder builder)
         {
             base.OnInitializeServices(builder);
@@ -25,6 +28,7 @@ namespace Gunslinger.Core
             builder
                 .WithInstance(filesProvider)
                 .WithSingleton<ISettingsProvider, SettingsProvider>()
+                .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
                 .WithInstance(_template);
         }
 
@@ -38,6 +42,8 @@ namespace Gunslinger.Core
             
             base.OnInitialize(container);
             
+            _windowManager = container.Get<IAppWindowManager>();
+            _windowManager.SetWindowed(_template.TargetSize * 2);
             UiApp.Initialize();
             UiApp.Navigation.NavigateTo<MainPageViewModel>();
         }
@@ -60,7 +66,7 @@ namespace Gunslinger.Core
             {
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
-                MaxScale = 2
+                MaxScale = 4
             });
     }
 }

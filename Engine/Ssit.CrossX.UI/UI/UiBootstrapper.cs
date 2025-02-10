@@ -48,7 +48,7 @@ public static class UiBootstrapper
             .AddMapping<Background, BackgroundHandler>()
             .AddMapping<Label, LabelHandler<Label>>()
             .AddMapping<LabelButton, LabelButtonHandler<LabelButton>>()
-            .AddMapping<TextView, TextViewHandler>()
+            // .AddMapping<TextView, TextViewHandler>()
             .AddMapping<Button, ButtonHandler>()
             .AddMapping<VerticalStack, VerticalStackHandler<VerticalStack>>()
             .AddMapping<ImageView, ImageViewHandler>()

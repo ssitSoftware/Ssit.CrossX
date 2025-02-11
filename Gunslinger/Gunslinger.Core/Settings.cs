@@ -53,7 +53,7 @@ public class Settings: AppSettingsBase<Settings>
         get => _scale;
         set
         {
-            if (value > 4)
+            if (value > 5)
             {
                 value = 1;
             }

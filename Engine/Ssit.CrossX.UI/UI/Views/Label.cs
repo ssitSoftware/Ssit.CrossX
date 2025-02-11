@@ -3,6 +3,13 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
+public enum TextScaling
+{
+    None,
+    Default,
+    Pixel
+}
+
 public class Label: Background
 {
     public SharedString Text { get; set; }
@@ -15,5 +22,5 @@ public class Label: Background
     public FontDesc? Font { get; set; }
     
     public Thickness? Padding { get; set; }
-    public bool PixelScaling { get; set; }
+    public TextScaling Scaling { get; set; }
 }

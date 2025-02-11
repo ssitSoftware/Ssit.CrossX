@@ -67,26 +67,9 @@ public unsafe class SdlTexture: ITexture
             surface = newSurface;
         }
 
-        byte* pixels = (byte*)surface->pixels;
-        
-        for (var y = 0; y < surface->h; y++)
+        if (SDL_PremultiplySurfaceAlpha(surface, CBool.FromBoolean(true)).Value == 0)
         {
-            for (var x = 0; x < surface->w; x++)
-            {
-                var a = pixels[x * 4 + 3];
-                var b = pixels[x * 4 + 0];
-                var g = pixels[x * 4 + 1];
-                var r = pixels[x * 4 + 2];
-                
-                r = (byte)(r * a / 255);
-                g = (byte)(g * a / 255);
-                b = (byte)(b * a / 255);
-                
-                pixels[x * 4 + 2] = r;
-                pixels[x * 4 + 1] = g;
-                pixels[x * 4 + 0] = b;
-            }
-            pixels += surface->pitch;
+            throw new InvalidProgramException("SDL_PremultiplySurfaceAlpha failed");
         }
 
         var width = surface->w;

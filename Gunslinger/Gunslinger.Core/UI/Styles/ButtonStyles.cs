@@ -11,7 +11,7 @@ public static class ButtonStyles
 {
     public static LabelButton WithDefaultStyle(this LabelButton button)
     {
-        button.PixelScaling = true;
+        button.Scaling = TextScaling.Pixel;
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
         button.VerticalAlign = Align.Center;
         button.HorizontalAlign = Align.Fill;

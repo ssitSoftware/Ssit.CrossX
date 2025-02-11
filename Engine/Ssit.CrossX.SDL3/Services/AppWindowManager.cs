@@ -48,6 +48,7 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
 
             _windowSize = size;
             SDL_SetWindowSize(window, size.Width, size.Height);
+            SDL_SetWindowPosition(window, (int)SDL_WINDOWPOS_CENTERED, (int)SDL_WINDOWPOS_CENTERED);
         });
     }
 

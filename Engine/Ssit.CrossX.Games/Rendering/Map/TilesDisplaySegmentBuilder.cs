@@ -76,9 +76,6 @@ public class TilesDisplaySegmentBuilder
     {
         var list = new List<TilesDisplaySegment>();
         
-        var textures = 
-            _tileSets.Select(tileset => _contentManager.Get<ITexture>(tileset)).ToArray();
-        
         try
         {
             _verticesMap.Clear();
@@ -128,10 +125,6 @@ public class TilesDisplaySegmentBuilder
         finally
         {
             _verticesMap.Clear();
-            foreach (var tex in textures)
-            {
-                tex.Dispose();
-            }
         }
     }
 

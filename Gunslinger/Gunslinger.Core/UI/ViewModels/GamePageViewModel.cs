@@ -27,14 +27,14 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     private double _fps = 60;
 
-    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer)
+    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer, ISimulation simulation)
     {
         _eventSource = eventSource;
         _renderer = renderer;
         _backCommand = new SyncCommand(navigation.NavigateBack);
-        
-        Simulation = container.IoCConstruct<Simulation>("assets:/Game/Maps/Map1.map");
 
+        Simulation = simulation;
+        
         _eventSource.Updating += OnUpdating;
         _eventSource.RenderFinished += OnRenderFinished;
     }
@@ -49,7 +49,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
         _fps = (fps * 2 + _fps * 8) / 10.0;
         Fps.FormatText("FPS: {0}\n" +
                        "Quads Rendered: {1}\n" +
-                       "Sprites Rendered {2}\n" +
+                       "Sprites Rendered: {2}\n" +
                        "Lines Rendered: {3}\n" +
                        "Rectangles Filled: {4}", 
             (int)Math.Round(_fps),

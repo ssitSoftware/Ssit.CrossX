@@ -52,7 +52,8 @@ namespace Gunslinger.Core
             navigationMap
                 .Map<MainPageViewModel, MainPage>()
                 .Map<OptionsPageViewModel, OptionsPage>()
-                .Map<GamePageViewModel, GamePage>();
+                .Map<GamePageViewModel, GamePage>()
+                .Map<LoadingPageViewModel, LoadingPage>();
 
             handlers
                 .AddMapping<LabelButtonEx, LabelButtonExHandler>();

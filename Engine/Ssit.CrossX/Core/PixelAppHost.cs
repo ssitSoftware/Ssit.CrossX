@@ -91,6 +91,8 @@ public class PixelAppHost: IAppHost
     
     private void EndRender()
     {
+        _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
+        
         if (_glowRenderTarget != null)
         {
             _renderer.SetRenderTarget(_renderTarget);
@@ -100,8 +102,11 @@ public class PixelAppHost: IAppHost
             _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
         }
 
+        _renderer.SetRenderTarget(_postRenderTarget);
+        _renderer.QuadsRenderer.Draw(_renderTarget, new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
+        
         var sourceTexture = _postRenderTarget;
-
+        
         _renderer.SetRenderTarget(null);
         
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
@@ -113,8 +118,12 @@ public class PixelAppHost: IAppHost
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
 
-        _renderer.QuadsRenderer.Draw(_renderTarget, targetRect);
+        _renderer.StateManager.SetTextureFilter(TextureFilter.Linear);
+        _renderer.QuadsRenderer.Draw(sourceTexture, targetRect);
+        
         Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
+        
+        _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
     }
 
     private (int, int, Size) CalculateScaleAndSize(Size size)

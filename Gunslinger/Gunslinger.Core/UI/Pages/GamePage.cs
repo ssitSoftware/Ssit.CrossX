@@ -31,7 +31,7 @@ public class GamePage: Page<GamePageViewModel>
                     TextAlign = ContentAlign.Left | ContentAlign.Top,
                     Font = ("Default", 12),
                     TextColor = RgbaColor.White,
-                    PixelScaling = true
+                    Scaling = TextScaling.None
                 }
             ]
         };

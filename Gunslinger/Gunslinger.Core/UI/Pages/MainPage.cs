@@ -44,7 +44,7 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
                     Font = ("Default", 12),
                     TextColor = RgbaColor.Gray,
                     TextOutlineColor = RgbaColor.Black,
-                    PixelScaling = true
+                    Scaling = TextScaling.Pixel
                 }
             ]
         };

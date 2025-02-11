@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
@@ -39,6 +40,8 @@ public class Simulation : ISimulation
         using var stream = contentManager.FilesProvider.Open(path);
         var map = MapFile.FromStream(stream, gameTemplate);
 
+        var tilesets = map.Tilesets.Select(o => contentManager.Get<ITexture>(o));
+        
         _position.Y = map.MainLayer.Size.Height - (float)gameTemplate.TargetSize.Height / gameTemplate.TileSize;
         _position.X = (float)gameTemplate.TargetSize.Width / gameTemplate.TileSize / 2;
         
@@ -48,6 +51,11 @@ public class Simulation : ISimulation
             .WithMap(map);
 
         _mapDisplayElement = builder.Build();
+
+        foreach (var ts in tilesets)
+        {
+            ts.Dispose();
+        }
     }
 
     void ISimulation.Update(float deltaTime) => Update(deltaTime);

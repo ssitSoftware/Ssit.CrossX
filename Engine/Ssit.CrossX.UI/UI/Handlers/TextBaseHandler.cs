@@ -19,7 +19,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         ? RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f)
         : AttachedView.TextOutlineColor;
     
-    protected float TextScale => AttachedView.PixelScaling ? CurrentScale : 1;
+    protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : 1;
     
     protected RectangleF TextRectangle
     {
@@ -75,7 +75,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     {
         var size = AttachedView.Font?.FontSize ?? 12;
 
-        if (!AttachedView.PixelScaling)
+        if (AttachedView.Scaling == TextScaling.Default)
         {
             size = (int)MathF.Ceiling(size * CurrentScale);
         }

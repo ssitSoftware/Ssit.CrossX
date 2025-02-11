@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Ssit.CrossX.IoC;
 
 namespace Ssit.CrossX.UI.Services;
@@ -70,14 +71,19 @@ internal class Navigation: INavigation
         {
             throw new InvalidOperationException("Cannot navigate back when the navigation stack is empty.");
         }
-        
+
         var oldData = _navigationStack.Pop();
-        
+
         if (oldData.ViewModel is IDisposable disposable)
         {
             _objectsToDisposeOnTransitionFinished.Add(disposable);
         }
-        
+
+        while (_navigationStack.Peek().ViewModel.GetType().GetCustomAttribute(typeof(NoHistoryAttribute)) != null)
+        {
+            (_navigationStack.Pop().ViewModel as IDisposable)?.Dispose();
+        }
+
         var data = _navigationStack.Peek();
         var page = InitializePage(data.ViewModel, data.FocusedId);
         

@@ -97,6 +97,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                     case SDL_EventType.SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                     case SDL_EventType.SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                     {
+                        
                         int w, h;
                         SDL_GetRenderOutputSize(renderer, &w, &h);
                         SDL_Rect vp = new() { x = 0, y = 0, w = w, h = h };

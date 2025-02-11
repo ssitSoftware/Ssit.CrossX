@@ -64,8 +64,8 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
                         outlineAlpha = Math.Min(255, outlineAlpha);
                     }
                     
-                    fillColors[x, y] = new RgbaColor(255, 255, 255, (byte)fillAlpha);
-                    outlineColors[x, y] = new RgbaColor(255, 255, 255, (byte)outlineAlpha);
+                    fillColors[x, y] = RgbaColor.FromNonPremultiplied(255, 255, 255, (byte)fillAlpha);
+                    outlineColors[x, y] = RgbaColor.FromNonPremultiplied(255, 255, 255, (byte)outlineAlpha);
                 }
             }
         }

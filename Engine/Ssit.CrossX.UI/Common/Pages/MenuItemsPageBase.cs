@@ -43,7 +43,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
     }
 
     protected View CreateMenuItems<TButton>(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
-        int defaultButtonIndex = 0, bool isMainList = true) where TButton: LabelButton, new()
+        int defaultButtonIndex = 0, bool isMainList = true, bool suppressBack = false) where TButton: LabelButton, new()
     {
         var controls = new List<View>();
         var commandsSource = isMainList ? ViewModel as IPageCommandsSource : null;
@@ -87,7 +87,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
             navId++;
         }
 
-        if (commandsSource is not null)
+        if (!suppressBack && commandsSource is not null && commandsSource.BackCommand != null)
         {
             controls.Add(new Background
             {

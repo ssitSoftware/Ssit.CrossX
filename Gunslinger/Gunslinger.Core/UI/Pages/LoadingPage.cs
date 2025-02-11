@@ -17,6 +17,4 @@ internal class LoadingPage: Page<LoadingPageViewModel>
             Children = []
         };
     }
-
-    private ITranslator Translator => Services.Get<ITranslator>();
 }

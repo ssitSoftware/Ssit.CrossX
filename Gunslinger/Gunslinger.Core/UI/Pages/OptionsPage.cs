@@ -1,27 +1,12 @@
-using Gunslinger.Core.UI.Pages.Internal;
 using Gunslinger.Core.UI.ViewModels;
-using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.UI.Views;
 
 namespace Gunslinger.Core.UI.Pages;
 
-public class OptionsPage: MenuItemsPageBaseEx<OptionsPageViewModel>
+public class OptionsPage : OptionsPageBase<OptionsPageViewModel>
 {
     protected override View CreateView()
     {
-        var menuView = CreateMenuItems<LabelButtonEx>("Options",
-        [
-            (Translator["Fullscreen"] +": " + ViewModel.FullscreenStr, ViewModel.FullScreenCommand),
-            (Translator["Scale"] +": " + ViewModel.ScaleStr, ViewModel.ScaleCommand),
-            (Translator["Sound Volume"] +": " + ViewModel.SoundVolumeStr, ViewModel.SoundVolumeCommand),
-            (Translator["Music Volume"] + ": "+ ViewModel.MusicVolumeStr, ViewModel.MusicVolumeCommand),
-            (null, null),
-            (Translator["Language"] + ": " + Translator["#LangName"], ViewModel.LanguageCommand),
-            (null, null),
-            (Translator["Camera Shake"] + ": " + ViewModel.CameraShakeStr, ViewModel.CameraShakeCommand),
-            (Translator["Controls"], ViewModel.ControlsCommand)
-        ]);
-
-        return CreateDefaultItemsContainer(menuView);
+        return CreateDefaultItemsContainer(CreateMenu());
     }
 }

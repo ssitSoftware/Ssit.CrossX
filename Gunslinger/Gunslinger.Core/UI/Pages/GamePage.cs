@@ -4,7 +4,6 @@ using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
-using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace Gunslinger.Core.UI.Pages;
@@ -31,6 +30,7 @@ public class GamePage: Page<GamePageViewModel>
                     TextAlign = ContentAlign.Left | ContentAlign.Top,
                     Font = ("Default", 12),
                     TextColor = RgbaColor.White,
+                    TextOutlineColor = RgbaColor.Black,
                     Scaling = TextScaling.None
                 }
             ]

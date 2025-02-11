@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
@@ -16,14 +17,17 @@ namespace Gunslinger.Core.Game;
 
 public class Simulation : ISimulation
 {
+    private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
     private readonly IInputMappings _inputMappings;
     private readonly MapDisplayElement _mapDisplayElement;
+
+    private bool _isDisposed;
     
     int ISimulation.RenderPasses => 1;
 
     private Vector2 _position = new Vector2(0, 10000); 
-
+    
     void ISimulation.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
     {
         if (renderPass != 0)
@@ -32,8 +36,9 @@ public class Simulation : ISimulation
         Render(renderer, target, scale);
     }
 
-    public Simulation(IIoCContainer container, IContentManager contentManager, IGameTemplate gameTemplate, IInputMappings inputMappings, string path)
+    public Simulation(IIoCContainer container, IContentManager contentManager, IActionScheduler scheduler, IGameTemplate gameTemplate, IInputMappings inputMappings, string path)
     {
+        _scheduler = scheduler;
         _gameTemplate = gameTemplate;
         _inputMappings = inputMappings;
 
@@ -64,6 +69,9 @@ public class Simulation : ISimulation
 
     private void Render(IRenderer2 renderer, RectangleF target, float scale)
     {
+        if (_isDisposed)
+            return;
+        
         renderer.StateManager.SaveState();
         renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _gameTemplate.DefaultBackground);
         
@@ -81,6 +89,9 @@ public class Simulation : ISimulation
 
     private void Update(float deltaTime)
     {
+        if (_isDisposed)
+            return;
+        
         _position.X += _inputMappings[0].GetAxis("Horizontal") * deltaTime * 10;
         _position.Y += _inputMappings[0].GetAxis("Vertical") * deltaTime * 10;
         
@@ -90,6 +101,8 @@ public class Simulation : ISimulation
     
     public void Dispose()
     {
-        _mapDisplayElement.Dispose();
+        _isDisposed = true;
+        Task.Delay(500).ContinueWith(o =>
+            _scheduler.Schedule(_mapDisplayElement.Dispose));
     }
 }

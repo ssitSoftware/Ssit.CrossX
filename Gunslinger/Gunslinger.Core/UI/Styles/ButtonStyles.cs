@@ -38,7 +38,7 @@ public static class ButtonStyles
             Hover = RgbaColor.Black,
             Focused = RgbaColor.Black,
             Pushed = RgbaColor.Black,
-            Disabled = RgbaColor.Transparent
+            Disabled = RgbaColor.Black
         };
         
         return button;

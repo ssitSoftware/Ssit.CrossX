@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Graphics.Sprites.Json;
@@ -13,6 +14,7 @@ internal class ContentManager: IContentManager
 {
     private readonly IIoCContainer _ioCContainer;
     private readonly IFilesProvider _filesProvider;
+    private readonly IActionScheduler _scheduler;
 
     public IFilesProvider FilesProvider => _filesProvider;
     
@@ -25,11 +27,12 @@ internal class ContentManager: IContentManager
     private readonly Dictionary<string, ResourceInstance> _resources = new();
     private readonly Dictionary<Type, LoadResourceDelegate> _resourceLoaders = new();
 
-    public ContentManager(IIoCContainer ioCContainer, IFilesProvider filesProvider)
+    public ContentManager(IIoCContainer ioCContainer, IFilesProvider filesProvider, IActionScheduler scheduler)
     {
         _ioCContainer = ioCContainer;
         _filesProvider = filesProvider;
-        
+        _scheduler = scheduler;
+
         RegisterLoader<ITexture>(LoadTextureFunc);
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
     }
@@ -56,8 +59,8 @@ internal class ContentManager: IContentManager
                     
                     if (resource.Users.Count == 0)
                     {
-                        resource.Object.Dispose();
                         _resources.Remove(key);
+                        _scheduler.Schedule(resource.Object.Dispose);
                     }
                 };
             }
@@ -71,6 +74,7 @@ internal class ContentManager: IContentManager
     {
         var handle = new ResourceHandleManaged<TResource>((TResource)resource.Object, key, g =>
         {
+            
             resource.Users.Remove(g);
             if (resource.Users.Count == 0)
             {

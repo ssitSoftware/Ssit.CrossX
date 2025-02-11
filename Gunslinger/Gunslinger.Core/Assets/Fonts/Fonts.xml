@@ -4,7 +4,7 @@
           Sizes="12,18,22" 
           Weight="Normal" 
           Italic="false"
-          Antialiasing="false" 
+          Antialiasing="true" 
           CharSets="Ascii, Polish, German, French, Spanish, Special"
           Outline="4"
           Spacing="25%"

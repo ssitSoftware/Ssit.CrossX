@@ -3,7 +3,6 @@ using System.Windows.Input;
 using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
@@ -16,10 +15,10 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 {
     private readonly IEventSource _eventSource;
     private readonly IRenderer2 _renderer;
-    ICommand IPageCommandsSource.MenuCommand => _backCommand;
+    ICommand IPageCommandsSource.MenuCommand => _pauseCommand;
     ICommand IPageCommandsSource.BackCommand => null;
     
-    private readonly SyncCommand _backCommand;
+    private readonly SyncCommand _pauseCommand;
     
     public SharedStringValue Fps { get; } = new();
 
@@ -31,7 +30,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     {
         _eventSource = eventSource;
         _renderer = renderer;
-        _backCommand = new SyncCommand(navigation.NavigateBack);
+        _pauseCommand = new SyncCommand(()=>navigation.NavigateTo<PausePageViewModel>(Simulation));
 
         Simulation = simulation;
         

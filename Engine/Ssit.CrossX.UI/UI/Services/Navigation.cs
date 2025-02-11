@@ -173,12 +173,13 @@ internal class Navigation: INavigation
         PreviousPage?.Update(dt);
         CurrentPage?.Update(dt);
 
-        if (true)
+        if (PreviousPage is null)
         {
             foreach (var disposable in _objectsToDisposeOnTransitionFinished)
             {
                 disposable.Dispose();
             }
+            _objectsToDisposeOnTransitionFinished.Clear();
         }
     }
 }

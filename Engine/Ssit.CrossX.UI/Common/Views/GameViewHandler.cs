@@ -20,7 +20,7 @@ internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters) :
     {
         base.Update(dt);
         
-        if (dt > 0)
+        if (dt > 0 && AttachedView.Active)
         {
             var simulation = AttachedView.Simulation;
             simulation.Update(dt);

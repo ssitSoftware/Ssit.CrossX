@@ -4,7 +4,6 @@ public interface IUpdatable
 {
     void Update(float dt)
     {
-        
     }
 
     void PostUpdate()

@@ -15,7 +15,6 @@ public abstract class Behavior
     
     protected virtual void OnLeaveState()
     {
-        
     }
 
     protected virtual void OnEnterState()

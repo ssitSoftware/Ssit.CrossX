@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Ssit.CrossX.Games.Rendering;
-using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Logic;
 
@@ -9,19 +7,8 @@ public abstract class Brain: IUpdatable
 {
     private readonly Dictionary<string, State> _states = new();
     private State _currentState;
-    private IGameObjectRenderer _renderer;
 
-    protected Brain(IGameObjectRenderer renderer)
-    {
-        _renderer = renderer;
-        _renderer.AnimationFinished += RendererOnAnimationFinished;
-    }
-
-    private void RendererOnAnimationFinished(string sequenceName, bool reverse)
-    {
-        _currentState?.SequenceFinished(sequenceName);
-    }
-
+    protected void OnAnimationFinished(string sequenceName) => _currentState?.SequenceFinished(sequenceName);
     public string CurrentState { get; private set; }
 
     void IUpdatable.Update(float dt) => OnUpdate(dt);

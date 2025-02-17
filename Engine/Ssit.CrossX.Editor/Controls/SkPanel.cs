@@ -74,7 +74,7 @@ namespace Ssit.CrossX.Editor.Controls
             public Rect Bounds => new Rect(0, 0, _control.Bounds.Width, _control.Bounds.Height);
             public Color Background { get; set; }
         
-            public bool Equals(ICustomDrawOperation? other)
+            public bool Equals(ICustomDrawOperation other)
             {
                 return ReferenceEquals(this, other);
             }

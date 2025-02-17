@@ -31,6 +31,7 @@ public class GameInstance : IGameInstance
     private readonly MapDisplayElement _mapDisplayElement;
 
     private readonly World _world;
+    private readonly IIoCContainer _container;
     
     private bool _isDisposed;
 
@@ -81,9 +82,10 @@ public class GameInstance : IGameInstance
         var worldBuilder = new WorldBuilder()
             .WithMap(map)
             .WithFilesProvider(contentManager.FilesProvider)
+            .WithContainer(container)
             .WithGameTemplate(gameTemplate);
 
-        _world = worldBuilder.Build();
+        (_world, _container) = worldBuilder.Build();
     }
 
     void IGameInstance.Update(float deltaTime) => Update(deltaTime);
@@ -136,11 +138,43 @@ public class GameInstance : IGameInstance
         _position.Y += _inputMappings[0].GetAxis("Vertical") * deltaTime * 10;
 
         _timeToUpdate += deltaTime;
+
+        foreach (var body in _world.BodyList)
+        {
+            if (body.UserData is IUpdatable updatable)
+            {
+                updatable.Update(deltaTime);
+            }
+        }
         
         while (_timeToUpdate >= WorldDelta)
         {
+            foreach (var body in _world.BodyList)
+            {
+                if (body.UserData is IUpdatable updatable)
+                {
+                    updatable.FixedUpdate(WorldDelta);
+                }
+            }
+            
             _world.Step(WorldDelta);
             _timeToUpdate -= WorldDelta;
+            
+            foreach (var body in _world.BodyList)
+            {
+                if (body.UserData is IUpdatable updatable)
+                {
+                    updatable.PostFixedUpdate();
+                }
+            }
+        }
+        
+        foreach (var body in _world.BodyList)
+        {
+            if (body.UserData is IUpdatable updatable)
+            {
+                updatable.PostUpdate();
+            }
         }
         
         _mapDisplayElement.Update(deltaTime);
@@ -162,6 +196,7 @@ public class GameInstance : IGameInstance
             }
 
             _world.ProcessChanges();
+            _container?.Dispose();
         });
     }
 }

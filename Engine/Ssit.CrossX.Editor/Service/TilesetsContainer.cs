@@ -29,7 +29,7 @@ namespace Ssit.CrossX.Editor.Service
                 using var stream = _gameTemplate.AssetsProvider.Open(path);
                 var image = SKImage.FromEncodedData(stream);
 
-                var cutPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path),
+                var cutPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path)!,
                     System.IO.Path.GetFileNameWithoutExtension(path));
                 
                 using var metaStream = _gameTemplate.AssetsProvider.Open(cutPath + ".tiles");

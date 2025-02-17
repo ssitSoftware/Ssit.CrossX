@@ -12,8 +12,8 @@ public class OptionsPageInGameViewModel(
     IMusicPlayer musicPlayer,
     ISettingsProvider settingsProvider,
     IUiSounds sounds,
-    ISimulation simulation)
+    IGameInstance gameInstance)
     : OptionsPageViewModel(navigation, translator, soundManager, musicPlayer, settingsProvider, sounds)
 {
-    public ISimulation Simulation { get; } = simulation;
+    public IGameInstance GameInstance { get; } = gameInstance;
 }

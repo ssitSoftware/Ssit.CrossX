@@ -47,12 +47,11 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
         using var app = new TApp();
         
-        var window = SDL_CreateWindow(CString.FromIntPtr(0), 800, 600, 0);
+        var window = SDL_CreateWindow(CString.FromIntPtr(IntPtr.Zero), 800, 600, 0);
         var renderer = SDL_CreateRenderer(window, null);
         SDL_SetRenderVSync(renderer, 1);
         
         var appWindowManager = new AppWindowManager(window, renderer);
-        
         var sdlRenderer = new SdlRenderer(renderer);
 
         builder
@@ -70,6 +69,11 @@ public static class AppRunner<TApp> where TApp : IApp, new()
         app.Start(args);
 
         app.SetActive(true);
+        
+        if (!pointingDevices.Enable)
+        {
+            SDL_HideCursor();
+        }
         
         var lastTicks = SDL_GetTicksNS();
         
@@ -97,7 +101,6 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                     case SDL_EventType.SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                     case SDL_EventType.SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                     {
-                        
                         int w, h;
                         SDL_GetRenderOutputSize(renderer, &w, &h);
                         SDL_Rect vp = new() { x = 0, y = 0, w = w, h = h };
@@ -106,6 +109,17 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                         appWindowManager.EnsureWindowSize();
                         break;
                     }
+                    
+                    case SDL_EventType.SDL_EVENT_WINDOW_MOUSE_LEAVE:
+                        SDL_ShowCursor();
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_WINDOW_MOUSE_ENTER:
+                        if (!pointingDevices.Enable)
+                        {
+                            SDL_HideCursor();
+                        }
+                        break;
                 }
                 
                 gameControllers.ProcessEvent(@event);

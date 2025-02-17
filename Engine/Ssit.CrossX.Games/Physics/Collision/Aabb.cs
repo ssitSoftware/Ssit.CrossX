@@ -310,4 +310,9 @@ public struct Aabb
         output.Normal = normal;
         return true;
     }
+
+    public static implicit operator RectangleF(Aabb aabb)
+    {
+        return new RectangleF(aabb.LowerBound.X, aabb.LowerBound.Y, aabb.Width, aabb.Height);
+    }
 }

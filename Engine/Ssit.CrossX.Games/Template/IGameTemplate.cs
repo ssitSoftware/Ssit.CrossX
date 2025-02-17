@@ -1,10 +1,12 @@
 using System;
+using System.Numerics;
 using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.Games.Template;
 
 public interface IGameTemplate
 {
+    Vector2 Gravity { get; }
     string Name { get; }
     Guid Guid { get; }
     int TileSize { get; }

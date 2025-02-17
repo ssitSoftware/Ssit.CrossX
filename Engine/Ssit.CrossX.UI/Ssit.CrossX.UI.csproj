@@ -11,4 +11,8 @@
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\Views\" />
+    </ItemGroup>
+
 </Project>

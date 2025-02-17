@@ -65,7 +65,7 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
             var nextIndex = navId + 1;
             var prevIndex = navId - 1;
             
-            if (commandsSource is null)
+            if (commandsSource is null || suppressBack)
             {
                 nextIndex %= navCount;
                 prevIndex = (prevIndex + navCount) % navCount;

@@ -372,9 +372,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
                     // Remove world body list.
                     BodyList.Remove(body);
-
-                    if (BodyRemoved != null)
-                        BodyRemoved(body);
+                    BodyRemoved?.Invoke(body);
+                    
+                    if (body.UserData is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
 
 #if USE_AWAKE_BODY_SET
                     Debug.Assert(!AwakeBodySet.Contains(body));
@@ -1126,8 +1129,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         {
             Debug.Assert(!_bodyRemoveList.Contains(body), "The body is already marked for removal. You are removing the body more than once.");
 
-            if (!_bodyRemoveList.Contains(body))
-                _bodyRemoveList.Add(body);
+            _bodyRemoveList.Add(body);
 
 #if USE_AWAKE_BODY_SET
             if (AwakeBodySet.Contains(body))

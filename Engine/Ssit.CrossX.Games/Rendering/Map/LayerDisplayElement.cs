@@ -39,9 +39,9 @@ public class LayerDisplayElement: IDisposable
             }
         }
         
-        foreach(var dispObj in _displayObjects)
+        foreach(var displayObject in _displayObjects)
         {
-            dispObj.Dispose();
+            displayObject.Dispose();
         }
         
         _displayObjects.Clear();

@@ -4,6 +4,7 @@ using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
@@ -15,6 +16,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 {
     private readonly IEventSource _eventSource;
     private readonly IRenderer2 _renderer;
+    private readonly IKeyboard _keyboard;
     ICommand IPageCommandsSource.MenuCommand => _pauseCommand;
     ICommand IPageCommandsSource.BackCommand => null;
     
@@ -22,17 +24,19 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     
     public SharedStringValue Fps { get; } = new();
 
-    public ISimulation Simulation { get; }
+    public IGameInstance GameInstance { get; }
+    public SharedBoolMutable ShowDebug { get; } = new(false);
 
     private double _fps = 60;
 
-    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer, ISimulation simulation)
+    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer, IGameInstance gameInstance, IKeyboard keyboard)
     {
         _eventSource = eventSource;
         _renderer = renderer;
-        _pauseCommand = new SyncCommand(()=>navigation.NavigateTo<PausePageViewModel>(Simulation));
+        _keyboard = keyboard;
+        _pauseCommand = new SyncCommand(()=>navigation.NavigateTo<PausePageViewModel>(GameInstance));
 
-        Simulation = simulation;
+        GameInstance = gameInstance;
         
         _eventSource.Updating += OnUpdating;
         _eventSource.RenderFinished += OnRenderFinished;
@@ -56,11 +60,16 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
             _renderer.SpriteRenderer.SpritesRendered,
             _renderer.GeometryRenderer.LinesRendered,
             _renderer.GeometryRenderer.RectanglesFilled);
+
+        if (_keyboard.GetKey(Key.D) == ButtonState.JustPressed)
+        {
+            ShowDebug.SetValue(!ShowDebug.Value);
+        }
     }
 
     public void Dispose()
     {
-        Simulation.Dispose();
+        GameInstance.Dispose();
         _eventSource.Updating -= OnUpdating;
         _eventSource.RenderFinished -= OnRenderFinished;
     }

@@ -22,7 +22,6 @@ public class PixelAppHost: IAppHost
         public Mode Mode = Mode.WidthAndHeight;
         public int MaxScale = 2;
         public GlowParameters GlowParameters;
-        public bool EnableDebug = false;
     }
 
     public class GlowParameters
@@ -102,11 +101,16 @@ public class PixelAppHost: IAppHost
             _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
         }
 
-        _renderer.SetRenderTarget(_postRenderTarget);
-        _renderer.QuadsRenderer.Draw(_renderTarget, new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
-        
-        var sourceTexture = _postRenderTarget;
-        
+        var sourceTexture = _renderTarget;
+        if (_postRenderTarget != null)
+        {
+            _renderer.SetRenderTarget(_postRenderTarget);
+            _renderer.QuadsRenderer.Draw(_renderTarget,
+                new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
+
+            sourceTexture = _postRenderTarget;
+        }
+
         _renderer.SetRenderTarget(null);
         
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
@@ -184,6 +188,8 @@ public class PixelAppHost: IAppHost
         
         _renderTarget?.Dispose();
         _postRenderTarget?.Dispose();
+        _postRenderTarget = null;
+        
         _glowRenderTarget?.Dispose();
         _glowRenderTarget = null;
 
@@ -199,11 +205,14 @@ public class PixelAppHost: IAppHost
                 Size = size
             });
         }
-        
-        _postRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
+
+        if (targetScale > 1)
         {
-            Size = size * targetScale
-        });
+            _postRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
+            {
+                Size = size * targetScale
+            });
+        }
     }
     
     public void Dispose()

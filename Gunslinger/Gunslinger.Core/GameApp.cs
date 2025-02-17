@@ -1,7 +1,4 @@
-using Gunslinger.Core.UI.Handlers;
-using Gunslinger.Core.UI.Pages;
 using Gunslinger.Core.UI.ViewModels;
-using Gunslinger.Core.UI.Views;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
@@ -30,6 +27,14 @@ namespace Gunslinger.Core
                 .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
                 .WithInstance(_template);
         }
+        
+        protected override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
+        {
+            base.OnInitializeUi(builder, navigationMap, handlers);
+            
+            navigationMap.InitializeNavigation();
+            handlers.InitializeCustomViews();
+        }
 
         protected override void OnInitialize(IIoCContainer container)
         {
@@ -40,25 +45,7 @@ namespace Gunslinger.Core
                 .InitializeMusic("Menu");
             
             base.OnInitialize(container);
-            
-            UiApp.Initialize();
-            UiApp.Navigation.NavigateTo<MainPageViewModel>();
-        }
-
-        protected override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
-        {
-            base.OnInitializeUi(builder, navigationMap, handlers);
-            
-            navigationMap
-                .Map<MainPageViewModel, MainPage>()
-                .Map<OptionsPageViewModel, OptionsPage>()
-                .Map<OptionsPageInGameViewModel, OptionsPageInGame>()
-                .Map<GamePageViewModel, GamePage>()
-                .Map<LoadingPageViewModel, LoadingPage>()
-                .Map<PausePageViewModel, PausePage>();
-
-            handlers
-                .AddMapping<LabelButtonEx, LabelButtonExHandler>();
+            UiApp.Initialize<MainPageViewModel>();
         }
 
         protected override IAppHost CreateAppHost(IIoCContainer container) =>
@@ -66,7 +53,7 @@ namespace Gunslinger.Core
             {
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
-                MaxScale = 4
+                MaxScale = 8
             });
     }
 }

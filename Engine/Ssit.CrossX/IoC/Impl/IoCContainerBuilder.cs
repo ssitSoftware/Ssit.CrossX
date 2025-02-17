@@ -47,9 +47,9 @@ internal class IoCContainerBuilder: IIoCContainerBuilder
     public IIoCContainerBuilder WithSingleton<TAbstract, TImplementation>(object parameter = null)
         where TAbstract : class where TImplementation : class, TAbstract
     {
-        _singletonTypes.Add(typeof(TAbstract), new SingletonInfo 
+        _singletonTypes.Add(typeof(TAbstract), new SingletonInfo
             {
-                Type = typeof(TImplementation), 
+                Type = typeof(TImplementation),
                 Parameter = parameter
             }
         );

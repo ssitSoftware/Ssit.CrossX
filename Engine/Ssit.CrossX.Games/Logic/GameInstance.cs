@@ -1,0 +1,167 @@
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
+using Ssit.CrossX.Content;
+using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic.Map;
+using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.Games.Rendering.Map;
+using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.IoC;
+
+namespace Ssit.CrossX.Games.Logic;
+
+public class GameInstance : IGameInstance
+{
+    public class Parameters
+    {
+        public string MapPath { get; set; }
+    }
+    
+    private const float WorldDelta = 1f / 60f;
+    
+    private readonly IActionScheduler _scheduler;
+    private readonly IGameTemplate _gameTemplate;
+    private readonly IInputMappings _inputMappings;
+    private readonly MapDisplayElement _mapDisplayElement;
+
+    private readonly World _world;
+    
+    private bool _isDisposed;
+
+    private float _timeToUpdate = 0;
+    
+    int IGameInstance.RenderPasses => 1;
+
+    private Vector2 _position = Vector2.Zero;
+    
+    void IGameInstance.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
+    {
+        if (renderPass != 0)
+            return;
+        
+        Render(renderer, target, scale);
+    }
+
+    void IGameInstance.RenderDebug(IRenderer2 renderer, RectangleF target, float scale) => RenderDebug(renderer, target, scale);
+
+    public GameInstance(IIoCContainer container, IContentManager contentManager, 
+        IActionScheduler scheduler, IGameTemplate gameTemplate, IInputMappings inputMappings, 
+        Parameters parameters)
+    {
+        _scheduler = scheduler;
+        _gameTemplate = gameTemplate;
+        _inputMappings = inputMappings;
+
+        using var stream = contentManager.FilesProvider.Open(parameters.MapPath);
+        var map = MapFile.FromStream(stream, gameTemplate);
+
+        var tilesets = map.Tilesets.Select(contentManager.Get<ITexture>).ToArray();
+        
+        _position.Y = map.MainLayer.Size.Height - (float)gameTemplate.TargetSize.Height / gameTemplate.TileSize;
+        _position.X = (float)gameTemplate.TargetSize.Width / gameTemplate.TileSize / 2;
+        
+        var builder = new MapDisplayElementBuilder()
+            .WithServices(container, contentManager)
+            .WithTemplate(gameTemplate)
+            .WithMap(map);
+        
+        _mapDisplayElement = builder.Build();
+        
+        foreach (var ts in tilesets)
+        {
+            ts.Dispose();
+        }
+
+        var worldBuilder = new WorldBuilder()
+            .WithMap(map)
+            .WithFilesProvider(contentManager.FilesProvider)
+            .WithGameTemplate(gameTemplate);
+
+        _world = worldBuilder.Build();
+    }
+
+    void IGameInstance.Update(float deltaTime) => Update(deltaTime);
+
+    public event Action Updated;
+
+    private void Render(IRenderer2 renderer, RectangleF target, float scale)
+    {
+        if (_isDisposed)
+            return;
+        
+        renderer.StateManager.SaveState();
+        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _gameTemplate.DefaultBackground);
+        
+        renderer.StateManager.Translate(target.TopLeft);
+        renderer.StateManager.Scale(scale);
+
+        var size = target.Size.ToVector() / scale;
+        
+        MapRenderer.Render(renderer, _mapDisplayElement, _world, _position,
+            new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
+            _gameTemplate.TileSize);
+
+        renderer.StateManager.RestoreState();
+    }
+    
+    private void RenderDebug(IRenderer2 renderer, RectangleF target, float scale)
+    {
+        if (_isDisposed)
+            return;
+        
+        renderer.StateManager.SaveState();
+        renderer.StateManager.Translate(target.TopLeft);
+        renderer.StateManager.Scale(scale);
+        
+        var size = target.Size.ToVector() / scale;
+        MapRenderer.RenderDebug(renderer, _mapDisplayElement, _world, _position,
+            new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
+            _gameTemplate);
+        
+        renderer.StateManager.RestoreState();
+    }
+
+    private void Update(float deltaTime)
+    {
+        if (_isDisposed)
+            return;
+        
+        _position.X += _inputMappings[0].GetAxis("Horizontal") * deltaTime * 10;
+        _position.Y += _inputMappings[0].GetAxis("Vertical") * deltaTime * 10;
+
+        _timeToUpdate += deltaTime;
+        
+        while (_timeToUpdate >= WorldDelta)
+        {
+            _world.Step(WorldDelta);
+            _timeToUpdate -= WorldDelta;
+        }
+        
+        _mapDisplayElement.Update(deltaTime);
+        Updated?.Invoke();
+    }
+    
+    public void Dispose()
+    {
+        if (_isDisposed)
+            return;
+        
+        _isDisposed = true;
+        Task.Delay(1000).ContinueWith(o =>
+        {
+            _scheduler.Schedule(_mapDisplayElement.Dispose);
+            foreach (var body in _world.BodyList)
+            {
+                _world.RemoveBody(body);
+            }
+
+            _world.ProcessChanges();
+        });
+    }
+}

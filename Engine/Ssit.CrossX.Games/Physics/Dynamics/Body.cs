@@ -83,6 +83,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         internal Transform _xf; // the body origin transform
         internal bool _island;
 
+        public int MaterialIndex;
+        
         public PhysicsLogicFilter PhysicsLogicFilter;
         public ControllerFilter ControllerFilter;
         

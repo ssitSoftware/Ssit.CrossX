@@ -1,9 +1,12 @@
+using Gunslinger.Core.UI.Handlers;
+using Gunslinger.Core.UI.Pages;
+using Gunslinger.Core.UI.ViewModels;
+using Gunslinger.Core.UI.Views;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Games;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
@@ -68,7 +71,7 @@ public static class Initializer
         return container;
     }
 
-    public static IUiApp Initialize(this IUiApp uiApp)
+    public static void Initialize<TViewModel>(this IUiApp uiApp) where TViewModel: class
     {
         uiApp.InitializeUiSounds();
             
@@ -76,7 +79,7 @@ public static class Initializer
         uiApp.Services.Get<IPointingDevices>().Enable = false;
         uiApp.Services.Get<ITranslator>().CurrentLanguage = uiApp.Services.Get<ISettingsProvider>().Settings.Language;
         
-        return uiApp;
+        uiApp.Navigation.NavigateTo<TViewModel>();
     }
 
     public static IIoCContainer InitializeGame(this IIoCContainer container)
@@ -84,6 +87,21 @@ public static class Initializer
         container.Get<IContentManager>().RegisterGameContentTypes(GameObject.OriginAlignment.Center | GameObject.OriginAlignment.Bottom);
         return container;
     }
-    
-    
+
+    public static void InitializeNavigation(this INavigationMap map)
+    {
+        map
+            .Map<MainPageViewModel, MainPage>()
+            .Map<OptionsPageViewModel, OptionsPage>()
+            .Map<OptionsPageInGameViewModel, OptionsPageInGame>()
+            .Map<GamePageViewModel, GamePage>()
+            .Map<LoadingPageViewModel, LoadingPage>()
+            .Map<PausePageViewModel, PausePage>();
+    }
+
+    public static void InitializeCustomViews(this IHandlerMapper mapper)
+    {
+        mapper
+            .AddMapping<LabelButtonEx, LabelButtonExHandler>();
+    }
 }

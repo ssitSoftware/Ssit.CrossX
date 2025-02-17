@@ -1,6 +1,5 @@
 using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
-using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
@@ -18,7 +17,8 @@ public class GamePage: Page<GamePageViewModel>
             [
                 new GameView
                 {
-                    Simulation = ViewModel.Simulation
+                    GameInstance = ViewModel.GameInstance,
+                    ShowDebug = ViewModel.ShowDebug
                 },
                 new Label
                 {

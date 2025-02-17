@@ -6,11 +6,11 @@ using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
-public class PausePageViewModel(INavigation navigation, ISimulation simulation) : IPageCommandsSource
+public class PausePageViewModel(INavigation navigation, IGameInstance gameInstance) : IPageCommandsSource
 {
-    public ISimulation Simulation { get; } = simulation;
+    public IGameInstance GameInstance { get; } = gameInstance;
     public ICommand ResumeCommand { get; } = new SyncCommand(navigation.NavigateBack);
-    public ICommand OptionsCommand { get; } = new SyncCommand(()=>navigation.NavigateTo<OptionsPageInGameViewModel>(simulation));
+    public ICommand OptionsCommand { get; } = new SyncCommand(()=>navigation.NavigateTo<OptionsPageInGameViewModel>(gameInstance));
     public ICommand ExitCommand { get; } = new SyncCommand(navigation.NavigateBackTo<MainPageViewModel>);
     public ICommand BackCommand => ResumeCommand;
     public ICommand MenuCommand => ResumeCommand;

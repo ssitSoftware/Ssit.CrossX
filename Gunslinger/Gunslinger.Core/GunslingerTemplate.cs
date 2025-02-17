@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Gunslinger.Core.Game.Objects;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
@@ -10,6 +11,8 @@ namespace Gunslinger.Core;
 
 public class GunslingerTemplate: IGameTemplate
 {
+    public Vector2 Gravity => new(0, 10);
+    
     public string Name => "Gunslinger";
     public Guid Guid { get; } = Guid.Parse("b7d05cc4-a3f3-461f-8cb2-07ec58b6120a");
 
@@ -75,13 +78,13 @@ public class GunslingerTemplate: IGameTemplate
 
     public MaterialInfo[] Materials { get; } =
     [
-        new("Default", null, RgbaColor.LightBlue),
-        new("Grass", "GR|ASS", RgbaColor.Green),
-        new("Wood", "WO|OD", RgbaColor.SaddleBrown),
-        new("Mud", "MUD", RgbaColor.DarkKhaki),
-        new("Ice", "ICE", RgbaColor.AliceBlue),
-        new("Wood Platform", "PLA|WDN", RgbaColor.SaddleBrown),
-        new("Metal Platform", "PLA|MET", RgbaColor.DarkGray)
+        new("Default", null, RgbaColor.LightBlue, RgbaColor.Yellow),
+        new("Grass", "GR|ASS", RgbaColor.Green, RgbaColor.GreenYellow),
+        new("Wood", "WO|OD", RgbaColor.SaddleBrown, RgbaColor.Orange),
+        new("Mud", "MUD", RgbaColor.DarkKhaki, RgbaColor.Coral),
+        new("Ice", "ICE", RgbaColor.AliceBlue, RgbaColor.AliceBlue),
+        new("Wood Platform", "PLA|WDN", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
+        new("Metal Platform", "PLA|MET", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow)
     ];
     
     public int PreviewZoom => 2;

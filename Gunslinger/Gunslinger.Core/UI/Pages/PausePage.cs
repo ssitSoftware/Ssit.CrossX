@@ -2,7 +2,6 @@ using Gunslinger.Core.UI.Pages.Internal;
 using Gunslinger.Core.UI.ViewModels;
 using Gunslinger.Core.UI.Views;
 using Ssit.CrossX;
-using Ssit.CrossX.Common.Views;
 using Ssit.CrossX.UI.Views;
 
 namespace Gunslinger.Core.UI.Pages;
@@ -23,7 +22,7 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
             Children = [
                 new GameView
                 {
-                    Simulation = ViewModel.Simulation,
+                    GameInstance = ViewModel.GameInstance,
                     Active = false
                 },
                 new Background

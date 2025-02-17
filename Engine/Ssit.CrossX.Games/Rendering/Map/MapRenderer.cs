@@ -1,7 +1,10 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Ssit.CrossX.Games.Physics;
+using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
@@ -11,21 +14,50 @@ namespace Ssit.CrossX.Games.Rendering.Map;
 
 public static class MapRenderer
 {
-    public static void Render(IRenderer2 renderer, MapDisplayElement map, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
+    private static (Vector2 offset, RectangleF bounds) GetLayerRenderParameters(LayerDisplayElement mainLayer, LayerDisplayElement layer, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
     {
-        var mainLayer = map.Layers.First(o => o.IsMain);
         var screenSizeNormalized = targetSize.ToVector() / tileSize;
+        
         var globalOffset = cameraLookAt - screenSizeNormalized / 2;
         
         globalOffset.X = MathF.Min(MathF.Max(0, globalOffset.X), mainLayer.SourceSize.Width - screenSizeNormalized.X);
         globalOffset.Y = MathF.Min(MathF.Max(screenSizeNormalized.Y, globalOffset.Y), mainLayer.SourceSize.Height);
+
+        var offset = LayerOffsetCalculator.CalculateLayerOffset(layer, mainLayer, globalOffset);
+        
+        offset = -offset * tileSize + targetSize.ToVector() / 2 + new Vector2(-targetSize.Width / 2f, targetSize.Height / 2f);
+        var visibleBounds = new RectangleF(-offset.X / tileSize, -offset.Y / tileSize, (float)targetSize.Width / tileSize, (float)targetSize.Height / tileSize);
+        
+        return (offset, visibleBounds);
+    }
+    
+    public static void RenderDebug(IRenderer2 renderer, MapDisplayElement map, World world, Vector2 cameraLookAt,
+        Size targetSize, IGameTemplate gameTemplate)
+    {
+        var tileSize = gameTemplate.TileSize;
+        
+        var mainLayer = map.Layers.First(o => o.IsMain);
+        var (offset, _) = GetLayerRenderParameters(mainLayer, mainLayer, world, cameraLookAt, targetSize, tileSize);
+        
+        renderer.StateManager.SaveState();
+        renderer.StateManager.Translate(offset);
+        renderer.StateManager.Scale(tileSize);
+        
+        foreach (var body in world.BodyList)
+        {
+            WorldRenderer.Render(renderer.GeometryRenderer, body, gameTemplate);
+        }
+
+        renderer.StateManager.RestoreState();
+    }
+    
+    public static void Render(IRenderer2 renderer, MapDisplayElement map, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
+    {
+        var mainLayer = map.Layers.First(o => o.IsMain);
         
         foreach (var layer in map.Layers)
         {
-            var offset = LayerOffsetCalculator.CalculateLayerOffset(layer, mainLayer, globalOffset);
-            
-            offset = -offset * tileSize + targetSize.ToVector() / 2 + new Vector2(-targetSize.Width / 2f, targetSize.Height / 2f);
-            var visibleBounds = new RectangleF(-offset.X / tileSize, -offset.Y / tileSize, (float)targetSize.Width / tileSize, (float)targetSize.Height / tileSize);
+            var (offset, visibleBounds) = GetLayerRenderParameters(mainLayer, layer, world, cameraLookAt, targetSize, tileSize);
             
             renderer.StateManager.SaveState();
             renderer.StateManager.Translate(offset);

@@ -37,7 +37,10 @@ public static class SdlRendererExtensions
                 return SDL_BLENDMODE_BLEND_PREMULTIPLIED;
             
             case BlendMode.Additive:
-                return SDL_BLENDMODE_ADD_PREMULTIPLIED;
+                return SDL_BLENDMODE_ADD;
+            
+            case BlendMode.Multiply:
+                return SDL_BLENDMODE_MUL;
         }
         return SDL_BLENDMODE_NONE;
     }

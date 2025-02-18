@@ -26,6 +26,12 @@ public class PixelAppHost: IAppHost
 
     public class GlowParameters
     {
+        public float[][] Blur;
+        public float BlurDivider;
+        public float SelfGlowFactor;
+        public Vector2 SelfGlowDisplacementFactorR;
+        public Vector2 SelfGlowDisplacementFactorG;
+        public Vector2 SelfGlowDisplacementFactorB;
     }
 
     private readonly Parameters _parameters;
@@ -70,6 +76,7 @@ public class PixelAppHost: IAppHost
                 _renderer.SetRenderTarget(_glowRenderTarget);
                 _renderer.StateManager.SetGlowMode(true);
                 renderAction();
+                _renderer.StateManager.SetGlowMode(false);
             }
         }
         finally
@@ -91,23 +98,90 @@ public class PixelAppHost: IAppHost
     private void EndRender()
     {
         _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
+
+        var sourceTexture = _renderTarget;
+        
+        _renderer.SetRenderTarget(_renderTarget);
+        _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
+
+        var height = _renderTarget.Size.Height / Scale;
+
+        for (var idx = 0; idx < height; ++idx)
+        {
+            _renderer.GeometryRenderer.FillRectangle(new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * 0.25f);
+        }
         
         if (_glowRenderTarget != null)
         {
-            _renderer.SetRenderTarget(_renderTarget);
             _renderer.StateManager.SetBlendMode(BlendMode.Additive);
-            _renderer.QuadsRenderer.Draw(_glowRenderTarget,
-                new RectangleF(Scale / 2f, Scale / 2f, _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height));
+
+            if (_parameters.GlowParameters.SelfGlowFactor > 0.01f)
+            {
+                _renderer.SetRenderTarget(_glowRenderTarget);
+
+                if (_parameters.GlowParameters.SelfGlowDisplacementFactorR != Vector2.Zero ||
+                    _parameters.GlowParameters.SelfGlowDisplacementFactorG != Vector2.Zero ||
+                    _parameters.GlowParameters.SelfGlowDisplacementFactorB != Vector2.Zero)
+                {
+                    _renderer.QuadsRenderer.Draw(_renderTarget,
+                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorG.X,
+                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorG.Y,
+                            _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
+                        color: new RgbaColor(0, 255, 0) * _parameters.GlowParameters.SelfGlowFactor);
+
+                    _renderer.QuadsRenderer.Draw(_renderTarget,
+                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorR.X,
+                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorR.Y,
+                            _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
+                        color: RgbaColor.Red * _parameters.GlowParameters.SelfGlowFactor);
+
+                    _renderer.QuadsRenderer.Draw(_renderTarget,
+                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorB.X,
+                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorB.Y,
+                            _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
+                        color: RgbaColor.Blue * _parameters.GlowParameters.SelfGlowFactor);
+                }
+                else
+                {
+                    _renderer.QuadsRenderer.Draw(_renderTarget,
+                        new RectangleF(0, 0,
+                            _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
+                        color: RgbaColor.White * _parameters.GlowParameters.SelfGlowFactor);
+                }
+            }
+
+            _renderer.SetRenderTarget(_renderTarget);
+
+            var blur = _parameters.GlowParameters.Blur;
+            var blurDivider = _parameters.GlowParameters.BlurDivider;
+            
+            var offset = -new Vector2(Scale, Scale) * MathF.Floor(blur.Length / 2f);
+            
+            for (var y = 0; y < blur.Length; ++y)
+            {
+                for(var x = 0; x < blur[y].Length; ++x)
+                {
+                    var factor = blur[y][x] / blurDivider;
+                    if (factor > 0.01f)
+                    {
+                        _renderer.QuadsRenderer.Draw(_glowRenderTarget,
+                            new RectangleF(offset.X + x * Scale, offset.Y + y * Scale, _glowRenderTarget.Size.Width,
+                                _glowRenderTarget.Size.Height),
+                            color: RgbaColor.White * factor);
+                    }
+                }
+            }
+            
             _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
         }
-
-        var sourceTexture = _renderTarget;
+        
         if (_postRenderTarget != null)
         {
             _renderer.SetRenderTarget(_postRenderTarget);
-            _renderer.QuadsRenderer.Draw(_renderTarget,
+            
+            _renderer.QuadsRenderer.Draw(sourceTexture,
                 new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
-
+            
             sourceTexture = _postRenderTarget;
         }
 

@@ -6,20 +6,20 @@ using static bottlenoselabs.Interop.SDL;
 
 namespace Ssit.CrossX.SDL3.Graphics;
 
-public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider) : ISpriteRenderer
+public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider) 
+    : SdlRendererBase(renderStateProvider) , ISpriteRenderer
 {
     public int SpritesRendered { get; private set; }
 
     public void Draw(ITexture texture, RectangleF target, RectangleF? sourceRectangle = null, Vector2? nullableOrigin = null,
         RgbaColor? nullableColor = null, ImageTransform imageTransform = ImageTransform.None)
     {
-        var scale = renderStateProvider.Scale;
-        var offset = renderStateProvider.Offset;
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
 
-        var (textureHandle, color) = renderStateProvider.GetProperTextureAndColor(texture, nullableColor);
+        var textureHandle = PrepareTextureRender(texture, nullableColor);
         
         var source = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);
-        
         var origin = nullableOrigin ?? new Vector2(texture.Size.Width / 2f, texture.Size.Height / 2f);
         
         SDL_FRect sourceRect = new()
@@ -73,10 +73,6 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
                 break;
         }
         
-        SDL_SetTextureBlendMode(textureHandle.Pointer, renderStateProvider.BlendMode.ToSdlBlendMode());
-        SDL_SetTextureColorMod(textureHandle.Pointer, color.R, color.G, color.B);
-        SDL_SetTextureAlphaMod(textureHandle.Pointer, color.A);
-        SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
         SDL_RenderTextureRotated(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect, angle, &center, flip);
 
@@ -91,7 +87,7 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         
         var sourceRect = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);
         
-        var targetRect = new RectangleF((int)position.X, (int)position.Y, sourceRect.Width * scale, sourceRect.Height * scale);
+        var targetRect = new RectangleF(position.X, position.Y, sourceRect.Width * scale, sourceRect.Height * scale);
         Draw(texture, targetRect, sourceRectangle, origin, color, imageTransform);
     }
 

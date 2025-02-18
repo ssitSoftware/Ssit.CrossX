@@ -18,7 +18,7 @@ public class SpriteInstance : IDisposable
     public ITexture SpriteSheet => _spriteSheet.Resource;
     
     public Vector2 Origin { get; private set; }
-    public Rectangle Source { get; private set; }
+    public RectangleF Source { get; private set; }
     public string CurrentSequence => _currentSequence?.Name ?? "";
 
     private float _currentTime;

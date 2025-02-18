@@ -5,16 +5,14 @@ using static bottlenoselabs.Interop.SDL;
 namespace Ssit.CrossX.SDL3.Graphics;
 
 public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider)
-    : IQuadsRenderer
+    : SdlRendererBase(renderStateProvider), IQuadsRenderer
 {
     public int QuadsRendered { get; private set; }
 
     public void Draw(ITexture texture, RectangleF target, Rectangle? nullableSource = null, RgbaColor? colorAttr = null)
     {
-        var scale = renderStateProvider.Scale;
-        var offset = renderStateProvider.Offset;
-        
-        var (textureHandle, color) = renderStateProvider.GetProperTextureAndColor(texture, colorAttr ?? RgbaColor.White);
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
         
         var source = nullableSource ?? new Rectangle(0, 0, texture.Size.Width, texture.Size.Height);
         
@@ -35,11 +33,8 @@ public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvide
             h = target.Height * scale
         };
         
+        var textureHandle = PrepareTextureRender(texture, colorAttr);
         
-        SDL_SetTextureColorMod(textureHandle.Pointer, color.R, color.G, color.B);
-        SDL_SetTextureAlphaMod(textureHandle.Pointer, color.A);
-        SDL_SetTextureBlendMode(textureHandle.Pointer, renderStateProvider.BlendMode.ToSdlBlendMode());
-        SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
         SDL_RenderTexture(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect);
 
@@ -48,18 +43,13 @@ public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvide
 
     public void Draw(ITexture texture, IReadOnlyList<Quad> quads, RgbaColor colorAttr)
     {
-        var scale = renderStateProvider.Scale;
-        var offset = renderStateProvider.Offset;
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
         
         SDL_FRect sourceRect = new();
         SDL_FRect targetRect = new();
 
-        var (textureHandle, color) = renderStateProvider.GetProperTextureAndColor(texture, colorAttr);
-        
-        SDL_SetTextureColorMod(textureHandle.Pointer, color.R, color.G, color.B);
-        SDL_SetTextureAlphaMod(textureHandle.Pointer, color.A);
-        SDL_SetTextureBlendMode(textureHandle.Pointer, renderStateProvider.BlendMode.ToSdlBlendMode());
-        SDL_SetTextureScaleMode(textureHandle.Pointer, renderStateProvider.TextureFilter.ToSdlScaleMode());
+        var textureHandle = PrepareTextureRender(texture, colorAttr);
         
         for (var idx = 0; idx < quads.Count; idx++)
         {

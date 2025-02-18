@@ -31,7 +31,7 @@ public class GamePage: Page<GamePageViewModel>
                     Font = ("Default", 12),
                     TextColor = RgbaColor.White,
                     TextOutlineColor = RgbaColor.Black,
-                    Scaling = TextScaling.None
+                    Scaling = TextScaling.Default
                 }
             ]
         };

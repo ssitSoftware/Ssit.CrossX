@@ -1,5 +1,4 @@
 using System.Numerics;
-using bottlenoselabs.Interop;
 using Ssit.CrossX.Graphics.Renderer;
 using static bottlenoselabs.Interop.SDL;
 
@@ -20,6 +19,7 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         v2 = v2 * scale + offset;
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, renderStateProvider.BlendMode.ToSdlBlendMode());
         SDL_RenderLine(renderer, v1.X, v1.Y, v2.X, v2.Y);
 
         LinesRendered++;
@@ -39,6 +39,7 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         };
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, renderStateProvider.BlendMode.ToSdlBlendMode());
         SDL_RenderRect(renderer, &targetRect);
 
         LinesRendered += 4;
@@ -58,6 +59,7 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         };
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, renderStateProvider.BlendMode.ToSdlBlendMode());
         SDL_RenderFillRect(renderer, &targetRect);
         
         RectanglesFilled++;

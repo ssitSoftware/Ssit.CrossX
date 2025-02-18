@@ -4,5 +4,6 @@ public enum BlendMode
 {
     None,
     AlphaBlend,
-    Additive
+    Additive,
+    Multiply
 }

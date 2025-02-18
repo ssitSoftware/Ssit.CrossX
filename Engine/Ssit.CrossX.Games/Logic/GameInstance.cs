@@ -113,6 +113,9 @@ public class GameInstance : IGameInstance
     {
         if (_isDisposed)
             return;
+
+        if (renderer.StateProvider.UseGlowTextures)
+            return;
         
         renderer.StateManager.SaveState();
         renderer.StateManager.Translate(target.TopLeft);

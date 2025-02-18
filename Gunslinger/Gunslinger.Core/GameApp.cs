@@ -58,9 +58,9 @@ namespace Gunslinger.Core
                 GlowParameters = new PixelAppHost.GlowParameters
                 {
                     Blur = Blurs.Gaussian5X5,
-                    BlurDivider = Blurs.Gaussian5X5Divider,
-                    SelfGlowFactor = 0.25f,
-                    SelfGlowDisplacementFactorB = new Vector2(1, -1),
+                    BlurDivider = Blurs.Gaussian5X5Divider * 1f,
+                    SelfGlowFactor = 0.26f,
+                    SelfGlowDisplacementFactorB = new Vector2(1.5f, -1),
                     SelfGlowDisplacementFactorR = new Vector2(-1, 0)
                 }
             });

@@ -55,6 +55,11 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
         OnAnimationFinished(sequenceName);
     }
 
+    protected override void SetSequence(string state)
+    {
+        Sprite.SetSequence(state);
+    }
+    
     public void Dispose()
     {
         Sprite?.Dispose();

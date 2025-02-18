@@ -55,6 +55,7 @@ public class WorldBuilder
         servicesBuilder.WithInstance(world);
         servicesBuilder.WithSingleton<GameObjectsServices, GameObjectsServices>();
         servicesBuilder.WithInstance(_gameTemplate);
+        servicesBuilder.WithSingleton<ICamera, Camera>();
         
         var container = servicesBuilder.Build();
         

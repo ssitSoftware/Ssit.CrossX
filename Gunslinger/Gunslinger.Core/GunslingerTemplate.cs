@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Gunslinger.Core.Game;
 using Gunslinger.Core.Game.Objects;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
@@ -11,7 +12,7 @@ namespace Gunslinger.Core;
 
 public class GunslingerTemplate: IGameTemplate
 {
-    public Vector2 Gravity => new(0, 10);
+    public Vector2 Gravity => new(0, GamePhysicsParameters.GravityAcceleration);
     
     public string Name => "Gunslinger";
     public Guid Guid { get; } = Guid.Parse("b7d05cc4-a3f3-461f-8cb2-07ec58b6120a");

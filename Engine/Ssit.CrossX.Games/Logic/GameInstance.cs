@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
@@ -32,14 +31,13 @@ public class GameInstance : IGameInstance
 
     private readonly World _world;
     private readonly IIoCContainer _container;
+    private readonly ICamera _camera;
     
     private bool _isDisposed;
 
     private float _timeToUpdate = 0;
     
     int IGameInstance.RenderPasses => 1;
-
-    private Vector2 _position = Vector2.Zero;
     
     void IGameInstance.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
     {
@@ -64,9 +62,6 @@ public class GameInstance : IGameInstance
 
         var tilesets = map.Tilesets.Select(contentManager.Get<ITexture>).ToArray();
         
-        _position.Y = map.MainLayer.Size.Height - (float)gameTemplate.TargetSize.Height / gameTemplate.TileSize;
-        _position.X = (float)gameTemplate.TargetSize.Width / gameTemplate.TileSize / 2;
-        
         var builder = new MapDisplayElementBuilder()
             .WithServices(container, contentManager)
             .WithTemplate(gameTemplate)
@@ -86,6 +81,8 @@ public class GameInstance : IGameInstance
             .WithGameTemplate(gameTemplate);
 
         (_world, _container) = worldBuilder.Build();
+
+        _camera = _container.Get<ICamera>();
     }
 
     void IGameInstance.Update(float deltaTime) => Update(deltaTime);
@@ -105,7 +102,7 @@ public class GameInstance : IGameInstance
 
         var size = target.Size.ToVector() / scale;
         
-        MapRenderer.Render(renderer, _mapDisplayElement, _world, _position,
+        MapRenderer.Render(renderer, _mapDisplayElement, _world, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate.TileSize);
 
@@ -122,7 +119,7 @@ public class GameInstance : IGameInstance
         renderer.StateManager.Scale(scale);
         
         var size = target.Size.ToVector() / scale;
-        MapRenderer.RenderDebug(renderer, _mapDisplayElement, _world, _position,
+        MapRenderer.RenderDebug(renderer, _mapDisplayElement, _world, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate);
         
@@ -133,9 +130,6 @@ public class GameInstance : IGameInstance
     {
         if (_isDisposed)
             return;
-        
-        _position.X += _inputMappings[0].GetAxis("Horizontal") * deltaTime * 10;
-        _position.Y += _inputMappings[0].GetAxis("Vertical") * deltaTime * 10;
 
         _timeToUpdate += deltaTime;
 
@@ -146,8 +140,14 @@ public class GameInstance : IGameInstance
                 updatable.Update(deltaTime);
             }
         }
+
+        var worldDelta = WorldDelta;
+        if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 4f)
+        {
+            worldDelta = _timeToUpdate;
+        }
         
-        while (_timeToUpdate >= WorldDelta)
+        while (_timeToUpdate >= worldDelta)
         {
             foreach (var body in _world.BodyList)
             {
@@ -157,8 +157,8 @@ public class GameInstance : IGameInstance
                 }
             }
             
-            _world.Step(WorldDelta);
-            _timeToUpdate -= WorldDelta;
+            _world.Step(worldDelta);
+            _timeToUpdate -= worldDelta;
             
             foreach (var body in _world.BodyList)
             {
@@ -166,6 +166,12 @@ public class GameInstance : IGameInstance
                 {
                     updatable.PostFixedUpdate();
                 }
+            }
+            
+            worldDelta = WorldDelta;
+            if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 4f)
+            {
+                worldDelta = _timeToUpdate;
             }
         }
         
@@ -178,6 +184,7 @@ public class GameInstance : IGameInstance
         }
         
         _mapDisplayElement.Update(deltaTime);
+        _camera.Update(deltaTime);
         Updated?.Invoke();
     }
     

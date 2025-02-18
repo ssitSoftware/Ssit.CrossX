@@ -16,7 +16,7 @@ public static class MapRenderer
     {
         var screenSizeNormalized = targetSize.ToVector() / tileSize;
         
-        var globalOffset = cameraLookAt - screenSizeNormalized / 2;
+        var globalOffset = cameraLookAt + new Vector2(-screenSizeNormalized.X / 2, screenSizeNormalized.Y / 2);
         
         globalOffset.X = MathF.Min(MathF.Max(0, globalOffset.X), mainLayer.SourceSize.Width - screenSizeNormalized.X);
         globalOffset.Y = MathF.Min(MathF.Max(screenSizeNormalized.Y, globalOffset.Y), mainLayer.SourceSize.Height);

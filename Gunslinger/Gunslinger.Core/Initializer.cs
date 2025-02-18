@@ -19,26 +19,7 @@ public static class Initializer
     public static IIoCContainer InitializeInputMapping(this IIoCContainer container)
     {
         var inputMappings = container.Get<IInputMappings>();
-        var mapper = inputMappings.Mapper(0);
-
-        mapper.MapAxis("Horizontal", GameControllerAxis.LeftX);
-        mapper.MapAxis("Vertical", GameControllerAxis.LeftY);
-        
-        mapper.MapAxis("Horizontal", GameControllerButton.DPadLeft, GameControllerButton.DPadRight);
-        mapper.MapAxis("Horizontal", Key.Left, Key.Right);
-        
-        mapper.MapAxis("Vertical", GameControllerButton.DPadUp, GameControllerButton.DPadDown);
-        mapper.MapAxis("Vertical", Key.Up, Key.Down);
-
-        mapper.MapButton("Shoot", GameControllerButton.B);
-        mapper.MapButton("Shoot", Key.Z);
-
-        mapper.MapButton("Melee", GameControllerButton.X);
-        mapper.MapButton("Melee", Key.X);
-
-        mapper.MapButton("Jump", GameControllerButton.A);
-        mapper.MapButton("Jump", Key.C);
-
+        GameControls.RegisterGameControls(inputMappings);
         return container;
     }
 

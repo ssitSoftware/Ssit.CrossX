@@ -22,7 +22,6 @@ public class MapDisplayObject: IDisposable
     public bool IsFlipped { get; }
     public Vector2 Position { get; }
     public float Depth { get; internal set; }
-    public RgbaColor TintColor { get; internal set; }
     public string Name => _gameObject.Name;
 
     public MapDisplayObject(IContentManager contentManager, IGameTemplate template, MapObject obj)

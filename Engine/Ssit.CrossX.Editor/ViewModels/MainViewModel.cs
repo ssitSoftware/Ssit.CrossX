@@ -68,12 +68,12 @@ namespace Ssit.CrossX.Editor.ViewModels
                 
                 if (SetField(ref _mapFile, value))
                 {
+                    _instances.SetMap(_mapFile);
+                    
                     EditorViewModel.SelectedLayer =
                         MapFile.Layers.FirstOrDefault( o=> o.Id.ToLowerInvariant() == _editorData.SelectedLayer) ??
                         MapFile.Layers.FirstOrDefault( o=> o.Id.ToLowerInvariant() == "main") ??
                         MapFile.Layers.First();
-                    
-                    _instances.SetMap(_mapFile);
                     
                     EditorViewModel.Redraw();
                     IsModified = _mapFile.IsModified;

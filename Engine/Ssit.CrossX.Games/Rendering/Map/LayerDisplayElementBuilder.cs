@@ -73,12 +73,13 @@ public class LayerDisplayElementBuilder
             {
                 var dispObj = _container.IoCConstruct<MapDisplayObject>(obj);
                 dispObj.Depth = _layer.Depth;
-                dispObj.TintColor = _layer.TintColor.AsPremultiplied();
                 objects.Add(dispObj);
             }
         }
         
-        return new LayerDisplayElement(list, objects.OrderBy( o=>o.Name).ToList(), new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed), _layer.FogColor.AsPremultiplied(), _layer.Size, _layer == _file.MainLayer);
+        return new LayerDisplayElement(list, objects.OrderBy( o=>o.Name).ToList(), new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed),
+            _layer.TintColor.AsPremultiplied(),
+            _layer.FogColor.AsPremultiplied(), _layer.Size, _layer == _file.MainLayer);
     }
 
     private TilesDisplaySegment[] GenerateSegment(Rectangle rect)

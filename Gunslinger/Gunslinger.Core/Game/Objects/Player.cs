@@ -9,6 +9,7 @@ using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 
 namespace Gunslinger.Core.Game.Objects;
 
@@ -96,6 +97,12 @@ public class Player: SpriteGameObject
     {
         DetectOnGround();
         base.OnFixedUpdate(dt);
+    }
+
+    protected override void OnRender(IRenderer2 renderer, RgbaColor color)
+    {
+        color = color.Mix(RgbaColor.White, 0.5f);
+        base.OnRender(renderer, color);
     }
 
     private bool SetOnGround(Fixture arg)

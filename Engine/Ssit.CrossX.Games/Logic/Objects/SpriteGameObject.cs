@@ -20,7 +20,7 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
     
     public RectangleF Bounds => BoundsRect.Offset(Body.Position);
 
-    void IGameObjectRenderer2.Render(IRenderer2 renderer) => OnRender(renderer);
+    void IGameObjectRenderer2.Render(IRenderer2 renderer, RgbaColor color) => OnRender(renderer, color);
     
     protected SpriteGameObject(GameObjectsServices services, ObjectCreationParameters parameters, string path)
     {
@@ -39,9 +39,9 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
         Sprite.SequenceFinished += SpriteOnSequenceFinished;
     }
     
-    protected virtual void OnRender(IRenderer2 renderer)
+    protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
-        renderer.SpriteRenderer.Draw(Sprite, Body.Position * Services.GameTemplate.TileSize, transform: Transform);
+        renderer.SpriteRenderer.Draw(Sprite, Body.Position * Services.GameTemplate.TileSize, transform: Transform, color: color);
     }
 
     protected override void OnFixedUpdate(float dt)

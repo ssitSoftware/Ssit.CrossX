@@ -5,5 +5,5 @@ namespace Ssit.CrossX.Games.Rendering;
 public interface IGameObjectRenderer2
 {
     RectangleF Bounds { get; }
-    void Render(IRenderer2 renderer);
+    void Render(IRenderer2 renderer, RgbaColor color);
 }

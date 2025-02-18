@@ -200,8 +200,8 @@ public class MapLayer: BindableModel
         var width = reader.ReadInt32();
         var height = reader.ReadInt32();
 
-        FogColor = RgbaColor.FromBgra(reader.ReadUInt32(), false);
-        TintColor = RgbaColor.FromBgra(reader.ReadUInt32(), false);
+        FogColor = RgbaColor.FromRgba(reader.ReadUInt32(), false);
+        TintColor = RgbaColor.FromRgba(reader.ReadUInt32(), false);
         
         EnableLighting = reader.ReadBoolean();
         

@@ -64,7 +64,7 @@ public static class MapRenderer
 
             if (layer.IsMain)
             {
-                RenderGameObjects(renderer, world, visibleBounds);
+                RenderGameObjects(renderer, world, visibleBounds, mainLayer.TintColor);
             }
             
             renderer.StateManager.RestoreState();
@@ -84,33 +84,33 @@ public static class MapRenderer
             {
                 foreach (var segment in tiles.segments)
                 {
-                    renderer.QuadsRenderer.Draw(segment.Texture.Resource, segment.Quads, segment.TintColor);
+                    renderer.QuadsRenderer.Draw(segment.Texture.Resource, segment.Quads, layer.TintColor);
                 }
             }
         }
 
         foreach (var obj in layer.DisplayObjects)
         {
-            DrawObject(renderer, bounds, obj);
+            DrawObject(renderer, bounds, obj, layer.TintColor);
         }
     }
 
-    private static void DrawObject(IRenderer2 renderer, RectangleF bounds, MapDisplayObject obj)
+    private static void DrawObject(IRenderer2 renderer, RectangleF bounds, MapDisplayObject obj, RgbaColor tintColor)
     {
         // TODO: Filter invisible elements
         if (obj.Texture is not null)
         {
-            renderer.SpriteRenderer.Draw(obj.Texture, obj.Position, null, obj.Origin, color: obj.TintColor,  imageTransform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
+            renderer.SpriteRenderer.Draw(obj.Texture, obj.Position, null, obj.Origin, color: tintColor,  imageTransform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
         }
 
         if (obj.SpriteInstance is not null)
         {
-            renderer.SpriteRenderer.Draw(obj.SpriteInstance, obj.Position, color: obj.TintColor, transform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
+            renderer.SpriteRenderer.Draw(obj.SpriteInstance, obj.Position, color: tintColor, transform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
         }
     }
 
     private static void RenderGameObjects(IRenderer2 renderer,
-        World world, RectangleF bounds)
+        World world, RectangleF bounds, RgbaColor color)
     {
         if (world is null)
             return;
@@ -119,7 +119,7 @@ public static class MapRenderer
         {
             if (body.UserData is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {
-                gor.Render(renderer);
+                gor.Render(renderer, color);
             }
         }
     }

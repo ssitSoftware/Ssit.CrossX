@@ -14,17 +14,19 @@ public class LayerDisplayElement: IDisposable
     
     public Vector2 Speed { get; }
     public RgbaColor FogColor { get; }
+    public RgbaColor TintColor { get; }
     public Size SourceSize { get; }
     public bool IsMain { get; }
     
     internal LayerDisplayElement(List<(RectangleF bounds, TilesDisplaySegment[] segments)> tiles, 
         List<MapDisplayObject> displayObjects,
-        Vector2 speed, RgbaColor fogColor, Size sourceSize, bool mainLayer)
+        Vector2 speed, RgbaColor tintColor, RgbaColor fogColor, Size sourceSize, bool mainLayer)
     {
         _tiles = tiles;
         _displayObjects = displayObjects;
         Speed = speed;
         FogColor = fogColor;
+        TintColor = tintColor;
         SourceSize = sourceSize;
         IsMain = mainLayer;
     }

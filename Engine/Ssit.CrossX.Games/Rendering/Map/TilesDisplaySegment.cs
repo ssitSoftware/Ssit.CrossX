@@ -13,12 +13,10 @@ public class TilesDisplaySegment(IContentManager contentManager, TilesDisplaySeg
     {
         public IReadOnlyList<Quad> Quads;
         public string TexturePath;
-        public RgbaColor TintColor { get; set; }
     }
     
     public ResourceHandle<ITexture> Texture { get; } = contentManager.Get<ITexture>(parameters.TexturePath);
     public IReadOnlyList<Quad> Quads { get; } = parameters.Quads;
-    public RgbaColor TintColor { get; } = parameters.TintColor;
 
     public void Dispose()
     {

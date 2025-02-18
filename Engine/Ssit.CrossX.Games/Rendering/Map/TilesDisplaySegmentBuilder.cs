@@ -116,8 +116,7 @@ public class TilesDisplaySegmentBuilder
                 list.Add(_container.IoCConstruct<TilesDisplaySegment>(new TilesDisplaySegment.Parameters
                 {
                     Quads = quads.ToArray(),
-                    TexturePath = texture,
-                    TintColor = _tintColor,
+                    TexturePath = texture
                 }));
             }
             return list.ToArray();

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Gunslinger.Core.Game.Objects.ElevatorBehaviors;
 using Ssit.CrossX;
@@ -16,16 +14,10 @@ namespace Gunslinger.Core.Game.Objects;
 
 public class Elevator: SpriteGameObject, ITarget
 {
-    public enum SpeedMode
-    {
-        Constant,
-        Variable,
-    }
     public class Parameters
     {
         [EditorFloat(0.25f, 20)] public float Speed { get; set; } = 5;
         [EditorFloat(0.0f,10f, 0.1f)] public float BrakingDistance { get; set; } = 3f;
-        
         [EditorLink(typeof(ITarget))] public int Target { get; set; }
         [EditorLink(typeof(ISwitch))] public int Switch { get; set; }
     }

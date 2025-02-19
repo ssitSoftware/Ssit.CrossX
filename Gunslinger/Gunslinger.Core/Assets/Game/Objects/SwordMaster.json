@@ -825,7 +825,7 @@
     "trimmed": true,
     "spriteSourceSize": { "x": 21, "y": 9, "w": 14, "h": 22 },
     "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
+    "duration": 50
    },
    {
     "filename": "Jump Transition|1",
@@ -834,7 +834,7 @@
     "trimmed": true,
     "spriteSourceSize": { "x": 21, "y": 9, "w": 14, "h": 22 },
     "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
+    "duration": 50
    },
    {
     "filename": "Jump Transition|2",
@@ -843,7 +843,7 @@
     "trimmed": true,
     "spriteSourceSize": { "x": 17, "y": 9, "w": 19, "h": 21 },
     "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
+    "duration": 50
    },
    {
     "filename": "Jump Transition|3",
@@ -852,7 +852,7 @@
     "trimmed": true,
     "spriteSourceSize": { "x": 17, "y": 9, "w": 19, "h": 21 },
     "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
+    "duration": 50
    },
    {
     "filename": "Fall|0",

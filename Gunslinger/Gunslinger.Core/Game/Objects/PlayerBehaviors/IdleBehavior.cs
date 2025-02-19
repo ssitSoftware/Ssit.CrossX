@@ -6,6 +6,7 @@ namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 public class IdleBehavior(Player player): Behavior
 {
     private bool _canEnterIdle;
+    
     protected override void OnEnterState()
     {
         base.OnEnterState();
@@ -25,6 +26,13 @@ public class IdleBehavior(Player player): Behavior
                 else
                 {
                     player.SetState("Run");
+                }
+            }
+            else
+            {
+                if (player.Body.LinearVelocity.Y >= 0)
+                {
+                    _canEnterIdle = true;
                 }
             }
         }

@@ -1,7 +1,4 @@
-using System;
-using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
 using Ssit.CrossX.Games.Physics.Extensions;
 
 namespace Gunslinger.Core.Game;
@@ -29,10 +26,10 @@ public static class GamePhysics
     public const float MinRunSpeed = 4;
     public const float RunAccelerationSpeed = 10;
     public const float RunAcceleration = 50;
-    public const float GroundDeceleration = 60;
-    public const float AirBrakeDeceleration = 20;
-    public const float AirSteerAcceleration = 40;
-    public const float PlayerVelocityToFall = 10f;
+    public const float GroundDeceleration = 45;
+    public const float AirBrakeDeceleration = 16;
+    public const float AirSteerAcceleration = 32;
+    public const float PlayerGroundDistToFall = 2f;
     
     public static MaterialKind GetMaterialKind(int material)
     {

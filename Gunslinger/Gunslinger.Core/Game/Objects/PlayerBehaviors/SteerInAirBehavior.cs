@@ -9,8 +9,10 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
     protected override bool OnFixedUpdate(float dt)
     {
         if (player.IsOnGround)
+        {
             return false;
-        
+        }
+
         var move = inputMappings[0].GetAxis(GameControls.Horizontal);
         var amplitude = MathF.Abs(move);
         

@@ -6,11 +6,6 @@ using Ssit.CrossX.Games.Physics.Dynamics;
 
 namespace Ssit.CrossX.Games.Physics.Extensions;
 
-public interface IMomentumReceiver
-{
-    void OnKineticallyMoved(Vector2 offset);
-}
-
 public class MovingStackExtension: IDisposable
 {
     private readonly Body _body;
@@ -93,12 +88,6 @@ public class MovingStackExtension: IDisposable
     private static void BodyOnMoved(Body body, Vector2 vector)
     {
         var ext = body.GetExtension<MovingStackExtension>();
-        
-        if (vector.Y < 0)
-        {
-            vector.Y = 0;
-        }
-
         ext._offset = vector;
     }
 

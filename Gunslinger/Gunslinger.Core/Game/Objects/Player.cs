@@ -40,7 +40,7 @@ public class Player: SpriteGameObject, IMomentumReceiver
         set => Transform = value ? ImageTransform.FlipHorizontal : ImageTransform.None;
     }
     
-    public bool IsOnGround { get; private set; }
+    public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
 
     public Vector2 MomentumOffset { get; set; }

@@ -30,13 +30,8 @@ public class FallBehavior(Player player, World world): Behavior
             if (_disableFall)
                 return false;
             
-            if (player.CurrentState == "Jump")
-            {
-                player.SetState("Jump->Fall");
-                return true;
-            }
             
-            player.SetState("Fall");
+            player.SetState("Jump->Fall");
             return true;
         }
         return false;
@@ -48,7 +43,7 @@ public class FallBehavior(Player player, World world): Behavior
             return true;
         
         var @this = (FallBehavior) obj;
-        this._disableFall = true; 
+        @this._disableFall = true; 
         return false;
     }
 }

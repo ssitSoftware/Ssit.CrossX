@@ -28,15 +28,9 @@ public class IdleBehavior(Player player): Behavior
                     player.SetState("Run");
                 }
             }
-            else
-            {
-                if (player.Body.LinearVelocity.Y >= 0)
-                {
-                    _canEnterIdle = true;
-                }
-            }
         }
-        else
+        
+        if (player.Body.LinearVelocity.Y >= 0)
         {
             _canEnterIdle = true;
         }

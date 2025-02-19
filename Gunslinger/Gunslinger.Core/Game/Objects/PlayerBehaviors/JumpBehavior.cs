@@ -16,13 +16,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
         
         if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed && inputMappings[0].GetAxis(GameControls.Vertical) < 0.75f)
         {
-            var currentY = MathF.Min(player.Body.LinearVelocity.Y, 0);
-
-            if (player.MomentumOffset.Y >= 0.0f)
-            {
-                currentY = 0;
-            }
-            
+            var currentY = MathF.Min(player.MomentumOffset.Y / dt, 0);
             var currentX = player.Body.LinearVelocity.X + player.MomentumOffset.X / dt;
             
             var amplitude = MathF.Abs(currentX);
@@ -35,6 +29,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             
             player.Body.LinearVelocity = new Vector2(currentX, currentY - GamePhysics.JumpVelocity);
             player.Body.Position -= new Vector2(0, 0.11f); 
+            
             player.MomentumOffset = Vector2.Zero;
             
             player.SetState("Jump");

@@ -16,7 +16,7 @@ public class JumpOfPlatformBehavior(Player player, IInputMappings inputMappings)
             {
                 player.Body.Position = player.Body.Position with {Y = player.Body.Position.Y + 0.75f};
                 player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = 1};
-                player.SetState("Fall");
+                player.SetState("Jump->Fall");
                 return true;
             }
         }

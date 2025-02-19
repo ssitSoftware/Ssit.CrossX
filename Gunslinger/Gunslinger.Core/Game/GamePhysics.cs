@@ -1,5 +1,4 @@
 using System;
-using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
@@ -8,28 +7,65 @@ namespace Gunslinger.Core.Game;
 
 public static class GamePhysics
 {
-    public static void InitPhysicsForWorld(WorldBuilder builder)
+    public enum MaterialKind
     {
-        builder.WithMaterialAction("Wood Platform", ConfigurePlatformCollision);
-        builder.WithMaterialAction("Metal Platform", ConfigurePlatformCollision);
+        Default,
+        Platform,
+    }
+    
+    public const float GravityAcceleration = 56;
+    public const float JumpVelocity = 11f;
+    public const float JumpHoldAccel = 32;
+    public const float JumpHoldAccelInc = 2;
+    public const float RunSpeed = 12;
+    public const float MinRunSpeed = 4;
+    public const float RunAccelerationSpeed = 10;
+    public const float RunAcceleration = 50;
+    public const float GroundDeceleration = 60;
+    public const float AirBrakeDeceleration = 20;
+    public const float AirSteerAcceleration = 40;
+    public const float PlayerVelocityToFall = 10f;
+
+    public static MaterialKind GetMaterialKind(int material)
+    {
+        switch (material)
+        {
+            case 5:
+            case 6:
+                return MaterialKind.Platform;
+            default:
+                return MaterialKind.Default;
+        }
+    }
+    
+    public static void InitPhysicsForWorld(World world)
+    {
+        world.BodyAdded += WorldOnBodyAdded;
+        world.BodyRemoved += WorldOnBodyRemoved;
+        world.Disposing += WorldOnDisposing;
     }
 
-    public static void DeinitPhysicsForWorld(World world)
+    private static void WorldOnBodyAdded(Body body)
     {
-        if ( world is null ) return;
-        
-        foreach (var body in world.BodyList)
+        if (GetMaterialKind(body.MaterialIndex) == MaterialKind.Platform)
         {
-            if (body.IsStatic)
-            {
-                body.OnCollision -= BodyOnPlatformCollision;
-            }
+            body.OnCollision += BodyOnPlatformCollision;
+        }
+    }
+    
+    private static void WorldOnBodyRemoved(Body body)
+    {
+        if (GetMaterialKind(body.MaterialIndex) == MaterialKind.Platform)
+        {
+            body.OnCollision -= BodyOnPlatformCollision;
         }
     }
 
-    private static void ConfigurePlatformCollision(Body body)
+    private static void WorldOnDisposing(World world)
     {
-        body.OnCollision += BodyOnPlatformCollision;
+        world.BodyAdded -= WorldOnBodyAdded;
+        world.BodyRemoved -= WorldOnBodyAdded;
+        world.Disposing -= WorldOnDisposing;
     }
 
     private static bool BodyOnPlatformCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)

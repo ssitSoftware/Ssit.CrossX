@@ -43,36 +43,39 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
     /// </summary>
     public class World
     {
+        public event Action<World> Disposing;
+        
         private float _invDt0;
         private Body[] _stack = new Body[64];
         private bool _stepComplete;
-        private HashSet<Body> _bodyAddList = new();
-        private HashSet<Body> _bodyRemoveList = new();
-        private HashSet<Joint> _jointAddList = new();
-        private HashSet<Joint> _jointRemoveList = new();
-        private Func<Fixture, bool> _queryAABBCallback;
-        private Func<int, bool> _queryAABBCallbackWrapper;
-        private TOIInput _input = new();
+        private readonly HashSet<Body> _bodyAddList = new();
+        private readonly HashSet<Body> _bodyRemoveList = new();
+        private readonly HashSet<Joint> _jointAddList = new();
+        private readonly HashSet<Joint> _jointRemoveList = new();
+        private Func<object, Fixture, bool> _queryAabbCallback;
+        private readonly Func<int, bool> _queryAabbCallbackWrapper;
+        private object _queryAabbCallbackContext;
+        private readonly TOIInput _input = new();
         private Fixture _myFixture;
         private Vector2 _point1;
         private Vector2 _point2;
         private List<Fixture> _testPointAllFixtures;
-        private Stopwatch _watch = new();
+        private readonly Stopwatch _watch = new();
         private Func<Fixture, Vector2, Vector2, float, float> _rayCastCallback;
         private Func<RayCastInput, int, float> _rayCastCallbackWrapper;
 
-        internal Queue<Contact> _contactPool = new(256);
-        internal bool _worldHasNewFixture;
+        internal readonly Queue<Contact> ContactPool = new(256);
+        internal bool WorldHasNewFixture;
 
         /// <summary>
         /// Fires whenever a body has been added
         /// </summary>
-        public BodyDelegate BodyAdded;
+        public event BodyDelegate BodyAdded;
 
         /// <summary>
         /// Fires whenever a body has been removed
         /// </summary>
-        public BodyDelegate BodyRemoved;
+        public event BodyDelegate BodyRemoved;
 
         /// <summary>
         /// Fires whenever a fixture has been added
@@ -87,12 +90,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <summary>
         /// Fires whenever a joint has been added
         /// </summary>
-        public JointDelegate JointAdded;
+        public event JointDelegate JointAdded;
 
         /// <summary>
         /// Fires whenever a joint has been removed
         /// </summary>
-        public JointDelegate JointRemoved;
+        public event JointDelegate JointRemoved;
 
         /// <summary>
         /// Fires every time a controller is added to the World.
@@ -127,13 +130,23 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             TOISet = new HashSet<Body>();
 #endif
 
-            _queryAABBCallbackWrapper = QueryAABBCallbackWrapper;
+            _queryAabbCallbackWrapper = QueryAabbCallbackWrapper;
             _rayCastCallbackWrapper = RayCastCallbackWrapper;
 
             ContactManager = new ContactManager(new DynamicTreeBroadPhase());
             Gravity = gravity;
         }
 
+        public void Dispose()
+        {
+            Disposing?.Invoke(this);
+            foreach (var body in BodyList)
+            {
+                RemoveBody(body);
+            }
+            ProcessChanges();
+        }
+        
         private void ProcessRemovedJoints()
         {
             if (_jointRemoveList.Count > 0)
@@ -316,9 +329,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 #endif
                     // Add to world list.
                     BodyList.Add(body);
-
-                    if (BodyAdded != null)
-                        BodyAdded(body);
+                    BodyAdded?.Invoke(body);
                 }
 
                 _bodyAddList.Clear();
@@ -368,9 +379,6 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                         body.FixtureList[i].Destroy();
                     }
 
-                    body.FixtureList = null;
-
-                    // Remove world body list.
                     BodyList.Remove(body);
                     BodyRemoved?.Invoke(body);
                     
@@ -378,6 +386,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                     {
                         disposable.Dispose();
                     }
+                    
+                    body.FixtureList = null;
 
 #if USE_AWAKE_BODY_SET
                     Debug.Assert(!AwakeBodySet.Contains(body));
@@ -388,10 +398,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
         }
 
-        private bool QueryAABBCallbackWrapper(int proxyId)
+        private bool QueryAabbCallbackWrapper(int proxyId)
         {
             FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
-            return _queryAABBCallback(proxy.Fixture);
+            return _queryAabbCallback(_queryAabbCallbackContext, proxy.Fixture);
         }
 
         private float RayCastCallbackWrapper(RayCastInput rayCastInput, int proxyId)
@@ -1210,10 +1220,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 AddRemoveTime = _watch.ElapsedTicks;
 
             // If new fixtures were added, we need to find the new contacts.
-            if (_worldHasNewFixture)
+            if (WorldHasNewFixture)
             {
                 ContactManager.FindNewContacts();
-                _worldHasNewFixture = false;
+                WorldHasNewFixture = false;
             }
 
             if (Settings.EnableDiagnostics)
@@ -1295,32 +1305,26 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// Return true: Continues the query
         /// Return false: Terminate the query
         /// </summary>
+        /// <param name="context">Context object for callback.</param>
         /// <param name="callback">A user implemented callback class.</param>
         /// <param name="aabb">The aabb query box.</param>
-        public void QueryAABB(Func<Fixture, bool> callback, ref Aabb aabb)
+        public void QueryAabb(object context, Func<object, Fixture, bool> callback, ref Aabb aabb)
         {
-            _queryAABBCallback = callback;
-            ContactManager.BroadPhase.Query(_queryAABBCallbackWrapper, ref aabb);
-            _queryAABBCallback = null;
+            _queryAabbCallback = callback;
+            _queryAabbCallbackContext = context;
+            ContactManager.BroadPhase.Query(_queryAabbCallbackWrapper, ref aabb);
+            _queryAabbCallback = null;
         }
 
-        /// <summary>
-        /// Query the world for all fixtures that potentially overlap the provided AABB.
-        /// Use the overload with a callback for filtering and better performance.
-        /// </summary>
-        /// <param name="aabb">The aabb query box.</param>
-        /// <returns>A list of fixtures that were in the affected area.</returns>
-        public List<Fixture> QueryAABB(ref Aabb aabb)
+        public void QueryAabbs(List<Fixture> fixtures, ref Aabb aabb)
         {
-            List<Fixture> affected = new List<Fixture>();
-
-            QueryAABB(fixture =>
-                {
-                    affected.Add(fixture);
-                    return true;
-                }, ref aabb);
-
-            return affected;
+            fixtures.Clear();
+            QueryAabb(fixtures, (c, f) =>
+            {
+                var list = (List<Fixture>)c;
+                list.Add(f);
+                return true;
+            }, ref aabb);
         }
 
         /// <summary>
@@ -1411,17 +1415,19 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _point1 = point;
 
             // Query the world for overlapping shapes.
-            QueryAABB(TestPointCallback, ref aabb);
+            QueryAabb(this, TestPointCallback, ref aabb);
 
             return _myFixture;
         }
 
-        private bool TestPointCallback(Fixture fixture)
+        private static bool TestPointCallback(object context, Fixture fixture)
         {
-            bool inside = fixture.TestPoint(ref _point1);
+            var world = (World)context;
+            
+            bool inside = fixture.TestPoint(ref world._point1);
             if (inside)
             {
-                _myFixture = fixture;
+                world._myFixture = fixture;
                 return false;
             }
 
@@ -1445,16 +1451,18 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _testPointAllFixtures = new List<Fixture>();
 
             // Query the world for overlapping shapes.
-            QueryAABB(TestPointAllCallback, ref aabb);
+            QueryAabb(this, TestPointAllCallback, ref aabb);
 
             return _testPointAllFixtures;
         }
 
-        private bool TestPointAllCallback(Fixture fixture)
+        private static bool TestPointAllCallback(object context, Fixture fixture)
         {
-            bool inside = fixture.TestPoint(ref _point2);
+            var world = (World)context;
+            
+            bool inside = fixture.TestPoint(ref world._point2);
             if (inside)
-                _testPointAllFixtures.Add(fixture);
+                world._testPointAllFixtures.Add(fixture);
 
             // Continue the query.
             return true;

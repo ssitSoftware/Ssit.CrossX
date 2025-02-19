@@ -12,7 +12,7 @@ public class JumpingBehavior(Player player, IInputMappings inputMappings) : Beha
 
         if (increaseJump)
         {
-            var acc = GamePhysicsParameters.JumpHoldAccel + player.Stats.Jump * GamePhysicsParameters.JumpHoldAccelInc;
+            var acc = GamePhysics.JumpHoldAccel + player.Stats.Jump * GamePhysics.JumpHoldAccelInc;
             player.Body.LinearVelocity += new Vector2(0, -acc * dt);
         }
         

@@ -6,7 +6,7 @@ public class FallBehavior(Player player): Behavior
 {
     protected override bool OnFixedUpdate(float dt)
     {
-        if (player.Body.LinearVelocity.Y > GamePhysicsParameters.PlayerVelocityToFall && !player.IsOnGround)
+        if (player.Body.LinearVelocity.Y > GamePhysics.PlayerVelocityToFall && !player.IsOnGround)
         {
             if (player.CurrentState == "Jump")
             {

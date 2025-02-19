@@ -12,7 +12,7 @@ namespace Gunslinger.Core;
 
 public class GunslingerTemplate: IGameTemplate
 {
-    public Vector2 Gravity => new(0, GamePhysicsParameters.GravityAcceleration);
+    public Vector2 Gravity => new(0, GamePhysics.GravityAcceleration);
     
     public string Name => "Gunslinger";
     public Guid Guid { get; } = Guid.Parse("b7d05cc4-a3f3-461f-8cb2-07ec58b6120a");

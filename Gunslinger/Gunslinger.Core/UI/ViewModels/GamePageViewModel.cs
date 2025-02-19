@@ -70,8 +70,6 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     public void Dispose()
     {
-        GamePhysics.DeinitPhysicsForWorld((GameInstance as GameInstance)?.World);
-        
         GameInstance.Dispose();
         _eventSource.Updating -= OnUpdating;
         _eventSource.RenderFinished -= OnRenderFinished;

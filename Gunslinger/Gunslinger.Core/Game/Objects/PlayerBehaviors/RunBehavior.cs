@@ -43,7 +43,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         var sign = MathF.Sign(linearVelocityX);
         var amplitude = linearVelocityX * sign;
 
-        amplitude -= dt * GamePhysicsParameters.GroundDeceleration;
+        amplitude -= dt * GamePhysics.GroundDeceleration;
         amplitude = MathF.Max(0, amplitude);
 
         return amplitude * sign;
@@ -54,14 +54,14 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         var sign = MathF.Sign(move);
         var amplitude = linearVelocityX * sign;
 
-        if (amplitude < GamePhysicsParameters.RunAccelerationSpeed)
+        if (amplitude < GamePhysics.RunAccelerationSpeed)
         {
-            amplitude += dt * GamePhysicsParameters.RunAcceleration;
-            amplitude = MathF.Max(GamePhysicsParameters.MinRunSpeed, amplitude);
+            amplitude += dt * GamePhysics.RunAcceleration;
+            amplitude = MathF.Max(GamePhysics.MinRunSpeed, amplitude);
         }
         else
         {
-            amplitude = MathF.Max(GamePhysicsParameters.RunSpeed, amplitude);
+            amplitude = MathF.Max(GamePhysics.RunSpeed, amplitude);
         }
         return sign * amplitude;
     }

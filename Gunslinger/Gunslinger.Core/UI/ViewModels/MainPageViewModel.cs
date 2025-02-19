@@ -23,7 +23,7 @@ internal class MainPageViewModel
                 OnLoading = () => gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                 {
                     MapPath = "assets:/Game/Maps/Map1.map",
-                    InitWorldFunc = GamePhysics.InitPhysicsForWorld
+                    ProcessWorldFunc = GamePhysics.InitPhysicsForWorld
                 }),
                 OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance)
             });

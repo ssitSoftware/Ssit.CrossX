@@ -414,7 +414,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
             // Let the world know we have a new fixture. This will cause new contacts
             // to be created at the beginning of the next time step.
-            Body._world._worldHasNewFixture = true;
+            Body._world.WorldHasNewFixture = true;
 
             //FPE: Added event
             if (Body._world.FixtureAdded != null)

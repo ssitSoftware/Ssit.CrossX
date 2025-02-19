@@ -18,7 +18,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
         {
             //obj.Sounds.Play("Jump");
             player.SetState("Jump");
-            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = -GamePhysicsParameters.JumpVelocity};
+            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = -GamePhysics.JumpVelocity};
             player.Body.Position -= new Vector2(0, 0.11f); 
             return true;
         }

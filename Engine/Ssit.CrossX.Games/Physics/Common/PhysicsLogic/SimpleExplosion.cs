@@ -40,14 +40,14 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
             aabb.UpperBound = pos + new Vector2(radius);
 
             // Query the world for bodies within the radius.
-            World.QueryAABB(fixture =>
+            World.QueryAabb(affectedBodies, (c, fixture) =>
             {
+                var hashSet = (HashSet<Body>)c;
+                
                 if (Vector2.Distance(fixture.Body.Position, pos) <= radius)
                 {
-                    if (!affectedBodies.Contains(fixture.Body))
-                        affectedBodies.Add(fixture.Body);
+                    hashSet.Add(fixture.Body);
                 }
-
                 return true;
             }, ref aabb);
 

@@ -414,7 +414,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
             Debug.Assert(ShapeType.Unknown < type2 && type2 < ShapeType.TypeCount);
 
             Contact c;
-            Queue<Contact> pool = fixtureA.Body._world._contactPool;
+            Queue<Contact> pool = fixtureA.Body._world.ContactPool;
             if (pool.Count > 0)
             {
                 c = pool.Dequeue();
@@ -450,7 +450,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 #if USE_ACTIVE_CONTACT_SET
             FixtureA.Body.World.ContactManager.RemoveActiveContact(this);
 #endif
-            FixtureA.Body._world._contactPool.Enqueue(this);
+            FixtureA.Body._world.ContactPool.Enqueue(this);
 
             if (Manifold.PointCount > 0 && FixtureA.IsSensor == false && FixtureB.IsSensor == false)
             {

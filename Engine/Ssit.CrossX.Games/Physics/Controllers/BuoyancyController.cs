@@ -69,16 +69,17 @@ namespace Ssit.CrossX.Games.Physics.Controllers
         public override void Update(float dt)
         {
             _uniqueBodies.Clear();
-            World.QueryAABB(fixture =>
-                                {
-                                    if (fixture.Body.IsStatic || !fixture.Body.Awake)
-                                        return true;
+            World.QueryAabb(this, (c, fixture) =>
+            {
+                var controller = (BuoyancyController)c;
+                if (fixture.Body.IsStatic || !fixture.Body.Awake)
+                    return true;
 
-                                    if (!_uniqueBodies.ContainsKey(fixture.Body.BodyId))
-                                        _uniqueBodies.Add(fixture.Body.BodyId, fixture.Body);
+                if (!controller._uniqueBodies.ContainsKey(fixture.Body.BodyId))
+                    controller._uniqueBodies.Add(fixture.Body.BodyId, fixture.Body);
 
-                                    return true;
-                                }, ref _container);
+                return true;
+            }, ref _container);
 
             foreach (KeyValuePair<int, Body> kv in _uniqueBodies)
             {

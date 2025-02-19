@@ -20,7 +20,7 @@ public class GameInstance : IGameInstance
     public class Parameters
     {
         public string MapPath { get; set; }
-        public Action<WorldBuilder> InitWorldFunc { get; set; }
+        public Action<World> ProcessWorldFunc { get; set; }
     }
     
     private const float WorldDelta = 1f / 60f;
@@ -80,11 +80,9 @@ public class GameInstance : IGameInstance
             .WithFilesProvider(contentManager.FilesProvider)
             .WithContainer(container)
             .WithGameTemplate(gameTemplate);
-
-        parameters.InitWorldFunc?.Invoke(worldBuilder);
         
         (World, _container) = worldBuilder.Build();
-
+        parameters.ProcessWorldFunc?.Invoke(World);
         _camera = _container.Get<ICamera>();
     }
 
@@ -204,12 +202,7 @@ public class GameInstance : IGameInstance
         Task.Delay(1000).ContinueWith(o =>
         {
             _scheduler.Schedule(_mapDisplayElement.Dispose);
-            foreach (var body in World.BodyList)
-            {
-                World.RemoveBody(body);
-            }
-
-            World.ProcessChanges();
+            World.Dispose();
             _container?.Dispose();
         });
     }

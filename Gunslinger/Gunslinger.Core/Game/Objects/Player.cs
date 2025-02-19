@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Gunslinger.Core.Game.Objects.PlayerBehaviors;
 using Ssit.CrossX;
@@ -41,6 +42,8 @@ public class Player: SpriteGameObject
     public bool IsOnGround { get; private set; }
     public bool IsOnPlatform { get; private set; }
 
+    private readonly List<Fixture> _queryList = new();
+    
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters, "assets:/Game/Objects/SwordMaster")
     {
@@ -107,24 +110,27 @@ public class Player: SpriteGameObject
         color = color.Mix(RgbaColor.White, 0.5f);
         base.OnRender(renderer, color);
     }
-
-    private bool SetOnGround(Fixture arg)
-    {
-        if (arg.Body == Body) return true;
-        
-        IsOnGround = true;
-        IsOnPlatform = GamePhysicsParameters.IsPlatform(arg.Body.MaterialIndex);
-        
-        return false;
-    }
     
     private void DetectOnGround()
     {
         IsOnGround = false;
-        IsOnPlatform = false;
+        IsOnPlatform = true;
         
         var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.05f), Body.Position + new Vector2(0.15f, 0.05f));
-        Services.World.QueryAABB(SetOnGround, ref aabb);
+        Services.World.QueryAabbs(_queryList, ref aabb);
+
+        foreach (var fixture in _queryList)
+        {
+            if (fixture.Body == Body)
+                continue;
+            
+            IsOnGround = true;
+            IsOnPlatform &= 
+                GamePhysics.GetMaterialKind(fixture.Body.MaterialIndex) == GamePhysics.MaterialKind.Platform;
+        }
+        
+        IsOnPlatform &= IsOnGround;
+        _queryList.Clear();
     }
 
     protected override void SetSequence(string state)

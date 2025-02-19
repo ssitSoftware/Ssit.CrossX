@@ -20,8 +20,6 @@ public class WorldBuilder
     private IFilesProvider _filesProvider;
     private IGameTemplate _gameTemplate;
     private IIoCContainer _container;
-
-    private readonly Dictionary<string, List<Action<Body>>> _materialActions = new(); 
     
     public WorldBuilder WithContainer(IIoCContainer container)
     {
@@ -44,16 +42,6 @@ public class WorldBuilder
     public WorldBuilder WithMap(MapFile file)
     {
         _mapFile = file;
-        return this;
-    }
-
-    public WorldBuilder WithMaterialAction(string material, Action<Body> action)
-    {
-        if (!_materialActions.TryGetValue(material, out var list))
-        {
-            _materialActions.Add(material, list = new List<Action<Body>>());
-        }
-        list.Add(action);
         return this;
     }
 
@@ -91,7 +79,7 @@ public class WorldBuilder
                 }
 
                 var col = tilesets[tile.TileSet].GetCollisionPolygon(tile.X, tile.Y);
-                var material = tilesets[tile.TileSet].GetMaterial(tile.X, tile.Y);
+                var material = _gameTemplate.Materials[tile.Material].Name;
 
                 if (col == null || material == null)
                 {
@@ -135,14 +123,6 @@ public class WorldBuilder
                     default:
                         staticBody.CreateFixture(new ChainShape(new Vertices(col.Item1), col.Item2));
                         break;
-                }
-            }
-
-            if (_materialActions.TryGetValue(pair.Key, out var actions))
-            {
-                foreach (var action in actions)
-                {
-                    action(staticBody);
                 }
             }
         }

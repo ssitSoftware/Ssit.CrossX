@@ -127,8 +127,8 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
             int containedShapeCount = 0;
 
             // Query the world for overlapping shapes.
-            World.QueryAABB(
-                fixture =>
+            World.QueryAabb(null, 
+                (c, fixture) =>
                 {
                     if (fixture.TestPoint(ref pos))
                     {

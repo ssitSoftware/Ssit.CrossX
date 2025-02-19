@@ -36,14 +36,14 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
         var sign = MathF.Sign(move);
         var amplitude = linearVelocityX * sign;
 
-        if (amplitude < GamePhysicsParameters.RunSpeed)
+        if (amplitude < GamePhysics.RunSpeed)
         {
-            amplitude += dt * GamePhysicsParameters.AirSteerAcceleration;
-            amplitude = MathF.Min(GamePhysicsParameters.RunSpeed, amplitude);
+            amplitude += dt * GamePhysics.AirSteerAcceleration;
+            amplitude = MathF.Min(GamePhysics.RunSpeed, amplitude);
         }
         else
         {
-            amplitude = MathF.Max(GamePhysicsParameters.RunSpeed, amplitude);
+            amplitude = MathF.Max(GamePhysics.RunSpeed, amplitude);
         }
         return sign * amplitude;
     }
@@ -53,7 +53,7 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
         var sign = MathF.Sign(linearVelocityX);
         var amplitude = linearVelocityX * sign;
 
-        amplitude -= dt * GamePhysicsParameters.AirBrakeDeceleration;
+        amplitude -= dt * GamePhysics.AirBrakeDeceleration;
         amplitude = MathF.Max(0, amplitude);
 
         return amplitude * sign;

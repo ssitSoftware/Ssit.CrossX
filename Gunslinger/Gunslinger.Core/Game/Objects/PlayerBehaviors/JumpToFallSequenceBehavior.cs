@@ -20,7 +20,7 @@ public class JumpToFallSequenceBehavior(Player player) : Behavior
     {
         if (player.IsOnGround)
         {
-            if (MathF.Abs(player.Body.LinearVelocity.X) >= GamePhysicsParameters.MinRunSpeed)
+            if (MathF.Abs(player.Body.LinearVelocity.X) >= GamePhysics.MinRunSpeed)
             {
                 player.SetState("Run");
             }

@@ -19,8 +19,9 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             player.SetState("Jump");
             
             var currentY = MathF.Min(player.Body.LinearVelocity.Y, 0);
-            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = currentY - GamePhysics.JumpVelocity};
+            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = currentY - GamePhysics.JumpVelocity} + (player.MomentumOffset / dt) with { Y = 0 };
             player.Body.Position -= new Vector2(0, 0.11f); 
+            player.MomentumOffset = Vector2.Zero;
             return true;
         }
         

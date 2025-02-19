@@ -18,5 +18,4 @@ public class EditorAttribute : Attribute
 
 public class EditorComplex : EditorAttribute
 {
-    
 }

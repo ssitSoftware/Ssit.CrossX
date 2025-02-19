@@ -9,12 +9,13 @@ using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.Games.Physics.Extensions;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 
 namespace Gunslinger.Core.Game.Objects;
 
-public class Player: SpriteGameObject
+public class Player: SpriteGameObject, IMomentumReceiver
 {
     public class PlayerStats
     {
@@ -42,6 +43,8 @@ public class Player: SpriteGameObject
     public bool IsOnGround { get; private set; }
     public bool IsOnPlatform { get; private set; }
 
+    public Vector2 MomentumOffset { get; set; }
+    
     private readonly List<Fixture> _queryList = new();
     
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
@@ -104,6 +107,11 @@ public class Player: SpriteGameObject
 
     protected override void OnFixedUpdate(float dt)
     {
+        if (!IsOnGround)
+        {
+            MomentumOffset = Vector2.Zero;
+        }
+        
         DetectOnGround();
         base.OnFixedUpdate(dt);
     }
@@ -144,5 +152,10 @@ public class Player: SpriteGameObject
         }
         base.SetSequence(state);
         DetectOnGround();
+    }
+
+    public void OnKineticallyMoved(Vector2 offset)
+    {
+        MomentumOffset = offset;
     }
 }

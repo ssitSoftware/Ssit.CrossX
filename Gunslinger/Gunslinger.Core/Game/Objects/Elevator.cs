@@ -9,7 +9,6 @@ using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
-using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Extensions;
 
@@ -17,12 +16,18 @@ namespace Gunslinger.Core.Game.Objects;
 
 public class Elevator: SpriteGameObject, ITarget
 {
+    public enum SpeedMode
+    {
+        Constant,
+        Variable,
+    }
     public class Parameters
     {
+        [EditorFloat(0.25f, 20)] public float Speed { get; set; } = 5;
+        [EditorFloat(0.0f,10f, 0.1f)] public float BrakingDistance { get; set; } = 3f;
+        
         [EditorLink(typeof(ITarget))] public int Target { get; set; }
         [EditorLink(typeof(ISwitch))] public int Switch { get; set; }
-
-        [EditorFloat(0.25f, 20)] public float Speed { get; set; } = 5;
     }
 
     Vector2 ITarget.Position => _initialPosition;
@@ -35,11 +40,13 @@ public class Elevator: SpriteGameObject, ITarget
     public bool IsOn => _switch?.IsOn ?? true;
     public ITarget CurrentTarget { get; set; }
     public float Speed { get; }
+    public float BrakingDistance { get; }
 
     public Elevator(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters, "assets:/Game/Objects/Elevator")
     {
         ZOrder = 50;
         Speed = parameters.Parameters.Speed;
+        BrakingDistance = parameters.Parameters.BrakingDistance;
         
         BoundsRect = new RectangleF(-5, -2, 10, 4);
         

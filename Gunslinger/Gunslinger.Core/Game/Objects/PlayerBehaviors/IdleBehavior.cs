@@ -5,11 +5,18 @@ namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
 public class IdleBehavior(Player player): Behavior
 {
+    private bool _canEnterIdle;
+    protected override void OnEnterState()
+    {
+        base.OnEnterState();
+        _canEnterIdle = player.CurrentState != "Jump";
+    }
+
     protected override bool OnFixedUpdate(float dt)
     {
         if (player.IsOnGround)
         {
-            if (MathF.Abs(player.Body.LinearVelocity.Y) < 1)
+            if (_canEnterIdle)
             {
                 if (MathF.Abs(player.Body.LinearVelocity.X) < GamePhysics.MinRunSpeed)
                 {
@@ -20,6 +27,10 @@ public class IdleBehavior(Player player): Behavior
                     player.SetState("Run");
                 }
             }
+        }
+        else
+        {
+            _canEnterIdle = true;
         }
 
         return false;

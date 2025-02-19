@@ -16,9 +16,10 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
         
         if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed && inputMappings[0].GetAxis(GameControls.Vertical) < 0.75f)
         {
-            //obj.Sounds.Play("Jump");
             player.SetState("Jump");
-            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = -GamePhysics.JumpVelocity};
+            
+            var currentY = MathF.Min(player.Body.LinearVelocity.Y, 0);
+            player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = currentY - GamePhysics.JumpVelocity};
             player.Body.Position -= new Vector2(0, 0.11f); 
             return true;
         }

@@ -7,6 +7,7 @@ using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Logic.Objects;
+using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
@@ -49,9 +50,11 @@ public class Elevator: SpriteGameObject, ITarget
             Vertex0  = new Vector2(-3,0),
             Vertex3 = new Vector2(3,0)
         });
+
+        Body.Mass = 500;
         
         PlatformExtension.Attach(Body, 0.25f);
-        MovingStackExtension.Attach(Body);
+        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, 10, 0.2f));
         
         _initialPosition = parameters.Position;
         

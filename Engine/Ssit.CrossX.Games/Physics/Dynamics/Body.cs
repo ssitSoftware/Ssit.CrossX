@@ -131,7 +131,9 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _extensions.Clear();
         }
         
-        public event Action<Vector2> Moved;
+        public event Action<Body, Vector2> Moved;
+        public event Action<Body> PreProcessing;
+        public event Action<Body> PostProcessing;
         
         public Body(World world, Vector2 position = new(), float rotation = 0, BodyType bodyType = BodyType.Static, object userdata = null)
         {
@@ -165,6 +167,16 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
 
             world.AddBody(this); //FPE note: bodies can't live without a World
+        }
+
+        internal void SendPreProcessing()
+        {
+            PreProcessing?.Invoke(this);
+        }
+        
+        internal void SendPostProcessing()
+        {
+            PostProcessing?.Invoke(this);
         }
 
         /// <summary>
@@ -888,7 +900,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 FixtureList[i].Synchronize(broadPhase, ref _xf, ref _xf);
             }
             
-            Moved?.Invoke(_xf.P - oldPosition);
+            Moved?.Invoke(this, _xf.P - oldPosition);
         }
 
         /// <summary>
@@ -1283,7 +1295,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _xf.Q.Set(_sweep.A);
             _xf.P = _sweep.C - MathUtils.Mul(_xf.Q, _sweep.LocalCenter);
 
-            Moved?.Invoke(_xf.P - oldPosition);
+            Moved?.Invoke(this, _xf.P - oldPosition);
         }
 
         /// <summary>
@@ -1326,7 +1338,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _xf.Q.Set(_sweep.A);
             _xf.P = _sweep.C - MathUtils.Mul(_xf.Q, _sweep.LocalCenter);
             
-            Moved?.Invoke(_xf.P - oldPosition);
+            Moved?.Invoke(this, _xf.P - oldPosition);
         }
 
         public event OnCollisionEventHandler OnCollision

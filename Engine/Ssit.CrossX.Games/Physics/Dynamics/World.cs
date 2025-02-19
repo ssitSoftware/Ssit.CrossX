@@ -732,7 +732,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                         continue;
                     }
 
-                    // Prevent excessive sub-stepping.
+                    // Prevent excessive sub-(step)ping.
                     if (c._toiCount > Settings.MaxSubSteps)
                     {
                         continue;
@@ -1216,7 +1216,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 _watch.Start();
 
             ProcessChanges();
-
+            
+            for (int i = 0; i < BodyList.Count; i++)
+            {
+                BodyList[i].SendPreProcessing();
+            }
+            
             if (Settings.EnableDiagnostics)
                 AddRemoveTime = _watch.ElapsedTicks;
 
@@ -1281,6 +1286,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 _watch.Stop();
                 UpdateTime = _watch.ElapsedTicks;
                 _watch.Reset();
+            }
+            
+            for (int i = 0; i < BodyList.Count; i++)
+            {
+                BodyList[i].SendPostProcessing();
             }
         }
 

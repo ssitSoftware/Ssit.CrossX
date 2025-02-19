@@ -24,11 +24,12 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
 
             var newVelocityX = CalculateRunVelocity(player.Body.LinearVelocity.X, move, dt);
             
-            if (MathF.Abs(player.Body.LinearVelocity.X) < 1)
-            {
-                player.Body.Position -= new Vector2(0, 0.025f);
-            }
             player.Body.LinearVelocity = player.Body.LinearVelocity with {X = newVelocityX};
+            
+            if (MathF.Abs(player.Body.LinearVelocity.X) < 1 && player.Body.LinearVelocity.Y >= -0.1f)
+            {
+                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -0.1f };
+            }
             return true;
         }
 

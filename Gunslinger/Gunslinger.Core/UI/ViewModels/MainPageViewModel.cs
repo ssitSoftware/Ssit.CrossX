@@ -28,11 +28,13 @@ internal class MainPageViewModel
                 OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance)
             });
         });
+        
         OptionsCommand = new SyncCommand(o =>
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
             navigation.NavigateTo<OptionsPageViewModel>();
         });
+        
         ExitCommand = new SyncCommand( () =>
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();

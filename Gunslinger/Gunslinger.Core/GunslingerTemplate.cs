@@ -51,7 +51,9 @@ public class GunslingerTemplate: IGameTemplate
 
     public ObjectDescription[] Objects { get; } =
     [
-        new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters))
+        new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
+        new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
+        new("Devices/Elevator", typeof(Elevator), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
     ];
 
     public string[] TileSets { get; } =
@@ -59,7 +61,8 @@ public class GunslingerTemplate: IGameTemplate
         "assets:/Game/Tilesets/Wild.png",
         "assets:/Game/Tilesets/City.png",
         "assets:/Game/Tilesets/Victorian.png",
-        "assets:/Game/Tilesets/Background.png"
+        "assets:/Game/Tilesets/Background.png",
+        "assets:/Game/Tilesets/Beneath.png",
     ];
     
     public ImageDescription[] Images { get; } =

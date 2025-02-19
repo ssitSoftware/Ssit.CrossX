@@ -139,9 +139,9 @@ public class GameInstance : IGameInstance
 
         foreach (var body in World.BodyList)
         {
-            if (body.UserData is IUpdatable updatable)
+            if (body.Owner is IUpdatable updatable2)
             {
-                updatable.Update(deltaTime);
+                updatable2.Update(deltaTime);
             }
         }
 
@@ -155,9 +155,9 @@ public class GameInstance : IGameInstance
         {
             foreach (var body in World.BodyList)
             {
-                if (body.UserData is IUpdatable updatable)
+                if (body.Owner is IUpdatable updatable2)
                 {
-                    updatable.FixedUpdate(worldDelta);
+                    updatable2.FixedUpdate(worldDelta);
                 }
             }
             
@@ -166,9 +166,9 @@ public class GameInstance : IGameInstance
             
             foreach (var body in World.BodyList)
             {
-                if (body.UserData is IUpdatable updatable)
+                if (body.Owner is IUpdatable updatable2)
                 {
-                    updatable.PostFixedUpdate();
+                    updatable2.PostFixedUpdate();
                 }
             }
             
@@ -183,9 +183,9 @@ public class GameInstance : IGameInstance
         
         foreach (var body in World.BodyList)
         {
-            if (body.UserData is IUpdatable updatable)
+            if (body.Owner is IUpdatable updatable2)
             {
-                updatable.PostUpdate();
+                updatable2.PostUpdate();
             }
         }
         

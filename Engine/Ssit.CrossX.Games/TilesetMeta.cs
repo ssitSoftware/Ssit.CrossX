@@ -133,7 +133,6 @@ public class TilesetMeta(Dictionary<(int, int), (Vector2[], string)> collisions)
 
             case "bottom":
             {
-
                 var (left, right) = ParsePair(data[1]);
                 return
                 [

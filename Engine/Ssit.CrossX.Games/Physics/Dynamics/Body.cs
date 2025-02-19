@@ -87,11 +87,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         
         public PhysicsLogicFilter PhysicsLogicFilter;
         public ControllerFilter ControllerFilter;
-        
-        private int _bodyId;
-        private int _islandIndex;
-        private float _gravityScale;
-        private object _userData;
+
         private bool _isBullet;
         private List<Fixture> _fixtureList;
         private JointEdge _jointList;
@@ -100,6 +96,41 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         private bool _ignoreCcd;
         private bool _isDisposed;
 
+        private Dictionary<Type, IDisposable> _extensions;
+
+        public void SetExtension<TParam>(TParam param) where TParam: class, IDisposable
+        {
+            if(_extensions is null)
+                _extensions = new Dictionary<Type, IDisposable>();
+            
+            _extensions[typeof(TParam)] = param;
+        }
+
+        public TParam GetExtension<TParam>() where TParam: class, IDisposable
+        {
+            if (_extensions is null)
+                return null;
+            
+            if (_extensions.TryGetValue(typeof(TParam), out var param))
+            {
+                return (TParam)param;
+            }
+
+            return null;
+        }
+
+        internal void ClearExtensions()
+        {
+            if (_extensions is null)
+                return;
+            
+            foreach (var extension in _extensions)
+            {
+                extension.Value.Dispose();
+            }
+            _extensions.Clear();
+        }
+        
         public event Action<Vector2> Moved;
         
         public Body(World world, Vector2 position = new(), float rotation = 0, BodyType bodyType = BodyType.Static, object userdata = null)
@@ -139,37 +170,22 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <summary>
         /// A unique id for this body.
         /// </summary>
-        public int BodyId
-        {
-            get => _bodyId;
-            private set => _bodyId = value;
-        }
-
-        public int IslandIndex
-        {
-            get => _islandIndex;
-            set => _islandIndex = value;
-        }
+        public int BodyId { get; private set; }
+        public int IslandIndex { get; set; }
 
         /// <summary>
         /// Scale the gravity applied to this body.
         /// Defaults to 1. A value of 2 means double the gravity is applied to this body.
         /// </summary>
-        public float GravityScale
-        {
-            get => _gravityScale;
-            set => _gravityScale = value;
-        }
+        public float GravityScale { get; set; }
 
         /// <summary>
         /// Set the user data. Use this to store your application specific data.
         /// </summary>
         /// <value>The user data.</value>
-        public object UserData
-        {
-            get => _userData;
-            set => _userData = value;
-        }
+        public object UserData { get; set; }
+
+        public object Owner { get; set; }
 
         /// <summary>
         /// Gets the total number revolutions the body has made.

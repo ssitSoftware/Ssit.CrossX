@@ -14,6 +14,8 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
     public Body Body { get; }
     public SpriteInstance Sprite { get; private set; }
     
+    public int ZOrder { get; protected set; }
+    
     protected ImageTransform Transform { get; set; }
     
     protected RectangleF BoundsRect { get; set; }
@@ -29,7 +31,7 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
         Body.BodyType = BodyType.Dynamic;
         Body.Awake = true;
         Body.SetTransform(parameters.Position, 0);
-        Body.UserData = this;
+        Body.Owner = this;
         
         Transform = parameters.Flipped ? ImageTransform.FlipHorizontal : ImageTransform.None;
         

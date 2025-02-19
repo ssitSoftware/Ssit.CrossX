@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics;
@@ -12,6 +13,8 @@ namespace Ssit.CrossX.Games.Rendering.Map;
 
 public static class MapRenderer
 {
+    private static List<IGameObjectRenderer2> _gameObjects = new();
+    
     private static (Vector2 offset, RectangleF bounds) GetLayerRenderParameters(LayerDisplayElement mainLayer, LayerDisplayElement layer, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
     {
         var screenSizeNormalized = targetSize.ToVector() / tileSize;
@@ -115,12 +118,22 @@ public static class MapRenderer
         if (world is null)
             return;
         
+        _gameObjects.Clear();
+        
         foreach (var body in world.BodyList)
         {
-            if (body.UserData is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
+            if (body.Owner is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {
-                gor.Render(renderer, color);
+                _gameObjects.Add(gor);
             }
         }
+        
+        _gameObjects.Sort((o1,o2) => o1.ZOrder - o2.ZOrder);
+        foreach (var gameObj in _gameObjects)
+        {
+            gameObj.Render(renderer, color);
+        }
+        
+        _gameObjects.Clear();
     }
 }

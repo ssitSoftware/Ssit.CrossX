@@ -47,9 +47,12 @@ public class Player: SpriteGameObject
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters, "assets:/Game/Objects/SwordMaster")
     {
+        ZOrder = 100;
+        
         camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
         
         Sprite.SetSequence("Idle");
+        Body.IsBullet = true;
         Body.FixedRotation = true;
         
         Body.CreateFixture(new CircleShape(0.3f, 2)

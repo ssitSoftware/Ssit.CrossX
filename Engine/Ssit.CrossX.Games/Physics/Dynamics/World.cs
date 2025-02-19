@@ -382,11 +382,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                     BodyList.Remove(body);
                     BodyRemoved?.Invoke(body);
                     
-                    if (body.UserData is IDisposable disposable)
+                    if (body.Owner is IDisposable disposable2)
                     {
-                        disposable.Dispose();
+                        disposable2.Dispose();
                     }
-                    
+
+                    body.ClearExtensions();
                     body.FixtureList = null;
 
 #if USE_AWAKE_BODY_SET

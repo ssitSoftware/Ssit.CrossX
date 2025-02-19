@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IoC;
@@ -69,6 +70,8 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     public void Dispose()
     {
+        GamePhysics.DeinitPhysicsForWorld((GameInstance as GameInstance)?.World);
+        
         GameInstance.Dispose();
         _eventSource.Updating -= OnUpdating;
         _eventSource.RenderFinished -= OnRenderFinished;

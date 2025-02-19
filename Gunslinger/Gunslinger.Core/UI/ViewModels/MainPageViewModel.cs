@@ -3,6 +3,7 @@ using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Services;
 
@@ -21,7 +22,8 @@ internal class MainPageViewModel
             {
                 OnLoading = () => gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                 {
-                    MapPath = "assets:/Game/Maps/Map1.map"
+                    MapPath = "assets:/Game/Maps/Map1.map",
+                    InitWorldFunc = GamePhysics.InitPhysicsForWorld
                 }),
                 OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance)
             });

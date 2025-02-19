@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Input;
@@ -13,7 +14,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             return false;
         }
         
-        if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed)
+        if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed && inputMappings[0].GetAxis(GameControls.Vertical) < 0.75f)
         {
             //obj.Sounds.Play("Jump");
             player.SetState("Jump");

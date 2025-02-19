@@ -85,7 +85,7 @@ public class LayerDisplayElementBuilder
     private TilesDisplaySegment[] GenerateSegment(Rectangle rect)
     {
         var builder = new TilesDisplaySegmentBuilder()
-            .WithServices(_container, _contentManager)
+            .WithServices(_container)
             .WithBounds(rect)
             .WithMap(_file)
             .WithLayer(_layer)

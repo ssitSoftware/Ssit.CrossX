@@ -329,7 +329,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _contactSolver.Reset(subStep, ContactCount, _contacts, _positions, _velocities, warmstarting);
 
             // Solve position constraints.
-            for (int i = 0; i < Settings.TOIPositionIterations; ++i)
+            for (int i = 0; i < Settings.ToiPositionIterations; ++i)
             {
                 bool contactsOkay = _contactSolver.SolveTOIPositionConstraints(toiIndexA, toiIndexB);
                 if (contactsOkay)
@@ -349,7 +349,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _contactSolver.InitializeVelocityConstraints();
 
             // Solve velocity constraints.
-            for (int i = 0; i < Settings.TOIVelocityIterations; ++i)
+            for (int i = 0; i < Settings.ToiVelocityIterations; ++i)
             {
                 _contactSolver.SolveVelocityConstraints();
             }

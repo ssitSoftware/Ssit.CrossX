@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using Ssit.CrossX.Content;
 using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 
@@ -26,18 +23,13 @@ public class TilesDisplaySegmentBuilder
 
     private int _tileSize;
     
-    private RgbaColor _tintColor;
     private Tile[,] _tiles;
     
     private IIoCContainer _container;
-    private IContentManager _contentManager;
 
-    private float _depth;
-
-    public TilesDisplaySegmentBuilder WithServices(IIoCContainer container, IContentManager contentManager)
+    public TilesDisplaySegmentBuilder WithServices(IIoCContainer container)
     {
         _container = container;
-        _contentManager = contentManager;
         return this;
     }
     
@@ -49,10 +41,7 @@ public class TilesDisplaySegmentBuilder
     
     public TilesDisplaySegmentBuilder WithLayer(MapLayer layer)
     {
-        _tintColor = layer.TintColor;
         _tiles = layer.Tiles;
-        _depth = layer.Depth;
-        
         return this;
     }
 
@@ -132,9 +121,6 @@ public class TilesDisplaySegmentBuilder
         var maxX = Math.Min(xx + MergeSize, _endX);
         var maxY = Math.Min(yy + MergeSize, _endY);
         
-        var countX = maxX - xx;
-        var countY = maxY - yy;
-        
         var tile = tiles[xx, yy];
         width = 0;
         height = 0;
@@ -142,13 +128,22 @@ public class TilesDisplaySegmentBuilder
         if (tile.IsEmpty) return tile;
         
         var tileset = tile.TileSet;
+
+        for (var idx = 0; idx < _temp.GetLength(0); ++idx)
+        {
+            for (var idy = 0; idy < _temp.GetLength(1); ++idy)
+            {
+                _temp[idx, idy] = null;
+            }
+        }
         
         for(var idx = xx; idx < maxX; ++idx)
         {
             for (var idy = yy; idy < maxY; ++idy)
             {
                 var tile2 = tiles[idx, idy];
-                if (tile2.TileSet != tileset)
+                
+                if (tile2.IsEmpty || tile2.TileSet != tileset)
                 {
                     _temp[idx - xx, idy - yy] = null;
                     continue;
@@ -167,7 +162,7 @@ public class TilesDisplaySegmentBuilder
         width = 1;
         height = 1;
 
-        for (var idx = 0; idx < 8; ++idx)
+        for (var idx = 0; idx < MergeSize; ++idx)
         {
             int left = 2;
             if (CheckFilled(width+1, height))

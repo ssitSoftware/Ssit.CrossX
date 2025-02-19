@@ -16,6 +16,11 @@ public static class GamePhysicsParameters
     public const float PlayerFriction = 0.01f;
     public const float PlayerVelocityToFall = 10f;
 
+    public static bool IsPlatform(int material)
+    {
+        return material is 5 or 6;
+    }
+    
     // public static readonly Material[] Materials =
     // [
     //     new Material{ Friction = 1, Restitution = 0, Platform = false},

@@ -9,11 +9,6 @@ namespace Ssit.CrossX.Editor.Views
     public partial class MainWindow : Window
     {
         private readonly IGameTemplate _gameTemplate;
-
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
     
         public MainWindow(IGameTemplate gameTemplate)
         {

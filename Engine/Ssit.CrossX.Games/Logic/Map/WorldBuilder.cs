@@ -21,6 +21,8 @@ public class WorldBuilder
     private IGameTemplate _gameTemplate;
     private IIoCContainer _container;
 
+    private readonly Dictionary<string, List<Action<Body>>> _materialActions = new(); 
+    
     public WorldBuilder WithContainer(IIoCContainer container)
     {
         _container = container;
@@ -42,6 +44,16 @@ public class WorldBuilder
     public WorldBuilder WithMap(MapFile file)
     {
         _mapFile = file;
+        return this;
+    }
+
+    public WorldBuilder WithMaterialAction(string material, Action<Body> action)
+    {
+        if (!_materialActions.TryGetValue(material, out var list))
+        {
+            _materialActions.Add(material, list = new List<Action<Body>>());
+        }
+        list.Add(action);
         return this;
     }
 
@@ -125,6 +137,14 @@ public class WorldBuilder
                         break;
                 }
             }
+
+            if (_materialActions.TryGetValue(pair.Key, out var actions))
+            {
+                foreach (var action in actions)
+                {
+                    action(staticBody);
+                }
+            }
         }
         
         GenerateObjects(_mapFile.MainLayer.Objects, container);
@@ -133,6 +153,8 @@ public class WorldBuilder
 
     private void GenerateObjects(List<MapObject> mainLayerObjects, IIoCContainer container)
     {
+        var linkMap = new LinkMap();
+        
         foreach (var obj in mainLayerObjects)
         {
             if (!obj.HasLogic) continue;
@@ -144,8 +166,11 @@ public class WorldBuilder
             parameters.Position = obj.Position;
             parameters.Flipped = obj.Flipped;
             parameters.ParametersObject = obj.ParametersObject;
+            parameters.LinkMap = linkMap;
             
-            container.IoCConstruct(obj.Type, parameters);
+            var instance = container.IoCConstruct(obj.Type, parameters);
+            linkMap.AddMapping(obj.Id, instance);
         }
+        linkMap.ResolveLinks();
     }
 }

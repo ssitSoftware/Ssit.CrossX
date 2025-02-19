@@ -64,9 +64,9 @@ namespace Ssit.CrossX.Editor.Controls
                     skCanvas.Clear(new SKColor(Background.R, Background.G, Background.B));
                     Renderer?.Render(skCanvas, grContext, (int) _control.Bounds.Width, (int) _control.Bounds.Height);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    
+                    // IGNORE
                 }
             }
         

@@ -20,6 +20,7 @@ public class GameInstance : IGameInstance
     public class Parameters
     {
         public string MapPath { get; set; }
+        public Action<WorldBuilder> InitWorldFunc { get; set; }
     }
     
     private const float WorldDelta = 1f / 60f;
@@ -29,7 +30,7 @@ public class GameInstance : IGameInstance
     private readonly IInputMappings _inputMappings;
     private readonly MapDisplayElement _mapDisplayElement;
 
-    private readonly World _world;
+    public readonly World World;
     private readonly IIoCContainer _container;
     private readonly ICamera _camera;
     
@@ -80,7 +81,9 @@ public class GameInstance : IGameInstance
             .WithContainer(container)
             .WithGameTemplate(gameTemplate);
 
-        (_world, _container) = worldBuilder.Build();
+        parameters.InitWorldFunc?.Invoke(worldBuilder);
+        
+        (World, _container) = worldBuilder.Build();
 
         _camera = _container.Get<ICamera>();
     }
@@ -102,7 +105,7 @@ public class GameInstance : IGameInstance
 
         var size = target.Size.ToVector() / scale;
         
-        MapRenderer.Render(renderer, _mapDisplayElement, _world, _camera.LookAt,
+        MapRenderer.Render(renderer, _mapDisplayElement, World, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate.TileSize);
 
@@ -122,7 +125,7 @@ public class GameInstance : IGameInstance
         renderer.StateManager.Scale(scale);
         
         var size = target.Size.ToVector() / scale;
-        MapRenderer.RenderDebug(renderer, _mapDisplayElement, _world, _camera.LookAt,
+        MapRenderer.RenderDebug(renderer, _mapDisplayElement, World, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate);
         
@@ -136,7 +139,7 @@ public class GameInstance : IGameInstance
 
         _timeToUpdate += deltaTime;
 
-        foreach (var body in _world.BodyList)
+        foreach (var body in World.BodyList)
         {
             if (body.UserData is IUpdatable updatable)
             {
@@ -152,24 +155,26 @@ public class GameInstance : IGameInstance
         
         while (_timeToUpdate >= worldDelta)
         {
-            foreach (var body in _world.BodyList)
+            foreach (var body in World.BodyList)
             {
                 if (body.UserData is IUpdatable updatable)
                 {
-                    updatable.FixedUpdate(WorldDelta);
+                    updatable.FixedUpdate(worldDelta);
                 }
             }
             
-            _world.Step(worldDelta);
+            World.Step(worldDelta);
             _timeToUpdate -= worldDelta;
             
-            foreach (var body in _world.BodyList)
+            foreach (var body in World.BodyList)
             {
                 if (body.UserData is IUpdatable updatable)
                 {
                     updatable.PostFixedUpdate();
                 }
             }
+            
+            _camera.Update(worldDelta);
             
             worldDelta = WorldDelta;
             if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 4f)
@@ -178,7 +183,7 @@ public class GameInstance : IGameInstance
             }
         }
         
-        foreach (var body in _world.BodyList)
+        foreach (var body in World.BodyList)
         {
             if (body.UserData is IUpdatable updatable)
             {
@@ -187,7 +192,6 @@ public class GameInstance : IGameInstance
         }
         
         _mapDisplayElement.Update(deltaTime);
-        _camera.Update(deltaTime);
         Updated?.Invoke();
     }
     
@@ -200,12 +204,12 @@ public class GameInstance : IGameInstance
         Task.Delay(1000).ContinueWith(o =>
         {
             _scheduler.Schedule(_mapDisplayElement.Dispose);
-            foreach (var body in _world.BodyList)
+            foreach (var body in World.BodyList)
             {
-                _world.RemoveBody(body);
+                World.RemoveBody(body);
             }
 
-            _world.ProcessChanges();
+            World.ProcessChanges();
             _container?.Dispose();
         });
     }

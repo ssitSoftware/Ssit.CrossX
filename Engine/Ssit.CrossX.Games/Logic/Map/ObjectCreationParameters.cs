@@ -13,6 +13,8 @@ public class ObjectCreationParameters
         {
         }
     }
+
+    public ILinkMap LinkMap { get; internal set; }
 }
 
 public class ObjectCreationParameters<TParameters>: ObjectCreationParameters

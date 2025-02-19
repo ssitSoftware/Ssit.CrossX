@@ -82,12 +82,12 @@ namespace Ssit.CrossX.Games.Physics
         /// <summary>
         /// The number of velocity iterations in the TOI solver
         /// </summary>
-        public static int TOIVelocityIterations = VelocityIterations;
+        public static int ToiVelocityIterations = VelocityIterations;
 
         /// <summary>
         /// The number of position iterations in the TOI solver
         /// </summary>
-        public static int TOIPositionIterations = 20;
+        public static int ToiPositionIterations = 20;
 
         /// <summary>
         /// Maximum number of sub-steps per contact in continuous physics simulation.
@@ -115,7 +115,7 @@ namespace Ssit.CrossX.Games.Physics
         /// from earlier versions of FPE, set this to true and DefaultFixtureCollisionCategories
         /// to Category.All.
         /// </summary>
-        public static bool UseFPECollisionCategories;
+        public static bool UseFpeCollisionCategories;
 
         /// <summary>
         /// This is used by the Fixture constructor as the default value 
@@ -135,7 +135,7 @@ namespace Ssit.CrossX.Games.Physics
         /// This is used by the Fixture constructor as the default value 
         /// for Fixture.IgnoreCCDWith member.
         /// </summary>
-        public static Category DefaultFixtureIgnoreCCDWith = Category.None;
+        public static Category DefaultFixtureIgnoreCcdWith = Category.None;
 
         /// <summary>
         /// The maximum number of contact points between two convex shapes.
@@ -181,7 +181,7 @@ namespace Ssit.CrossX.Games.Physics
         /// <summary>
         /// Maximum number of contacts to be handled to solve a TOI impact.
         /// </summary>
-        public const int MaxTOIContacts = 32;
+        public const int MaxToiContacts = 32;
 
         /// <summary>
         /// A velocity threshold for elastic collisions. Any collision with a relative linear
@@ -243,7 +243,7 @@ namespace Ssit.CrossX.Games.Physics
         /// <summary>
         /// Defines the maximum number of iterations made by the GJK algorithm.
         /// </summary>
-        public const int MaxGJKIterations = 20;
+        public const int MaxGjkIterations = 20;
 
         /// <summary>
         /// This is only for debugging the solver

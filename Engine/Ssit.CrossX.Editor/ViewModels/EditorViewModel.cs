@@ -21,26 +21,26 @@ namespace Ssit.CrossX.Editor.ViewModels
         private readonly IEditorInstances _instances;
         private readonly IEditorBitmapsProvider _bitmapsProvider;
         private readonly EditorData _editorData;
-
-        private Vector2 _offset;
+        
         public event Action RedrawNeeded;
     
         private readonly List<SKImage> _imagesCache = new();
 
         public Vector2 Size { get; } = Vector2.Zero;
-        private SKColor _backgroundColor;
+        private readonly SKColor _backgroundColor;
 
-        private Stopwatch _stopwatch = new();
+        private readonly Stopwatch _stopwatch = new();
 
-        private SKPoint[] _arrowPoints = new SKPoint[3];
+        private readonly SKPoint[] _arrowPoints = new SKPoint[3];
         
-        private SKColor[] LinkColors = {
+        private static readonly SKColor[] LinkColors =
+        [
             SKColors.DodgerBlue,
             SKColors.LightSeaGreen,
             SKColors.LightBlue,
             SKColors.DarkSeaGreen,
             SKColors.MediumSeaGreen
-        };
+        ];
         
         public int SelectedMaterial
         {
@@ -294,7 +294,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             SetToolCommand = new RelayCommand<string>(s => SelectedTool = s);
             Zoom = new ZoomViewModel(() => RedrawNeeded?.Invoke(), editorData);
             
-            Tools.PropertyChanged += (o, e) =>
+            Tools.PropertyChanged += (_,_) =>
             {
                 SelectedObject = 0;
                 OnPropertyChanged(nameof(SelectedTool));
@@ -500,7 +500,6 @@ namespace Ssit.CrossX.Editor.ViewModels
             }
             
             var start = MapToScreen(Vector2.Zero, offset);
-            var end = MapToScreen(new Vector2(layer.Width, layer.Height), offset);
 
             var tileSetImages = GetTileSetImages(grContext);
         
@@ -829,17 +828,6 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public void UnloadResources()
         {
-        }
-    
-        private bool SetFieldAndRedraw<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (SetField(ref field, value, propertyName))
-            {
-                RedrawNeeded?.Invoke();
-                return true;
-            }
-
-            return false;
         }
     }
 }

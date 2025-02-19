@@ -41,7 +41,7 @@ public class AsyncCommand: IAsyncCommand
         {
             await ExecuteAsync(parameter);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // SKIP - Already called _onException;
         }

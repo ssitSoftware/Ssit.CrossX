@@ -478,11 +478,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     // Compute b'
                     b -= MathUtils.Mul(ref vc.K, a);
-
+#if B2_DEBUG_SOLVER 
                     const float k_errorTol = 1e-3f;
-                    //B2_NOT_USED(k_errorTol);
-
-                    for (; ; )
+#endif
+                    for (;;)
                     {
                         //
                         // Case 1: vn = 0

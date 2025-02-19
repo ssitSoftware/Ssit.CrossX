@@ -104,7 +104,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         private MapFile _mapFile;
 
         private readonly EditorData _editorData;
-
+        
         public MainViewModel(IServices services, 
             IEditorInstances instances, 
             IFileService fileService,
@@ -177,7 +177,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             if (string.IsNullOrWhiteSpace(_editorData.RecentMapPath) || 
                 !LoadMap(_editorData.RecentMapPath))
             {
-                New();
+                New().ConfigureAwait(true);
             }
 
             TilesetSelectorViewModel = _services.Create<TilesetSelectorViewModel>();

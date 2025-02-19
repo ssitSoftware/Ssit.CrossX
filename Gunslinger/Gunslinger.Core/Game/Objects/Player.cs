@@ -39,11 +39,13 @@ public class Player: SpriteGameObject
     }
     
     public bool IsOnGround { get; private set; }
+    public bool IsOnPlatform { get; private set; }
 
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters, "assets:/Game/Objects/SwordMaster")
     {
-        camera.SetTarget(Body, new Vector2(0, -5f));
+        camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
+        
         Sprite.SetSequence("Idle");
         Body.FixedRotation = true;
         
@@ -61,7 +63,7 @@ public class Player: SpriteGameObject
         Body.CreateFixture(new EdgeShape(new Vector2(0.29f, -0.3f), new Vector2(0.29f, -1.2f)));
 
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
-
+        
         Stats.Jump = 2;
         
         InitializeStates();
@@ -73,11 +75,12 @@ public class Player: SpriteGameObject
         var fallBehavior = Services.Container.IoCConstruct<FallBehavior>(this);
         var jumpBehavior = Services.Container.IoCConstruct<JumpBehavior>(this);
         var runBehavior = Services.Container.IoCConstruct<RunBehavior>(this);
+        var jumpOfPlatformBehavior = Services.Container.IoCConstruct<JumpOfPlatformBehavior>(this);
         var jumpingBehavior = Services.Container.IoCConstruct<JumpingBehavior>(this);
         var jumpToFallSequenceBehavior = Services.Container.IoCConstruct<JumpToFallSequenceBehavior>(this);
         var steerInAirBehavior = Services.Container.IoCConstruct<SteerInAirBehavior>(this);
         
-        var idleOrRunState = new State(jumpBehavior, runBehavior, fallBehavior, idleBehavior);
+        var idleOrRunState = new State(jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, idleBehavior);
         var jumpState = new State(jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
         var jumpToFallState = new State(steerInAirBehavior, jumpToFallSequenceBehavior, idleBehavior, runBehavior);
         var fallState = new State(steerInAirBehavior, fallBehavior, idleBehavior, runBehavior);
@@ -108,13 +111,17 @@ public class Player: SpriteGameObject
     private bool SetOnGround(Fixture arg)
     {
         if (arg.Body == Body) return true;
+        
         IsOnGround = true;
+        IsOnPlatform = GamePhysicsParameters.IsPlatform(arg.Body.MaterialIndex);
+        
         return false;
     }
     
     private void DetectOnGround()
     {
         IsOnGround = false;
+        IsOnPlatform = false;
         
         var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.05f), Body.Position + new Vector2(0.15f, 0.05f));
         Services.World.QueryAABB(SetOnGround, ref aabb);

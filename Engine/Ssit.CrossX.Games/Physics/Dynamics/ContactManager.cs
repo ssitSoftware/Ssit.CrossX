@@ -361,7 +361,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         private static bool ShouldCollide(Fixture fixtureA, Fixture fixtureB)
         {
-            if (Settings.UseFPECollisionCategories)
+            if (Settings.UseFpeCollisionCategories)
             {
                 if ((fixtureA.CollisionGroup == fixtureB.CollisionGroup) &&
                     fixtureA.CollisionGroup != 0 && fixtureB.CollisionGroup != 0)

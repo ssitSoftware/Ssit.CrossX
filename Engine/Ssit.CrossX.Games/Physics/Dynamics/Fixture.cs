@@ -138,7 +138,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             _collisionGroup = 0;
             _collisionIgnores = new HashSet<int>();
 
-            IgnoreCCDWith = Settings.DefaultFixtureIgnoreCCDWith;
+            IgnoreCCDWith = Settings.DefaultFixtureIgnoreCcdWith;
 
             //Fixture defaults
             Friction = 0.2f;

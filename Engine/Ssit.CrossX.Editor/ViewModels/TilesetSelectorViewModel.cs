@@ -74,8 +74,6 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public ZoomViewModel Zoom { get; }
 
-        private SKColor _backgroundColor;
-
         public TilesetSelectorViewModel(IEditorInstances instances)
         {
             _instances = instances;

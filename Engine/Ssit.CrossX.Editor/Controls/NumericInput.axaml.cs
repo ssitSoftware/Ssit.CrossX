@@ -19,10 +19,10 @@ public partial class NumericInput : UserControl
             defaultBindingMode: BindingMode.TwoWay);
     
     public static readonly StyledProperty<double> StepProperty =
-        AvaloniaProperty.Register<NumericInput, double>(nameof(Step), 0.0);
+        AvaloniaProperty.Register<NumericInput, double>(nameof(Step));
     
     public static readonly StyledProperty<ICommand> FocusLostCommandProperty =
-        AvaloniaProperty.Register<NumericInput, ICommand>(nameof(FocusLostCommand), null);
+        AvaloniaProperty.Register<NumericInput, ICommand>(nameof(FocusLostCommand));
     
     public double Value
     {

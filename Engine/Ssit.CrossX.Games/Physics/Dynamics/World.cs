@@ -661,9 +661,9 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 #endif
         }
 
-        private void SolveTOI(ref TimeStep step)
+        private void SolveToi(ref TimeStep step)
         {
-            Island.Reset(2 * Settings.MaxTOIContacts, Settings.MaxTOIContacts, 0, ContactManager);
+            Island.Reset(2 * Settings.MaxToiContacts, Settings.MaxToiContacts, 0, ContactManager);
 
 #if OPTIMIZE_TOI
             bool wasStepComplete = _stepComplete;
@@ -1249,7 +1249,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             // Handle TOI events.
             if (Settings.ContinuousPhysics)
             {
-                SolveTOI(ref step);
+                SolveToi(ref step);
             }
 
             if (Settings.EnableDiagnostics)

@@ -657,7 +657,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
             // Main iteration loop.
             int iter = 0;
-            while (iter < Settings.MaxGJKIterations)
+            while (iter < Settings.MaxGjkIterations)
             {
                 // Copy simplex so we can identify duplicates.
                 int saveCount = simplex.Count;

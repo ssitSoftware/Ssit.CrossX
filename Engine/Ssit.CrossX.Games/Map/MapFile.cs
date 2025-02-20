@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Utils;
 
@@ -39,6 +40,9 @@ public class MapFile: BindableModel
             return nextObjectId + 1;
         }
     }
+    
+    [Editor]
+    public RgbaColor BackgroundColor { get; set; }
     
     public ObservableCollection<MapLayer> Layers { get; } = new();
     
@@ -167,6 +171,7 @@ public class MapFile: BindableModel
     
     public void LoadRaw(BinaryReader reader, IGameTemplate gameTemplate)
     {
+        BackgroundColor = RgbaColor.FromRgba(reader.ReadUInt32(), false);
         Layers.Clear();
         
         var layersNo = reader.ReadByte();
@@ -182,6 +187,7 @@ public class MapFile: BindableModel
     
     public void SaveRaw(BinaryWriter writer)
     {
+        writer.Write(BackgroundColor.ToUInt32());
         writer.Write((byte)Layers.Count);
         foreach (var layer in Layers)
         {

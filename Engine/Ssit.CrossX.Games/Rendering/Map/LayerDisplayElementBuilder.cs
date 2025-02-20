@@ -51,7 +51,7 @@ public class LayerDisplayElementBuilder
     {
         var list = new List<(RectangleF bounds, TilesDisplaySegment[] segments)>();
         var objects = new List<MapDisplayObject>();
-        
+
         var segmentWidth = (int)MathF.Ceiling((float)_targetSize.Width / _tileSize / 2);
         var segmentHeight = (int)MathF.Ceiling((float)_targetSize.Height / _tileSize / 2);
 
@@ -74,12 +74,12 @@ public class LayerDisplayElementBuilder
                 var parameters = obj.ParametersObject as StaticObjectParameters;
                 var dispObj = _container.IoCConstruct<MapDisplayObject>(obj);
                 dispObj.SpriteInstance?.Advance(parameters?.AnimationTimeOffsetInMs / 1000f ?? 0f);
-                dispObj.Depth = _layer.Depth;
+                dispObj.Zorder = obj.ZOrder;
                 objects.Add(dispObj);
             }
         }
         
-        return new LayerDisplayElement(list, objects.OrderBy( o=>o.Name).ToList(), new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed),
+        return new LayerDisplayElement(list, objects.OrderBy( o=>o.Zorder).ToList(), new Vector2(_layer.HorizontalSpeed, _layer.VerticalSpeed),
             _layer.TintColor.AsPremultiplied(),
             _layer.FogColor.AsPremultiplied(), _layer.Size, _layer == _file.MainLayer);
     }

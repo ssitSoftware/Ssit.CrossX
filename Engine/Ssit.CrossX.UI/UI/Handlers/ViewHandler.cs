@@ -86,7 +86,10 @@ public abstract class ViewHandler: IDisposable
     
     public virtual void Draw(IRenderer2 renderer)
     {
-        OnDraw(renderer);
+        if (View.Visible.Value)
+        {
+            OnDraw(renderer);
+        }
     }
 
     public virtual void Update(float dt)

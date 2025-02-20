@@ -147,6 +147,7 @@ public class WorldBuilder
             parameters.Flipped = obj.Flipped;
             parameters.ParametersObject = obj.ParametersObject;
             parameters.LinkMap = linkMap;
+            parameters.ZOrder = obj.ZOrder;
             
             var instance = container.IoCConstruct(obj.Type, parameters);
             linkMap.AddMapping(obj.Id, instance);

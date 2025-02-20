@@ -21,7 +21,7 @@ public class MapDisplayObject: IDisposable
     public Vector2 Origin { get; }
     public bool IsFlipped { get; }
     public Vector2 Position { get; }
-    public float Depth { get; internal set; }
+    public int Zorder { get; internal set; }
     public string Name => _gameObject.Name;
 
     public MapDisplayObject(IContentManager contentManager, IGameTemplate template, MapObject obj)

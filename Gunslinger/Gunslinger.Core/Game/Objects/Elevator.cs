@@ -36,7 +36,6 @@ public class Elevator: SpriteGameObject, ITarget
 
     public Elevator(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters, "assets:/Game/Objects/Elevator")
     {
-        ZOrder = 50;
         Speed = parameters.Parameters.Speed;
         BrakingDistance = parameters.Parameters.BrakingDistance;
         

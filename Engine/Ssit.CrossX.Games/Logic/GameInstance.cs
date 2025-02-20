@@ -96,7 +96,7 @@ public class GameInstance : IGameInstance
             return;
         
         renderer.StateManager.SaveState();
-        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _gameTemplate.DefaultBackground);
+        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _mapDisplayElement.BackgroundColor);
         
         renderer.StateManager.Translate(target.TopLeft);
         renderer.StateManager.Scale(scale);

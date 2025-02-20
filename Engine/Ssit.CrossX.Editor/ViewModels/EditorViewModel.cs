@@ -27,7 +27,6 @@ namespace Ssit.CrossX.Editor.ViewModels
         private readonly List<SKImage> _imagesCache = new();
 
         public Vector2 Size { get; } = Vector2.Zero;
-        private readonly SKColor _backgroundColor;
 
         private readonly Stopwatch _stopwatch = new();
 
@@ -301,11 +300,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             };
             
             EnableAnimation(_editorData.Animate);
-            
-            _backgroundColor = _instances.Template.DefaultBackground.ToSkia();
             PropertiesView = services.Create<PropertiesViewModel>(this);
-            
-            
         }
 
         private void EnableAnimation(bool value)
@@ -370,7 +365,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             _skPaint.IsStroke = false;
             _skPaint.StrokeWidth = 1;
-            _skPaint.Color = _backgroundColor;
+            _skPaint.Color = _instances.Map.BackgroundColor.ToSkia();
         
             skCanvas.DrawRect(new SKRect(start.X, start.Y, end.X, end.Y), _skPaint);
 

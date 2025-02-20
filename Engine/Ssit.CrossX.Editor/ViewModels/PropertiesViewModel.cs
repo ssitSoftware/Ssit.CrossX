@@ -152,7 +152,9 @@ public class PropertiesViewModel: BindableModel
         
         if (_editor?.SelectedLayer is not null)
         {
-            Title = "Layer Properties";
+            Title = "Map & Layer Properties";
+            FillProperties(_mapFile);
+            
             FillProperties(_editor.SelectedLayer);
             return;
         }

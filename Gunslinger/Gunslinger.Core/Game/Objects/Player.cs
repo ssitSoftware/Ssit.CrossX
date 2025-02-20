@@ -50,8 +50,6 @@ public class Player: SpriteGameObject, IMomentumReceiver
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters, "assets:/Game/Objects/SwordMaster")
     {
-        ZOrder = 100;
-        
         camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
         
         Sprite.SetSequence("Idle");
@@ -127,7 +125,7 @@ public class Player: SpriteGameObject, IMomentumReceiver
         IsOnGround = false;
         IsOnPlatform = true;
         
-        var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.05f), Body.Position + new Vector2(0.15f, 0.05f));
+        var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.125f), Body.Position + new Vector2(0.15f, 0.125f));
         Services.World.QueryAabbs(_queryList, ref aabb);
 
         foreach (var fixture in _queryList)

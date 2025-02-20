@@ -49,6 +49,6 @@ public class MapDisplayElementBuilder
             layers.Add(builder.Build());
         }
         
-        return new MapDisplayElement(layers);
+        return new MapDisplayElement(layers, _file.BackgroundColor.AsPremultiplied());
     }
 }

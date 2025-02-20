@@ -14,7 +14,7 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
     public Body Body { get; }
     public SpriteInstance Sprite { get; private set; }
     
-    public int ZOrder { get; protected set; }
+    public int ZOrder { get; }
     
     protected ImageTransform Transform { get; set; }
     
@@ -26,6 +26,8 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
     
     protected SpriteGameObject(GameObjectsServices services, ObjectCreationParameters parameters, string path)
     {
+        ZOrder = parameters.ZOrder;
+        
         Services = services;
         Body = new Body(services.World);
         Body.BodyType = BodyType.Dynamic;

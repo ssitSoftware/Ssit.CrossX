@@ -13,7 +13,26 @@ namespace Ssit.CrossX.Games.Rendering.Map;
 
 public static class MapRenderer
 {
-    private static List<IGameObjectRenderer2> _gameObjects = new();
+    private readonly struct ObjectRenderInfo
+    {
+        public readonly MapDisplayObject DisplayObject;
+        public readonly IGameObjectRenderer2 ObjectRenderer;
+        public int ZOrder => DisplayObject?.Zorder ?? ObjectRenderer?.ZOrder ?? 0;
+        public ObjectRenderInfo(MapDisplayObject displayObject)
+        {
+            DisplayObject = displayObject;
+            ObjectRenderer = null;
+        }
+        
+        public ObjectRenderInfo(IGameObjectRenderer2 objectRenderer)
+        {
+            DisplayObject = null;
+            ObjectRenderer = objectRenderer;
+        }
+
+    }
+    private static readonly List<ObjectRenderInfo> _gameObjects = new();
+    
     
     private static (Vector2 offset, RectangleF bounds) GetLayerRenderParameters(LayerDisplayElement mainLayer, LayerDisplayElement layer, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
     {
@@ -67,9 +86,16 @@ public static class MapRenderer
 
             if (layer.IsMain)
             {
-                RenderGameObjects(renderer, world, visibleBounds, mainLayer.TintColor);
+                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor);
             }
-            
+            else
+            {
+                foreach (var obj in layer.DisplayObjects)
+                {
+                    DrawObject(renderer, visibleBounds, obj, layer.TintColor);
+                }
+            }
+
             renderer.StateManager.RestoreState();
             
             if (layer.FogColor.A > 0)
@@ -91,11 +117,6 @@ public static class MapRenderer
                 }
             }
         }
-
-        foreach (var obj in layer.DisplayObjects)
-        {
-            DrawObject(renderer, bounds, obj, layer.TintColor);
-        }
     }
 
     private static void DrawObject(IRenderer2 renderer, RectangleF bounds, MapDisplayObject obj, RgbaColor tintColor)
@@ -112,26 +133,35 @@ public static class MapRenderer
         }
     }
 
-    private static void RenderGameObjects(IRenderer2 renderer,
+    private static void RenderGameObjects(IRenderer2 renderer, LayerDisplayElement layer,
         World world, RectangleF bounds, RgbaColor color)
     {
         if (world is null)
             return;
         
         _gameObjects.Clear();
+        foreach (var obj in layer.DisplayObjects)
+        {
+            _gameObjects.Add(new ObjectRenderInfo(obj));
+        }
         
         foreach (var body in world.BodyList)
         {
             if (body.Owner is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {
-                _gameObjects.Add(gor);
+                _gameObjects.Add(new ObjectRenderInfo(gor));
             }
         }
         
         _gameObjects.Sort((o1,o2) => o1.ZOrder - o2.ZOrder);
         foreach (var gameObj in _gameObjects)
         {
-            gameObj.Render(renderer, color);
+            if (gameObj.DisplayObject != null)
+            {
+                DrawObject(renderer, bounds, gameObj.DisplayObject, layer.TintColor);
+            }
+
+            gameObj.ObjectRenderer?.Render(renderer, color);
         }
         
         _gameObjects.Clear();

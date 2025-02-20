@@ -26,7 +26,6 @@ public interface IGameTemplate
 
     IFilesProvider AssetsProvider { get; }
     decimal TilesetPanelZoom { get; }
-    
     int PreviewZoom { get; }
     RgbaColor EmptyColor { get; }
 }

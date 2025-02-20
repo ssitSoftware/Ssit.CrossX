@@ -4,3 +4,7 @@
 (0,14):      Default:    Solid
 (1,14,7,1):      Default:    Top (0.75,0.75)
 (0,24,2,1):      Default:    Top (0.75,0.75)
+(0,26):     Default:    Stair (1,0.5)
+(1,26):     Default:    Stair (0.5,0)
+(0,27):     Default:    Stair (0,0.5)
+(1,27):     Default:    Stair (0.5,1)

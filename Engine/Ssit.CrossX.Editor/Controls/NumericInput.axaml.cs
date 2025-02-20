@@ -9,10 +9,10 @@ namespace Ssit.CrossX.Editor.Controls;
 public partial class NumericInput : UserControl
 {
     public static readonly StyledProperty<double> MinimumProperty =
-        AvaloniaProperty.Register<NumericInput, double>(nameof(Minimum));
+        AvaloniaProperty.Register<NumericInput, double>(nameof(Minimum), -10000);
     
     public static readonly StyledProperty<double> MaximumProperty =
-        AvaloniaProperty.Register<NumericInput, double>(nameof(Maximum), 100);
+        AvaloniaProperty.Register<NumericInput, double>(nameof(Maximum), 10000);
     
     public static readonly StyledProperty<double> ValueProperty =
         AvaloniaProperty.Register<NumericInput, double>(nameof(Value),

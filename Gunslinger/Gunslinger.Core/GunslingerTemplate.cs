@@ -77,7 +77,8 @@ public class GunslingerTemplate: IGameTemplate
         new ("Monuments/Chapel", "assets:/Game/Images/Chapel"),
         new ("Monuments/Blue Throne", "assets:/Game/Images/Throne", "Blue"),
         new ("Monuments/Green Throne", "assets:/Game/Images/Throne", "Green"),
-        new ("Background/Small Throne", "assets:/Game/Images/ThroneSmall", "Green")
+        new ("Background/Small Throne", "assets:/Game/Images/ThroneSmall", "Green"),
+        new ("Light/Torch", "assets:/Game/Images/Torch"),
     ];
 
     public MaterialInfo[] Materials { get; } =

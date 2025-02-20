@@ -71,7 +71,9 @@ public class LayerDisplayElementBuilder
         {
             if (!obj.HasLogic)
             {
+                var parameters = obj.ParametersObject as StaticObjectParameters;
                 var dispObj = _container.IoCConstruct<MapDisplayObject>(obj);
+                dispObj.SpriteInstance?.Advance(parameters?.AnimationTimeOffsetInMs / 1000f ?? 0f);
                 dispObj.Depth = _layer.Depth;
                 objects.Add(dispObj);
             }

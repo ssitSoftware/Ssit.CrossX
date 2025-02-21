@@ -8,7 +8,7 @@ public class JumpingBehavior(Player player, IInputMappings inputMappings) : Beha
 {
     protected override bool OnFixedUpdate(float dt)
     {
-        bool increaseJump = !(player.Body.LinearVelocity.Y >= 0 || !inputMappings[0].GetButton(GameControls.Jump).IsDown);
+        bool increaseJump = !(player.Body.LinearVelocity.Y >= 0 || !inputMappings[player.PlayerIndex].GetButton(GameControls.Jump).IsDown);
 
         if (increaseJump)
         {

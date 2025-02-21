@@ -146,16 +146,21 @@ public class TilesetMeta(Dictionary<(int, int), (Vector2[], string)> collisions)
             case "stair":
             {
                 var (left, right) = ParsePair(data[1]);
-                
+                var up = (left*3+right)/4;
                 var mid = (left+right)/2;
+                var down = (left+right*3)/4;
                 
                 return
                 [
                     new Vector2(0, 1),
                     new Vector2(0, left),
-                    new Vector2(1/4f, mid),
-                    new Vector2(2/4f, mid),
-                    new Vector2(3/4f, right),
+                    new Vector2(1/8f, left),
+                    new Vector2(2/8f, up),
+                    new Vector2(3/8f, up),
+                    new Vector2(4/8f, mid),
+                    new Vector2(5/8f, mid),
+                    new Vector2(6/8f, down),
+                    new Vector2(7/8f, down),
                     new Vector2(1f, right),
                     new Vector2(1, 1)
                 ];

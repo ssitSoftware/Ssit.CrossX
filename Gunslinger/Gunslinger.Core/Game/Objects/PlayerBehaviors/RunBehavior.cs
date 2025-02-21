@@ -12,7 +12,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         if (!player.IsOnGround)
             return false;
         
-        var move = inputMappings[0].GetAxis(GameControls.Horizontal);
+        var move = inputMappings[player.PlayerIndex].GetAxis(GameControls.Horizontal);
         var amplitude = MathF.Abs(move);
         
         if (amplitude > 0.25f)

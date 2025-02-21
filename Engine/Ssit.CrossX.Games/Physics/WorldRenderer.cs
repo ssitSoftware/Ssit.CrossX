@@ -29,12 +29,14 @@ public static class WorldRenderer
             if (fixture.Shape == null)
                 continue;
             
-            Render(renderer, body, fixture.Shape, gameTemplate);
+            Render(renderer, body, fixture, gameTemplate);
         }
     }
     
-    public static void Render(IGeometryRenderer renderer, Body body, Shape shape, IGameTemplate gameTemplate)
+    public static void Render(IGeometryRenderer renderer, Body body, Fixture fixture, IGameTemplate gameTemplate)
     {
+        var shape = fixture.Shape;
+        
         var staticColor = RgbaColor.Yellow;
 
         if (body.MaterialIndex >= 0 && body.MaterialIndex < gameTemplate.Materials.Length)
@@ -42,10 +44,13 @@ public static class WorldRenderer
             var material = gameTemplate.Materials[body.MaterialIndex];
             staticColor = material.DebugColor;
         }
+
+        if (fixture.IsSensor)
+        {
+            staticColor = RgbaColor.Violet;
+        }
         
         RgbaColor color = body.IsStatic ? staticColor : (body.Awake ? RgbaColor.OrangeRed : RgbaColor.Green);
-
-        var showMatPosition = body.Position - new Vector2(0, 0.5f / gameTemplate.TileSize);
         
         switch (shape)
         {

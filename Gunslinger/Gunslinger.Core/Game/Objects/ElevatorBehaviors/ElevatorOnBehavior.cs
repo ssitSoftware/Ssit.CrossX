@@ -7,13 +7,10 @@ namespace Gunslinger.Core.Game.Objects.ElevatorBehaviors;
 public class ElevatorOnBehavior(Elevator elevator): Behavior
 {
     private Vector2 _lastMoveDirection;
-    private Vector2 _lastTargetPoint;
+    private Vector2 _lastTargetPoint = new Vector2(-10000);
 
     protected override void OnEnterState()
     {
-        _lastMoveDirection = Vector2.Zero;
-        _lastTargetPoint = new Vector2(-10000);
-
         elevator.Sprite.Advance((DateTime.Now.Millisecond % 100) / 1000f);
     }
 

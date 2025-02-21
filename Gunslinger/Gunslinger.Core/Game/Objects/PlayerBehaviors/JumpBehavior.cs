@@ -7,15 +7,19 @@ namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
 public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavior
 {
-    protected override bool OnUpdate(float dt)
+    private bool _jumpRequested;
+    
+    protected override bool OnFixedUpdate(float dt)
     {
         if (!player.IsOnGround)
         {
             return false;
         }
         
-        if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed && inputMappings[0].GetAxis(GameControls.Vertical) < 0.75f)
+        if (_jumpRequested)
         {
+            _jumpRequested = false;
+            
             var currentY = MathF.Min(player.MomentumOffset.Y / dt, 0);
             var currentX = player.Body.LinearVelocity.X + player.MomentumOffset.X / dt;
             
@@ -37,6 +41,13 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             return true;
         }
         
+        return false;
+    }
+
+    protected override bool OnUpdate(float dt)
+    {
+        _jumpRequested = inputMappings[player.PlayerIndex].GetButton(GameControls.Jump) == ButtonState.JustPressed &&
+                         inputMappings[player.PlayerIndex].GetAxis(GameControls.Vertical) < 0.75f;
         return false;
     }
 }

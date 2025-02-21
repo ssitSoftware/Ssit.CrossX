@@ -365,7 +365,9 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             _skPaint.IsStroke = false;
             _skPaint.StrokeWidth = 1;
-            _skPaint.Color = _instances.Map.BackgroundColor.ToSkia();
+            _skPaint.Color = ShowAllLayers
+                ? _instances.Map.BackgroundColor.ToSkia()
+                : _instances.Template.DefaultBackground.ToSkia();
         
             skCanvas.DrawRect(new SKRect(start.X, start.Y, end.X, end.Y), _skPaint);
 

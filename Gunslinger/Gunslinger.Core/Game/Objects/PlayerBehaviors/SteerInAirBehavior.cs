@@ -13,7 +13,7 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
             return false;
         }
 
-        var move = inputMappings[0].GetAxis(GameControls.Horizontal);
+        var move = inputMappings[player.PlayerIndex].GetAxis(GameControls.Horizontal);
         var amplitude = MathF.Abs(move);
         
         if (amplitude > 0.25f)

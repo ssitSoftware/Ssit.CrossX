@@ -12,7 +12,7 @@ using Ssit.CrossX.Games.Physics.Extensions;
 
 namespace Gunslinger.Core.Game.Objects;
 
-public class Elevator: SpriteGameObject, ITarget
+public sealed class Elevator: SpriteGameObject, ITarget
 {
     public class Parameters
     {

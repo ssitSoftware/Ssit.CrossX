@@ -1,0 +1,21 @@
+using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Input;
+
+namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
+
+public class OperateBehavior(Player player, IInputMappings inputMappings): Behavior
+{
+    protected override bool OnUpdate(float dt)
+    {
+        if (inputMappings[player.PlayerIndex].GetButton(GameControls.Operate) == ButtonState.JustPressed)
+        {
+            if (player.OperableInRange is not null)
+            {
+                player.OperableInRange.Operate(player);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}

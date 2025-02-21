@@ -15,7 +15,7 @@ using Ssit.CrossX.Graphics.Renderer;
 
 namespace Gunslinger.Core.Game.Objects;
 
-public class Player: SpriteGameObject, IMomentumReceiver
+public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
 {
     public class PlayerStats
     {
@@ -27,6 +27,8 @@ public class Player: SpriteGameObject, IMomentumReceiver
     }
     
     public PlayerStats Stats { get; } = new();
+
+    public int PlayerIndex => 0;
     
     public class Parameters
     {
@@ -40,12 +42,16 @@ public class Player: SpriteGameObject, IMomentumReceiver
         set => Transform = value ? ImageTransform.FlipHorizontal : ImageTransform.None;
     }
     
+    public ILogicOperable OperableInRange { get; private set; }
+    
     public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
 
     public Vector2 MomentumOffset { get; set; }
     
     private readonly List<Fixture> _queryList = new();
+
+    private Fixture _detectorFixture;
     
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters, "assets:/Game/Objects/SwordMaster")
@@ -56,7 +62,7 @@ public class Player: SpriteGameObject, IMomentumReceiver
         Body.IsBullet = true;
         Body.FixedRotation = true;
         
-        Body.CreateFixture(new CircleShape(0.3f, 2)
+        _detectorFixture = Body.CreateFixture(new CircleShape(0.3f, 2)
         {
             Position = new Vector2(0,-0.3f)
         });
@@ -86,8 +92,9 @@ public class Player: SpriteGameObject, IMomentumReceiver
         var jumpingBehavior = Services.Container.IoCConstruct<JumpingBehavior>(this);
         var jumpToFallSequenceBehavior = Services.Container.IoCConstruct<JumpToFallSequenceBehavior>(this);
         var steerInAirBehavior = Services.Container.IoCConstruct<SteerInAirBehavior>(this);
+        var operateBehavior = Services.Container.IoCConstruct<OperateBehavior>(this);
         
-        var idleOrRunState = new State(jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, idleBehavior);
+        var idleOrRunState = new State(operateBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, idleBehavior);
         var jumpState = new State(jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
         var jumpToFallState = new State(steerInAirBehavior, jumpToFallSequenceBehavior, idleBehavior, runBehavior);
         var fallState = new State(steerInAirBehavior, fallBehavior, idleBehavior, runBehavior);
@@ -155,5 +162,22 @@ public class Player: SpriteGameObject, IMomentumReceiver
     public void OnKineticallyMoved(Vector2 offset)
     {
         MomentumOffset = offset;
+    }
+
+    public void SetInRange(ILogicOperable operable, Fixture fixture, bool inRange)
+    {
+        if (_detectorFixture != fixture)
+        {
+            return;
+        }
+        
+        if (inRange)
+        {
+            OperableInRange = operable;
+        }
+        else if (OperableInRange == operable)
+        {
+            OperableInRange = null;
+        }
     }
 }

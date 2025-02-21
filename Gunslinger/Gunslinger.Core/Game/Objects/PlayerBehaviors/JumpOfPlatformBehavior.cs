@@ -10,9 +10,9 @@ public class JumpOfPlatformBehavior(Player player, IInputMappings inputMappings)
         if (!player.IsOnPlatform)
             return false;
         
-        if (inputMappings[0].GetButton(GameControls.Jump) == ButtonState.JustPressed)
+        if (inputMappings[player.PlayerIndex].GetButton(GameControls.Jump) == ButtonState.JustPressed)
         {
-            if (inputMappings[0].GetAxis(GameControls.Vertical) >= 0.75f)
+            if (inputMappings[player.PlayerIndex].GetAxis(GameControls.Vertical) >= 0.75f)
             {
                 player.Body.Position = player.Body.Position with {Y = player.Body.Position.Y + 0.75f};
                 player.Body.LinearVelocity = player.Body.LinearVelocity with {Y = 1};

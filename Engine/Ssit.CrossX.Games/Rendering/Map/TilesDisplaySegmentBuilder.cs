@@ -94,7 +94,7 @@ public class TilesDisplaySegmentBuilder
                         _verticesMap.Add(tile.TileSet, quads);
                     }
 
-                    quads.Add(new Quad(new RectangleF(tl - new Vector2(0.01f, 0.01f), br - tl + new Vector2(0.02f, 0.02f)), new RectangleF(xtl, xbr - xtl)));
+                    quads.Add(new Quad(new RectangleF(tl, br - tl), new RectangleF(xtl, xbr - xtl)));
                 }
             }
 

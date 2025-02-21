@@ -51,7 +51,7 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
     
     private readonly List<Fixture> _queryList = new();
 
-    private Fixture _detectorFixture;
+    private readonly Fixture _detectorFixture;
     
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters)

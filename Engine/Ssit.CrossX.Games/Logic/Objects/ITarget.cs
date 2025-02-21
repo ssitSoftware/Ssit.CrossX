@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Gunslinger.Core.Game.Objects;
+namespace Ssit.CrossX.Games.Logic.Objects;
 
 public interface ITarget
 {

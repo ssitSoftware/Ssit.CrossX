@@ -1,21 +1,14 @@
 namespace Ssit.CrossX.Games.Logic;
 
-public class State
+public class State(params Behavior[] behaviors)
 {
-    private readonly Behavior[] _behaviors;
-
-    public State(params Behavior[] behaviors)
-    {
-        _behaviors = behaviors;
-    }
-
     public void Update(float dt) => OnUpdate( dt);
 
     protected virtual void OnUpdate(float dt)
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            if (_behaviors[idx].Update(dt))
+            if (behaviors[idx].Update(dt))
             {
                 return;
             }
@@ -26,9 +19,9 @@ public class State
 
     protected virtual void OnFixedUpdate(float dt)
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            if (_behaviors[idx].FixedUpdate(dt))
+            if (behaviors[idx].FixedUpdate(dt))
             {
                 return;
             }
@@ -39,9 +32,9 @@ public class State
 
     protected virtual void OnPostFixedUpdate()
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            if (_behaviors[idx].PostFixedUpdate())
+            if (behaviors[idx].PostFixedUpdate())
             {
                 return;
             }
@@ -50,25 +43,25 @@ public class State
 
     public void Enter()
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            _behaviors[idx].EnterState();
+            behaviors[idx].EnterState();
         }
     }
     
     public void Leave()
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            _behaviors[idx].LeaveState();
+            behaviors[idx].LeaveState();
         }
     }
 
     public void SequenceFinished(string name)
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            if (_behaviors[idx].SequenceFinished(name))
+            if (behaviors[idx].SequenceFinished(name))
             {
                 return;
             }
@@ -77,9 +70,9 @@ public class State
 
     public void Event(string name, float parameter)
     {
-        for (var idx = 0; idx < _behaviors.Length; ++idx)
+        for (var idx = 0; idx < behaviors.Length; ++idx)
         {
-            if (_behaviors[idx].Event(name, parameter))
+            if (behaviors[idx].Event(name, parameter))
             {
                 return;
             }

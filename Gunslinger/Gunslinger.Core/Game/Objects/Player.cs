@@ -54,8 +54,10 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
     private Fixture _detectorFixture;
     
     public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
-        : base(services, parameters, "assets:/Game/Objects/SwordMaster")
+        : base(services, parameters)
     {
+        InitializeSprite("assets:/Game/Objects/SwordMaster");
+        
         camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
         
         Sprite.SetSequence("Idle");

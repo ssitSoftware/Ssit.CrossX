@@ -1,18 +1,16 @@
 using System.Numerics;
-using Gunslinger.Core.Game.Objects.ElevatorBehaviors;
-using Ssit.CrossX;
 using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Map;
-using Ssit.CrossX.Games.Logic.Objects;
+using Ssit.CrossX.Games.Logic.Objects.Behaviors;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Extensions;
 
-namespace Gunslinger.Core.Game.Objects;
+namespace Ssit.CrossX.Games.Logic.Objects;
 
-public sealed class Elevator: SpriteGameObject, ITarget
+public abstract class Elevator(GameObjectsServices services, ObjectCreationParameters<Elevator.Parameters> parameters)
+    : SpriteGameObject(services, parameters), ITarget
 {
     public class Parameters
     {
@@ -27,23 +25,22 @@ public sealed class Elevator: SpriteGameObject, ITarget
     
     private ITarget _target;
     private ISwitch _switch;
-    private readonly Vector2 _initialPosition;
+    private Vector2 _initialPosition;
     
     public bool IsOn => _switch?.IsOn ?? true;
     public ITarget CurrentTarget { get; set; }
-    public float Speed { get; }
-    public float BrakingDistance { get; }
+    public float Speed { get; private set; }
+    public float BrakingDistance { get; private set;}
 
-    public Elevator(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters, "assets:/Game/Objects/Elevator")
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width)
     {
+        BoundsRect = new RectangleF(-width, -width/2, width * 2, width);
+        
         Speed = parameters.Parameters.Speed;
         BrakingDistance = parameters.Parameters.BrakingDistance;
-        
-        BoundsRect = new RectangleF(-5, -2, 10, 4);
-        
         Body.BodyType = BodyType.Kinematic; 
         
-        Body.CreateFixture(new EdgeShape(new Vector2(-3, 0), new Vector2(3, 0))
+        Body.CreateFixture(new EdgeShape(new Vector2(-width / 2, 0), new Vector2(width / 2, 0))
         {
             Vertex0  = new Vector2(-3,0),
             Vertex3 = new Vector2(3,0)
@@ -59,8 +56,10 @@ public sealed class Elevator: SpriteGameObject, ITarget
         parameters.LinkMap.RequestLink<ITarget>(parameters.Parameters.Target, t => CurrentTarget = _target = t);
         parameters.LinkMap.RequestLink<ISwitch>(parameters.Parameters.Switch, s => _switch = s);
         
-        AddState("Off", new State(new ElevatorOffBehavior(this)));
-        AddState("On", new State(new ElevatorOnBehavior(this)));
+        var behavior = new ElevatorBehavior(this);
+        
+        AddState("Off", new State(behavior));
+        AddState("On", new State(behavior));
         
         SetState("Off");
     }

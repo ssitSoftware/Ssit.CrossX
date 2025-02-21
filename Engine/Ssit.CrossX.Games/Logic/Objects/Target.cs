@@ -2,7 +2,7 @@ using System.Numerics;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
 
-namespace Gunslinger.Core.Game.Objects;
+namespace Ssit.CrossX.Games.Logic.Objects;
 
 public class Target : ITarget
 {

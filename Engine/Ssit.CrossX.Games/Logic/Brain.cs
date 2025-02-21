@@ -8,7 +8,7 @@ public abstract class Brain: IUpdatable
     private readonly Dictionary<string, State> _states = new();
     private State _currentState;
 
-    protected void OnAnimationFinished(string sequenceName) => _currentState?.SequenceFinished(sequenceName);
+    protected virtual void OnAnimationFinished(string sequenceName) => _currentState?.SequenceFinished(sequenceName);
     public string CurrentState { get; private set; }
 
     void IUpdatable.Update(float dt) => OnUpdate(dt);

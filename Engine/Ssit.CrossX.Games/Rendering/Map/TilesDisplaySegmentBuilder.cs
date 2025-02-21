@@ -12,7 +12,7 @@ public class TilesDisplaySegmentBuilder
     private const int MergeSize = 32;
     
     private readonly Dictionary<int, List<Quad>> _verticesMap = new();
-    private Tile?[,] _temp = new Tile?[MergeSize, MergeSize];
+    private readonly Tile?[,] _temp = new Tile?[MergeSize, MergeSize];
     
     private string[] _tileSets;
     private int _startX;
@@ -94,7 +94,7 @@ public class TilesDisplaySegmentBuilder
                         _verticesMap.Add(tile.TileSet, quads);
                     }
 
-                    quads.Add(new Quad(new RectangleF(tl, br - tl), new RectangleF(xtl, xbr - xtl)));
+                    quads.Add(new Quad(new RectangleF(tl - new Vector2(0.01f, 0.01f), br - tl + new Vector2(0.02f, 0.02f)), new RectangleF(xtl, xbr - xtl)));
                 }
             }
 

@@ -1,6 +1,6 @@
 using Ssit.CrossX.Games.Physics.Dynamics;
 
-namespace Gunslinger.Core.Game.Objects;
+namespace Ssit.CrossX.Games.Logic.Objects;
 
 public interface ILogicOperator
 {

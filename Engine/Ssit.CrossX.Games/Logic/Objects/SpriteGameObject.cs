@@ -24,7 +24,7 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
 
     void IGameObjectRenderer2.Render(IRenderer2 renderer, RgbaColor color) => OnRender(renderer, color);
     
-    protected SpriteGameObject(GameObjectsServices services, ObjectCreationParameters parameters, string path)
+    protected SpriteGameObject(GameObjectsServices services, ObjectCreationParameters parameters)
     {
         ZOrder = parameters.ZOrder;
         
@@ -36,8 +36,11 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
         Body.Owner = this;
         
         Transform = parameters.Flipped ? ImageTransform.FlipHorizontal : ImageTransform.None;
-        
-        using var go = services.ContentManager.Get<GameObject>(path);
+    }
+
+    protected void InitializeSprite(string spritePath)
+    {
+        using var go = Services.ContentManager.Get<GameObject>(spritePath);
         Sprite = go.Resource.CreateSpriteInstance();
         
         Sprite.SequenceFinished += SpriteOnSequenceFinished;

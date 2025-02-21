@@ -1,13 +1,13 @@
 using System;
 using System.Numerics;
-using Ssit.CrossX.Games.Logic;
 
-namespace Gunslinger.Core.Game.Objects.ElevatorBehaviors;
+namespace Ssit.CrossX.Games.Logic.Objects.Behaviors;
 
-public class ElevatorOnBehavior(Elevator elevator): Behavior
+public class ElevatorBehavior(Elevator elevator): Behavior
 {
     private Vector2 _lastMoveDirection;
     private Vector2 _lastTargetPoint = new Vector2(-10000);
+    private float _speedFactor;
 
     protected override void OnEnterState()
     {
@@ -16,11 +16,18 @@ public class ElevatorOnBehavior(Elevator elevator): Behavior
 
     protected override bool OnFixedUpdate(float dt)
     {
-        if (!elevator.IsOn)
+        if (!elevator.IsOn && elevator.CurrentState != "Off")
         {
             elevator.SetState("Off");
-            return true;
         }
+        
+        if (elevator.IsOn && elevator.CurrentState != "On")
+        {
+            elevator.SetState("On");
+        }
+        
+        _speedFactor += dt * (elevator.IsOn ? 1 : -1) * 2;
+        _speedFactor = MathF.Min(MathF.Max(_speedFactor, 0), 1);
         
         while (true)
         {
@@ -42,7 +49,7 @@ public class ElevatorOnBehavior(Elevator elevator): Behavior
                 continue;
             }
 
-            var speed = elevator.Speed;
+            var speed = elevator.Speed * _speedFactor;
 
             if (elevator.BrakingDistance > 0)
             {

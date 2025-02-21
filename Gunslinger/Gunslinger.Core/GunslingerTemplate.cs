@@ -4,6 +4,7 @@ using Gunslinger.Core.Game;
 using Gunslinger.Core.Game.Objects;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IO;
@@ -41,7 +42,7 @@ public class GunslingerTemplate: IGameTemplate
         new ("B", "- Background", new Size(128,96), 0.5f, 0.5f, "Background", 100, new RgbaColor(224,232,224), LayerAlign.Bottom),
         new ("BO", "- Background Overlay", new Size(128,96), 0.5f, 0.5f, "Background", 100, new RgbaColor(224,232,224), LayerAlign.Bottom, new RgbaColor(224,232,224,56)),
         
-        new ("CB", "Close Background", new Size(512,96), 1, 1, "Main", 10, RgbaColor.White, LayerAlign.Bottom),
+        new ("CB", "Close Background", new Size(512,96),  1, 1, "Main", 10, RgbaColor.White, LayerAlign.Bottom),
         new (LayerDescription.MainLayerId, "Main", new Size(512,96), 1, 1, "Main", 0, RgbaColor.White, LayerAlign.Left),
         new ("CF", "Close Foreground", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
         new ("CFO", "Close Foreground Overlay", new Size(512,96), 1, 1, "Main", -10, RgbaColor.White, LayerAlign.Bottom),
@@ -53,8 +54,12 @@ public class GunslingerTemplate: IGameTemplate
     [
         new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
         new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
-        new("Devices/Elevator", typeof(Elevator), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
-        new("Devices/Switch", typeof(Switch), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
+        new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
+        new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
+        new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
+        new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
+        new("Devices/Metal Door", typeof(MechanicalDoorImpl), "assets:/Game/Objects/Door", "Closed", typeof(MechanicalDoor.Parameters)),
+        new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off")
     ];
 
     public string[] TileSets { get; } =
@@ -64,6 +69,7 @@ public class GunslingerTemplate: IGameTemplate
         "assets:/Game/Tilesets/Victorian.png",
         "assets:/Game/Tilesets/Background.png",
         "assets:/Game/Tilesets/Beneath.png",
+        "assets:/Game/Tilesets/Cables.png",
     ];
 
     public ImageDescription[] Images { get; } =

@@ -49,7 +49,7 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         Body.Mass = 500;
         
         PlatformExtension.Attach(Body, 0.25f);
-        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, 10, 0.2f));
+        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f));
         
         _initialPosition = parameters.Position;
         

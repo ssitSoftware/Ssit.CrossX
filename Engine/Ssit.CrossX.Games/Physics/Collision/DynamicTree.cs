@@ -185,7 +185,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             int proxyId = AllocateNode();
 
             // Fatten the aabb.
-            Vector2 r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
+            Vector2 r = new Vector2(Settings.AabbExtension, Settings.AabbExtension);
             _nodes[proxyId].AABB.LowerBound = aabb.LowerBound - r;
             _nodes[proxyId].AABB.UpperBound = aabb.UpperBound + r;
             _nodes[proxyId].UserData = userData;
@@ -233,12 +233,12 @@ namespace Ssit.CrossX.Games.Physics.Collision
 
             // Extend AABB.
             Aabb b = aabb;
-            Vector2 r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
+            Vector2 r = new Vector2(Settings.AabbExtension, Settings.AabbExtension);
             b.LowerBound = b.LowerBound - r;
             b.UpperBound = b.UpperBound + r;
 
             // Predict AABB displacement.
-            Vector2 d = Settings.AABBMultiplier * displacement;
+            Vector2 d = Settings.AabbMultiplier * displacement;
 
             if (d.X < 0.0f)
             {

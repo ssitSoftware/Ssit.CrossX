@@ -63,10 +63,7 @@ public static class MapRenderer
         renderer.StateManager.Translate(offset);
         renderer.StateManager.Scale(tileSize);
         
-        foreach (var body in world.BodyList)
-        {
-            WorldRenderer.Render(renderer.GeometryRenderer, body, gameTemplate);
-        }
+        WorldRenderer.Render(renderer.GeometryRenderer, world, gameTemplate);
 
         renderer.StateManager.RestoreState();
     }

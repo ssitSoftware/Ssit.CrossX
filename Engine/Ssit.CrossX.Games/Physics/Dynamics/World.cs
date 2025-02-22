@@ -67,6 +67,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         internal readonly Queue<Contact> ContactPool = new(256);
         internal bool WorldHasNewFixture;
 
+        private readonly List<Aabb> _aabbQueries = new();
+        
+        public IReadOnlyList<Aabb> AabbQueries => _aabbQueries;
+
         /// <summary>
         /// Fires whenever a body has been added
         /// </summary>
@@ -1209,6 +1213,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <param name="dt">The amount of time to simulate, this should not vary.</param>
         public void Step(float dt)
         {
+            _aabbQueries.Clear();
+            
             if (!Enabled)
                 return;
 
@@ -1321,6 +1327,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// <param name="aabb">The aabb query box.</param>
         public void QueryAabb(object context, Func<object, Fixture, bool> callback, ref Aabb aabb)
         {
+            _aabbQueries.Add(aabb);
+            
             _queryAabbCallback = callback;
             _queryAabbCallbackContext = context;
             ContactManager.BroadPhase.Query(_queryAabbCallbackWrapper, ref aabb);

@@ -92,7 +92,7 @@ namespace Ssit.CrossX.Games.Physics
         /// <summary>
         /// Maximum number of sub-steps per contact in continuous physics simulation.
         /// </summary>
-        public const int MaxSubSteps = 8;
+        public const int MaxSubSteps = 16;
 
         /// <summary>
         /// Enable/Disable warmstarting
@@ -148,14 +148,14 @@ namespace Ssit.CrossX.Games.Physics
         /// to move by a small amount without triggering a tree adjustment.
         /// This is in meters.
         /// </summary>
-        public const float AABBExtension = 0.1f;
+        public const float AabbExtension = 0.1f;
 
         /// <summary>
         /// This is used to fatten AABBs in the dynamic tree. This is used to predict
         /// the future position based on the current displacement.
         /// This is a dimensionless multiplier.
         /// </summary>
-        public const float AABBMultiplier = 2.0f;
+        public const float AabbMultiplier = 2.0f;
 
         /// <summary>
         /// A small length used as a collision and constraint tolerance. Usually it is

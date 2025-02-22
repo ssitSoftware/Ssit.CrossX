@@ -27,5 +27,7 @@ public class CrateImpl : Pushable, IMomentumReceiver
 
         Body.Mass = 300;
         Body.LinearDamping = 5;
+        
+        MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)));
     }
 }

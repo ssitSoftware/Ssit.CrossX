@@ -21,6 +21,19 @@ public static class WorldRenderer
             SCirclePoints[idx] = p;
         }
     }
+
+    public static void Render(IGeometryRenderer renderer, World world, IGameTemplate gameTemplate)
+    {
+        foreach (var body in world.BodyList)
+        {
+            Render(renderer, body, gameTemplate);
+        }
+
+        foreach (var aabb in world.AabbQueries)
+        {
+            renderer.DrawRectangle(new RectangleF(aabb.LowerBound, aabb.UpperBound - aabb.LowerBound), RgbaColor.LightPink);
+        }
+    }
     
     public static void Render(IGeometryRenderer renderer, Body body, IGameTemplate gameTemplate)
     {

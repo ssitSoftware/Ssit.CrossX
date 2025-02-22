@@ -136,7 +136,7 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
         IsOnGround = false;
         IsOnPlatform = true;
         
-        var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.125f), Body.Position + new Vector2(0.15f, 0.125f));
+        var aabb = new Aabb(Body.Position - new Vector2(0.2f, 0.125f), Body.Position + new Vector2(0.2f, 0.125f));
         Services.World.QueryAabbs(_queryList, ref aabb);
 
         foreach (var fixture in _queryList)

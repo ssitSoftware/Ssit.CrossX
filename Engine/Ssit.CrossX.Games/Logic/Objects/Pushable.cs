@@ -45,6 +45,7 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
     {
         Body = new Body(Services.World);
         Body.BodyType = BodyType.Dynamic;
+        Body.IsBullet = true;
         Body.SetTransform(parameters.Position, 0);
         Body.Owner = this;
         

@@ -61,8 +61,10 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
                 angle = Math.PI / 2;
                 break;
             
+            // TODO: Fix small over-rotation here
             case ImageTransform.Rotate180:
-                angle = Math.PI;
+                //angle = Math.PI;
+                flip = SDL_FlipMode.SDL_FLIP_HORIZONTAL | SDL_FlipMode.SDL_FLIP_VERTICAL;
                 break;
             
             case ImageTransform.Rotate270:

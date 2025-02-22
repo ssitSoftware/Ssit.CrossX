@@ -53,10 +53,17 @@ public class MovingStackExtension: IDisposable
             {
                 bd.LinearVelocity = bd.LinearVelocity with { Y = 0 };
             }
-            
+
             bd.Position += offset;
+            
+            var bde = bd.GetExtension<MovingStackExtension>();
+            if (bde != null && bde._lyingBodies.Count > 0 && !bde._lyingBodies.Contains(body))
+            {
+                BodyOnPostProcessing(bd);
+            }
         }
-        ext._lyingBodies.Clear();
+        
+        ext._offset = Vector2.Zero;
     }
     
     private static void BodyOnPreProcessing(Body body)
@@ -86,12 +93,13 @@ public class MovingStackExtension: IDisposable
         }
         
         ext._lyingFixtures.Clear();
+        ext._offset = Vector2.Zero;
     }
 
     private static void BodyOnMoved(Body body, Vector2 vector)
     {
         var ext = body.GetExtension<MovingStackExtension>();
-        ext._offset = vector;
+        ext._offset += vector;
     }
 
     public void Dispose()

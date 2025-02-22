@@ -26,6 +26,8 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
         [EditorInt(-1, 3)] public int MagneticJump { get; set; } = -1;
     }
     
+    float IMomentumReceiver.OffsetFactor => 0.975f;
+    
     public PlayerStats Stats { get; } = new();
 
     public int PlayerIndex => 0;
@@ -77,8 +79,8 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
         Body.CreateFixture(new EdgeShape(new Vector2(-0.29f, -0.3f), new Vector2(-0.29f, -1.2f)));
         Body.CreateFixture(new EdgeShape(new Vector2(0.29f, -0.3f), new Vector2(0.29f, -1.2f)));
 
+        Body.Mass = 80;
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
-        
         Stats.Jump = 2;
         
         InitializeStates();

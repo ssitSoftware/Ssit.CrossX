@@ -59,7 +59,8 @@ public class GunslingerTemplate: IGameTemplate
         new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
         new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
         new("Devices/Metal Door", typeof(MechanicalDoorImpl), "assets:/Game/Objects/Door", "Closed", typeof(MechanicalDoor.Parameters)),
-        new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off")
+        new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
+        new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview")
     ];
 
     public string[] TileSets { get; } =

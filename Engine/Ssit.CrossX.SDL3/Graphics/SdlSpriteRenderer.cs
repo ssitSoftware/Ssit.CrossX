@@ -20,7 +20,7 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         var textureHandle = PrepareTextureRender(texture, nullableColor);
         
         var source = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);
-        var origin = nullableOrigin ?? new Vector2(texture.Size.Width / 2f, texture.Size.Height / 2f);
+        var rotCenter = nullableOrigin ?? new Vector2(texture.Size.Width / 2f, texture.Size.Height / 2f);
         
         SDL_FRect sourceRect = new()
         {
@@ -37,14 +37,11 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
             w = target.Width * scale,
             h = target.Height * scale
         };
-
-        var scaleX = target.Width / source.Width;
-        var scaleY = target.Height / source.Height;
-
-        SDL_FPoint center = new()
+        
+        var center = new SDL_FPoint
         {
-            x = targetRect.x + origin.X * scaleX,
-            y = targetRect.y + origin.Y * scaleY
+            x = sourceRect.x + rotCenter.X,
+            y = sourceRect.y + rotCenter.Y
         };
 
         var flip = SDL_FlipMode.SDL_FLIP_NONE;

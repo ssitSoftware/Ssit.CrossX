@@ -55,6 +55,8 @@ public static class GamePhysics
         {
             PlatformExtension.Attach(body);
         }
+
+        
     }
 
     private static void WorldOnDisposing(World world)

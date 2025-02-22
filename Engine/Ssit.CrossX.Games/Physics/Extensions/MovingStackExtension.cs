@@ -38,12 +38,15 @@ public class MovingStackExtension: IDisposable
         {
             var offset = ext._offset;
             
+            float factor = 0.5f;
+            
             if (bd.Owner is IMomentumReceiver receiver)
             {
                 receiver.OnKineticallyMoved(offset);
+                factor = receiver.OffsetFactor;
             }
             
-            offset.X *= 0.975f;
+            offset.X *= factor;
             offset.Y = 0;
 
             if (offset.Y < 0)

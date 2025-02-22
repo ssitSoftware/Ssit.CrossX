@@ -31,6 +31,9 @@ public static class WorldRenderer
             
             Render(renderer, body, fixture, gameTemplate);
         }
+        
+        renderer.DrawLine(body.Position - new Vector2(0.2f, 0.2f), body.Position + new Vector2(0.2f, 0.2f), RgbaColor.Pink);
+        renderer.DrawLine(body.Position - new Vector2(0.2f, -0.2f), body.Position + new Vector2(0.2f, -0.2f), RgbaColor.Pink);
     }
     
     public static void Render(IGeometryRenderer renderer, Body body, Fixture fixture, IGameTemplate gameTemplate)
@@ -67,16 +70,20 @@ public static class WorldRenderer
                 break;
             
             case ChainShape chainShape:
-                DrawChain(body.Position, chainShape, renderer, color);
+                DrawChain(body, chainShape, renderer, color);
                 break;
         }
     }
 
-    private static void DrawChain(Vector2 position, ChainShape chainShape, IGeometryRenderer renderer, RgbaColor color)
+    private static void DrawChain(Body body, ChainShape chainShape, IGeometryRenderer renderer, RgbaColor color)
     {
+        var position = body.Position;
+        var matrix = Matrix3x2.CreateRotation(body.Rotation, position);
         for(var idx =0; idx < chainShape.Vertices.Count - 1; ++idx)
         {
-            renderer.DrawLine(chainShape.Vertices[idx] + position, chainShape.Vertices[idx + 1] + position, color);
+            var p1 = Vector2.Transform(chainShape.Vertices[idx] + position, matrix);
+            var p2 = Vector2.Transform(chainShape.Vertices[idx+1] + position, matrix);
+            renderer.DrawLine(p1, p2, color);
         }
     }
 
@@ -110,9 +117,15 @@ public static class WorldRenderer
 
     private static void DrawPolygon(Body body, PolygonShape polygonShape, IGeometryRenderer renderer, RgbaColor color)
     {
+        var position = body.Position;
+        var matrix = Matrix3x2.CreateRotation(body.Rotation, position);
+        
         for(var idx =0; idx < polygonShape.Vertices.Count; ++idx)
         {
-            renderer.DrawLine(polygonShape.Vertices[idx] + body.Position, polygonShape.Vertices[(idx + 1) % polygonShape.Vertices.Count] + body.Position, color);
+            var p1 = Vector2.Transform(polygonShape.Vertices[idx] + position, matrix);
+            var p2 = Vector2.Transform(polygonShape.Vertices[(idx + 1) % polygonShape.Vertices.Count] + position, matrix);
+            
+            renderer.DrawLine(p1, p2, color);
         }
     }
 }

@@ -43,7 +43,8 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         Body.CreateFixture(new EdgeShape(new Vector2(-width / 2, 0), new Vector2(width / 2, 0))
         {
             Vertex0  = new Vector2(-3,0),
-            Vertex3 = new Vector2(3,0)
+            Vertex3 = new Vector2(3,0),
+            Density = 20
         });
 
         Body.Mass = 500;

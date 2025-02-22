@@ -26,7 +26,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     public SharedStringValue Fps { get; } = new();
 
     public IGameInstance GameInstance { get; }
-    public SharedBoolMutable ShowDebug { get; } = new(true);
+    public SharedBoolMutable ShowDebug { get; } = new(false);
 
     private double _fps = 60;
 

@@ -66,12 +66,12 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
         Body.IsBullet = true;
         Body.FixedRotation = true;
         
-        _detectorFixture = Body.CreateFixture(new CircleShape(0.3f, 2)
+        _detectorFixture = Body.CreateFixture(new CircleShape(0.3f, 10)
         {
             Position = new Vector2(0,-0.3f)
         });
         
-        Body.CreateFixture(new CircleShape(0.3f, 2)
+        Body.CreateFixture(new CircleShape(0.3f, 10)
         {
             Position = new Vector2(0, -1.2f)
         });

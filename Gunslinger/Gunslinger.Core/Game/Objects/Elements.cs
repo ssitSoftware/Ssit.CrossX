@@ -1,4 +1,5 @@
 using System.Numerics;
+using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
@@ -10,9 +11,14 @@ namespace Gunslinger.Core.Game.Objects;
 
 public class CrateImpl : Pushable, IMomentumReceiver
 {
+    public class Parameters
+    {
+        [Editor] public bool MovingStackExtension { get; set; }
+    }
+    
     public float OffsetFactor => 0.75f;
     
-    public CrateImpl(GameObjectsServices services, ObjectCreationParameters parameters) 
+    public CrateImpl(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) 
         : base(services, parameters)
     {
         InitializeSprite("assets:/Game/Objects/Crate");
@@ -23,11 +29,14 @@ public class CrateImpl : Pushable, IMomentumReceiver
                 new Vector2(0.625f, -0.625f),
                 new Vector2(0.625f, 0.625f),
                 new Vector2(-0.625f, 0.625f),
-            ]), 1));
+            ]), 20));
 
         Body.Mass = 300;
         Body.LinearDamping = 5;
-        
-        MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)));
+
+        if (parameters.Parameters.MovingStackExtension)
+        {
+            MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)));
+        }
     }
 }

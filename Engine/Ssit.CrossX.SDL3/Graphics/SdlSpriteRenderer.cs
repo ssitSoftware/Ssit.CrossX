@@ -63,12 +63,10 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
             
             // TODO: Fix small over-rotation here
             case ImageTransform.Rotate180:
-                //angle = Math.PI;
-                flip = SDL_FlipMode.SDL_FLIP_HORIZONTAL | SDL_FlipMode.SDL_FLIP_VERTICAL;
+                angle = Math.PI;
                 break;
             
             case ImageTransform.Rotate270:
-                angle = Math.PI * 3 / 2;
                 break;
         }
         
@@ -81,7 +79,16 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
     public void Draw(ITexture texture, Vector2 position, RectangleF? sourceRectangle = null, Vector2? origin = null,
         float scale = 1, RgbaColor? color = null, ImageTransform imageTransform = ImageTransform.None)
     {
-        var offset = origin ?? Vector2.Zero;
+        Vector2 offset = Vector2.Zero;
+
+        if (origin != null)
+        {
+            offset = origin.Value;
+        }
+        else if (sourceRectangle != null)
+        {
+            offset = (sourceRectangle.Value.Size / 2f).ToVector();
+        }
         position -= offset * scale;
         
         var sourceRect = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);

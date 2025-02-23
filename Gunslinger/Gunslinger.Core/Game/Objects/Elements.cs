@@ -40,3 +40,17 @@ public class CrateImpl : Pushable, IMomentumReceiver
         }
     }
 }
+
+public class TireImpl : Pushable
+{
+    public TireImpl(GameObjectsServices services, ObjectCreationParameters parameters) 
+        : base(services, parameters)
+    {
+        InitializeSprite("assets:/Game/Objects/Tire");
+        
+        InitializePhysics(new CircleShape(0.75f, 20));
+
+        Body.Mass = 300;
+        Body.LinearDamping = 2;
+    }
+}

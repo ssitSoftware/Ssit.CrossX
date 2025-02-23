@@ -75,8 +75,9 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
     protected virtual void Render(IRenderer2 renderer, RgbaColor color)
     {
         const int fullRotationSteps = 24;
-        const int quarterRotationSteps = fullRotationSteps / 4;
         const float angle15 = MathF.PI / 12;
+
+        int frames = _sequence.Frames.Length;
         
         var angle = (int)MathF.Round(Body.Rotation / angle15);
 
@@ -86,8 +87,15 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
         }
         angle %= fullRotationSteps;
 
-        var frame = angle % quarterRotationSteps;
-        var transform = (ImageTransform)(angle / quarterRotationSteps);
+        var frame = angle % fullRotationSteps;
+
+        var transform = ImageTransform.None;
+        if (frames == fullRotationSteps / 4)
+        {
+            var quarterSteps = fullRotationSteps / 4;
+            transform = (ImageTransform)(angle /quarterSteps);
+            frame %= quarterSteps;
+        }
         
         renderer.SpriteRenderer.Draw(_spriteSheet.Resource, Body.Position * Services.GameTemplate.TileSize, 
             _sequence.Frames[frame].Source, 

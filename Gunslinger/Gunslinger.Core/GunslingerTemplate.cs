@@ -2,6 +2,8 @@ using System;
 using System.Numerics;
 using Gunslinger.Core.Game;
 using Gunslinger.Core.Game.Objects;
+using Gunslinger.Core.Game.Objects.Devices;
+using Gunslinger.Core.Game.Objects.Pushables;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Logic.Objects;

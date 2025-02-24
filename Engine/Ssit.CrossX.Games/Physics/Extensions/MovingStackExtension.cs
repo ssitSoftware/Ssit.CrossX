@@ -37,8 +37,7 @@ public class MovingStackExtension: IDisposable
         foreach (var bd in ext._lyingBodies)
         {
             var offset = ext._offset;
-            
-            float factor = 0.5f;
+            Vector2 factor = Vector2.Zero;
             
             if (bd.Owner is IMomentumReceiver receiver)
             {
@@ -46,8 +45,7 @@ public class MovingStackExtension: IDisposable
                 factor = receiver.OffsetFactor;
             }
             
-            offset.X *= factor;
-            offset.Y = 0;
+            offset *= factor;
 
             if (offset.Y < 0)
             {
@@ -88,6 +86,7 @@ public class MovingStackExtension: IDisposable
             if (fix.Body.IsKinematic) continue;
             if (fix.Body.Position.Y > body.Position.Y) continue;
             if (ext._lyingBodies.Contains(fix.Body)) continue;
+            if (fix.Body.Owner is not IMomentumReceiver) continue;
             
             ext._lyingBodies.Add(fix.Body);
         }

@@ -8,5 +8,5 @@ public interface IMomentumReceiver
     {
     }
 
-    float OffsetFactor => 0.5f;
+    Vector2 OffsetFactor => new(0.5f);
 }

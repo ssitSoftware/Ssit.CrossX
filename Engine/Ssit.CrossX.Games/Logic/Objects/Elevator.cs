@@ -44,10 +44,11 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         {
             Vertex0  = new Vector2(-3,0),
             Vertex3 = new Vector2(3,0),
-            Density = 20
+            Density = 200
         });
 
-        Body.Mass = 500;
+        Body.Friction = 1;
+        Body.Mass = 1000;
         
         PlatformExtension.Attach(Body, 0.25f);
         MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f));

@@ -26,7 +26,7 @@ public class Player: SpriteGameObject, IMomentumReceiver, ILogicOperator
         [EditorInt(-1, 3)] public int MagneticJump { get; set; } = -1;
     }
     
-    float IMomentumReceiver.OffsetFactor => 0.975f;
+    Vector2 IMomentumReceiver.OffsetFactor => new Vector2(0.95f, 0f);
     
     public PlayerStats Stats { get; } = new();
 

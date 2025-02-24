@@ -10,61 +10,55 @@ public class MovingStackExtension: IDisposable
 {
     private readonly Body _body;
     private readonly Aabb _detectionAabb;
+    private readonly float[] _kineticFactors;
 
     private readonly List<Fixture> _lyingFixtures = new();
     private readonly List<Body> _lyingBodies = new();
     private Vector2 _offset;
     
-    public static void Attach(Body body, Aabb detectionAabb)
+    public static void Attach(Body body, Aabb detectionAabb, float[] kineticFactors)
     {
-        body.SetExtension(new MovingStackExtension(body, detectionAabb));
+        body.SetExtension(new MovingStackExtension(body, detectionAabb, kineticFactors));
     }
 
-    private MovingStackExtension(Body body, Aabb detectionAabb)
+    private MovingStackExtension(Body body, Aabb detectionAabb, float[] kineticFactors)
     {
         _body = body;
         _detectionAabb = detectionAabb;
+        _kineticFactors = kineticFactors;
 
         _body.Moved += BodyOnMoved;
         _body.PreProcessing += BodyOnPreProcessing;
         _body.PostProcessing += BodyOnPostProcessing;
     }
 
-    private static void BodyOnPostProcessing(Body body)
+    private static void BodyOnPostProcessing(Body body, float dt)
     {
         var ext = body.GetExtension<MovingStackExtension>();
 
         foreach (var bd in ext._lyingBodies)
         {
             var offset = ext._offset;
-            Vector2 factor = Vector2.Zero;
-            
             if (bd.Owner is IMomentumReceiver receiver)
             {
-                receiver.OnKineticallyMoved(offset);
-                factor = receiver.OffsetFactor;
-            }
-            
-            offset *= factor;
+                var speed = (int)MathF.Floor(MathF.Abs(offset.X) / dt + 0.05f);
+                speed = Math.Min(speed, ext._kineticFactors.Length - 1);
+                var kineticFactor = ext._kineticFactors[speed];
 
-            if (offset.Y < 0)
-            {
-                bd.LinearVelocity = bd.LinearVelocity with { Y = 0 };
+                receiver.OnKineticallyMoved(offset, kineticFactor);
             }
-
-            bd.Position += offset;
             
             var bde = bd.GetExtension<MovingStackExtension>();
             if (bde != null && bde._lyingBodies.Count > 0 && !bde._lyingBodies.Contains(body))
             {
-                BodyOnPostProcessing(bd);
+                BodyOnPostProcessing(bd, dt);
             }
         }
         
         ext._offset = Vector2.Zero;
     }
     
-    private static void BodyOnPreProcessing(Body body)
+    private static void BodyOnPreProcessing(Body body, float dt)
     {
         var ext = body.GetExtension<MovingStackExtension>();
 

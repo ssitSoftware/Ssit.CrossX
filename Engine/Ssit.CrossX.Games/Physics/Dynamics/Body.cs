@@ -132,8 +132,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         }
         
         public event Action<Body, Vector2> Moved;
-        public event Action<Body> PreProcessing;
-        public event Action<Body> PostProcessing;
+        public event Action<Body, float> PreProcessing;
+        public event Action<Body, float> PostProcessing;
         
         public Body(World world, Vector2 position = new(), float rotation = 0, BodyType bodyType = BodyType.Static, object userdata = null)
         {
@@ -169,14 +169,14 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             world.AddBody(this); //FPE note: bodies can't live without a World
         }
 
-        internal void SendPreProcessing()
+        internal void SendPreProcessing(float dt)
         {
-            PreProcessing?.Invoke(this);
+            PreProcessing?.Invoke(this, dt);
         }
         
-        internal void SendPostProcessing()
+        internal void SendPostProcessing(float dt)
         {
-            PostProcessing?.Invoke(this);
+            PostProcessing?.Invoke(this, dt);
         }
 
         /// <summary>
@@ -655,6 +655,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the restitution (bounciness) of the body.
+        /// Restitution is calculated as the average of the restitution values
+        /// of the associated fixtures.
+        /// </summary>
         public float Restitution
         {
             get
@@ -679,6 +684,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
         }
 
+        /// <summary>
+        /// Represents the friction coefficient of the body.
+        /// This property determines the resistance to sliding motion
+        /// between the body's fixtures and surfaces it interacts with.
+        /// </summary>
         public float Friction
         {
             get

@@ -46,6 +46,8 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
 
         var flip = SDL_FlipMode.SDL_FLIP_NONE;
         double angle = 0;
+
+        const float pi = (float)Math.PI;
         
         switch (imageTransform)
         {
@@ -58,21 +60,21 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
                 break;
             
             case ImageTransform.Rotate90:
-                angle = Math.PI / 2;
+                angle = pi / 2f;
                 break;
             
-            // TODO: Fix small over-rotation here
             case ImageTransform.Rotate180:
-                angle = Math.PI;
+                angle = pi;
                 break;
             
             case ImageTransform.Rotate270:
+                angle = pi * 3 / 2f;
                 break;
         }
         
         SDL_RenderTextureRotated(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect, angle, &center, flip);
-
+        
         SpritesRendered++;
     }
 

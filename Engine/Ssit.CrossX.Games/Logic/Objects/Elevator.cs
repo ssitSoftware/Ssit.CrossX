@@ -14,7 +14,7 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
 {
     public class Parameters
     {
-        [EditorFloat(0.25f, 20)] public float Speed { get; set; } = 5;
+        [EditorInt(2,8)] public int Speed { get; set; } = 5;
         [EditorFloat(0.0f,10f, 0.1f)] public float BrakingDistance { get; set; } = 3f;
         [EditorLink(typeof(ITarget))] public int Target { get; set; }
         [EditorLink(typeof(ISwitch))] public int Switch { get; set; }
@@ -32,11 +32,12 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
     public float Speed { get; private set; }
     public float BrakingDistance { get; private set;}
 
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width)
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width, float[] kineticFactors)
     {
         BoundsRect = new RectangleF(-width, -width/2, width * 2, width);
-        
-        Speed = parameters.Parameters.Speed;
+
+        var speed = parameters.Parameters.Speed;
+        Speed = speed;
         BrakingDistance = parameters.Parameters.BrakingDistance;
         Body.BodyType = BodyType.Kinematic; 
         
@@ -44,14 +45,14 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         {
             Vertex0  = new Vector2(-3,0),
             Vertex3 = new Vector2(3,0),
-            Density = 200
+            Density = 1000
         });
 
         Body.Friction = 1;
         Body.Mass = 1000;
         
         PlatformExtension.Attach(Body, 0.25f);
-        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f));
+        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f), kineticFactors);
         
         _initialPosition = parameters.Position;
         

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Template;
@@ -67,13 +68,13 @@ public class MapObject
 
         if (parametersType != null)
         {
-            if (string.IsNullOrWhiteSpace(parameters))
-            {
-                paramsObj = Activator.CreateInstance(parametersType);
-            }
-            else
+            try
             {
                 paramsObj = JsonConvert.DeserializeObject(parameters, parametersType);
+            }
+            catch
+            {
+                paramsObj = Activator.CreateInstance(parametersType);
             }
         }
         

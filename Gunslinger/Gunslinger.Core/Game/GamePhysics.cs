@@ -5,6 +5,8 @@ namespace Gunslinger.Core.Game;
 
 public static class GamePhysics
 {
+    public static readonly float[] DefaultKineticFactors = [0.6f, 0.63f, 0.815f, 0.845f, 0.89f, 0.91f, 0.93f, 0.94f, 0.953f, 0.96f, 0.97f];
+    
     public enum MaterialKind
     {
         Default,
@@ -54,6 +56,14 @@ public static class GamePhysics
         if (GetMaterialKind(body.MaterialIndex) == MaterialKind.Platform && body.IsStatic)
         {
             PlatformExtension.Attach(body);
+        }
+
+        if (body.IsStatic)
+        {
+            foreach (var fix in body.FixtureList)
+            {
+                fix.Shape.Density = 1000;
+            }
         }
     }
 

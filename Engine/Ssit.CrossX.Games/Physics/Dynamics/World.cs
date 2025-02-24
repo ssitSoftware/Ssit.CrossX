@@ -1225,7 +1225,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             
             for (int i = 0; i < BodyList.Count; i++)
             {
-                BodyList[i].SendPreProcessing();
+                BodyList[i].SendPreProcessing(dt);
             }
             
             if (Settings.EnableDiagnostics)
@@ -1296,7 +1296,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             
             for (int i = 0; i < BodyList.Count; i++)
             {
-                BodyList[i].SendPostProcessing();
+                BodyList[i].SendPostProcessing(dt);
             }
         }
 

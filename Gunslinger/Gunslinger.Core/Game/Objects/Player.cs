@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Gunslinger.Core.Game.Objects.PlayerBehaviors;
@@ -30,6 +29,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public PlayerStats Stats { get; } = new();
 
     public int PlayerIndex => 0;
+
+    public float GroundHorizontalVelocity { get; private set; }
 
     public class Parameters
     {
@@ -110,8 +111,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var idleOrRunState = new State(operateBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior,
             idleBehavior);
         var jumpState = new State(jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
-        var jumpToFallState = new State(steerInAirBehavior, jumpToFallSequenceBehavior, idleBehavior, runBehavior);
-        var fallState = new State(steerInAirBehavior, fallBehavior, idleBehavior, runBehavior);
+        var jumpToFallState = new State(steerInAirBehavior, jumpToFallSequenceBehavior, runBehavior, idleBehavior);
+        var fallState = new State(steerInAirBehavior, fallBehavior, runBehavior, idleBehavior);
 
         AddState("Idle", idleOrRunState);
         AddState("Run", idleOrRunState);
@@ -127,7 +128,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     protected override void OnFixedUpdate(float dt)
     {
         _fixedTimeDelta = dt;
-
+        GroundHorizontalVelocity = 0;
+        
         if (!IsOnGround)
         {
             MomentumOffset = Vector2.Zero;
@@ -149,7 +151,10 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         IsOnGround = false;
         IsOnPlatform = true;
 
-        var aabb = new Aabb(Body.Position - new Vector2(0.15f, 0.1f), Body.Position + new Vector2(0.15f, 0.2f));
+        var leftX = FaceLeft ? 0.15f : 0.3f;
+        var rightX = FaceLeft ? 0.3f : 0.15f;
+        
+        var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.1f), Body.Position + new Vector2(rightX, 0.2f));
         Services.World.QueryAabbs(_queryList, ref aabb);
 
         foreach (var fixture in _queryList)
@@ -160,6 +165,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             IsOnGround = true;
             IsOnPlatform &=
                 GamePhysics.GetMaterialKind(fixture.Body.MaterialIndex) == GamePhysics.MaterialKind.Platform;
+            
+            GroundHorizontalVelocity = fixture.Body.IsStatic ? GroundHorizontalVelocity : fixture.Body.LinearVelocity.X;
         }
 
         IsOnPlatform &= IsOnGround;

@@ -53,7 +53,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
     {
         var sign = MathF.Sign(move);
         var amplitude = linearVelocityX * sign;
-
+        
         if (amplitude < GamePhysics.RunAccelerationSpeed)
         {
             amplitude += dt * GamePhysics.RunAcceleration;

@@ -38,16 +38,16 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
             h = target.Height * scale
         };
         
+        Vector2 sc = new Vector2(targetRect.w / sourceRect.w, targetRect.h / sourceRect.h);
+        
         var center = new SDL_FPoint
         {
-            x = sourceRect.x + rotCenter.X,
-            y = sourceRect.y + rotCenter.Y
+            x = rotCenter.X * sc.X,
+            y = rotCenter.Y * sc.Y
         };
 
         var flip = SDL_FlipMode.SDL_FLIP_NONE;
         double angle = 0;
-
-        const float pi = (float)Math.PI;
         
         switch (imageTransform)
         {
@@ -60,15 +60,15 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
                 break;
             
             case ImageTransform.Rotate90:
-                angle = pi / 2f;
+                angle = 90;
                 break;
             
             case ImageTransform.Rotate180:
-                angle = pi;
+                angle = 180;
                 break;
             
             case ImageTransform.Rotate270:
-                angle = pi * 3 / 2f;
+                angle = 270;
                 break;
         }
         

@@ -54,8 +54,8 @@ public class ElevatorBehavior(Elevator elevator): Behavior
             if (elevator.BrakingDistance > 0)
             {
                 var factor = diff.Length() / elevator.BrakingDistance + 0.2f;
-                var factor2 = (_lastTargetPoint - elevator.Body.Position).Length() / elevator.BrakingDistance + 0.2f;
-                
+                var factor2 = (_lastTargetPoint - elevator.Body.Position).Length() / elevator.BrakingDistance + 0.2f;  
+                 
                 factor = MathF.Min(MathF.Min(factor2, factor), 1);
                 factor = MathF.Sin(factor * MathF.PI / 2);
                 speed *= factor;

@@ -21,7 +21,7 @@ public class PlatformExtension: IDisposable
     {
         _body = body;
         _tolerance = tolerance;
-        
+
         body.OnCollision += BodyOnOnCollision;
     }
     

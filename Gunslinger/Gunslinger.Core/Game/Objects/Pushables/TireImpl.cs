@@ -14,6 +14,6 @@ public class TireImpl : Pushable
 
         Body.Mass = 200;
         Body.LinearDamping = 0.2f;
-        Body.Restitution = 0.75f;
+        Body.Restitution = 0.5f;
     }
 }

@@ -19,14 +19,7 @@ public class IdleBehavior(Player player): Behavior
         {
             if (_canEnterIdle)
             {
-                if (MathF.Abs(player.Body.LinearVelocity.X) < GamePhysics.MinRunSpeed)
-                {
-                    player.SetState("Idle");
-                }
-                else
-                {
-                    player.SetState("Run");
-                }
+                player.SetState("Idle");
             }
         }
         

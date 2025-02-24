@@ -13,6 +13,7 @@ public class TireImpl : Pushable
         InitializePhysics(new CircleShape(0.75f, 20));
 
         Body.Mass = 200;
+        Body.Friction = 0.1f;
         Body.LinearDamping = 0.2f;
         Body.Restitution = 0.5f;
     }

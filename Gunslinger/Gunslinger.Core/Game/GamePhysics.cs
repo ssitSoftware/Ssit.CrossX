@@ -27,7 +27,7 @@ public static class GamePhysics
     public const float RunSpeed = 12;
     public const float MinRunSpeed = 4;
     public const float RunAccelerationSpeed = 10;
-    public const float RunAcceleration = 50;
+    public const float RunAcceleration = 100;
     public const float GroundDeceleration = 45;
     public const float AirBrakeDeceleration = 16;
     public const float AirSteerAcceleration = 32;
@@ -60,6 +60,7 @@ public static class GamePhysics
 
         if (body.IsStatic)
         {
+            body.Friction = 1;
             foreach (var fix in body.FixtureList)
             {
                 fix.Shape.Density = 1000;

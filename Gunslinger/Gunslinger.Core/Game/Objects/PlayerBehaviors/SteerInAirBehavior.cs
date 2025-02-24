@@ -20,7 +20,6 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
         {
             move = MathF.Sign(move);
             player.FaceLeft = move < 0;
-            player.Body.Friction = 0f;
 
             var newVelocityX = CalculateVelocity(player.Body.LinearVelocity.X, move, dt);
             player.Body.LinearVelocity = player.Body.LinearVelocity with {X = newVelocityX};

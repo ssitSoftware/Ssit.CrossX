@@ -35,7 +35,7 @@ public class CrateImpl : Pushable
 
         if (parameters.Parameters.MovingStackExtension)
         {
-            MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)), GamePhysics.DefaultKineticFactors);
+            //MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)), GamePhysics.DefaultKineticFactors);
         }
     }
 }

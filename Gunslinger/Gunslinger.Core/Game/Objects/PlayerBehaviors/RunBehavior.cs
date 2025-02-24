@@ -1,5 +1,6 @@
 using System;
 using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Input;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
@@ -22,18 +23,15 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
             player.FaceLeft = move < 0;
 
             var newVelocityX = CalculateRunVelocity(player.Body.LinearVelocity.X, move, dt);
-            
             player.Body.LinearVelocity = player.Body.LinearVelocity with {X = newVelocityX};
             
-            if (MathF.Abs(player.Body.LinearVelocity.X) < 1 && player.Body.LinearVelocity.Y >= -0.1f)
+            if (MathF.Abs(player.Body.LinearVelocity.X) < 1 && player.IsOnStaticGround)
             {
-                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -0.1f };
+                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -3f };
             }
+            
             return true;
         }
-
-        var slowVelocityX = CalculateNoRunVelocity(player.Body.LinearVelocity.X, dt);
-        player.Body.LinearVelocity = player.Body.LinearVelocity with {X = slowVelocityX};
         
         return false;
     }

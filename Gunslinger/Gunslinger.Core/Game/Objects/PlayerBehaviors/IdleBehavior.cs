@@ -20,6 +20,7 @@ public class IdleBehavior(Player player): Behavior
             if (_canEnterIdle)
             {
                 player.SetState("Idle");
+                player.Body.LinearDamping = 4;
             }
         }
         

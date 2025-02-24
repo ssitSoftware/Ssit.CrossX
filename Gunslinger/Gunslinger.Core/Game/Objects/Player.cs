@@ -45,6 +45,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     public ILogicOperable OperableInRange { get; private set; }
 
+    public bool IsOnStaticGround { get; private set; }
     public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
 
@@ -64,6 +65,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         Sprite.SetSequence("Idle");
         Body.IsBullet = true;
         Body.FixedRotation = true;
+        Body.Friction = 1f;
 
         // _detectorFixture = Body.CreateFixture(new PolygonShape(new Vertices([
         //     new Vector2(-0.17f,0),
@@ -129,6 +131,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     {
         _fixedTimeDelta = dt;
         GroundHorizontalVelocity = 0;
+        Body.LinearDamping = 0;
         
         if (!IsOnGround)
         {
@@ -136,7 +139,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         }
 
         DetectOnGround();
-        Body.Friction = 0.2f;
         base.OnFixedUpdate(dt);
     }
 
@@ -150,7 +152,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     {
         IsOnGround = false;
         IsOnPlatform = true;
-
+        IsOnStaticGround = true;
+        
         var leftX = FaceLeft ? 0.15f : 0.3f;
         var rightX = FaceLeft ? 0.3f : 0.15f;
         
@@ -165,10 +168,16 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             IsOnGround = true;
             IsOnPlatform &=
                 GamePhysics.GetMaterialKind(fixture.Body.MaterialIndex) == GamePhysics.MaterialKind.Platform;
+
+            if (!fixture.Body.IsStatic)
+            {
+                IsOnStaticGround = false;
+            }
             
             GroundHorizontalVelocity = fixture.Body.IsStatic ? GroundHorizontalVelocity : fixture.Body.LinearVelocity.X;
         }
 
+        IsOnStaticGround &= IsOnGround;
         IsOnPlatform &= IsOnGround;
         _queryList.Clear();
     }
@@ -189,7 +198,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         MomentumOffset = offset;
         offset.Y = 0;
         
-        Body.Position += offset * kineticFactor;
+        //Body.Position += offset * kineticFactor;
     }
 
     public void SetInRange(ILogicOperable operable, Fixture fixture, bool inRange)

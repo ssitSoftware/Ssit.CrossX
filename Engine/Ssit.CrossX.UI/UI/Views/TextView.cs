@@ -1,4 +1,3 @@
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 
 namespace Ssit.CrossX.UI.Views;

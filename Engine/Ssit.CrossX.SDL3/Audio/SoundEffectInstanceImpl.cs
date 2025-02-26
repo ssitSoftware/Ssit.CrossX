@@ -4,6 +4,7 @@ using Ssit.CrossX.Core;
 
 namespace Ssit.CrossX.SDL3.Audio;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 internal class SoundEffectInstanceImpl: ISoundEffectInstance
 {
     public readonly Guid Guid = Guid.NewGuid();
@@ -12,7 +13,7 @@ internal class SoundEffectInstanceImpl: ISoundEffectInstance
     private readonly ISoundManager _soundManager;
 
     private SoundParameters _parameters;
-    private int _sourceHandle = 0;
+    private int _sourceHandle;
 
     public SoundEffectInstanceImpl(SoundEffectImpl soundEffect, IEventSource eventSource, ISoundManager soundManager)
     {

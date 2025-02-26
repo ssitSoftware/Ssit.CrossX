@@ -25,8 +25,8 @@ public class AsyncCommand: IAsyncCommand
     public AsyncCommand(Func<Task> execute, Func<bool> canExecute = null,
         Action<Exception> onException = null)
     {
-        _execute = execute != null ? o => execute() : throw new ArgumentNullException(nameof(execute));
-        _canExecute = o => canExecute?.Invoke() ?? true;
+        _execute = execute != null ? _ => execute() : throw new ArgumentNullException(nameof(execute));
+        _canExecute = _ => canExecute?.Invoke() ?? true;
         _onException = onException;
     }
     

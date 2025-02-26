@@ -13,7 +13,7 @@ using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor
 {
-    public partial class App : Application
+    public class App : Application
     {
         private readonly IServices _services = new Services();
 

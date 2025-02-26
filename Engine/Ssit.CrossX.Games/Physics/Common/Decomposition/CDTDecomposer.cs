@@ -55,7 +55,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
 
             DTSweepContext tcx = new DTSweepContext();
             tcx.PrepareTriangulation(poly);
-            DTSweep.Triangulate(tcx);
+            DtSweep.Triangulate(tcx);
 
             List<Vertices> results = new List<Vertices>();
 

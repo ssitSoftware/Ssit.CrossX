@@ -13,7 +13,7 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
         Normal
     }
 
-    public int Position { get; private set; } = 0;
+    public int Position { get; private set; }
     
     private VorbisDataProvider _dataProvider;
     private readonly IMusicDataProvider _musicDataProvider;
@@ -23,8 +23,8 @@ internal class SingleMusicPlayerImpl: ISingleMusicPlayer
     private int[] _buffers;
     private short[] _dataBuffer;
 
-    private float _fadeSpeed = 0;
-    private float _volume = 0;
+    private float _fadeSpeed;
+    private float _volume;
     private Mode _mode;
     
     public SingleMusicPlayerImpl(IMusicDataProvider musicDataProvider, IMusicPlayer musicPlayer)

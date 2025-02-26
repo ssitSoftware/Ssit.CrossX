@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
 
 namespace Ssit.CrossX.Xml;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class XNode
 {
     public readonly string Tag;
@@ -23,7 +26,7 @@ public class XNode
     {
         parent = null;
         Tag = tag;
-        Nodes = new List<XNode>();
+        Nodes = [];
     }
 
     public void RemoveAttribute(string key)
@@ -35,7 +38,7 @@ public class XNode
     {
         this.parent = parent;
         Tag = tag;
-        Nodes = new List<XNode>();
+        Nodes = [];
     }
 
     public XNode(XNode parent, string tag, string @namespace)
@@ -43,7 +46,7 @@ public class XNode
         this.parent = parent;
         Namespace = @namespace;
         Tag = tag;
-        Nodes = new List<XNode>();
+        Nodes = [];
     }
 
     public XNode AddChildNode(string tag, string @namespace)
@@ -57,7 +60,7 @@ public class XNode
     {
         this.parent = parent;
         LineNumber = lineNumber;
-        Nodes = new List<XNode>();
+        Nodes = [];
     }
 
     private XNode(XmlReader reader, XNode parent, Dictionary<string, string> namespaces)
@@ -100,10 +103,10 @@ public class XNode
             // Read all attributes and add them to dictionary.
             while (reader.MoveToNextAttribute())
             {
-                string key = reader.Name;
+                var key = reader.Name;
                 if (key.StartsWith("xmlns:", StringComparison.InvariantCulture))
                 {
-                    key = key.Substring(6);
+                    key = key[6..];
                     namespaces.Add(key, reader.Value);
                 }
                 else if (key != "xmlns")
@@ -111,7 +114,7 @@ public class XNode
                     if (key.Contains(":"))
                     {
                         string[] vals = key.Split(':');
-                        key = string.Format("{0}:{1}", namespaces[vals[0]], vals[1]);
+                        key = $"{namespaces[vals[0]]}:{vals[1]}";
                     }
 
                     attributes.Add(key, reader.Value);
@@ -123,7 +126,7 @@ public class XNode
             reader.Read();
         }
 
-        Nodes = new List<XNode>();
+        Nodes = [];
 
         while (reader.NodeType != XmlNodeType.Element && reader.NodeType != XmlNodeType.Text)
         {
@@ -213,11 +216,11 @@ public class XNode
     {
         get
         {
-            for (int idx = 0; idx < Nodes.Count; ++idx)
+            foreach (var node in Nodes)
             {
-                if (Nodes[idx].Tag == nodeName)
+                if (node.Tag == nodeName)
                 {
-                    return Nodes[idx];
+                    return node;
                 }
             }
 
@@ -233,7 +236,7 @@ public class XNode
 
     public string NodeError(string format, params object[] args)
     {
-        string message = string.Format(format, args);
+        var message = string.Format(format, args);
         return $"{NodeInfo}: error: {message}";
     }
 
@@ -246,10 +249,8 @@ public class XNode
         settings.Indent = true;
         settings.OmitXmlDeclaration = false;
 
-        using (var xmlWriter = XmlWriter.Create(stream, settings))
-        {
-            Write(xmlWriter);
-        }
+        using var xmlWriter = XmlWriter.Create(stream, settings);
+        Write(xmlWriter);
     }
     public void Write(XmlWriter writer)
     {

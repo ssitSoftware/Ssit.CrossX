@@ -29,7 +29,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     
     private int? _currentPointerId;
 
-    private bool _isExecutingDelayedCommand = false;
+    private bool _isExecutingDelayedCommand;
     private bool _isEnabled;
 
     public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds)
@@ -211,7 +211,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             }
 
             await asyncCommand.ExecuteAsync(AttachedView.CommandParameter);
-        }).ContinueWith(t =>
+        }).ContinueWith(_ =>
         {
             IsPressed = false;
             _isExecutingDelayedCommand = false;

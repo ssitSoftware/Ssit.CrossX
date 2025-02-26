@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Ssit.CrossX.Games.Template;
 
@@ -25,8 +24,8 @@ public class EditorData: IZoomData, IDisposable
     [JsonProperty] public bool ShowObjects { get; set; } = true;
     [JsonProperty] public bool ShowMaterials { get; set; }
     [JsonProperty] public bool ShowCollisions { get; set; }
-    [JsonProperty] public float CameraX { get; set; } = 0;
-    [JsonProperty] public float CameraY { get; set; } = 0;
+    [JsonProperty] public float CameraX { get; set; }
+    [JsonProperty] public float CameraY { get; set; }
     [JsonProperty] public string SelectedLayer { get; set; } = LayerDescription.MainLayerId;
 
     private string _appName;

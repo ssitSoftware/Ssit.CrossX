@@ -51,10 +51,10 @@ using System.Diagnostics;
 
 namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
 {
-    internal static class DTSweep
+    internal static class DtSweep
     {
-        private const double PI_div2 = Math.PI / 2;
-        private const double PI_3div4 = 3 * Math.PI / 4;
+        private const double PiDiv2 = Math.PI / 2;
+        private const double Pi3Div4 = 3 * Math.PI / 4;
 
         /// <summary>
         /// Triangulate simple polygon with holes
@@ -687,7 +687,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
         }
 
         /// <summary>
-        /// Scan part of the FlipScan algorithm<br>
+        /// Scan part of the FlipScan algorithm<br/>
         /// When a triangle pair isn't flippable we will scan for the next 
         /// point that is inside the flip triangle scan area. When found 
         /// we generate a new flipEdgeEvent
@@ -758,7 +758,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
                     break;
 
                 angle = HoleAngle(node);
-                if (angle > PI_div2 || angle < -PI_div2)
+                if (angle > PiDiv2 || angle < -PiDiv2)
                 {
                     break;
                 }
@@ -770,7 +770,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
             if (n.HasNext && n.Next.HasNext)
             {
                 angle = BasinAngle(n);
-                if (angle < PI_3div4)
+                if (angle < Pi3Div4)
                 {
                     FillBasin(tcx, n);
                 }
@@ -802,14 +802,14 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
         private static bool AngleExceeds90Degrees(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
-            bool exceeds90Degrees = angle > PI_div2 || angle < -PI_div2;
+            bool exceeds90Degrees = angle > PiDiv2 || angle < -PiDiv2;
             return exceeds90Degrees;
         }
 
         private static bool AngleExceedsPlus90DegreesOrIsNegative(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
-            bool exceedsPlus90DegreesOrIsNegative = angle > PI_div2 || angle < 0;
+            bool exceedsPlus90DegreesOrIsNegative = angle > PiDiv2 || angle < 0;
             return exceedsPlus90DegreesOrIsNegative;
         }
 

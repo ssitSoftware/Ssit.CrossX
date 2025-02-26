@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ssit.CrossX.Core;
 
+[SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class ParametersBase
 {
     public event Action ApplyParameters;

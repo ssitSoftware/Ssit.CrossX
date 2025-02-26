@@ -1,5 +1,4 @@
-﻿using Ssit.CrossX.Games;
-using Ssit.CrossX.Games.Map;
+﻿using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor.Service

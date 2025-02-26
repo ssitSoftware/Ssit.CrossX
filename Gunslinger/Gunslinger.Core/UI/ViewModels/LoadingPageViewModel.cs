@@ -1,11 +1,15 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.UI;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
+[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
 [NoHistory]
 internal class LoadingPageViewModel: IDisposable
 {
@@ -37,7 +41,7 @@ internal class LoadingPageViewModel: IDisposable
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         _task = Task.Run(_parameters.OnLoading);
-        _task.ContinueWith(o =>
+        _task.ContinueWith(_ =>
         {
             if (stopwatch.ElapsedMilliseconds < 500)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
 
@@ -13,6 +14,7 @@ public sealed class SwitchAggregator : ISwitch
         Xor
     }
     
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Parameters
     {
         [EditorLink(typeof(ISwitch))] public int Switch1 { get; set; }
@@ -83,7 +85,7 @@ public sealed class SwitchAggregator : ISwitch
         }
         
         var newValue =_negateResult ? !result : result;
-        ;
+        
         if (newValue != oldValue)
         {
             IsOn = newValue;

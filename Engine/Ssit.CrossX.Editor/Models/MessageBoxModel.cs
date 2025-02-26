@@ -7,6 +7,6 @@ namespace Ssit.CrossX.Editor.Models
         public bool ShowYes { get; set; }
         public bool ShowNo { get; set; }
         public bool ShowCancel { get; set; }
-        public bool ShowOK { get; set; }
+        public bool ShowOk { get; set; }
     }
 }

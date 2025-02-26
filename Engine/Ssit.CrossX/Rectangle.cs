@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Ssit.CrossX;
@@ -8,6 +9,7 @@ namespace Ssit.CrossX;
 /// Represents a rectangle defined by its position and size.
 /// </summary>
 [DebuggerDisplay("Rectangle = ({X}, {Y}, {Width}, {Height})")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public readonly struct Rectangle : IEquatable<Rectangle>
 {
     public static readonly Rectangle Empty = new(0, 0, 0, 0);
@@ -80,7 +82,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
         var w = Math.Max(0, r - x);
         var h = Math.Max(0, b - y);
 
-        return new(x, y, w, h);
+        return new Rectangle(x, y, w, h);
     }
 
     /// <summary>
@@ -96,9 +98,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
         if (other.X >= Right) return false;
 
         if (other.Bottom <= Y) return false;
-        if (other.Y >= Bottom) return false;
-        
-        return true;
+        return other.Y < Bottom;
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     /// </return>
     public Rectangle Inflate(int i)
     {
-        return new(X - i, Y - i, Width + i * 2, Height + i * 2);
+        return new Rectangle(X - i, Y - i, Width + i * 2, Height + i * 2);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     /// </return>
     public Rectangle Inflate(Size size)
     {
-        return new(X - size.Width, Y - size.Height, Width + size.Width * 2, Height + size.Height * 2);
+        return new Rectangle(X - size.Width, Y - size.Height, Width + size.Width * 2, Height + size.Height * 2);
     }
 
     public bool Equals(Rectangle other)

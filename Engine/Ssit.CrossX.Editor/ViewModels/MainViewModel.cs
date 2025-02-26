@@ -18,7 +18,6 @@ namespace Ssit.CrossX.Editor.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly IServices _services;
         private readonly IEditorInstances _instances;
         private readonly IFileService _fileService;
         private readonly IWindowService _windowService;
@@ -113,13 +112,12 @@ namespace Ssit.CrossX.Editor.ViewModels
             IWindowService windowService,
             EditorData editorData)
         {
-            _services = services;
             _instances = instances;
             _fileService = fileService;
             _windowService = windowService;
             _editorData = editorData;
             
-            ObjectsSelector = _services.Create<ImageSelectorViewModel>(new ImageSelectorViewModel.Parameters
+            ObjectsSelector = services.Create<ImageSelectorViewModel>(new ImageSelectorViewModel.Parameters
             {
                 Categories = objectsContainer.Categories,
                 Images = objectsContainer.Objects,
@@ -132,7 +130,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 }
             });
             
-            ImagesSelector = _services.Create<ImageSelectorViewModel>(new ImageSelectorViewModel.Parameters
+            ImagesSelector = services.Create<ImageSelectorViewModel>(new ImageSelectorViewModel.Parameters
             {
                 Categories = imagesContainer.Categories,
                 Images = imagesContainer.Images,
@@ -172,7 +170,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 EditorViewModel.Redraw();
             });
 
-            EditorViewModel = _services.Create<EditorViewModel>();
+            EditorViewModel = services.Create<EditorViewModel>();
 
             if (string.IsNullOrWhiteSpace(_editorData.RecentMapPath) || 
                 !LoadMap(_editorData.RecentMapPath))
@@ -180,7 +178,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 New().ConfigureAwait(true);
             }
 
-            TilesetSelectorViewModel = _services.Create<TilesetSelectorViewModel>();
+            TilesetSelectorViewModel = services.Create<TilesetSelectorViewModel>();
 
             TilesetsContainer = instances.TilesetsContainer;
             
@@ -403,11 +401,11 @@ namespace Ssit.CrossX.Editor.ViewModels
             using (var stream = File.Open(_filePath, FileMode.Create))
             {
                 //using var gzipStream = new GZipStream(stream, CompressionLevel.SmallestSize);
-                MapFile.Save(stream, true);
+                MapFile.Save(stream);
             }
         }
 
-        private bool _forceClose = false;
+        private bool _forceClose;
         public bool CanClose()
         {
             if (_forceClose)

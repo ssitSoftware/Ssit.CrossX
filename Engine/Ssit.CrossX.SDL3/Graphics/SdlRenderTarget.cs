@@ -4,7 +4,8 @@ using static bottlenoselabs.Interop.SDL;
 
 namespace Ssit.CrossX.SDL3.Graphics;
 
-public unsafe class SdlRenderTarget: ITexture, IRenderTarget
+// ReSharper disable once ClassNeverInstantiated.Global
+public unsafe class SdlRenderTarget: IRenderTarget
 {
     private bool _disposed;
     private readonly SdlHandle<SDL_Texture> _textureDiff;

@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Views;

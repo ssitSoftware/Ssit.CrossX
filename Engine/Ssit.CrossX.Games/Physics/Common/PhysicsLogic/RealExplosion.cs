@@ -128,7 +128,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
             // Query the world for overlapping shapes.
             World.QueryAabb(null, 
-                (c, fixture) =>
+                (_, fixture) =>
                 {
                     if (fixture.TestPoint(ref pos))
                     {
@@ -253,7 +253,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
                 // RaycastOne
                 bool hitClosest = false;
-                World.RayCast((f, p, n, fr) =>
+                World.RayCast((f, _, _, fr) =>
                                   {
                                       Body body = f.Body;
 

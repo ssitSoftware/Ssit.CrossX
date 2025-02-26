@@ -35,7 +35,7 @@ public class WindowService: IWindowService
             ShowYes = type == MessageBoxType.YesNo || type == MessageBoxType.YesNoCancel,
             ShowNo = type == MessageBoxType.YesNo || type == MessageBoxType.YesNoCancel,
             ShowCancel = type == MessageBoxType.OkCancel || type == MessageBoxType.YesNoCancel,
-            ShowOK = type == MessageBoxType.Ok || type == MessageBoxType.OkCancel
+            ShowOk = type == MessageBoxType.Ok || type == MessageBoxType.OkCancel
         };
         
         try

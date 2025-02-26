@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Editor;

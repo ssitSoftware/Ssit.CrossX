@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using Ssit.CrossX.Graphics;
 
 namespace Ssit.CrossX.Core;
 

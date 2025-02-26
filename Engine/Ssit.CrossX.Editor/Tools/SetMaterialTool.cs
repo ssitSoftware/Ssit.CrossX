@@ -13,7 +13,7 @@ public class SetMaterialTool(IEditorInstances instances) : EditorTool(Name, inst
     
     public int MaterialIndex { get; set; }
 
-    private bool _pushState = false;
+    private bool _pushState;
 
     public override void OnButtonDown(MouseInputInfo input)
     {

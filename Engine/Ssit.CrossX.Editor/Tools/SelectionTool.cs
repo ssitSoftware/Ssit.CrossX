@@ -25,7 +25,7 @@ namespace Ssit.CrossX.Editor.Tools
         private MapObject _draggedObject;
         private int _objectToSelectAfter;
 
-        private bool _canMoveObject = false;
+        private bool _canMoveObject;
         
         private Type _searchedType;
         private TaskCompletionSource<MapObject> _findObjectSource;

@@ -1,66 +1,35 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Ssit.CrossX;
-
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct RgbaColorF
-{
-    /// <summary>
-    /// Represents the red component of the color in the RGBA color space.
-    /// </summary>
-    public float R;
-
-    /// <summary>
-    /// Represents the green component of the color in the RGBA color space.
-    /// </summary>
-    public float G;
-
-    /// <summary>
-    /// Represents the blue component of the color in the RGBA color space.
-    /// </summary>
-    public float B;
-
-    /// <summary>
-    /// Represents the alpha component of the RGBA color,
-    /// specifying the transparency level. A value of 255
-    /// represents full opacity, while a value of 0 represents
-    /// full transparency.
-    /// </summary>
-    public float A;
-    
-    public static implicit operator RgbaColorF(RgbaColor color) => new ()
-    {
-        R = color.Rf,
-        G = color.Gf,
-        B = color.Bf,
-        A = color.Af
-    };
-}
 
 /// <summary>
 /// Represents a color in the RGBA (Red, Green, Blue, Alpha) color space.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 [DebuggerDisplay("RgbaColor = ({R}, {G}, {B}, {A})")]
-public readonly partial struct RgbaColor : IEquatable<RgbaColor>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte alpha = 255)
+    : IEquatable<RgbaColor>
 {
     /// <summary>
     /// Represents the red component of the color in the RGBA color space.
     /// </summary>
-    public readonly byte R;
+    public readonly byte R = red;
 
     /// <summary>
     /// Represents the green component of the color in the RGBA color space.
     /// </summary>
-    public readonly byte G;
+    public readonly byte G = green;
 
     /// <summary>
     /// Represents the blue component of the color in the RGBA color space.
     /// </summary>
-    public readonly byte B;
+    public readonly byte B = blue;
 
     /// <summary>
     /// Represents the alpha component of the RGBA color,
@@ -68,7 +37,7 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
     /// represents full opacity, while a value of 0 represents
     /// full transparency.
     /// </summary>
-    public readonly byte A;
+    public readonly byte A = alpha;
 
     /// <summary>
     /// Represents the normalized red component of the color in the RGBA color space.
@@ -94,28 +63,12 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
     /// </summary>
     public float Af => A / 255.0f;
 
-    public RgbaColor(long color)
+    public RgbaColor(long color) : this((byte)(color & 0xff), (byte)((color >> 8) & 0xff), (byte)((color >> 16) & 0xff), (byte)((color >> 24) & 0xff))
     {
-        R = (byte)(color & 0xff);
-        G = (byte)((color >> 8) & 0xff);
-        B = (byte)((color >> 16) & 0xff);
-        A = (byte)((color >> 24) & 0xff);
     }
 
-    public RgbaColor(byte red, byte green, byte blue, byte alpha = 255)
+    public RgbaColor(float red, float green, float blue, float alpha = 1.0f) : this((byte)(red * 255), (byte)(green * 255), (byte)(blue * 255), (byte)(alpha * 255))
     {
-        R = red;
-        G = green;
-        B = blue;
-        A = alpha;
-    }
-    
-    public RgbaColor(float red, float green, float blue, float alpha = 1.0f)
-    {
-        R = (byte)(red * 255);
-        G = (byte)(green * 255);
-        B = (byte)(blue * 255);
-        A = (byte)(alpha * 255);
     }
 
     /// <summary>
@@ -131,7 +84,7 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
         var blue = Bf * (1 - mix) + other.Bf * mix;
         var alpha = Af * (1 - mix) + other.Af * mix;
 
-        return new(red, green, blue, alpha);
+        return new RgbaColor(red, green, blue, alpha);
     }
     
     public int ToInt32()
@@ -192,30 +145,33 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
         
         if (h < 60)
         {
-            return new RgbaColor(c + m, x + m, m, 1);
+            return new RgbaColor(c + m, x + m, m);
         }
-        else if (h < 120)
+
+        if (h < 120)
         {
-            return new RgbaColor(x + m, c + m, m, 1);
+            return new RgbaColor(x + m, c + m, m);
         }
-        else if (h < 180)
+
+        if (h < 180)
         {
-            return new RgbaColor(m, c + m, x + m, 1);
+            return new RgbaColor(m, c + m, x + m);
         }
-        else if (h < 240)
+
+        if (h < 240)
         {
-            return new RgbaColor(m, x + m, c + m, 1);
+            return new RgbaColor(m, x + m, c + m);
         }
-        else if ( h < 300)
+
+        if ( h < 300)
         {
-            return new RgbaColor(x + m, m, c + m, 1);
+            return new RgbaColor(x + m, m, c + m);
         }
-        else
-        {
-            return new RgbaColor(c + m, m, x + m, 1);
-        }
+
+        return new RgbaColor(c + m, m, x + m);
     }
 
+/*
     public RgbaColor InvertHsl(bool forceDifferent = false)
     {
         var (h,s,l) = ToHsl();
@@ -227,23 +183,23 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
         var nh = 360 - h;
         var nl  = 1 - l;
 
-        if (forceDifferent && MathF.Abs(l - 0.5f) < 0.2 && MathF.Abs(nh - h) < 30)
-        {
-            nl += 0.25f;
-            nh = (nh + 180) % 360;
-
-            if (s < 0.25f)
-            {
-                s = 0.25f;
-            }
-        }
+        if (!forceDifferent || !(MathF.Abs(l - 0.5f) < 0.2) || !(MathF.Abs(nh - h) < 30)) return FromHsl(nh, s, nl);
         
+        nl += 0.25f;
+        nh = (nh + 180) % 360;
+
+        if (s < 0.25f)
+        {
+            s = 0.25f;
+        }
+
         return FromHsl(nh, s, nl);
     }
+*/
     
     public static RgbaColor operator * (RgbaColor color1, RgbaColor color2)
     {
-        return new(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);
+        return new RgbaColor(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);
     }
     
     public static RgbaColor operator *(RgbaColor color, float multiply) => new(color.Rf * multiply, color.Gf * multiply, color.Bf * multiply, color.Af * multiply);
@@ -258,7 +214,7 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        return obj is RgbaColor && Equals((RgbaColor)obj);
+        return obj is RgbaColor color && Equals(color);
     }
 
     public override int GetHashCode()

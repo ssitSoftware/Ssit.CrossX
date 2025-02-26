@@ -1,5 +1,4 @@
 using System.Windows.Input;
-using Ssit.CrossX.Audio;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.UI;
@@ -8,11 +7,10 @@ using Ssit.CrossX.UI.Values;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class OptionsPageViewModel: IPageCommandsSource
 {
     private readonly ITranslator _translator;
-    private readonly ISoundManager _soundManager;
-    private readonly IMusicPlayer _musicPlayer;
     private readonly Settings _settings;
     
     ICommand IPageCommandsSource.MenuCommand => null;
@@ -34,12 +32,9 @@ public class OptionsPageViewModel: IPageCommandsSource
     
     public SharedStringSource ScaleStr { get; } = new();
 
-    public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISoundManager soundManager,
-        IMusicPlayer musicPlayer, ISettingsProvider settingsProvider, IUiSounds sounds)
+    public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISettingsProvider settingsProvider, IUiSounds sounds)
     {
         _translator = translator;
-        _soundManager = soundManager;
-        _musicPlayer = musicPlayer;
         _settings = settingsProvider.Settings;
 
         BackCommand = new SyncCommand( () =>
@@ -48,7 +43,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             navigation.NavigateBack();
         });
     
-        SoundVolumeCommand = new SyncCommand(o =>
+        SoundVolumeCommand = new SyncCommand(_ =>
         {
             int vol = _settings.SoundVolume;
             vol++;
@@ -59,7 +54,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             UpdateStrings();
         });
         
-        MusicVolumeCommand = new SyncCommand(o =>
+        MusicVolumeCommand = new SyncCommand(_ =>
         {
             int vol = _settings.MusicVolume;
             vol++;
@@ -70,7 +65,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             UpdateStrings();
         });
         
-        CameraShakeCommand = new SyncCommand(o =>
+        CameraShakeCommand = new SyncCommand(_ =>
         {
             _settings.CameraShake = !_settings.CameraShake;
             _settings.Save();
@@ -91,7 +86,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
         });
 
-        FullScreenCommand = new SyncCommand(o =>
+        FullScreenCommand = new SyncCommand(_ =>
         {
             sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             _settings.Fullscreen = !_settings.Fullscreen;
@@ -99,13 +94,13 @@ public class OptionsPageViewModel: IPageCommandsSource
             UpdateStrings();
         });
 
-        ScaleCommand = new SyncCommand(o =>
+        ScaleCommand = new SyncCommand(_ =>
         {
             sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             _settings.Scale += 1;
             _settings.Save();
             UpdateStrings();
-        }, o => !_settings.Fullscreen);
+        }, _ => !_settings.Fullscreen);
         
         UpdateStrings();
     }

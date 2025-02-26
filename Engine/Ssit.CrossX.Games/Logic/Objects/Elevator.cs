@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
@@ -12,6 +13,7 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 public abstract class Elevator(GameObjectsServices services, ObjectCreationParameters<Elevator.Parameters> parameters)
     : SpriteGameObject(services, parameters), ITarget
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Parameters
     {
         [EditorInt(2,8)] public int Speed { get; set; } = 5;

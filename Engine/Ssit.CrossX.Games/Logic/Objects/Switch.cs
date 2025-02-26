@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
@@ -10,6 +11,7 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 public abstract class Switch(GameObjectsServices services, ObjectCreationParameters<Switch.Parameters> parameters)
     : SpriteGameObject(services, parameters), ISwitch, ILogicOperable
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Parameters
     {
         [Editor] public bool IsOn { get; set; }

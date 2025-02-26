@@ -1,16 +1,18 @@
+using System.Diagnostics.CodeAnalysis;
 using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
-using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Services;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
+[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
+[SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
 internal class MainPageViewModel
 {
     public MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container)
@@ -35,7 +37,7 @@ internal class MainPageViewModel
             });
         });
         
-        OptionsCommand = new SyncCommand(o =>
+        OptionsCommand = new SyncCommand(_ =>
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
             navigation.NavigateTo<OptionsPageViewModel>();

@@ -9,7 +9,6 @@ namespace Ssit.CrossX.Editor.Helpers
         public static NativeMenu GenerateNativeMenu(MenuItemModel[] list)
         {
             var nativeMenu = new NativeMenu();
-            var items = new List<NativeMenuItemBase>();
 
             foreach (var el in list)
             {

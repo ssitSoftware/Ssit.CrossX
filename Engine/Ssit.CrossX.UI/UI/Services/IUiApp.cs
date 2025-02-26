@@ -1,5 +1,4 @@
 using System;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 

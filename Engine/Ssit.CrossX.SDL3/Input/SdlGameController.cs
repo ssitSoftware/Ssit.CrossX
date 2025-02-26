@@ -7,7 +7,7 @@ namespace Ssit.CrossX.SDL3.Input;
 internal unsafe class SdlGameController: IDisposable
 {
     private readonly int _playerIndex;
-    private SdlHandle<SDL_Gamepad> _handle = null;
+    private SdlHandle<SDL_Gamepad> _handle;
     
     private static readonly HashSet<uint> AttachedControllers = new();
     private readonly HashSet<GameControllerButton> _previousButtons = new();

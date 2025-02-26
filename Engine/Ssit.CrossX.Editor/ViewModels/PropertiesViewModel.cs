@@ -1,14 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ssit.CrossX.Editor.Models.Parameters;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
-using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Utils;
@@ -157,7 +155,6 @@ public class PropertiesViewModel: BindableModel
             FillProperties(_mapFile);
             
             FillProperties(_editor.SelectedLayer);
-            return;
         }
     }
 

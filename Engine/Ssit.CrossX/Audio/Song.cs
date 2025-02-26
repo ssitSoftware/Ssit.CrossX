@@ -8,6 +8,7 @@ public class Song
     /// <summary>
     /// Gets the name of the song.
     /// </summary>
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Name { get; }
 
     /// <summary>

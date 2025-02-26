@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Utils;
 
@@ -57,7 +56,7 @@ public abstract class ParameterModel<TValue> : ParameterModel
     
     public ICommand FocusLostCommand { get; }
 
-    private bool _disableUpdatingEvent = false;
+    private bool _disableUpdatingEvent;
 
     protected ParameterModel(string name, object owner, PropertyInfo propertyInfo, IPropertyHandler handler) :
         base(name)

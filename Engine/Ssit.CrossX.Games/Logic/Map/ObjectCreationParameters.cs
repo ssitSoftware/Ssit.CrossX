@@ -9,6 +9,7 @@ public class ObjectCreationParameters
     
     internal virtual object ParametersObject
     {
+        // ReSharper disable once ValueParameterNotUsed
         set
         {
         }

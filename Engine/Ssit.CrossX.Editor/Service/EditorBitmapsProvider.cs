@@ -29,7 +29,7 @@ public class EditorBitmapsProvider : IEditorBitmapsProvider
 
             var lines = material.ShortName.Split('|');
 
-            float width = 0;
+            float width;
 
             var size = 48;
             while (true)

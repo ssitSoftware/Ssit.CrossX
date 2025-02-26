@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
 
 namespace Ssit.CrossX.Games.Physics.Controllers
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
     public abstract class AbstractForceController : Controller
     {
         #region DecayModes enum

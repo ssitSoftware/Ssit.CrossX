@@ -10,7 +10,7 @@ internal class Translator : ITranslator
     private readonly Dictionary<string, SharedStringValue> _strings = new();
 
     private readonly Dictionary<string, string>[] _languages;
-    private int _language = 0;
+    private int _language;
     
     public int CurrentLanguage
     {

@@ -4,18 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Template;
 
 namespace Ssit.CrossX.Games.Map;
-
-public class StaticObjectParameters
-{
-    [EditorInt(0, 5000, 10)]
-    public int AnimationTimeOffsetInMs { get; set; }
-}
 
 public class MapObject
 {
@@ -24,7 +17,7 @@ public class MapObject
     public bool HasLogic { get; set; }
 
     [EditorInt(-1000, 1000, 10)]
-    public int ZOrder { get; set; } = 0;
+    public int ZOrder { get; set; }
     
     public Vector2 Position { get; set; }
     

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Ssit.CrossX;
@@ -12,6 +13,8 @@ namespace Ssit.CrossX;
 /// It supports intersection, inflation, and containment checks.
 /// </remarks>
 [DebuggerDisplay("RectangleF = ({X}, {Y}, {Width}, {Height})")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public readonly struct RectangleF: IEquatable<RectangleF>
 {
     public RectangleF(Vector2 position, SizeF size)
@@ -161,7 +164,7 @@ public readonly struct RectangleF: IEquatable<RectangleF>
         var w = MathF.Max(0, r - x);
         var h = MathF.Max(0, b - y);
 
-        return new(x, y, w, h);
+        return new RectangleF(x, y, w, h);
     }
 
     /// <summary>
@@ -175,9 +178,7 @@ public readonly struct RectangleF: IEquatable<RectangleF>
         if (other.X >= Right) return false;
 
         if (other.Bottom <= Y) return false;
-        if (other.Y >= Bottom) return false;
-        
-        return true;
+        return other.Y < Bottom;
     }
 
     /// <summary>
@@ -211,7 +212,7 @@ public readonly struct RectangleF: IEquatable<RectangleF>
         var x = X - left;
         var y = Y - top;
 
-        return new(x, y, w, h);
+        return new RectangleF(x, y, w, h);
     }
 
     /// <summary>
@@ -225,8 +226,7 @@ public readonly struct RectangleF: IEquatable<RectangleF>
         if (pos.X >= Right) return false;
 
         if (pos.Y < Y) return false;
-        if (pos.Y >= Bottom) return false;
-        return true;
+        return pos.Y < Bottom;
     }
 
     public static implicit operator RectangleF(Rectangle rect) =>

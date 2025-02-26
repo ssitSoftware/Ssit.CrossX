@@ -60,7 +60,7 @@ public class MapFile: BindableModel
                 return _mainLayer;
             
             return _mainLayer = Layers.FirstOrDefault(o => o.Name.ToLowerInvariant() == "main") ??
-                         Layers.FirstOrDefault(o => o.HorizontalSpeed == 1 && o.VerticalSpeed == 1) ??
+                         Layers.FirstOrDefault(o => Math.Abs(o.HorizontalSpeed - 1) < float.Epsilon && Math.Abs(o.VerticalSpeed - 1) < float.Epsilon) ??
                          Layers.First();
         }
     }

@@ -13,7 +13,8 @@ public class SdlPointingDevices: IPointingDevices
         return null;
     }
 
-    public Vector2? HoverPosition { get; }
+    public Vector2? HoverPosition => null;
+
     public bool ShowHoverPointer { get; set; }
     public void PushTransform(Matrix3x2 transform)
     {

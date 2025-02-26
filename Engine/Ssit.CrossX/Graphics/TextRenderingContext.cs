@@ -20,7 +20,7 @@ public class TextRenderingContext
     private IGlyphFont _font;
     private TextSpacing _spacing;
     private int _textHashCode = -1;
-    private int _targetWidth = 0;
+    private int _targetWidth;
     
     public List<LineDefinition> Lines { get; } = new ();
 

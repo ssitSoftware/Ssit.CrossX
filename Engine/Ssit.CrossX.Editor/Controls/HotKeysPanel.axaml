@@ -13,6 +13,7 @@
     xmlns:viewModels="clr-namespace:Ssit.CrossX.Editor.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
+        <!-- ReSharper disable once Xaml.ConstructorWarning -->
         <viewModels:MainViewModel />
     </Design.DataContext>
 

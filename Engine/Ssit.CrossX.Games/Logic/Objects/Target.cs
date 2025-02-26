@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
@@ -6,6 +7,7 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 
 public class Target : ITarget
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Parameters
     {
         [EditorLink(typeof(ITarget))] public int Next { get; set; }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Ssit.CrossX.UI.Services;
 
 public interface INavigation

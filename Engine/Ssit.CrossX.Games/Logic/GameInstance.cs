@@ -27,16 +27,16 @@ public class GameInstance : IGameInstance
     
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
-    private readonly IInputMappings _inputMappings;
     private readonly MapDisplayElement _mapDisplayElement;
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public readonly World World;
     public readonly IIoCContainer Container;
     private readonly ICamera _camera;
     
     private bool _isDisposed;
 
-    private float _timeToUpdate = 0;
+    private float _timeToUpdate;
     
     int IGameInstance.RenderPasses => 1;
     
@@ -56,7 +56,6 @@ public class GameInstance : IGameInstance
     {
         _scheduler = scheduler;
         _gameTemplate = gameTemplate;
-        _inputMappings = inputMappings;
 
         using var stream = contentManager.FilesProvider.Open(parameters.MapPath);
         var map = MapFile.FromStream(stream, gameTemplate);
@@ -199,7 +198,7 @@ public class GameInstance : IGameInstance
             return;
         
         _isDisposed = true;
-        Task.Delay(1000).ContinueWith(o =>
+        Task.Delay(1000).ContinueWith(_ =>
         {
             _scheduler.Schedule(_mapDisplayElement.Dispose);
             World.Dispose();

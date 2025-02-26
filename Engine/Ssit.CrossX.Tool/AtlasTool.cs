@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using SkiaSharp;
 
 namespace Ssit.CrossX.Tool;

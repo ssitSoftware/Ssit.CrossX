@@ -19,8 +19,10 @@ public class SyncCommand: ICommand
     
     public SyncCommand(Action execute, Func<bool> canExecute = null)
     {
-        _execute = execute != null ? o => execute() : throw new ArgumentNullException(nameof(execute));
-        _canExecute = o => canExecute?.Invoke() ?? true;
+        if(execute is null) throw new ArgumentNullException(nameof(execute));
+        
+        _execute = _ => execute();
+        _canExecute = _ => canExecute?.Invoke() ?? true;
     }
     
     public bool CanExecute(object parameter = null)

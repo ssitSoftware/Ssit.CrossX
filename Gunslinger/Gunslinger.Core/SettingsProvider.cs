@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
@@ -6,6 +7,9 @@ using Ssit.CrossX.IO;
 
 namespace Gunslinger.Core;
 
+[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
 public class SettingsProvider : ISettingsProvider
 {
     private readonly IMusicPlayer _musicPlayer;

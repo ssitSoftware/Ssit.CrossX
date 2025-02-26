@@ -1,4 +1,3 @@
-using System;
 using Ssit.CrossX.Games.Logic;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;

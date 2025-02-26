@@ -1,18 +1,18 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
-using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
-using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 
 namespace Gunslinger.Core.UI.ViewModels;
 
+[SuppressMessage("ReSharper", "HeapView.DelegateAllocation")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class GamePageViewModel: IPageCommandsSource, IDisposable
 {
     private readonly IEventSource _eventSource;
@@ -30,12 +30,12 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     private double _fps = 60;
 
-    public GamePageViewModel(INavigation navigation, IIoCContainer container, IEventSource eventSource, IRenderer2 renderer, IGameInstance gameInstance, IKeyboard keyboard)
+    public GamePageViewModel(INavigation navigation, IEventSource eventSource, IRenderer2 renderer, IGameInstance gameInstance, IKeyboard keyboard)
     {
         _eventSource = eventSource;
         _renderer = renderer;
         _keyboard = keyboard;
-        _pauseCommand = new SyncCommand(()=>navigation.NavigateTo<PausePageViewModel>(GameInstance));
+        _pauseCommand = new SyncCommand(() => navigation.NavigateTo<PausePageViewModel>(GameInstance));
 
         GameInstance = gameInstance;
         

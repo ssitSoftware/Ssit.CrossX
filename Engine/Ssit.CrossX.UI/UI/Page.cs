@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Exceptions;
@@ -20,8 +19,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private ViewHandler _rootHandler;
     private RectangleF _screenBounds;
     private bool _recalculateLayout;
-    private bool _recalculationNeeded = false;
-    private bool _renderingInvalid = false;
+    private bool _recalculationNeeded;
+    private bool _renderingInvalid;
     
     private RectangleF _bounds;
     protected IIoCContainer Services => _iocContainer;

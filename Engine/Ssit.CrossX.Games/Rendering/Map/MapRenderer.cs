@@ -31,10 +31,9 @@ public static class MapRenderer
         }
 
     }
-    private static readonly List<ObjectRenderInfo> _gameObjects = new();
+    private static readonly List<ObjectRenderInfo> GameObjects = new();
     
-    
-    private static (Vector2 offset, RectangleF bounds) GetLayerRenderParameters(LayerDisplayElement mainLayer, LayerDisplayElement layer, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
+    private static (Vector2 offset, RectangleF bounds) GetLayerRenderParameters(LayerDisplayElement mainLayer, LayerDisplayElement layer, Vector2 cameraLookAt, Size targetSize, int tileSize)
     {
         var screenSizeNormalized = targetSize.ToVector() / tileSize;
         
@@ -57,7 +56,7 @@ public static class MapRenderer
         var tileSize = gameTemplate.TileSize;
         
         var mainLayer = map.Layers.First(o => o.IsMain);
-        var (offset, _) = GetLayerRenderParameters(mainLayer, mainLayer, world, cameraLookAt, targetSize, tileSize);
+        var (offset, _) = GetLayerRenderParameters(mainLayer, mainLayer, cameraLookAt, targetSize, tileSize);
         
         renderer.StateManager.SaveState();
         renderer.StateManager.Translate(offset);
@@ -74,7 +73,7 @@ public static class MapRenderer
         
         foreach (var layer in map.Layers)
         {
-            var (offset, visibleBounds) = GetLayerRenderParameters(mainLayer, layer, world, cameraLookAt, targetSize, tileSize);
+            var (offset, visibleBounds) = GetLayerRenderParameters(mainLayer, layer, cameraLookAt, targetSize, tileSize);
             
             renderer.StateManager.SaveState();
             renderer.StateManager.Translate(offset);
@@ -116,6 +115,7 @@ public static class MapRenderer
         }
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private static void DrawObject(IRenderer2 renderer, RectangleF bounds, MapDisplayObject obj, RgbaColor tintColor)
     {
         // TODO: Filter invisible elements
@@ -136,22 +136,22 @@ public static class MapRenderer
         if (world is null)
             return;
         
-        _gameObjects.Clear();
+        GameObjects.Clear();
         foreach (var obj in layer.DisplayObjects)
         {
-            _gameObjects.Add(new ObjectRenderInfo(obj));
+            GameObjects.Add(new ObjectRenderInfo(obj));
         }
         
         foreach (var body in world.BodyList)
         {
             if (body.Owner is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {
-                _gameObjects.Add(new ObjectRenderInfo(gor));
+                GameObjects.Add(new ObjectRenderInfo(gor));
             }
         }
         
-        _gameObjects.Sort((o1,o2) => o1.ZOrder - o2.ZOrder);
-        foreach (var gameObj in _gameObjects)
+        GameObjects.Sort((o1,o2) => o1.ZOrder - o2.ZOrder);
+        foreach (var gameObj in GameObjects)
         {
             if (gameObj.DisplayObject != null)
             {
@@ -161,6 +161,6 @@ public static class MapRenderer
             gameObj.ObjectRenderer?.Render(renderer, color);
         }
         
-        _gameObjects.Clear();
+        GameObjects.Clear();
     }
 }

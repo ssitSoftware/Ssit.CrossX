@@ -1,4 +1,3 @@
-using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IoC;
 using Ssit.CrossX.UI.Services;
 

@@ -7,15 +7,15 @@ public class LayerDescription
     public const string MainLayerId = "MAIN";
     
     public readonly string Id;
-    public readonly string Name = null;
-    public readonly Size Size = default;
+    public readonly string Name;
+    public readonly Size Size;
 
-    public readonly float HorizontalSpeed = 0;
-    public readonly float VerticalSpeed = 0;
+    public readonly float HorizontalSpeed;
+    public readonly float VerticalSpeed;
 
-    public readonly string InitialTileset = null; 
+    public readonly string InitialTileset; 
     
-    public readonly float Depth = 0;
+    public readonly float Depth;
 
     public readonly RgbaColor Tint;
     public readonly RgbaColor Fog;

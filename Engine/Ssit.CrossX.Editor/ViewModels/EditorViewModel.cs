@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Editor.Input;

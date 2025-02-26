@@ -1,5 +1,4 @@
 using System;
-using Ssit.CrossX.IoC.Impl;
 
 namespace Ssit.CrossX.IoC;
 

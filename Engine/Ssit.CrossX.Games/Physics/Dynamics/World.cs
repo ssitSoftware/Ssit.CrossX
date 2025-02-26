@@ -1376,7 +1376,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         {
             List<Fixture> affected = new List<Fixture>();
 
-            RayCast((f, p, n, fr) =>
+            RayCast((f, _, _, _) =>
             {
                 affected.Add(f);
                 return 1;

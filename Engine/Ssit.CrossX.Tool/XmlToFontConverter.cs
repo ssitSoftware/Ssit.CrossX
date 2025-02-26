@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Xml.Linq;
 using Newtonsoft.Json;
 using SkiaSharp;
 using Ssit.CrossX.Graphics.Internal;
@@ -19,7 +18,6 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
     [Flags]
     private enum CharSets
     {
-        None = 0,
         Ascii = 1,
         Polish = 2,
         German = 4,

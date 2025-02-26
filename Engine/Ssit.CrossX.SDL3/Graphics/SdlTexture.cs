@@ -1,12 +1,12 @@
 using Interop.Runtime;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.IO;
 using Ssit.CrossX.SDL3.Common;
 using static bottlenoselabs.Interop.SDL;
 using static bottlenoselabs.Interop.SDL_image;
 
 namespace Ssit.CrossX.SDL3.Graphics;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public unsafe class SdlTexture: ITexture
 {
     private bool _disposed;

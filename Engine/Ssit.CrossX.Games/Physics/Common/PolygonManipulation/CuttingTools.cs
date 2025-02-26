@@ -157,7 +157,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
                 return false;
 
             //Get the entry points
-            world.RayCast((f, p, n, fr) =>
+            world.RayCast((f, p, _, _) =>
                               {
                                   fixtures.Add(f);
                                   entryPoints.Add(p);
@@ -165,7 +165,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
                               }, start, end);
 
             //Reverse the ray to get the exitpoints
-            world.RayCast((f, p, n, fr) =>
+            world.RayCast((_, p, _, _) =>
                               {
                                   exitPoints.Add(p);
                                   return 1;

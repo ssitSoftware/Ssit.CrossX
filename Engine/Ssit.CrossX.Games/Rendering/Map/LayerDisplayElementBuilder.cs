@@ -15,15 +15,13 @@ public class LayerDisplayElementBuilder
     private MapFile _file;
     
     private IIoCContainer _container;
-    private IContentManager _contentManager;
-    
+
     private int _tileSize;
     private Size _targetSize;
     
     public LayerDisplayElementBuilder WithServices(IIoCContainer container, IContentManager contentManager)
     {
         _container = container;
-        _contentManager = contentManager;
         return this;
     }
     

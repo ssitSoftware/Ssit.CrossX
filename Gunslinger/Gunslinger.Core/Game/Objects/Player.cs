@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using Gunslinger.Core.Game.Objects.PlayerBehaviors;
 using Ssit.CrossX;
-using Ssit.CrossX.Audio;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic;
@@ -23,7 +22,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public class PlayerStats
     {
         // Player statistics
-        [EditorInt(0, 3)] public int Jump { get; set; } = 0;
+        [EditorInt(0, 3)] public int Jump { get; set; }
         [EditorInt(-1, 3)] public int WallClimb { get; set; } = -1;
         [EditorInt(-1, 3)] public int Dash { get; set; } = -1;
         [EditorInt(-1, 3)] public int MagneticJump { get; set; } = -1;

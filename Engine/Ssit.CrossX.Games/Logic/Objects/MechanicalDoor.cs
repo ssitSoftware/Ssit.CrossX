@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
@@ -10,6 +11,7 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreationParameters<MechanicalDoor.Parameters> parameters)
     : SpriteGameObject(services, parameters)
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Parameters
     {
         [EditorLink(typeof(ISwitch))] public int Switch { get; set; }

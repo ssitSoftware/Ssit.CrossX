@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using Ssit.CrossX.Editor.Input;
 using SkiaSharp;
 using MouseButton = Avalonia.Input.MouseButton;
+// ReSharper disable BitwiseOperatorOnEnumWithoutFlags
 
 namespace Ssit.CrossX.Editor.Controls
 {

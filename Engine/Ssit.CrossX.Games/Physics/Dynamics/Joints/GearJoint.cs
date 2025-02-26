@@ -316,13 +316,13 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
 
             if (Settings.EnableWarmstarting)
             {
-                vA += (_mA * _impulse) * _JvAC;
+                vA += _mA * _impulse * _JvAC;
                 wA += _iA * _impulse * _JwA;
-                vB += (_mB * _impulse) * _JvBD;
+                vB += _mB * _impulse * _JvBD;
                 wB += _iB * _impulse * _JwB;
-                vC -= (_mC * _impulse) * _JvAC;
+                vC -= _mC * _impulse * _JvAC;
                 wC -= _iC * _impulse * _JwC;
-                vD -= (_mD * _impulse) * _JvBD;
+                vD -= _mD * _impulse * _JvBD;
                 wD -= _iD * _impulse * _JwD;
             }
             else
@@ -352,18 +352,18 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float wD = data.velocities[_indexD].w;
 
             float Cdot = Vector2.Dot(_JvAC, vA - vC) + Vector2.Dot(_JvBD, vB - vD);
-            Cdot += (_JwA * wA - _JwC * wC) + (_JwB * wB - _JwD * wD);
+            Cdot += _JwA * wA - _JwC * wC + (_JwB * wB - _JwD * wD);
 
             float impulse = -_mass * Cdot;
             _impulse += impulse;
 
-            vA += (_mA * impulse) * _JvAC;
+            vA += _mA * impulse * _JvAC;
             wA += _iA * impulse * _JwA;
-            vB += (_mB * impulse) * _JvBD;
+            vB += _mB * impulse * _JvBD;
             wB += _iB * impulse * _JwB;
-            vC -= (_mC * impulse) * _JvAC;
+            vC -= _mC * impulse * _JvAC;
             wC -= _iC * impulse * _JwC;
-            vD -= (_mD * impulse) * _JvBD;
+            vD -= _mD * impulse * _JvBD;
             wD -= _iD * impulse * _JwD;
 
             data.velocities[_indexA].v = vA;
@@ -445,7 +445,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 coordinateB = Vector2.Dot(pB - pD, _localAxisD);
             }
 
-            float C = (coordinateA + _ratio * coordinateB) - _constant;
+            float C = coordinateA + _ratio * coordinateB - _constant;
 
             float impulse = 0.0f;
             if (mass > 0.0f)

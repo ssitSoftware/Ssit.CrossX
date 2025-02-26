@@ -275,8 +275,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
                 _impulse *= data.step.dtRatio;
 
                 // Warm starting.
-                Vector2 PA = -(_impulse) * _uA;
-                Vector2 PB = (-Ratio * _impulse) * _uB;
+                Vector2 PA = -_impulse * _uA;
+                Vector2 PB = -Ratio * _impulse * _uB;
 
                 vA += _invMassA * PA;
                 wA += _invIA * MathUtils.Cross(_rA, PA);

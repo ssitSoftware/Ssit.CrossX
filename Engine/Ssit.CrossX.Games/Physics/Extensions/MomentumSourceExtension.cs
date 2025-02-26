@@ -6,26 +6,24 @@ using Ssit.CrossX.Games.Physics.Dynamics;
 
 namespace Ssit.CrossX.Games.Physics.Extensions;
 
-public class MovingStackExtension: IDisposable
+public class MomentumSourceExtension: IDisposable
 {
     private readonly Body _body;
     private readonly Aabb _detectionAabb;
-    private readonly float[] _kineticFactors;
 
     private readonly List<Fixture> _lyingFixtures = new();
     private readonly List<Body> _lyingBodies = new();
     private Vector2 _offset;
     
-    public static void Attach(Body body, Aabb detectionAabb, float[] kineticFactors)
+    public static void Attach(Body body, Aabb detectionAabb)
     {
-        body.SetExtension(new MovingStackExtension(body, detectionAabb, kineticFactors));
+        body.SetExtension(new MomentumSourceExtension(body, detectionAabb));
     }
 
-    private MovingStackExtension(Body body, Aabb detectionAabb, float[] kineticFactors)
+    private MomentumSourceExtension(Body body, Aabb detectionAabb)
     {
         _body = body;
         _detectionAabb = detectionAabb;
-        _kineticFactors = kineticFactors;
 
         _body.Moved += BodyOnMoved;
         _body.PreProcessing += BodyOnPreProcessing;
@@ -34,24 +32,14 @@ public class MovingStackExtension: IDisposable
 
     private static void BodyOnPostProcessing(Body body, float dt)
     {
-        var ext = body.GetExtension<MovingStackExtension>();
+        var ext = body.GetExtension<MomentumSourceExtension>();
 
         foreach (var bd in ext._lyingBodies)
         {
             var offset = ext._offset;
             if (bd.Owner is IMomentumReceiver receiver)
             {
-                var speed = (int)MathF.Floor(MathF.Abs(offset.X) / dt + 0.05f);
-                speed = Math.Min(speed, ext._kineticFactors.Length - 1);
-                var kineticFactor = ext._kineticFactors[speed];
-
-                receiver.OnKineticallyMoved(offset, kineticFactor);
-            }
-            
-            var bde = bd.GetExtension<MovingStackExtension>();
-            if (bde != null && bde._lyingBodies.Count > 0 && !bde._lyingBodies.Contains(body))
-            {
-                BodyOnPostProcessing(bd, dt);
+                receiver.OnMomentumPassed(offset);
             }
         }
         
@@ -60,7 +48,7 @@ public class MovingStackExtension: IDisposable
     
     private static void BodyOnPreProcessing(Body body, float dt)
     {
-        var ext = body.GetExtension<MovingStackExtension>();
+        var ext = body.GetExtension<MomentumSourceExtension>();
 
         ext._lyingBodies.Clear();
         
@@ -91,7 +79,7 @@ public class MovingStackExtension: IDisposable
 
     private static void BodyOnMoved(Body body, Vector2 vector)
     {
-        var ext = body.GetExtension<MovingStackExtension>();
+        var ext = body.GetExtension<MomentumSourceExtension>();
         ext._offset += vector;
     }
 

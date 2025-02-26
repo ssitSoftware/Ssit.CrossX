@@ -71,7 +71,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
 
         private static void SimplifySection(Vertices vertices, int i, int j, bool[] usePoint, float distanceTolerance)
         {
-            if ((i + 1) == j)
+            if (i + 1 == j)
                 return;
 
             Vector2 a = vertices[i];
@@ -124,9 +124,9 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
             //Gather points to process
             for (int i = 0; i < vertices.Count; ++i)
             {
-                int lower = (i == 0) ? (vertices.Count - 1) : (i - 1);
+                int lower = i == 0 ? vertices.Count - 1 : i - 1;
                 int middle = i;
-                int upper = (i == vertices.Count - 1) ? (0) : (i + 1);
+                int upper = i == vertices.Count - 1 ? 0 : i + 1;
 
                 float dx0 = vertices[middle].X - vertices[lower].X;
                 float dy0 = vertices[middle].Y - vertices[lower].Y;

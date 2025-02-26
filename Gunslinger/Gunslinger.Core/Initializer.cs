@@ -20,6 +20,7 @@ public static class Initializer
     {
         var inputMappings = container.Get<IInputMappings>();
         GameControls.RegisterGameControls(inputMappings);
+        
         return container;
     }
 

@@ -435,7 +435,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
       polygon.Add(Vector2.Zero);
       polygon.Add(edge.EdgeStart);
       polygon.Add(edge.EdgeEnd);
-      return (polygon.PointInPolygon(ref point) == 1);
+      return polygon.PointInPolygon(ref point) == 1;
     }
 
     /// <summary>

@@ -197,7 +197,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
                 break;
             
             case ContentAlign.Right:
-                pos.X += (targetRect.Width - targetSize.Width);
+                pos.X += targetRect.Width - targetSize.Width;
                 break;
         }
         
@@ -208,7 +208,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
                 break;
             
             case ContentAlign.Bottom:
-                pos.Y += (targetRect.Height - targetSize.Height);
+                pos.Y += targetRect.Height - targetSize.Height;
                 break;
         }
 

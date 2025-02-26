@@ -12,7 +12,6 @@ public class Sprite: IDisposable
         public Rectangle Source { get; } = source;
         public Vector2 Offset { get; } = offset;
         public float Duration { get; } = duration;
-        public string Event { get; set; }
     }
     
     public class SpriteSequence(string name, SpriteFrame[] frames)

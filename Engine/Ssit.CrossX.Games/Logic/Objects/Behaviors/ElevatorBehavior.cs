@@ -11,7 +11,7 @@ public class ElevatorBehavior(Elevator elevator): Behavior
 
     protected override void OnEnterState()
     {
-        elevator.Sprite.Advance((DateTime.Now.Millisecond % 100) / 1000f);
+        elevator.Sprite.Advance(DateTime.Now.Millisecond % 100 / 1000f);
     }
 
     protected override bool OnFixedUpdate(float dt)

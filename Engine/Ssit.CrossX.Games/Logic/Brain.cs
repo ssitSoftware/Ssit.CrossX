@@ -9,6 +9,9 @@ public abstract class Brain: IUpdatable
     private State _currentState;
 
     protected virtual void OnAnimationFinished(string sequenceName) => _currentState?.SequenceFinished(sequenceName);
+    
+    protected virtual void CallStateEvent(string eventName, float parameter) => _currentState?.Event(eventName, parameter);
+    
     public string CurrentState { get; private set; }
 
     void IUpdatable.Update(float dt) => OnUpdate(dt);

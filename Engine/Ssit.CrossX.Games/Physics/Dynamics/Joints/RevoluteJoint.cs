@@ -339,7 +339,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float mA = _invMassA, mB = _invMassB;
             float iA = _invIA, iB = _invIB;
 
-            bool fixedRotation = (iA + iB == 0.0f);
+            bool fixedRotation = iA + iB == 0.0f;
 
             _mass.Ex.X = mA + mB + _rA.Y * _rA.Y * iA + _rB.Y * _rB.Y * iB;
             _mass.Ey.X = -_rA.Y * _rA.X * iA - _rB.Y * _rB.X * iB;
@@ -432,13 +432,13 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float mA = _invMassA, mB = _invMassB;
             float iA = _invIA, iB = _invIB;
 
-            bool fixedRotation = (iA + iB == 0.0f);
+            bool fixedRotation = iA + iB == 0.0f;
 
             // Solve motor constraint.
             if (_enableMotor && _limitState != LimitState.Equal && fixedRotation == false)
             {
                 float Cdot = wB - wA - _motorSpeed;
-                float impulse = _motorMass * (-Cdot);
+                float impulse = _motorMass * -Cdot;
                 float oldImpulse = _motorImpulse;
                 float maxImpulse = data.step.dt * _maxMotorTorque;
                 _motorImpulse = MathUtils.Clamp(_motorImpulse + impulse, -maxImpulse, maxImpulse);
@@ -542,7 +542,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float angularError = 0.0f;
             float positionError;
 
-            bool fixedRotation = (_invIA + _invIB == 0.0f);
+            bool fixedRotation = _invIA + _invIB == 0.0f;
 
             // Solve angular limit constraint.
             if (_enableLimit && _limitState != LimitState.Inactive && fixedRotation == false)

@@ -363,7 +363,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         {
             if (Settings.UseFpeCollisionCategories)
             {
-                if ((fixtureA.CollisionGroup == fixtureB.CollisionGroup) &&
+                if (fixtureA.CollisionGroup == fixtureB.CollisionGroup &&
                     fixtureA.CollisionGroup != 0 && fixtureB.CollisionGroup != 0)
                     return false;
 

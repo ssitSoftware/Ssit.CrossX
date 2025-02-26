@@ -109,17 +109,17 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay
 
         public bool Contains(TriangulationPoint p)
         {
-            return (p == Points[0] || p == Points[1] || p == Points[2]);
+            return p == Points[0] || p == Points[1] || p == Points[2];
         }
 
         public bool Contains(DTSweepConstraint e)
         {
-            return (Contains(e.P) && Contains(e.Q));
+            return Contains(e.P) && Contains(e.Q);
         }
 
         public bool Contains(TriangulationPoint p, TriangulationPoint q)
         {
-            return (Contains(p) && Contains(q));
+            return Contains(p) && Contains(q);
         }
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay
             double b = Points[0].X - Points[1].X;
             double h = Points[2].Y - Points[1].Y;
 
-            return Math.Abs((b*h*0.5f));
+            return Math.Abs(b*h*0.5f);
         }
 
         public TriangulationPoint Centroid()
@@ -347,9 +347,9 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay
             int i2 = Points.IndexOf(p2);
 
             // Points of this triangle in the edge p1-p2
-            bool a = (i1 == 0 || i2 == 0);
-            bool b = (i1 == 1 || i2 == 1);
-            bool c = (i1 == 2 || i2 == 2);
+            bool a = i1 == 0 || i2 == 0;
+            bool b = i1 == 1 || i2 == 1;
+            bool c = i1 == 2 || i2 == 2;
 
             if (b && c) return 0;
             if (a && c) return 1;

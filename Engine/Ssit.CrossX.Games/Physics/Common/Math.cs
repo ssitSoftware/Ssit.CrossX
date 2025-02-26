@@ -77,8 +77,8 @@ namespace Ssit.CrossX.Games.Physics.Common
 
         public static Vector2 Mul(ref Transform t, ref Vector2 v)
         {
-            float x = (t.Q.C * v.X - t.Q.S * v.Y) + t.P.X;
-            float y = (t.Q.S * v.X + t.Q.C * v.Y) + t.P.Y;
+            float x = t.Q.C * v.X - t.Q.S * v.Y + t.P.X;
+            float y = t.Q.S * v.X + t.Q.C * v.Y + t.P.Y;
 
             return new Vector2(x, y);
         }
@@ -102,8 +102,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         {
             float px = v.X - t.P.X;
             float py = v.Y - t.P.Y;
-            float x = (t.Q.C * px + t.Q.S * py);
-            float y = (-t.Q.S * px + t.Q.C * py);
+            float x = t.Q.C * px + t.Q.S * py;
+            float y = -t.Q.S * px + t.Q.C * py;
 
             return new Vector2(x, y);
         }
@@ -166,8 +166,8 @@ namespace Ssit.CrossX.Games.Physics.Common
         {
             float px = v.X - t.P.X;
             float py = v.Y - t.P.Y;
-            float x = (t.Q.C * px + t.Q.S * py);
-            float y = (-t.Q.S * px + t.Q.C * py);
+            float x = t.Q.C * px + t.Q.S * py;
+            float y = -t.Q.S * px + t.Q.C * py;
 
             return new Vector2(x, y);
         }
@@ -284,11 +284,11 @@ namespace Ssit.CrossX.Games.Physics.Common
             double theta2 = Math.Atan2(p2.Y, p2.X);
             double dtheta = theta2 - theta1;
             while (dtheta > Math.PI)
-                dtheta -= (2 * Math.PI);
+                dtheta -= 2 * Math.PI;
             while (dtheta < -Math.PI)
-                dtheta += (2 * Math.PI);
+                dtheta += 2 * Math.PI;
 
-            return (dtheta);
+            return dtheta;
         }
 
         /// Perform the dot product on two vectors.
@@ -369,7 +369,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// false otherwise.</returns>
         public static bool FloatInRange(float value, float min, float max)
         {
-            return (value >= min && value <= max);
+            return value >= min && value <= max;
         }
 
         #region Nested type: FloatConverter

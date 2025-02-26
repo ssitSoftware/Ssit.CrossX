@@ -297,8 +297,8 @@ namespace Ssit.CrossX.Games.Physics.Collision
             cache.Count = (UInt16)Count;
             for (int i = 0; i < Count; ++i)
             {
-                cache.IndexA[i] = (byte)(V[i].IndexA);
-                cache.IndexB[i] = (byte)(V[i].IndexB);
+                cache.IndexA[i] = (byte)V[i].IndexA;
+                cache.IndexB[i] = (byte)V[i].IndexB;
             }
         }
 

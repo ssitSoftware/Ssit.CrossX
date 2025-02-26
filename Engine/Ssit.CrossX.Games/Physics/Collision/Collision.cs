@@ -788,7 +788,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
             // Region AB
             float den = Vector2.Dot(e, e);
             Debug.Assert(den > 0.0f);
-            P = (1.0f / den) * (u * A + v * B);
+            P = 1.0f / den * (u * A + v * B);
             d = Q - P;
             float dd2 = Vector2.Dot(d, d);
             if (dd2 > radius * radius)

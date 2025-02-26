@@ -512,7 +512,7 @@ namespace Ssit.CrossX.Games.Physics.Collision
                     aabb.Combine(ref leafAABB, ref _nodes[child1].AABB);
                     float oldArea = _nodes[child1].AABB.Perimeter;
                     float newArea = aabb.Perimeter;
-                    cost1 = (newArea - oldArea) + inheritanceCost;
+                    cost1 = newArea - oldArea + inheritanceCost;
                 }
 
                 // Cost of descending into child2

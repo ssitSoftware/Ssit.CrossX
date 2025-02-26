@@ -117,7 +117,7 @@ namespace Ssit.CrossX.Games.Physics.Common
 
         public bool Equals(CurveKey other)
         {
-            return (this == other);
+            return this == other;
         }
 
 #endregion
@@ -135,11 +135,11 @@ namespace Ssit.CrossX.Games.Physics.Common
             if (Equals(b, null))
                 return Equals(a, null);
 
-            return (a.position == b.position)
-                   && (a.value == b.value)
-                   && (a.tangentIn == b.tangentIn)
-                   && (a.tangentOut == b.tangentOut)
-                   && (a.continuity == b.continuity);
+            return a.position == b.position
+                   && a.value == b.value
+                   && a.tangentIn == b.tangentIn
+                   && a.tangentOut == b.tangentOut
+                   && a.continuity == b.continuity;
         }
 
         public CurveKey Clone()
@@ -149,7 +149,7 @@ namespace Ssit.CrossX.Games.Physics.Common
 
         public override bool Equals(object obj)
         {
-            return (obj is CurveKey) ? ((CurveKey) obj) == this : false;
+            return obj is CurveKey ? (CurveKey) obj == this : false;
         }
 
         public override int GetHashCode()

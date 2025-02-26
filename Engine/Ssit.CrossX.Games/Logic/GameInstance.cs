@@ -31,7 +31,7 @@ public class GameInstance : IGameInstance
     private readonly MapDisplayElement _mapDisplayElement;
 
     public readonly World World;
-    private readonly IIoCContainer _container;
+    public readonly IIoCContainer Container;
     private readonly ICamera _camera;
     
     private bool _isDisposed;
@@ -81,9 +81,9 @@ public class GameInstance : IGameInstance
             .WithContainer(container)
             .WithGameTemplate(gameTemplate);
         
-        (World, _container) = worldBuilder.Build();
+        (World, Container) = worldBuilder.Build();
         parameters.ProcessWorldFunc?.Invoke(World);
-        _camera = _container.Get<ICamera>();
+        _camera = Container.Get<ICamera>();
     }
 
     void IGameInstance.Update(float deltaTime) => Update(deltaTime);
@@ -203,7 +203,7 @@ public class GameInstance : IGameInstance
         {
             _scheduler.Schedule(_mapDisplayElement.Dispose);
             World.Dispose();
-            _container?.Dispose();
+            Container?.Dispose();
         });
     }
 }

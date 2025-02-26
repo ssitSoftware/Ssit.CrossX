@@ -66,7 +66,7 @@ public static class WorldRenderer
             staticColor = RgbaColor.Violet;
         }
         
-        RgbaColor color = body.IsStatic ? staticColor : (body.Awake ? RgbaColor.OrangeRed : RgbaColor.Green);
+        RgbaColor color = body.IsStatic ? staticColor : body.Awake ? RgbaColor.OrangeRed : RgbaColor.Green;
         
         switch (shape)
         {

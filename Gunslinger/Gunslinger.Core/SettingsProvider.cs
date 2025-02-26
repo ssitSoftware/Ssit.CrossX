@@ -46,7 +46,7 @@ public class SettingsProvider : ISettingsProvider
         switch (args.PropertyName)
         {
             case nameof(Settings.MusicVolume):
-                _musicPlayer.Volume = Settings.MusicVolume / 4f;
+                _musicPlayer.Volume = Settings.MusicVolume / 8f;
                 break;
                 
             case nameof(Settings.SoundVolume):

@@ -788,12 +788,12 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
             // Check additional points on front.
             AdvancingFrontNode next2Node = nextNode.Next;
             // "..Plus.." because only want angles on same side as point being added.
-            if ((next2Node != null) && !AngleExceedsPlus90DegreesOrIsNegative(node.Point, next2Node.Point, prevNode.Point))
+            if (next2Node != null && !AngleExceedsPlus90DegreesOrIsNegative(node.Point, next2Node.Point, prevNode.Point))
                 return false;
 
             AdvancingFrontNode prev2Node = prevNode.Prev;
             // "..Plus.." because only want angles on same side as point being added.
-            if ((prev2Node != null) && !AngleExceedsPlus90DegreesOrIsNegative(node.Point, nextNode.Point, prev2Node.Point))
+            if (prev2Node != null && !AngleExceedsPlus90DegreesOrIsNegative(node.Point, nextNode.Point, prev2Node.Point))
                 return false;
 
             return true;
@@ -802,14 +802,14 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.CDT.Delaunay.Sweep
         private static bool AngleExceeds90Degrees(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
-            bool exceeds90Degrees = ((angle > PI_div2) || (angle < -PI_div2));
+            bool exceeds90Degrees = angle > PI_div2 || angle < -PI_div2;
             return exceeds90Degrees;
         }
 
         private static bool AngleExceedsPlus90DegreesOrIsNegative(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
-            bool exceedsPlus90DegreesOrIsNegative = (angle > PI_div2) || (angle < 0);
+            bool exceedsPlus90DegreesOrIsNegative = angle > PI_div2 || angle < 0;
             return exceedsPlus90DegreesOrIsNegative;
         }
 

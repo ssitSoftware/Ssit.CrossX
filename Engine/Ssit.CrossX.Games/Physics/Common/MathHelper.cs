@@ -61,10 +61,10 @@ namespace Ssit.CrossX.Games.Physics.Common
         public static float Clamp(float value, float min, float max)
         {
             // First we check to see if we're greater than the max
-            value = (value > max) ? max : value;
+            value = value > max ? max : value;
 
             // Then we check to see if we're less than the min.
-            value = (value < min) ? min : value;
+            value = value < min ? min : value;
 
             // There's no check to see if min > max.
             return value;

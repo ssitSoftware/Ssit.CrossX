@@ -87,7 +87,7 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
         return true;
     }
 
-    public void Toggle()
+    public virtual void Toggle()
     {
         if (_anotherToggle != null)
         {

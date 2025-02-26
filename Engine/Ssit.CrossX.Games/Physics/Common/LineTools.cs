@@ -61,8 +61,8 @@ namespace Ssit.CrossX.Games.Physics.Common
             if (Math.Max(y1, y2) < Math.Min(y3, y4) || Math.Max(y3, y4) < Math.Min(y1, y2))
                 return false;
 
-            float ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3));
-            float ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3));
+            float ua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+            float ub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
             float denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
             if (Math.Abs(denom) < Settings.Epsilon)
             {
@@ -72,10 +72,10 @@ namespace Ssit.CrossX.Games.Physics.Common
             ua /= denom;
             ub /= denom;
 
-            if ((0 < ua) && (ua < 1) && (0 < ub) && (ub < 1))
+            if (0 < ua && ua < 1 && 0 < ub && ub < 1)
             {
-                intersectionPoint.X = (x1 + ua * (x2 - x1));
-                intersectionPoint.Y = (y1 + ua * (y2 - y1));
+                intersectionPoint.X = x1 + ua * (x2 - x1);
+                intersectionPoint.Y = y1 + ua * (y2 - y1);
                 return true;
             }
 
@@ -140,7 +140,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             float d = point2.Y - point1.Y;
 
             // denominator to solution of linear system
-            float denom = (a * b) - (c * d);
+            float denom = a * b - c * d;
 
             // if denominator is 0, then lines are parallel
             if (!(denom >= -Settings.Epsilon && denom <= Settings.Epsilon))
@@ -150,14 +150,14 @@ namespace Ssit.CrossX.Games.Physics.Common
                 float oneOverDenom = 1.0f / denom;
 
                 // numerator of first equation
-                float ua = (c * e) - (a * f);
+                float ua = c * e - a * f;
                 ua *= oneOverDenom;
 
                 // check if intersection point of the two lines is on line segment 1
                 if (!firstIsSegment || ua >= 0.0f && ua <= 1.0f)
                 {
                     // numerator of second equation
-                    float ub = (b * e) - (d * f);
+                    float ub = b * e - d * f;
                     ub *= oneOverDenom;
 
                     // check if intersection point of the two lines is on line segment 2

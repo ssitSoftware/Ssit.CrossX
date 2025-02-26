@@ -4,7 +4,5 @@ namespace Ssit.CrossX.Games.Physics.Extensions;
 
 public interface IMomentumReceiver
 {
-    void OnKineticallyMoved(Vector2 offset, float kineticFactor)
-    {
-    }
+    void OnMomentumPassed(Vector2 offset);
 }

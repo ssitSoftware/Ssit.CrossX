@@ -130,7 +130,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
 
         public override Vector2 GetReactionForce(float invDt)
         {
-            return (invDt * _impulse) * _u;
+            return invDt * _impulse * _u;
         }
 
         public override float GetReactionTorque(float invDt)

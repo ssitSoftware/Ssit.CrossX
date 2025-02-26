@@ -49,7 +49,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
             for (int v = nv - 1; nv > 2; )
             {
                 // If we loop, it is probably a non-simple polygon 
-                if (0 >= (count--))
+                if (0 >= count--)
                 {
                     // Triangulate: ERROR - probable bad polygon!
                     return new List<Vertices>();
@@ -116,7 +116,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
             //b cross cp
             float bcp = (a.X - c.X) * (p.Y - c.Y) - (a.Y - c.Y) * (p.X - c.X);
 
-            return ((abp >= 0.0f) && (bcp >= 0.0f) && (aap >= 0.0f));
+            return abp >= 0.0f && bcp >= 0.0f && aap >= 0.0f;
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
 
             for (int p = 0; p < n; p++)
             {
-                if ((p == u) || (p == v) || (p == w))
+                if (p == u || p == v || p == w)
                     continue;
 
                 Vector2 point = contour[V[p]];

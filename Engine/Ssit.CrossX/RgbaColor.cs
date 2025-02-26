@@ -136,19 +136,19 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
     
     public int ToInt32()
     {
-        long argb = (B | (G << 8) | (R << 16) | (A << 24));
+        long argb = B | (G << 8) | (R << 16) | (A << 24);
         return (int)argb;
     }
 
     public uint ToUInt32()
     {
-        long argb = (R | (G << 8) | (B << 16) | (A << 24));
+        long argb = R | (G << 8) | (B << 16) | (A << 24);
         return (uint)argb;
     }
     
     public uint ToUInt32Inverted()
     {
-        long argb = (A | (B << 8) | (G << 16) | (R << 24));
+        long argb = A | (B << 8) | (G << 16) | (R << 24);
         return (uint)argb;
     }
     
@@ -187,7 +187,7 @@ public readonly partial struct RgbaColor : IEquatable<RgbaColor>
         l = MathF.Max(0, MathF.Min(1, l));
         
         var c = (1 - MathF.Abs(2 * l - 1)) * s;
-        var x = c * (1 - MathF.Abs((h / 60) % 2 - 1));
+        var x = c * (1 - MathF.Abs(h / 60 % 2 - 1));
         var m = l - c / 2;
         
         if (h < 60)

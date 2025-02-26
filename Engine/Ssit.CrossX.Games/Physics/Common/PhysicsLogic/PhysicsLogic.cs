@@ -6,7 +6,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
     [Flags]
     public enum PhysicsLogicType
     {
-        Explosion = (1 << 0)
+        Explosion = 1 << 0
     }
 
     public struct PhysicsLogicFilter

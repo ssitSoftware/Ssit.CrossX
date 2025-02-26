@@ -105,11 +105,11 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
                 Vector2 offset;
                 if (cutAdded[n] > 0)
                 {
-                    offset = (newPolygon[n][cutAdded[n] - 1] - newPolygon[n][cutAdded[n]]);
+                    offset = newPolygon[n][cutAdded[n] - 1] - newPolygon[n][cutAdded[n]];
                 }
                 else
                 {
-                    offset = (newPolygon[n][newPolygon[n].Count - 1] - newPolygon[n][0]);
+                    offset = newPolygon[n][newPolygon[n].Count - 1] - newPolygon[n][0];
                 }
                 offset = Vector2.Normalize(offset);
 
@@ -120,11 +120,11 @@ namespace Ssit.CrossX.Games.Physics.Common.PolygonManipulation
 
                 if (cutAdded[n] < newPolygon[n].Count - 2)
                 {
-                    offset = (newPolygon[n][cutAdded[n] + 2] - newPolygon[n][cutAdded[n] + 1]);
+                    offset = newPolygon[n][cutAdded[n] + 2] - newPolygon[n][cutAdded[n] + 1];
                 }
                 else
                 {
-                    offset = (newPolygon[n][0] - newPolygon[n][newPolygon[n].Count - 1]);
+                    offset = newPolygon[n][0] - newPolygon[n][newPolygon[n].Count - 1];
                 }
                 offset = Vector2.Normalize(offset);
 

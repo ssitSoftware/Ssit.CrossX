@@ -87,7 +87,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             }
             else
             {
-                int numberOfEdges = (segments * 4 + 8);
+                int numberOfEdges = segments * 4 + 8;
 
                 float stepSize = MathHelper.TwoPi / (numberOfEdges - 4);
                 int perPhase = numberOfEdges / 4;
@@ -284,9 +284,9 @@ namespace Ssit.CrossX.Games.Physics.Common
             float stepSize = MathHelper.TwoPi / numberOfTeeth;
             tipPercentage /= 100f;
             MathHelper.Clamp(tipPercentage, 0f, 1f);
-            float toothTipStepSize = (stepSize / 2f) * tipPercentage;
+            float toothTipStepSize = stepSize / 2f * tipPercentage;
 
-            float toothAngleStepSize = (stepSize - (toothTipStepSize * 2f)) / 2f;
+            float toothAngleStepSize = (stepSize - toothTipStepSize * 2f) / 2f;
 
             for (int i = numberOfTeeth - 1; i >= 0; --i)
             {

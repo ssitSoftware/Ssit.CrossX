@@ -181,8 +181,8 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
                 }
 
                 // - add the clipped triangle to the triangle list
-                int under = (earIndex == 0) ? (vNum) : (earIndex - 1);
-                int over = (earIndex == vNum) ? 0 : (earIndex + 1);
+                int under = earIndex == 0 ? vNum : earIndex - 1;
+                int over = earIndex == vNum ? 0 : earIndex + 1;
                 Triangle toAdd = new Triangle(xrem[earIndex], yrem[earIndex], xrem[over], yrem[over], xrem[under],
                                               yrem[under]);
                 buffer[bufferSize] = toAdd;
@@ -393,7 +393,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
                 float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
                 float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
-                return ((u > 0) && (v > 0) && (u + v < 1));
+                return u > 0 && v > 0 && u + v < 1;
             }
         }
     }

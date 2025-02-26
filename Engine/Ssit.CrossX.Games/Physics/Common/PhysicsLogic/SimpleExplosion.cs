@@ -81,7 +81,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
         private float GetPercent(float distance, float radius)
         {
             //(1-(distance/radius))^power-1
-            float percent = (float)Math.Pow(1 - ((distance - radius) / radius), Power) - 1;
+            float percent = (float)Math.Pow(1 - (distance - radius) / radius, Power) - 1;
 
             if (float.IsNaN(percent))
                 return 0f;

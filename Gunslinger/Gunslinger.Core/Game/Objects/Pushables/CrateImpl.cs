@@ -29,13 +29,13 @@ public class CrateImpl : Pushable
                 new Vector2(-0.625f, 0.625f),
             ]), 20));
 
-        Body.Mass = 200;
+        Body.Mass = 75;
         Body.LinearDamping = 2;
         Body.Friction = 1;
 
         if (parameters.Parameters.MovingStackExtension)
         {
-            //MovingStackExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)), GamePhysics.DefaultKineticFactors);
+            MomentumSourceExtension.Attach(Body, new Aabb(new Vector2(-0.55f, -0.7f), new Vector2(0.55f, -0.5f)));
         }
     }
 }

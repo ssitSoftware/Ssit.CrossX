@@ -34,6 +34,7 @@ public class FallBehavior(Player player, World world): Behavior
             player.SetState("Jump->Fall");
             return true;
         }
+        
         return false;
     }
 

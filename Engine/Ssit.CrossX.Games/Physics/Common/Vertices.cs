@@ -78,7 +78,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <param name="index">The current index</param>
         public int NextIndex(int index)
         {
-            return (index + 1 > Count - 1) ? 0 : index + 1;
+            return index + 1 > Count - 1 ? 0 : index + 1;
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Ssit.CrossX.Games.Physics.Common
         public float GetArea()
         {
             float area = GetSignedArea();
-            return (area < 0 ? -area : area);
+            return area < 0 ? -area : area;
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             {
                 // Triangle vertices.
                 Vector2 current = this[i];
-                Vector2 next = (i + 1 < Count ? this[i + 1] : this[0]);
+                Vector2 next = i + 1 < Count ? this[i + 1] : this[0];
 
                 float triangleArea = 0.5f * (current.X * next.Y - current.Y * next.X);
                 area += triangleArea;
@@ -290,7 +290,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             for (int i = 0; i < Count; i++)
             {
                 Vector2 position = this[i];
-                this[i] = new Vector2((position.X * num1 + position.Y * -num2), (position.X * num2 + position.Y * num1));
+                this[i] = new Vector2(position.X * num1 + position.Y * -num2, position.X * num2 + position.Y * num1);
             }
 
             if (Holes != null && Holes.Count > 0)
@@ -356,7 +356,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             if (Count < 3)
                 return false;
 
-            return (GetSignedArea() > 0.0f);
+            return GetSignedArea() > 0.0f;
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace Ssit.CrossX.Games.Physics.Common
                     }
                 }
             }
-            return (wn == 0 ? -1 : 1);
+            return wn == 0 ? -1 : 1;
         }
 
         /// <summary>

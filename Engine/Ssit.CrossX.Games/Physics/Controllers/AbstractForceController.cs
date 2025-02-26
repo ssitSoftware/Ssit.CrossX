@@ -231,7 +231,7 @@ namespace Ssit.CrossX.Games.Physics.Controllers
                             return 1.0f;
                         if (distance > DecayEnd)
                             return 0.0f;
-                        return (DecayEnd - DecayStart / distance - DecayStart);
+                        return DecayEnd - DecayStart / distance - DecayStart;
                     }
                 case DecayModes.InverseSquare:
                     {

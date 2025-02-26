@@ -58,7 +58,7 @@ namespace Ssit.CrossX.Games.Physics.Factories
             if (attachRopeJoint)
                 JointFactory.CreateRopeJoint(world, chainLinks[0], chainLinks[chainLinks.Count - 1], Vector2.Zero, Vector2.Zero);
 
-            return (path);
+            return path;
         }
     }
 }

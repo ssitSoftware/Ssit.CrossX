@@ -50,7 +50,7 @@ public class OptionsPageViewModel: IPageCommandsSource
     
         SoundVolumeCommand = new SyncCommand(o =>
         {
-            int vol = (int)(soundManager.MasterVolume * 4);
+            int vol = _settings.SoundVolume;
             vol++;
             vol %= 5;
             _settings.SoundVolume = vol;
@@ -61,7 +61,7 @@ public class OptionsPageViewModel: IPageCommandsSource
         
         MusicVolumeCommand = new SyncCommand(o =>
         {
-            int vol = (int)(musicPlayer.Volume * 4);
+            int vol = _settings.MusicVolume;
             vol++;
             vol %= 5;
             _settings.MusicVolume = vol;
@@ -112,8 +112,7 @@ public class OptionsPageViewModel: IPageCommandsSource
     
     private void UpdateStrings()
     {
-        int vol = (int)(_soundManager.MasterVolume * 4);
-        vol *= 25;
+        int vol = _settings.SoundVolume * 25;
         
         if (vol == 0)
         {
@@ -124,8 +123,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             SoundVolumeStr.SetSource($"{vol}%");
         }
 
-        vol = (int)(_musicPlayer.Volume * 4);
-        vol *= 25;
+        vol = _settings.MusicVolume * 25;
         
         if (vol == 0)
         {

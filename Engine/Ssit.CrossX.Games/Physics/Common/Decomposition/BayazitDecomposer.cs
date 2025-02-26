@@ -89,7 +89,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
                     // if there are no vertices to connect to, choose a point in the middle
                     if (lowerIndex == (upperIndex + 1) % vertices.Count)
                     {
-                        Vector2 p = ((lowerInt + upperInt) / 2);
+                        Vector2 p = (lowerInt + upperInt) / 2;
 
                         lowerPoly = Copy(i, upperIndex, vertices);
                         lowerPoly.Add(p);
@@ -151,7 +151,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition
         private static Vector2 At(int i, Vertices vertices)
         {
             int s = vertices.Count;
-            return vertices[i < 0 ? s - 1 - ((-i - 1) % s) : i % s];
+            return vertices[i < 0 ? s - 1 - (-i - 1) % s : i % s];
         }
 
         private static Vertices Copy(int i, int j, Vertices vertices)

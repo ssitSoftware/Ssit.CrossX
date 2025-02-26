@@ -32,7 +32,7 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
     public float Speed { get; private set; }
     public float BrakingDistance { get; private set;}
 
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width, float[] kineticFactors)
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width)
     {
         BoundsRect = new RectangleF(-width, -width/2, width * 2, width);
 
@@ -52,7 +52,7 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         Body.Mass = 1000;
         
         PlatformExtension.Attach(Body, 0.25f);
-        MovingStackExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f), kineticFactors);
+        MomentumSourceExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f));
         
         _initialPosition = parameters.Position;
         

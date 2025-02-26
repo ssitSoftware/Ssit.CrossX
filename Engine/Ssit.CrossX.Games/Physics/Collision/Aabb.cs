@@ -196,8 +196,8 @@ public struct Aabb
     public bool Contains(ref Vector2 point)
     {
         //using epsilon to try and gaurd against float rounding errors.
-        return (point.X > (LowerBound.X + Settings.Epsilon) && point.X < (UpperBound.X - Settings.Epsilon) &&
-                (point.Y > (LowerBound.Y + Settings.Epsilon) && point.Y < (UpperBound.Y - Settings.Epsilon)));
+        return point.X > LowerBound.X + Settings.Epsilon && point.X < UpperBound.X - Settings.Epsilon &&
+               point.Y > LowerBound.Y + Settings.Epsilon && point.Y < UpperBound.Y - Settings.Epsilon;
     }
 
     /// <summary>

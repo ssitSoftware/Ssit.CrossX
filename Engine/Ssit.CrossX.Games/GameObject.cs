@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using SkiaSharp;
 using Ssit.CrossX.Content;
@@ -125,7 +126,10 @@ public class GameObject: IDisposable
     {
         if ( _contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
         if (!HasSprite) throw new InvalidOperationException("GameObject has no sprite");
-        return new SpriteInstance(ResourcePath, Description.Origin, _contentManager);
+        
+        var events = Description.Events?.Select( o=>new SpriteInstance.Event(o.Sequence, o.Frame, o.Name, o.Parameters)).ToArray();
+        
+        return new SpriteInstance(ResourcePath, Description.Origin, events, _contentManager);
     }
 
     public ResourceHandle<ITexture> RequestTexture()

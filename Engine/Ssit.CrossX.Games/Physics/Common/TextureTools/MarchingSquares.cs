@@ -60,9 +60,9 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
             GeomPoly gp;
 
             int xn = (int)(domain.Extents.X * 2 / cellWidth);
-            bool xp = xn == (domain.Extents.X * 2 / cellWidth);
+            bool xp = xn == domain.Extents.X * 2 / cellWidth;
             int yn = (int)(domain.Extents.Y * 2 / cellHeight);
-            bool yp = yn == (domain.Extents.Y * 2 / cellHeight);
+            bool yp = yn == domain.Extents.Y * 2 / cellHeight;
             if (!xp) xn++;
             if (!yp) yn++;
 
@@ -675,7 +675,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
             /// </summary>
             public bool Has(T value)
             {
-                return (Find(value) != null);
+                return Find(value) != null;
             }
 
             // Non CxFastList Methods 

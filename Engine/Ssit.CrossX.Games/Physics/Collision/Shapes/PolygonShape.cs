@@ -192,7 +192,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
                 float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
                 float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
 
-                I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+                I += 0.25f * k_inv3 * D * (intx2 + inty2);
             }
 
             //The area is too small for the engine to handle.
@@ -452,7 +452,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
                     return false;
             }
 
-            return (Radius == shape.Radius && MassData == shape.MassData);
+            return Radius == shape.Radius && MassData == shape.MassData;
         }
 
         public override Shape Clone()

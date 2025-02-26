@@ -5,8 +5,6 @@ namespace Gunslinger.Core.Game;
 
 public static class GamePhysics
 {
-    public static readonly float[] DefaultKineticFactors = [0.6f, 0.63f, 0.815f, 0.845f, 0.89f, 0.91f, 0.93f, 0.94f, 0.953f, 0.96f, 0.97f];
-    
     public enum MaterialKind
     {
         Default,
@@ -15,6 +13,7 @@ public static class GamePhysics
     
     public static class Materials
     {
+        public const int Any = -1;
         public const int Default = 0;
         public const int WoodPlatform = 5;
         public const int MetalPlatform = 6;
@@ -28,9 +27,8 @@ public static class GamePhysics
     public const float MinRunSpeed = 4;
     public const float RunAccelerationSpeed = 10;
     public const float RunAcceleration = 100;
-    public const float GroundDeceleration = 45;
-    public const float AirBrakeDeceleration = 16;
-    public const float AirSteerAcceleration = 32;
+    public const float AirBrakeDeceleration = 8;
+    public const float AirSteerAcceleration = 24;
     public const float PlayerGroundDistToFall = 2f;
     
     public static MaterialKind GetMaterialKind(int material)

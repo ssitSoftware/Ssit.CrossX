@@ -5,7 +5,7 @@ using System.Numerics;
 namespace Ssit.CrossX;
 
 [DebuggerDisplay("Size = ({Width}, {Height})")]
-public readonly struct Size
+public readonly struct Size : IEquatable<Size>
 {
     public static readonly Size Zero = new (0, 0);
 
@@ -38,6 +38,6 @@ public readonly struct Size
     public static bool operator ==(Size s1, Size s2) => s1.Width == s2.Width && s1.Height == s2.Height;
     public static bool operator !=(Size s1, Size s2) => !(s1 == s2);
 
-    public static Size operator /(Size s, int v) => new Size(s.Width / v, s.Height / v);
-    public static Size operator *(Size s, int v) => new Size(s.Width * v, s.Height * v);
+    public static Size operator /(Size s, int v) => new(s.Width / v, s.Height / v);
+    public static Size operator *(Size s, int v) => new(s.Width * v, s.Height * v);
 }

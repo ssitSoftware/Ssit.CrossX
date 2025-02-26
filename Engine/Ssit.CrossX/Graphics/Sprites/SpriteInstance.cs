@@ -1,15 +1,32 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Newtonsoft.Json;
 using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.Graphics.Sprites;
 
 public class SpriteInstance : IDisposable
 {
+    public interface IHandler
+    {
+        void OnSpriteEvent(SpriteInstance instance, Event @event);
+        void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse);
+    }
+    
+    public class Event(string sequenceName, int frame, string eventName, string parameters)
+    {
+        internal readonly int Frame = frame;
+        
+        public string EventName { get; } = eventName;
+        public string SequenceName { get; } = sequenceName;
+
+        public TParameters GetParameters<TParameters>() where TParameters: class, new() => JsonConvert.DeserializeObject<TParameters>(parameters);
+    }
+    
     private readonly Vector2 _origin;
 
-    public delegate void SpriteEventDelegate(SpriteInstance instance, string eventName);
-
+    public delegate void SpriteEventDelegate(SpriteInstance instance, Event @event);
     public delegate void SequenceFinishedDelegate(SpriteInstance instance, string sequenceName, bool reverse);
 
     private readonly ResourceHandle<Sprite> _sprite;
@@ -28,15 +45,32 @@ public class SpriteInstance : IDisposable
 
     private Sprite.SpriteSequence _currentSequence;
 
-    public event SpriteEventDelegate SpriteEvent;
-    public event SequenceFinishedDelegate SequenceFinished;
+    private readonly Dictionary<(string, int), Event> _events;
 
-    public SpriteInstance(string spritePath, Vector2 origin, IContentManager contentManager)
+    public IHandler Handler { get; set; }
+    
+    public SpriteInstance(string spritePath, Vector2 origin, IReadOnlyList<Event> events, IContentManager contentManager)
     {
         _sprite = contentManager.Get<Sprite>(spritePath);
         _spriteSheet = contentManager.Get<ITexture>(_sprite.Resource.SheetName);
 
         _origin = origin;
+        _events = PrepareEvents(events);
+    }
+
+    private Dictionary<(string, int), Event> PrepareEvents(IReadOnlyList<Event> events)
+    {
+        if(events is null) return null;
+        if(events.Count == 0) return null;
+        
+        var dict = new Dictionary<(string, int), Event>();
+        
+        foreach (var @event in events)
+        {
+            dict.Add((@event.SequenceName, @event.Frame), @event);
+        }
+
+        return dict;
     }
 
     public void SetSequence(string sequenceName, bool resetPosition = false)
@@ -52,7 +86,7 @@ public class SpriteInstance : IDisposable
         }
 
         _currentSequence = _sprite.Resource.GetSequence(sequenceName);
-
+        
         _currentTime = 0;
         _lastFrame = -1;
         _maxTime = 0;
@@ -63,7 +97,7 @@ public class SpriteInstance : IDisposable
             _maxTime += frame.Duration;
             _maxTimeDelta = MathF.Min(_maxTimeDelta, frame.Duration);
         }
-
+        
         AdvanceOne(0, false);
 
         Source = _currentSequence.Frames[_lastFrame].Source;
@@ -97,7 +131,7 @@ public class SpriteInstance : IDisposable
 
         if (_currentTime >= _maxTime || _currentTime < 0)
         {
-            SequenceFinished?.Invoke(this, _currentSequence.Name, _currentTime < 0);
+            Handler?.OnSequenceFinished(this, _currentSequence.Name, _currentTime < 0);
             if (_currentSequence?.Name != currentSequence || _currentSequence is null)
             {
                 return;
@@ -118,9 +152,9 @@ public class SpriteInstance : IDisposable
 
         if (frame != _lastFrame)
         {
-            if (_currentSequence.Frames[frame].Event != null)
+            if(_events != null && _events.TryGetValue((currentSequence, frame), out var @event))
             {
-                SpriteEvent?.Invoke(this, _currentSequence.Frames[frame].Event);
+                Handler?.OnSpriteEvent(this, @event);
             }
         }
 

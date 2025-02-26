@@ -1,6 +1,5 @@
 using System;
 using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Input;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
@@ -35,18 +34,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         
         return false;
     }
-
-    private float CalculateNoRunVelocity(float linearVelocityX, float dt)
-    {
-        var sign = MathF.Sign(linearVelocityX);
-        var amplitude = linearVelocityX * sign;
-
-        amplitude -= dt * GamePhysics.GroundDeceleration;
-        amplitude = MathF.Max(0, amplitude);
-
-        return amplitude * sign;
-    }
-
+    
     private float CalculateRunVelocity(float linearVelocityX, float move, float dt)
     {
         var sign = MathF.Sign(move);

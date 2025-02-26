@@ -1,7 +1,9 @@
 using Gunslinger.Core.Game;
 using Ssit.CrossX.Commands;
+using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
+using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.IoC;
@@ -17,14 +19,18 @@ internal class MainPageViewModel
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
-            IGameInstance gameInstance = null;
+            GameInstance gameInstance = null;
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
             {
-                OnLoading = () => gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
+                OnLoading = () =>
                 {
-                    MapPath = "assets:/Game/Maps/Map1.map",
-                    ProcessWorldFunc = GamePhysics.InitPhysicsForWorld
-                }),
+                    gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
+                    {
+                        MapPath = "assets:/Game/Maps/Map1.map",
+                        ProcessWorldFunc = GamePhysics.InitPhysicsForWorld
+                    });
+                    gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
+                },
                 OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance)
             });
         });

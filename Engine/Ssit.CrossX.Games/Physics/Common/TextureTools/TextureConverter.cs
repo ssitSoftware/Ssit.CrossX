@@ -440,7 +440,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
             _tempIsSolidY = (int)v.Y;
 
             if (_tempIsSolidX >= 0 && _tempIsSolidX < _width && _tempIsSolidY >= 0 && _tempIsSolidY < _height)
-                return (_data[_tempIsSolidX + _tempIsSolidY * _width] >= _alphaTolerance);
+                return _data[_tempIsSolidX + _tempIsSolidY * _width] >= _alphaTolerance;
             //return ((_data[_tempIsSolidX + _tempIsSolidY * _width] & 0xFF000000) >= _alphaTolerance);
 
             return false;
@@ -449,7 +449,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
         public bool IsSolid(ref int x, ref int y)
         {
             if (x >= 0 && x < _width && y >= 0 && y < _height)
-                return (_data[x + y * _width] >= _alphaTolerance);
+                return _data[x + y * _width] >= _alphaTolerance;
             //return ((_data[x + y * _width] & 0xFF000000) >= _alphaTolerance);
 
             return false;
@@ -458,7 +458,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
         public bool IsSolid(ref int index)
         {
             if (index >= 0 && index < _dataLength)
-                return (_data[index] >= _alphaTolerance);
+                return _data[index] >= _alphaTolerance;
             //return ((_data[index] & 0xFF000000) >= _alphaTolerance);
 
             return false;
@@ -466,7 +466,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
 
         public bool InBounds(ref Vector2 coord)
         {
-            return (coord.X >= 0f && coord.X < _width && coord.Y >= 0f && coord.Y < _height);
+            return coord.X >= 0f && coord.X < _width && coord.Y >= 0f && coord.Y < _height;
         }
         #endregion
 
@@ -806,9 +806,9 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
                                 // If thwo edges are aligned like this: /\ and the y coordinate lies on the top,
                                 // then we get the same x coord twice and we don't need that.
                                 if (slope.Y > 0)
-                                    addFind = (nextSlope.Y <= 0);
+                                    addFind = nextSlope.Y <= 0;
                                 else
-                                    addFind = (nextSlope.Y >= 0);
+                                    addFind = nextSlope.Y >= 0;
                             }
 
                             if (addFind)

@@ -146,7 +146,7 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
             var songProvider = new VorbisDataProvider(songStream);
             songProvider.Skip(startPosition, BufferLength);
             
-            _scheduler.Schedule((() =>
+            _scheduler.Schedule(() =>
             {
                 foreach (var player in _musicPlayers)
                 {
@@ -156,7 +156,7 @@ internal class MusicPlayer: IMusicPlayer, IMusicDataProvider, IDisposable
                 var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
                 _musicPlayers.Add(newPlayer);
                 newPlayer.Start(songProvider, BufferLength, fadeTime);
-            }));
+            });
         });
     }
 

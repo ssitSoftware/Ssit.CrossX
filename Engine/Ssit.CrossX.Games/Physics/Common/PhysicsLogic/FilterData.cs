@@ -45,7 +45,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
             foreach (Fixture fixture in body.FixtureList)
             {
                 //Disable
-                if ((fixture.CollisionGroup == DisabledOnGroup) && fixture.CollisionGroup != 0 && DisabledOnGroup != 0)
+                if (fixture.CollisionGroup == DisabledOnGroup && fixture.CollisionGroup != 0 && DisabledOnGroup != 0)
                     return false;
 
                 if ((fixture.CollisionCategories & DisabledOnCategories) != Category.None)
@@ -54,7 +54,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                 if (EnabledOnGroup != 0 || EnabledOnCategories != Category.All)
                 {
                     //Enable
-                    if ((fixture.CollisionGroup == EnabledOnGroup) && fixture.CollisionGroup != 0 && EnabledOnGroup != 0)
+                    if (fixture.CollisionGroup == EnabledOnGroup && fixture.CollisionGroup != 0 && EnabledOnGroup != 0)
                         return true;
 
                     if ((fixture.CollisionCategories & EnabledOnCategories) != Category.None &&

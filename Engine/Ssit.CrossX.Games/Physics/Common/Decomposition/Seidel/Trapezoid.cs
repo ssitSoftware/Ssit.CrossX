@@ -80,7 +80,7 @@ namespace Ssit.CrossX.Games.Physics.Common.Decomposition.Seidel
         // Determines if this point lies inside the trapezoid
         public bool Contains(Point point)
         {
-            return (point.X > LeftPoint.X && point.X < RightPoint.X && Top.IsAbove(point) && Bottom.IsBelow(point));
+            return point.X > LeftPoint.X && point.X < RightPoint.X && Top.IsAbove(point) && Bottom.IsBelow(point);
         }
 
         public List<Point> GetVertices()

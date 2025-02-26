@@ -553,15 +553,15 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// </summary>
         internal bool CompareTo(Fixture fixture)
         {
-            return (_collidesWith == fixture._collidesWith &&
-                    _collisionCategories == fixture._collisionCategories &&
-                    _collisionGroup == fixture._collisionGroup &&
-                    Friction == fixture.Friction &&
-                    IsSensor == fixture.IsSensor &&
-                    Restitution == fixture.Restitution &&
-                    UserData == fixture.UserData &&
-                    IgnoreCCDWith == fixture.IgnoreCCDWith &&
-                    SequenceEqual(_collisionIgnores, fixture._collisionIgnores));
+            return _collidesWith == fixture._collidesWith &&
+                   _collisionCategories == fixture._collisionCategories &&
+                   _collisionGroup == fixture._collisionGroup &&
+                   Friction == fixture.Friction &&
+                   IsSensor == fixture.IsSensor &&
+                   Restitution == fixture.Restitution &&
+                   UserData == fixture.UserData &&
+                   IgnoreCCDWith == fixture.IgnoreCCDWith &&
+                   SequenceEqual(_collisionIgnores, fixture._collisionIgnores);
         }
 
         private bool SequenceEqual<T>(HashSet<T> first, HashSet<T> second)

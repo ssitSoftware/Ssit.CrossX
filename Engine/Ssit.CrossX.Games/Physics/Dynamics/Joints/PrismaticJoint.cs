@@ -431,7 +431,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             // Compute the effective masses.
             Vector2 rA = MathUtils.Mul(qA, LocalAnchorA - _localCenterA);
             Vector2 rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
-            Vector2 d = (cB - cA) + rB - rA;
+            Vector2 d = cB - cA + rB - rA;
 
             float mA = _invMassA, mB = _invMassB;
             float iA = _invIA, iB = _invIB;

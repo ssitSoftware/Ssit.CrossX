@@ -1,4 +1,6 @@
+using System;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IoC;
@@ -11,12 +13,14 @@ public class GameObjectsServices
     public IContentManager ContentManager { get; }
     public IIoCContainer Container { get; }
     public IGameTemplate GameTemplate { get; }
+    public ICommonSoundContainer CommonSoundContainer { get; }
 
-    public GameObjectsServices(World world, IContentManager contentManager, IIoCContainer container, IGameTemplate gameTemplate)
+    public GameObjectsServices(World world, IContentManager contentManager, IIoCContainer container, IGameTemplate gameTemplate, ICommonSoundContainer commonSoundContainer)
     {
         World = world;
         ContentManager = contentManager;
         Container = container;
         GameTemplate = gameTemplate;
+        CommonSoundContainer = commonSoundContainer;
     }
 }

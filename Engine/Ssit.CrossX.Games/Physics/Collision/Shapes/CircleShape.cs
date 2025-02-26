@@ -163,7 +163,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
 
             //Magic
             float l2 = l * l;
-            float area = _2radius * (float)((Math.Asin(l / Radius) + Settings.Pi / 2) + l * Math.Sqrt(_2radius - l2));
+            float area = _2radius * (float)(Math.Asin(l / Radius) + Settings.Pi / 2 + l * Math.Sqrt(_2radius - l2));
             float com = -2.0f / 3.0f * (float)Math.Pow(_2radius - l2, 1.5f) / area;
 
             sc.X = p.X + normal.X * com;
@@ -179,7 +179,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
         /// <returns>True if the two circles are the same size and have the same position</returns>
         public bool CompareTo(CircleShape shape)
         {
-            return (Radius == shape.Radius && Position == shape.Position);
+            return Radius == shape.Radius && Position == shape.Position;
         }
 
         public override Shape Clone()

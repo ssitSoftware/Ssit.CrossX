@@ -8,7 +8,7 @@ using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 
-public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
+public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, SpriteInstance.IHandler, IDisposable
 {
     protected GameObjectsServices Services { get; }
     public Body Body { get; }
@@ -42,10 +42,13 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
     {
         using var go = Services.ContentManager.Get<GameObject>(spritePath);
         Sprite = go.Resource.CreateSpriteInstance();
-        
-        Sprite.SequenceFinished += SpriteOnSequenceFinished;
+        Sprite.Handler = this;
     }
-    
+
+    protected virtual void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
+    {
+    }
+
     protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
         renderer.SpriteRenderer.Draw(Sprite, Body.Position * Services.GameTemplate.TileSize, transform: Transform, color: color);
@@ -57,19 +60,23 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, IDisposable
         Sprite.Advance(dt);
     }
 
-    private void SpriteOnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
-    {
-        OnAnimationFinished(sequenceName);
-    }
-
     protected override void SetSequence(string state)
     {
         Sprite.SetSequence(state);
     }
     
-    public void Dispose()
+    void IDisposable.Dispose()
+    {
+        OnDispose(true);
+    }
+
+    protected virtual void OnDispose(bool disposing)
     {
         Sprite?.Dispose();
         Sprite = null;
     }
+
+    void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event) => OnSpriteEvent(instance, @event);
+
+    void SpriteInstance.IHandler.OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse) => OnAnimationFinished(sequenceName);
 }

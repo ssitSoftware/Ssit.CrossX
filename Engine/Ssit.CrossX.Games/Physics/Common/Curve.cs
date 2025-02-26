@@ -154,24 +154,24 @@ namespace Ssit.CrossX.Games.Physics.Common
                     case CurveLoopType.Cycle:
                         //start -> end / start -> end
                         int cycle = GetNumberOfCycle(position);
-                        float virtualPos = position - (cycle*(last.Position - first.Position));
+                        float virtualPos = position - cycle*(last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
 
                     case CurveLoopType.CycleOffset:
                         //make the curve continue (with no step) so must up the curve each cycle of delta(value)
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle*(last.Position - first.Position));
-                        return (GetCurvePosition(virtualPos) + cycle*(last.Value - first.Value));
+                        virtualPos = position - cycle*(last.Position - first.Position);
+                        return GetCurvePosition(virtualPos) + cycle*(last.Value - first.Value);
 
                     case CurveLoopType.Oscillate:
                         //go back on curve from end and target start 
                         // start-> end / end -> start
                         cycle = GetNumberOfCycle(position);
                         if (0 == cycle%2f) //if pair
-                            virtualPos = position - (cycle*(last.Position - first.Position));
+                            virtualPos = position - cycle*(last.Position - first.Position);
                         else
                             virtualPos = last.Position - position + first.Position +
-                                         (cycle*(last.Position - first.Position));
+                                         cycle*(last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
                 }
             }
@@ -191,25 +191,25 @@ namespace Ssit.CrossX.Games.Physics.Common
                     case CurveLoopType.Cycle:
                         //start -> end / start -> end
                         cycle = GetNumberOfCycle(position);
-                        float virtualPos = position - (cycle*(last.Position - first.Position));
+                        float virtualPos = position - cycle*(last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
 
                     case CurveLoopType.CycleOffset:
                         //make the curve continue (with no step) so must up the curve each cycle of delta(value)
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle*(last.Position - first.Position));
-                        return (GetCurvePosition(virtualPos) + cycle*(last.Value - first.Value));
+                        virtualPos = position - cycle*(last.Position - first.Position);
+                        return GetCurvePosition(virtualPos) + cycle*(last.Value - first.Value);
 
                     case CurveLoopType.Oscillate:
                         //go back on curve from end and target start 
                         // start-> end / end -> start
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle*(last.Position - first.Position));
+                        virtualPos = position - cycle*(last.Position - first.Position);
                         if (0 == cycle%2f) //if pair
-                            virtualPos = position - (cycle*(last.Position - first.Position));
+                            virtualPos = position - cycle*(last.Position - first.Position);
                         else
                             virtualPos = last.Position - position + first.Position +
-                                         (cycle*(last.Position - first.Position));
+                                         cycle*(last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
                 }
             }

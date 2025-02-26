@@ -103,7 +103,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Joints
             float aW = data.positions[indexA].a;
             float bW = data.positions[indexB].a;
 
-            _jointError = (bW - aW - TargetAngle);
+            _jointError = bW - aW - TargetAngle;
             _bias = -BiasFactor * data.step.inv_dt * _jointError;
             _massFactor = (1 - Softness) / (BodyA._invI + BodyB._invI);
         }

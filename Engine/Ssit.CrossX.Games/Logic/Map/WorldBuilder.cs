@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
@@ -20,7 +21,7 @@ public class WorldBuilder
     private IFilesProvider _filesProvider;
     private IGameTemplate _gameTemplate;
     private IIoCContainer _container;
-    
+
     public WorldBuilder WithContainer(IIoCContainer container)
     {
         _container = container;
@@ -54,6 +55,8 @@ public class WorldBuilder
 
         servicesBuilder.WithInstance(world);
         servicesBuilder.WithSingleton<GameObjectsServices, GameObjectsServices>();
+        servicesBuilder.WithSingleton<ICommonSoundContainer, CommonSoundContainer>();
+        
         servicesBuilder.WithInstance(_gameTemplate);
         servicesBuilder.WithSingleton<ICamera, Camera>();
         

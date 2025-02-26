@@ -380,7 +380,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
 
                     // Compute tangent force
                     float vt = Vector2.Dot(dv, tangent) - vc.tangentSpeed;
-                    float lambda = vcp.tangentMass * (-vt);
+                    float lambda = vcp.tangentMass * -vt;
 
                     // b2Clamp the accumulated force
                     float maxFriction = friction * vcp.normalImpulse;

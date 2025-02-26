@@ -129,6 +129,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 extension.Value.Dispose();
             }
             _extensions.Clear();
+            _extensions = null;
         }
         
         public event Action<Body, Vector2> Moved;

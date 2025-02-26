@@ -10,4 +10,10 @@ public sealed class SwitchImpl : Switch
         InitializeSprite("assets:/Game/Objects/Switch");
         InitializePhysics(parameters, 0.5f);
     }
+
+    public override void Toggle()
+    {
+        base.Toggle();
+        Services.CommonSoundContainer.Play(IsOn ? "RockerSwitchOn" : "RockerSwitchOff");
+    }
 }

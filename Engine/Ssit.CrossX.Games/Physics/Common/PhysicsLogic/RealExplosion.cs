@@ -28,7 +28,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
         int IComparer<float>.Compare(float a, float b)
         {
-            float diff = (a - b);
+            float diff = a - b;
             if (diff > 0)
                 return 1;
             if (diff < 0)
@@ -178,7 +178,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                 else
                     ps = shapes[i].Shape as PolygonShape;
 
-                if ((shapes[i].Body.BodyType == BodyType.Dynamic) && ps != null)
+                if (shapes[i].Body.BodyType == BodyType.Dynamic && ps != null)
                 {
                     Vector2 toCentroid = shapes[i].Body.GetWorldPoint(ps.MassData.Centroid) - pos;
                     float angleToCentroid = (float)Math.Atan2(toCentroid.Y, toCentroid.X);
@@ -189,9 +189,9 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
                     for (int j = 0; j < ps.Vertices.Count; ++j)
                     {
-                        Vector2 toVertex = (shapes[i].Body.GetWorldPoint(ps.Vertices[j]) - pos);
+                        Vector2 toVertex = shapes[i].Body.GetWorldPoint(ps.Vertices[j]) - pos;
                         float newAngle = (float)Math.Atan2(toVertex.Y, toVertex.X);
-                        float diff = (newAngle - angleToCentroid);
+                        float diff = newAngle - angleToCentroid;
 
                         diff = (diff - MathHelper.Pi) % (2 * MathHelper.Pi);
                         // the minus pi is important. It means cutoff for going other direction is at 180 deg where it needs to be
@@ -232,18 +232,18 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                 Fixture fixture = null;
                 float midpt;
 
-                int iplus = (i == valIndex - 1 ? 0 : i + 1);
+                int iplus = i == valIndex - 1 ? 0 : i + 1;
                 if (vals[i] == vals[iplus])
                     continue;
 
                 if (i == valIndex - 1)
                 {
                     // the single edgecase
-                    midpt = (vals[0] + MathHelper.Pi * 2 + vals[i]);
+                    midpt = vals[0] + MathHelper.Pi * 2 + vals[i];
                 }
                 else
                 {
-                    midpt = (vals[i + 1] + vals[i]);
+                    midpt = vals[i + 1] + vals[i];
                 }
 
                 midpt = midpt / 2;
@@ -266,9 +266,9 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                                   }, p1, p2);
 
                 //draws radius points
-                if ((hitClosest) && (fixture.Body.BodyType == BodyType.Dynamic))
+                if (hitClosest && fixture.Body.BodyType == BodyType.Dynamic)
                 {
-                    if ((_data.Any()) && (_data.Last().Body == fixture.Body) && (!rayMissed))
+                    if (_data.Any() && _data.Last().Body == fixture.Body && !rayMissed)
                     {
                         int laPos = _data.Count - 1;
                         ShapeData la = _data[laPos];
@@ -285,10 +285,10 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                         _data.Add(d);
                     }
 
-                    if ((_data.Count > 1)
-                        && (i == valIndex - 1)
-                        && (_data.Last().Body == _data.First().Body)
-                        && (_data.Last().Max == _data.First().Min))
+                    if (_data.Count > 1
+                        && i == valIndex - 1
+                        && _data.Last().Body == _data.First().Body
+                        && _data.Last().Max == _data.First().Min)
                     {
                         ShapeData fi = _data[0];
                         fi.Min = _data.Last().Min;
@@ -303,8 +303,8 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
                     int lastPos = _data.Count - 1;
                     ShapeData last = _data[lastPos];
-                    while ((_data.Count > 0)
-                           && (_data.Last().Min >= _data.Last().Max)) // just making sure min<max
+                    while (_data.Count > 0
+                           && _data.Last().Min >= _data.Last().Max) // just making sure min<max
                     {
                         last.Min = _data.Last().Min - 2 * MathHelper.Pi;
                         _data[lastPos] = last;
@@ -325,7 +325,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
                 float arclen = _data[i].Max - _data[i].Min;
 
                 float first = MathHelper.Min(MaxEdgeOffset, EdgeRatio * arclen);
-                int insertedRays = (int)Math.Ceiling(((arclen - 2.0f * first) - (MinRays - 1) * MaxAngle) / MaxAngle);
+                int insertedRays = (int)Math.Ceiling((arclen - 2.0f * first - (MinRays - 1) * MaxAngle) / MaxAngle);
 
                 if (insertedRays < 0)
                     insertedRays = 0;
@@ -364,7 +364,7 @@ namespace Ssit.CrossX.Games.Physics.Common.PhysicsLogic
 
                         // the force that is to be applied for this particular ray.
                         // offset is angular coverage. lambda*length of segment is distance.
-                        float impulse = (arclen / (MinRays + insertedRays)) * maxForce * 180.0f / MathHelper.Pi * (1.0f - Math.Min(1.0f, minlambda));
+                        float impulse = arclen / (MinRays + insertedRays) * maxForce * 180.0f / MathHelper.Pi * (1.0f - Math.Min(1.0f, minlambda));
 
                         // We Apply the impulse!!!
                         Vector2 vectImp = Vector2.Dot(impulse * new Vector2((float)Math.Cos(j), (float)Math.Sin(j)), -ro.Normal) * new Vector2((float)Math.Cos(j), (float)Math.Sin(j));

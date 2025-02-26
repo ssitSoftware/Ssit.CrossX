@@ -21,7 +21,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             _jumpRequested = false;
             
             var currentY = MathF.Min(player.MomentumOffset.Y / dt, 0);
-            var currentX = player.Body.LinearVelocity.X + player.MomentumOffset.X / dt;
+            var currentX = player.Body.LinearVelocity.X + player.MomentumOffset.X / dt / 2;
             
             var amplitude = MathF.Abs(currentX);
             var maxAmplitude = MathF.Abs(player.Body.LinearVelocity.X + 0.6f * player.MomentumOffset.X / dt);
@@ -38,6 +38,8 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
             
             player.SetState("Jump");
             player.IsOnGround = false;
+
+            player.SoundContainer.Play("Jump", player.GroundMaterial);
             return true;
         }
         

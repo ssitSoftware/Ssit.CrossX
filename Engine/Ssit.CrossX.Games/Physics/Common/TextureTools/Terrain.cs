@@ -111,7 +111,7 @@ namespace Ssit.CrossX.Games.Physics.Common.TextureTools
         public void Initialize()
         {
             // find top left of terrain in world space
-            _topLeft = new Vector2(Center.X - (Width * 0.5f), Center.Y - (-Height * 0.5f));
+            _topLeft = new Vector2(Center.X - Width * 0.5f, Center.Y - -Height * 0.5f);
 
             // convert the terrains size to a point cloud size
             _localWidth = Width * PointsPerUnit;

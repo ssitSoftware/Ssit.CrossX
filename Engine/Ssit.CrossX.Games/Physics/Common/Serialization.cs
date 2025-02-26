@@ -1158,7 +1158,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             {
                 StreamWriter writer = new StreamWriter(stream);
                 {
-                    writer.Write((outer) ? node.OuterXml : node.InnerXml);
+                    writer.Write(outer ? node.OuterXml : node.InnerXml);
                     writer.Flush();
                     stream.Position = 0;
                 }

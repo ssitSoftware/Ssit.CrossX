@@ -46,8 +46,9 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
 
         if (MathF.Abs(offset) > float.Epsilon)
         {
+            offset = MathF.Round(offset * CurrentScale) / CurrentScale; 
             renderer.StateManager.SaveState();
-            renderer.StateManager.Translate(new Vector2(offset, 0));
+            renderer.StateManager.Translate(new Vector2(MathF.Round(offset), 0));
             base.OnDraw(renderer);
             renderer.StateManager.RestoreState();
             return;

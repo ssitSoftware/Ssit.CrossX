@@ -23,7 +23,7 @@ public class GameInstance : IGameInstance
         public Action<World> ProcessWorldFunc { get; set; }
     }
     
-    private const float WorldDelta = 1f / 60f;
+    private const float WorldDelta = 1f / 300f;
     
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
@@ -145,7 +145,7 @@ public class GameInstance : IGameInstance
         }
 
         var worldDelta = WorldDelta;
-        if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 4f)
+        if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 8f)
         {
             worldDelta = _timeToUpdate;
         }

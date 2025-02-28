@@ -15,8 +15,9 @@ public static class GamePhysics
     {
         public const int Any = -1;
         public const int Default = 0;
-        public const int WoodPlatform = 5;
-        public const int MetalPlatform = 6;
+        public const int Water = 4;
+        public const int WoodPlatform = 6;
+        public const int MetalPlatform = 7;
     }
     
     public const float GravityAcceleration = 56;

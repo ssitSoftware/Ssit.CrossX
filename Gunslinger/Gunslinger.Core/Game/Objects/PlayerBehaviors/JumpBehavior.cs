@@ -48,7 +48,7 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
 
     protected override bool OnUpdate(float dt)
     {
-        _jumpRequested = inputMappings[player.PlayerIndex].GetButton(GameControls.Jump) == ButtonState.JustPressed &&
+        _jumpRequested |= inputMappings[player.PlayerIndex].GetButton(GameControls.Jump) == ButtonState.JustPressed &&
                          inputMappings[player.PlayerIndex].GetAxis(GameControls.Vertical) < 0.75f;
         return false;
     }

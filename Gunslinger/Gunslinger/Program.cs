@@ -1,4 +1,4 @@
 ﻿using Gunslinger.Core;
-using Ssit.CrossX.SDL3;
+using Ssit.CrossX.SDL;
 
 AppRunner<GameApp>.Run();

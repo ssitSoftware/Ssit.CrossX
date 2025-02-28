@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Ssit.CrossX.IO;
@@ -7,12 +8,17 @@ public class BundleFilesProvider: IFilesProvider
     private readonly string _bundleDir = "";
     public BundleFilesProvider()
     {
-        var location = GetType().Assembly.Location;
+        var location = AppDomain.CurrentDomain.BaseDirectory;
+        
+        
         var dir = Path.GetDirectoryName(location) ?? string.Empty;
 
+        Console.WriteLine($"Location: {dir}");
+        
         string[] dirs = [
             dir + "/Resources/",
-            dir + "/../Resources/"
+            dir + "/../Resources/",
+            dir
         ];
 
         foreach (var directory in dirs)
@@ -24,6 +30,8 @@ public class BundleFilesProvider: IFilesProvider
                 break;
             }
         }
+        
+        Console.WriteLine($"BundleDir: {_bundleDir}");
     }
     
     public Stream Open(string path)

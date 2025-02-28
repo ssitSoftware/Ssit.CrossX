@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Gunslinger.Core.Game.Objects.PlayerBehaviors;
@@ -178,7 +179,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
                 IsOnStaticGround = false;
             }
 
-            GroundMaterial = fixture.Body.MaterialIndex;
+            GroundMaterial = Math.Max(fixture.Body.MaterialIndex, GroundMaterial);
             GroundHorizontalVelocity = fixture.Body.IsStatic ? GroundHorizontalVelocity : fixture.Body.LinearVelocity.X;
         }
 

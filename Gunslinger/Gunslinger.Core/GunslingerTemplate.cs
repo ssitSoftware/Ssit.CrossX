@@ -100,6 +100,7 @@ public class GunslingerTemplate: IGameTemplate
         new("Grass", "GR|ASS", RgbaColor.Green, RgbaColor.GreenYellow),
         new("Wood", "WO|OD", RgbaColor.SaddleBrown, RgbaColor.Orange),
         new("Mud", "MUD", RgbaColor.DarkKhaki, RgbaColor.Coral),
+        new("Water", "WAT|ER", RgbaColor.LightBlue, RgbaColor.LightBlue),
         new("Ice", "ICE", RgbaColor.AliceBlue, RgbaColor.AliceBlue),
         new("Wood Platform", "PLA|WDN", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
         new("Metal Platform", "PLA|MET", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow)

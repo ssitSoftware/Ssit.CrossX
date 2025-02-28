@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.CrossX.Editor", "Engin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunslinger.Editor", "Gunslinger\Gunslinger.Editor\Gunslinger.Editor.csproj", "{5BACF7AC-23D8-4CAD-9722-24475990F0A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.CrossX.SDL3", "Engine\Ssit.CrossX.SDL3\Ssit.CrossX.SDL3.csproj", "{68B651D5-E861-4645-AE76-B442FFFF4556}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssit.CrossX.SDL", "Engine\Ssit.CrossX.SDL\Ssit.CrossX.SDL.csproj", "{68B651D5-E861-4645-AE76-B442FFFF4556}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDL", "SDL", "{BBB00354-96C2-4F39-BED7-E5C87F9B0583}"
 EndProject

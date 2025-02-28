@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\SDL3-cs\src\cs\production\Interop.SDL\Interop.SDL.csproj" />
+      <ProjectReference Include="..\..\SDL3-cs\src\cs\production\Interop.SDL_image\Interop.SDL_image.csproj" />
+      <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK.Audio.OpenAL" Version="5.0.0-pre.13" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="SDL2_mixer" />
+      <None Remove="ogg" />
+    </ItemGroup>
+
+</Project>

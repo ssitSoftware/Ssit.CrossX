@@ -49,7 +49,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     }
 
     public ILogicOperable OperableInRange { get; private set; }
-
+    
+    public List<Vector2> InAirVelocity { get; } = new();
     public bool IsOnStaticGround { get; private set; }
     public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
@@ -141,6 +142,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         if (!IsOnGround)
         {
             MomentumOffset = Vector2.Zero;
+            InAirVelocity.Add(Body.LinearVelocity);
+            while (InAirVelocity.Count > 30)
+            {
+                InAirVelocity.RemoveAt(0);
+            }
         }
         
         base.OnFixedUpdate(dt);
@@ -162,7 +168,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var leftX = FaceLeft ? 0.15f : 0.3f;
         var rightX = FaceLeft ? 0.3f : 0.15f;
         
-        var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.1f), Body.Position + new Vector2(rightX, 0.2f));
+        var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.05f), Body.Position + new Vector2(rightX, 0.2f));
         Services.World.QueryAabbs(_queryList, ref aabb);
 
         foreach (var fixture in _queryList)

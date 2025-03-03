@@ -21,7 +21,6 @@ internal class LoadingPageViewModel: IDisposable
     
     private readonly IEventSource _eventSource;
     private readonly Parameters _parameters;
-    private Task _task;
     
     public LoadingPageViewModel(IEventSource eventSource, Parameters parameters)
     {
@@ -33,22 +32,9 @@ internal class LoadingPageViewModel: IDisposable
     private void EventSourceOnRenderFinished()
     { 
         _eventSource.RenderFinished -= EventSourceOnRenderFinished;
-        if (_task != null)
-        {
-            return;
-        }
-
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-        _task = Task.Run(_parameters.OnLoading);
-        _task.ContinueWith(_ =>
-        {
-            if (stopwatch.ElapsedMilliseconds < 500)
-            {
-                Task.Delay(500 - (int)stopwatch.ElapsedMilliseconds).Wait();
-            }
-            _parameters.OnLoaded();
-        });
+        
+        _parameters.OnLoading();
+        _parameters.OnLoaded();
     }
 
     public void Dispose()

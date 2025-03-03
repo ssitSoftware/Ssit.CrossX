@@ -54,7 +54,7 @@ public unsafe class SdlTexture: ITexture
         
         var bytes = memoryStream.GetBuffer();
         
-        fixed(byte* ptr = bytes)
+        fixed (byte* ptr = bytes)
         {
             var io = SDL_IOFromMem(ptr, (ulong)bytes.Length);
             surface = IMG_Load_IO(io, CBool.FromBoolean(true));

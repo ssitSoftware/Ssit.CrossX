@@ -5,6 +5,7 @@ namespace Ssit.CrossX.Core;
 
 public interface IGameInstance: IDisposable
 {
+    float WorldDelta { get; }
     int RenderPasses { get; }
     void Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale);
     void RenderDebug(IRenderer2 renderer, RectangleF target, float scale);

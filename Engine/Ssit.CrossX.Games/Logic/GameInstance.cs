@@ -22,9 +22,16 @@ public class GameInstance : IGameInstance
         public string MapPath { get; set; }
         public Action<World> ProcessWorldFunc { get; set; }
     }
-    
-    private const float WorldDelta = 1f / 300f;
-    
+
+    private float _gameTime;
+    private int _framesCount;
+
+    private static readonly float[] WorldDeltas =
+    [
+        1f / 300f, 1f / 240f, 1f / 200f, 1f / 165f, 1f / 150f, 1f / 144f, 1f / 120f
+    ];
+
+    public float WorldDelta { get; private set; } = 1 / 120f;
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
     private readonly MapDisplayElement _mapDisplayElement;
@@ -35,7 +42,6 @@ public class GameInstance : IGameInstance
     private readonly ICamera _camera;
     
     private bool _isDisposed;
-
     private float _timeToUpdate;
     
     int IGameInstance.RenderPasses => 1;
@@ -134,6 +140,42 @@ public class GameInstance : IGameInstance
         if (_isDisposed)
             return;
 
+        _gameTime += deltaTime;
+        _framesCount++;
+
+        if (_gameTime >= 1)
+        {
+            var fps = _framesCount / _gameTime;
+            _gameTime = 0;
+            _framesCount = 0;
+
+            var dt = 1 / fps;
+
+            WorldDelta = WorldDeltas[0];
+            for (var i = 1; i < WorldDeltas.Length; i++)
+            {
+                if ( MathF.Abs(dt - WorldDeltas[i]) <= MathF.Abs(dt - WorldDelta) )
+                {
+                    WorldDelta = WorldDeltas[i];
+                }
+            }
+
+            var div = 1f;
+            while (dt > WorldDeltas[^1] * 1.05f)
+            {
+                div++;
+                dt = 1 / fps / div;
+                WorldDelta = WorldDeltas[0];
+                for (var i = 1; i < WorldDeltas.Length; i++)
+                {
+                    if ( MathF.Abs(dt - WorldDeltas[i]) <= MathF.Abs(dt - WorldDelta) )
+                    {
+                        WorldDelta = WorldDeltas[i];
+                    }
+                }
+            }
+        }
+        
         _timeToUpdate += deltaTime;
 
         foreach (var body in World.BodyList)
@@ -145,11 +187,6 @@ public class GameInstance : IGameInstance
         }
 
         var worldDelta = WorldDelta;
-        if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 8f)
-        {
-            worldDelta = _timeToUpdate;
-        }
-        
         while (_timeToUpdate >= worldDelta)
         {
             foreach (var body in World.BodyList)

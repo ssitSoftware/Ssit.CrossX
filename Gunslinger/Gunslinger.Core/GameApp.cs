@@ -54,7 +54,7 @@ namespace Gunslinger.Core
             {
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
-                MaxScale = 10,
+                MaxScale = 20,
                 GlowParameters = new PixelAppHost.GlowParameters
                 {
                     Blur = Blurs.OptimizedGaussian5X5,

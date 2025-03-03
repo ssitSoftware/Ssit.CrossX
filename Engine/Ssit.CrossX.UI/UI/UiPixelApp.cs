@@ -58,6 +58,7 @@ public abstract class UiPixelApp : IApp
     {
         builder
             .WithInstance<IInputCoordinateSystem>(new InputCoordinateSystem(_appHost))
+            .WithInstance(_appHost)
             .WithCommonUi();
 
         handlers.AddCommonUiMaping();

@@ -29,9 +29,21 @@ public class FallBehavior(Player player, World world): Behavior
 
             if (_disableFall)
                 return false;
-            
-            
-            player.SetState("Jump->Fall");
+
+            switch (player.CurrentState)
+            {
+                case "Jump":
+                    player.SetState("Jump->Fall");
+                    break;
+                
+                case "Jump->Fall":
+                    break;
+                
+                default:
+                    player.SetState("Fall");
+                    break;
+            }
+
             return true;
         }
         

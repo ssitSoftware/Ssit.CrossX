@@ -32,7 +32,7 @@ public class GamePage: Page<GamePageViewModel>
                     TextColor = RgbaColor.White,
                     TextOutlineColor = RgbaColor.Black,
                     Scaling = TextScaling.Default,
-                    Visible = ViewModel.ShowDebug
+                    Visible = ViewModel.ShowFps
                 }
             ]
         };

@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Logic;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class JumpToFallSequenceBehavior(Player player) : Behavior
 {
     protected override bool OnSequenceFinished(string name)

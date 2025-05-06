@@ -1,11 +1,12 @@
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper)
-    : ChildrenContainerHandler<Container>(parameters, handlerMapper)
+public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null)
+    : ChildrenContainerHandler<Container>(parameters, handlerMapper, paletteSource)
 {
     protected override void RecalculateChildrenLayouts()
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Physics.Collision;
@@ -6,6 +7,7 @@ using Ssit.CrossX.Games.Physics.Dynamics;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class FallBehavior(Player player, World world): Behavior
 {
     private float _maxVelocity;

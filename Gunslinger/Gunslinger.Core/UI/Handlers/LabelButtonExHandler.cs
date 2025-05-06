@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Gunslinger.Core.UI.Views;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Handlers;
@@ -13,8 +14,8 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     private float _time;
     private float _waveAmplitude;
     
-    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) 
-        : base(parameters, fontsManager, actionDispatcher, uiSounds)
+    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) 
+        : base(parameters, fontsManager, actionDispatcher, uiSounds, paletteSource)
     {
     }
 

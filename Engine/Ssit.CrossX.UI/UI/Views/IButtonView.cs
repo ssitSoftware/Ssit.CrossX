@@ -10,4 +10,5 @@ public interface IButtonView: IFocusableView
     TimeSpan KeyCommandDelay { get; }
     TimeSpan CommandDelay { get; }
     string CommandSoundId { get; }
+    bool EnableCommandType { get; }
 }

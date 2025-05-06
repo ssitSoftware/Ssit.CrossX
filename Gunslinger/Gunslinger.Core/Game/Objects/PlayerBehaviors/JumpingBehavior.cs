@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Input;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class JumpingBehavior(Player player, IInputMappings inputMappings) : Behavior
 {
     protected override bool OnFixedUpdate(float dt)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
@@ -49,7 +50,7 @@ public abstract class ChildrenContainerHandler<TContainer>
         return new RectangleF(left, top, bounds.Width - right - left, bounds.Height - bottom - top);
     }
     
-    protected ChildrenContainerHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper) : base(parameters)
+    protected ChildrenContainerHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource) : base(parameters, paletteSource)
     {
         _handlerMapper = handlerMapper;
         

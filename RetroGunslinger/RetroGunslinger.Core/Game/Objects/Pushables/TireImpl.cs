@@ -1,0 +1,20 @@
+using Ssit.CrossX.Games.Logic.Map;
+using Ssit.CrossX.Games.Logic.Objects;
+using Ssit.CrossX.Games.Physics.Collision.Shapes;
+
+namespace RetroGunslinger.Core.Game.Objects.Pushables;
+
+public class TireImpl : Pushable
+{
+    public TireImpl(GameObjectsServices services, ObjectCreationParameters parameters) 
+        : base(services, parameters)
+    {
+        InitializeSprite("assets:/Game/Objects/Tire");
+        InitializePhysics(new CircleShape(0.75f, 20));
+
+        Body.Mass = 200;
+        Body.Friction = 0.1f;
+        Body.LinearDamping = 0.2f;
+        Body.Restitution = 0.5f;
+    }
+}

@@ -266,6 +266,16 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
         return premultiply ? color.AsPremultiplied() : color;
     }
 
+    public static implicit operator RgbaColor(uint intColor)
+    {
+        if ((intColor & 0xff000000) == 0)
+        {
+            intColor |= 0xff000000;
+        }
+
+        return FromBgra(intColor);
+    }
+    
     /// <summary>
     /// Converts this RgbaColor instance to a System.Drawing.Color object.
     /// The resulting Color object will have the same red, green, blue, and alpha components

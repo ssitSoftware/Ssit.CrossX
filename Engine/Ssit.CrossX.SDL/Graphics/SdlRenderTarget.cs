@@ -48,5 +48,7 @@ public unsafe class SdlRenderTarget: IRenderTarget
         }
 
         _disposed = true;
+        
+        GC.SuppressFinalize(this);
     }
 }

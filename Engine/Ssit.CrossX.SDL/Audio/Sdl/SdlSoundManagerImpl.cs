@@ -6,11 +6,9 @@ public class SdlSoundManagerImpl: ISoundManager
 {
     public void Dispose()
     {
-        
     }
 
     public event Action MasterVolumeUpdated;
-    public float MasterVolume { get; set; }
     public ISoundListener SoundListener { get; set; }
-    
+    public float MasterVolume { get; set; }
 }

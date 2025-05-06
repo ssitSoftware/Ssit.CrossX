@@ -13,8 +13,8 @@ public enum TextScaling
 public class Label: Background
 {
     public SharedString Text { get; set; }
-    public RgbaColor? TextColor { get; set; }
-    public RgbaColor? TextOutlineColor { get; set; }
+    public ColorWrapper TextColor { get; set; }
+    public ColorWrapper TextOutlineColor { get; set; }
     
     public ContentAlign? TextAlign { get; set; }
     public TextSpacing? TextSpacing { get; set; }

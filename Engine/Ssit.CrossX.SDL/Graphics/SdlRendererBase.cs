@@ -27,5 +27,4 @@ public abstract unsafe class SdlRendererBase(IRenderStateProvider renderStatePro
         
         return textureHandle;
     }
-    
 }

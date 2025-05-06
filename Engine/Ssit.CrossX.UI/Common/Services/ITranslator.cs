@@ -5,6 +5,6 @@ namespace Ssit.CrossX.Common.Services;
 public interface ITranslator
 {
     SharedString this[string key] { get; }
-    void ToggleLanguage();
+    void ToggleLanguage(bool previous = false);
     int CurrentLanguage { get; set; }
 }

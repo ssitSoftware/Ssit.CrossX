@@ -1,13 +1,17 @@
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters) : ViewHandler<TBackground>(parameters) where TBackground: Background
+public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource) 
+    : ViewHandler<TBackground>(parameters) where TBackground: Background
 {
+    protected IPaletteSource PaletteSource { get; } = paletteSource;
+
     protected virtual RgbaColor? BackgroundColor(IRenderer2 renderer) => renderer.StateProvider.UseGlowTextures
-        ? RgbaColor.Black * (AttachedView.BackgroundColor?.Af ?? 1f)
-        : AttachedView.BackgroundColor;
+        ? RgbaColor.Black * (AttachedView.BackgroundColor.GetColor(PaletteSource)?.Af ?? 1f)
+        : AttachedView.BackgroundColor.GetColor(PaletteSource);
     
     protected override void OnDraw(IRenderer2 renderer)
     {
@@ -19,6 +23,7 @@ public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters 
     }
 }
 
-public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters) : BackgroundHandler<Background>(parameters)
+public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource) 
+    : BackgroundHandler<Background>(parameters, paletteSource)
 {
 }

@@ -58,9 +58,17 @@ internal class Translator : ITranslator
         }
     }
 
-    public void ToggleLanguage()
+    public void ToggleLanguage(bool previous = false)
     {
-        _language = (_language + 1) % _languages.Length;
+        if (previous)
+        {
+            _language = (_language + _languages.Length - 1) % _languages.Length;
+        }
+        else
+        {
+            _language = (_language + 1) % _languages.Length;
+        }
+
         UpdateLanguage(_languages[_language]);
     }
 

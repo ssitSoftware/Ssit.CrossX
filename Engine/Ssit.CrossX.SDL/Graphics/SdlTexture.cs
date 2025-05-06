@@ -1,35 +1,68 @@
 using Interop.Runtime;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
-using static bottlenoselabs.Interop.SDL;
+
 using static bottlenoselabs.Interop.SDL_image;
+using static bottlenoselabs.Interop.SDL; 
 
 namespace Ssit.CrossX.SDL.Graphics;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public unsafe class SdlTexture: ITexture
 {
+    private readonly SdlHandles _handles;
+    private readonly ISdlPalette _sdlPalette;
     private bool _disposed;
     
-    private readonly SdlHandle<SDL_Texture> _textureDiff;
+    private SdlHandle<SDL_Texture> _textureDiff;
     private readonly SdlHandle<SDL_Texture> _textureGlow;
 
+    private readonly SdlHandle<SDL_Surface> _surfaceDiff;
+    
     public Size Size { get; }
     public TextureMaps TextureMaps { get; }
 
-    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters)
+    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, ISdlPalette sdlPalette = null)
     {
+        _handles = handles;
+        _sdlPalette = sdlPalette;
+        
         if (parameters.DiffuseMapStream is not null)
         {
-            var (texture, width, height) = LoadTexture(parameters.DiffuseMapStream, handles.Renderer);
+            int width, height;
+
+            if (sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
+            {
+                (_textureDiff, width, height) =
+                    LoadTexture(parameters.DiffuseMapStream, handles.Renderer, parameters.ColorMode);
+            }
+            else
+            {
+                (_textureDiff, _surfaceDiff) = LoadIndexedImage(parameters.GlowMapStream, sdlPalette.OriginalPalette);
+                
+                width = _surfaceDiff.Pointer->w;
+                height = _surfaceDiff.Pointer->h;
+                
+                UpdateSdlPalette();
+            }
+
             Size = new Size(width, height);
             TextureMaps = TextureMaps.Diffuse;
-            _textureDiff = texture;
         }
         
         if (parameters.GlowMapStream is not null)
         {
-            var (texture, width, height) = LoadTexture(parameters.GlowMapStream, handles.Renderer);
+            int width, height;
+            if (_sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
+            {
+                (_textureGlow, width, height) =
+                    LoadTexture(parameters.GlowMapStream, handles.Renderer, parameters.ColorMode);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
             if (Size == Size.Zero)
             {
                 Size = new Size(width, height);
@@ -41,11 +74,51 @@ public unsafe class SdlTexture: ITexture
             }
 
             TextureMaps |= TextureMaps.GlowMap;
-            _textureGlow = texture;
+            
+        }
+
+        if (_sdlPalette != null)
+        {
+            _sdlPalette.OnPaletteChanged += UpdateSdlPalette;
         }
     }
 
-    private (SdlHandle<SDL_Texture> ptr, int w, int h) LoadTexture(Stream stream, SDL_Renderer* renderer)
+    private (SdlHandle<SDL_Texture>, SdlHandle<SDL_Surface>) LoadIndexedImage(Stream stream, IReadOnlyList<RgbaColor> palette)
+    {
+        // TODO: Loading paletted image!
+        SDL_Surface* surfacePtr = SDL_CreateSurface(100, 100, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+        
+        var texturePtr = SDL_CreateTexture(_handles.Renderer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888, SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, surfacePtr->w, surfacePtr->h);
+        
+        return (new SdlHandle<SDL_Texture>(texturePtr), new SdlHandle<SDL_Surface>(surfacePtr));
+    }
+
+    private void UpdateSdlPalette()
+    {
+        if (_surfaceDiff is null || _surfaceDiff.Pointer is null)
+        {
+            return;
+        }
+        
+        SDL_SetSurfacePalette(_surfaceDiff.Pointer, _sdlPalette.PaletteHandle.Pointer);
+        
+        var newSurface = SDL_ConvertSurface(_surfaceDiff.Pointer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
+        SDL_PremultiplySurfaceAlpha(newSurface, CBool.FromBoolean(true));
+        
+        if (_textureDiff != null && _textureDiff.Pointer != null)
+        {
+            SDL_UpdateTexture(_textureDiff.Pointer, null, newSurface->pixels, newSurface->pitch);
+        }
+        else
+        {
+            var texture = SDL_CreateTextureFromSurface(_handles.Renderer, newSurface);
+            _textureDiff = new SdlHandle<SDL_Texture>(texture);
+        }
+        
+        SDL_DestroySurface(newSurface);
+    }
+
+    private (SdlHandle<SDL_Texture> ptr, int w, int h) LoadTexture(Stream stream, SDL_Renderer* renderer, LoadTextureColorMode colorMode)
     {
         var memoryStream = new MemoryStream();
         stream.CopyTo(memoryStream);
@@ -67,6 +140,35 @@ public unsafe class SdlTexture: ITexture
             surface = newSurface;
         }
 
+        if (colorMode == LoadTextureColorMode.Desaturate)
+        {
+            byte* pixels = (byte*)surface->pixels;
+
+            for (var i = 0; i < surface->w * surface->h; i++)
+            {
+                var r = pixels[i * 4 + 0];
+                var g = pixels[i * 4 + 1];
+                var b = pixels[i * 4 + 2];
+
+                var t = (byte)(0.299 * r + 0.587 * g + 0.114 * b);
+
+                pixels[i * 4 + 0] = t;
+                pixels[i * 4 + 1] = t;
+                pixels[i * 4 + 2] = t;
+            }
+        }
+        else if (colorMode == LoadTextureColorMode.WhiteAlpha)
+        {
+            byte* pixels = (byte*)surface->pixels;
+
+            for (var i = 0; i < surface->w * surface->h; i++)
+            {
+                pixels[i * 4 + 0] = 255;
+                pixels[i * 4 + 1] = 255;
+                pixels[i * 4 + 2] = 255;
+            }
+        }
+
         if (SDL_PremultiplySurfaceAlpha(surface, CBool.FromBoolean(true)).Value == 0)
         {
             throw new InvalidProgramException("SDL_PremultiplySurfaceAlpha failed");
@@ -83,6 +185,11 @@ public unsafe class SdlTexture: ITexture
     
     public TTextureMap GetMap<TTextureMap>(TextureMaps map) where TTextureMap : class
     {
+        if (_disposed)
+        {
+            throw new ObjectDisposedException(nameof(SdlTexture));
+        }
+        
         return map switch
         {
             TextureMaps.Diffuse => _textureDiff as TTextureMap,
@@ -92,7 +199,7 @@ public unsafe class SdlTexture: ITexture
             _ => null
         };
     }
-    
+
     public void Dispose()
     {
         if (_disposed)
@@ -110,6 +217,13 @@ public unsafe class SdlTexture: ITexture
             SDL_DestroyTexture(_textureGlow.Pointer);
         }
 
+        if (_surfaceDiff != null && _surfaceDiff.Pointer != null)
+        {
+            SDL_DestroySurface(_surfaceDiff.Pointer);
+        }
+        
         _disposed = true;
+        
+        GC.SuppressFinalize(this);
     }
 }

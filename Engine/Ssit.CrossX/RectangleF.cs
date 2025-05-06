@@ -236,4 +236,6 @@ public readonly struct RectangleF: IEquatable<RectangleF>
     public override bool Equals(object obj) => obj is RectangleF other && Equals(other);
     public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
     public RectangleF Offset(Vector2 offset) => new(X + offset.X, Y + offset.Y, Width, Height);
+    
+    public static RectangleF operator + (RectangleF rect, Vector2 offset) => rect.Offset(offset);
 }

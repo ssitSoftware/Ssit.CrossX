@@ -62,6 +62,11 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             .WithInstance(new SdlHandles(window, renderer));
         
         app.InitializeServices(builder);
+
+        if (builder.IsRegistered(typeof(IPaletteSource)))
+        {
+            builder.WithSingleton<ISdlPalette, SdlPalette>();
+        }
         
         using var services = builder.Build();
         

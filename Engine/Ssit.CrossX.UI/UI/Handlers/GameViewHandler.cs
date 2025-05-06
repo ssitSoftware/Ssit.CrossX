@@ -1,9 +1,10 @@
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters) : BackgroundHandler<GameView>(parameters)
+internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource = null) : BackgroundHandler<GameView>(parameters, paletteSource)
 {
     protected override void OnDraw(IRenderer2 renderer)
     {

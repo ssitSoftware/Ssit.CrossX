@@ -1,4 +1,3 @@
-using System.Numerics;
 using Gunslinger.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
@@ -55,13 +54,14 @@ namespace Gunslinger.Core
                 DesignSize = _template.TargetSize,
                 Mode = PixelAppHost.Mode.Height,
                 MaxScale = 20,
+                Interline = true,
                 GlowParameters = new PixelAppHost.GlowParameters
                 {
-                    Blur = Blurs.OptimizedGaussian5X5,
+                    Blur = Blurs.Gaussian5X5,
                     BlurDivider = Blurs.Gaussian5X5Divider * 1f,
                     SelfGlowFactor = 0.3f,
-                    SelfGlowDisplacementFactorB = new Vector2(1.5f, -1),
-                    SelfGlowDisplacementFactorR = new Vector2(-1, 0)
+                    // SelfGlowDisplacementFactorB = new Vector2(1.5f, -1),
+                    // SelfGlowDisplacementFactorR = new Vector2(-1, 0)
                 }
             });
     }

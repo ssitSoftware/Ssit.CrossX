@@ -32,11 +32,9 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public PlayerStats Stats { get; } = new();
 
     void IMomentumReceiver.OnMomentumPassed(Vector2 offset) => MomentumOffset = offset;
-    
-    public int PlayerIndex => 0;
 
-    public float GroundHorizontalVelocity { get; private set; }
-    
+    public int PlayerIndex { get; } = 0;
+
     public class Parameters
     {
         [EditorFloat(10, 20)] public float Speed { get; set; }
@@ -49,12 +47,10 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     }
 
     public ILogicOperable OperableInRange { get; private set; }
-    
-    public List<Vector2> InAirVelocity { get; } = new();
+    public List<Vector2> InAirVelocity { get; } = [];
     public bool IsOnStaticGround { get; private set; }
     public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
-    
     public int GroundMaterial { get; private set; }
 
     public Vector2 MomentumOffset { get; set; }
@@ -100,7 +96,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
         Stats.Jump = 3;
 
-        InitializeStates();
+        InitializeStates(); 
     }
 
     private void InitializeStates()
@@ -134,7 +130,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     protected override void OnFixedUpdate(float dt)
     {
-        GroundHorizontalVelocity = 0;
         Body.LinearDamping = 0;
         
         DetectOnGround();
@@ -143,6 +138,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         {
             MomentumOffset = Vector2.Zero;
             InAirVelocity.Add(Body.LinearVelocity);
+            
             while (InAirVelocity.Count > 30)
             {
                 InAirVelocity.RemoveAt(0);
@@ -155,7 +151,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     protected override void OnRender(IRenderer2 renderer, RgbaColor color)
     {
         color = color.Mix(RgbaColor.White, 0.5f);
-        base.OnRender(renderer, color);
+        base.OnRender(renderer, color); 
     }
 
     private void DetectOnGround()
@@ -164,10 +160,10 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         IsOnPlatform = true;
         IsOnStaticGround = true;
         GroundMaterial = 0;
-        
+
         var leftX = FaceLeft ? 0.15f : 0.3f;
         var rightX = FaceLeft ? 0.3f : 0.15f;
-        
+
         var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.05f), Body.Position + new Vector2(rightX, 0.2f));
         Services.World.QueryAabbs(_queryList, ref aabb);
 
@@ -183,10 +179,9 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             if (!fixture.Body.IsStatic)
             {
                 IsOnStaticGround = false;
-            }
+            } 
 
             GroundMaterial = Math.Max(fixture.Body.MaterialIndex, GroundMaterial);
-            GroundHorizontalVelocity = fixture.Body.IsStatic ? GroundHorizontalVelocity : fixture.Body.LinearVelocity.X;
         }
 
         IsOnStaticGround &= IsOnGround;
@@ -194,8 +189,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _queryList.Clear();
     }
 
-    protected override void SetSequence(string state)
-    {
+    protected override void SetSequence(string state)       
+    { 
         if (state == "Jump->Fall")
         {
             state = "Jump Transition";
@@ -211,7 +206,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         {
             return;
         }
-        
+
         if (inRange)
         {
             OperableInRange = operable;
@@ -225,13 +220,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     protected override void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
         SoundContainer.Play(@event.EventName, GroundMaterial);
-        
-        // switch (@event.EventName)
-        // {
-        // default:
-        //     //CallStateEvent(@event.EventName, 0);
-        //     break;
-        // }
     }
 
     protected override void OnDispose(bool disposing)

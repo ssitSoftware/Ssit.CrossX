@@ -79,7 +79,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                     {
                         if (_viewHandler.ScreenBounds.Contains(pointer.Position))
                         {
-                            Execute(TimeSpan.Zero);
+                            Execute(TimeSpan.Zero, null);
                             _currentPointerId = null;
                             return true;
                         }
@@ -141,10 +141,20 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
         {
             case UiButton.Left:
                 focusId = AttachedView?.HorizontalNavigation.left;
+                
+                if (focusId is null && true == AttachedView?.EnableCommandType)
+                {
+                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Previous);
+                }
                 break;
             
             case UiButton.Right:
                 focusId = AttachedView?.HorizontalNavigation.right;
+                
+                if (focusId is null && true == AttachedView?.EnableCommandType)
+                {
+                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Next);
+                }
                 break;
             
             case UiButton.Up:
@@ -158,7 +168,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             case UiButton.Select:
                 if (IsEnabled)
                 {
-                    Execute(AttachedView.KeyCommandDelay);
+                    Execute(AttachedView.KeyCommandDelay, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);;
                 }
                 break;
         }
@@ -168,9 +178,8 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             var focusable = context.FindFocusable(focusId, _viewHandler);
             if (focusable != null)
             {
-                if (!focusable.SkipNavigation)
+                if (!focusable.SkipNavigation && focusable.Enabled)
                 {
-                    
                     context.Focus(focusable, _viewHandler);
                     _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
                     return true;
@@ -183,7 +192,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
         return false;
     }
 
-    private void Execute(TimeSpan delay)
+    private void Execute(TimeSpan delay, ButtonCommandType? commandType)
     {
         if (AttachedView.Command is not IAsyncCommand asyncCommand)
         {
@@ -210,7 +219,15 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                 await Task.Delay(AttachedView.CommandDelay);
             }
 
-            await asyncCommand.ExecuteAsync(AttachedView.CommandParameter);
+            if (commandType.HasValue)
+            {
+                await asyncCommand.ExecuteAsync((AttachedView.CommandParameter, commandType.Value));
+            }
+            else
+            {
+                await asyncCommand.ExecuteAsync(AttachedView.CommandParameter);
+            }
+
         }).ContinueWith(_ =>
         {
             IsPressed = false;

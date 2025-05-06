@@ -21,7 +21,18 @@ public class PixelAppHost: IAppHost
         public Size DesignSize = new(360, 180);
         public Mode Mode = Mode.WidthAndHeight;
         public int MaxScale = 2;
+        public int MinScale = 1;
         public GlowParameters GlowParameters;
+        public CrtParameters CrtParameters;
+    }
+    
+    public class CrtParameters
+    {
+        public Vector2 DisplacementFactorR;
+        public Vector2 DisplacementFactorG;
+        public Vector2 DisplacementFactorB;
+        public float Interline;
+        public bool HasDisplacement => DisplacementFactorR != Vector2.Zero || DisplacementFactorG != Vector2.Zero || DisplacementFactorB != Vector2.Zero;
     }
 
     public class GlowParameters
@@ -29,9 +40,11 @@ public class PixelAppHost: IAppHost
         public float[][] Blur;
         public float BlurDivider;
         public float SelfGlowFactor;
-        public Vector2 SelfGlowDisplacementFactorR;
-        public Vector2 SelfGlowDisplacementFactorG;
-        public Vector2 SelfGlowDisplacementFactorB;
+        public bool EnableGameGlow;
+        public Vector2 DisplacementFactorR;
+        public Vector2 DisplacementFactorG;
+        public Vector2 DisplacementFactorB;
+        public bool HasDisplacement => DisplacementFactorR != Vector2.Zero || DisplacementFactorG != Vector2.Zero || DisplacementFactorB != Vector2.Zero;
     }
 
     private readonly Parameters _parameters;
@@ -62,21 +75,25 @@ public class PixelAppHost: IAppHost
         ResizeInternal(targetSize);
     }
 
-    public void Render(Action renderAction)
+    public void Render(object state, Action<object> renderAction)
     {
         BeginRender();
         try
         {
             _renderer.StateManager.Reset();
             _renderer.StateManager.SetGlowMode(false);
-            renderAction();
+            renderAction(state);
 
             if (_glowRenderTarget != null)
             {
                 _renderer.SetRenderTarget(_glowRenderTarget);
-                _renderer.StateManager.SetGlowMode(true);
-                renderAction();
-                _renderer.StateManager.SetGlowMode(false);
+                _renderer.Clear(RgbaColor.Black);
+                if (true == _parameters.GlowParameters?.EnableGameGlow)
+                {
+                    _renderer.StateManager.SetGlowMode(true);
+                    renderAction(state);
+                    _renderer.StateManager.SetGlowMode(false);
+                }
             }
         }
         finally
@@ -100,15 +117,19 @@ public class PixelAppHost: IAppHost
         _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
 
         var sourceTexture = _renderTarget;
-        
-        _renderer.SetRenderTarget(_renderTarget);
-        _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
 
-        var height = _renderTarget.Size.Height / Scale;
-
-        for (var idx = 0; idx < height; ++idx)
+        if (_parameters.CrtParameters?.Interline > 0)
         {
-            _renderer.GeometryRenderer.FillRectangle(new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * 0.25f);
+            _renderer.SetRenderTarget(_renderTarget);
+            _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
+            
+            var height = _renderTarget.Size.Height / Scale;
+
+            for (var idx = 0; idx < height; ++idx)
+            {
+                _renderer.GeometryRenderer.FillRectangle(
+                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * (_parameters.CrtParameters?.Interline ?? 0));
+            }
         }
         
         if (_glowRenderTarget != null)
@@ -119,41 +140,40 @@ public class PixelAppHost: IAppHost
             {
                 _renderer.SetRenderTarget(_glowRenderTarget);
 
-                if (_parameters.GlowParameters.SelfGlowDisplacementFactorR != Vector2.Zero ||
-                    _parameters.GlowParameters.SelfGlowDisplacementFactorG != Vector2.Zero ||
-                    _parameters.GlowParameters.SelfGlowDisplacementFactorB != Vector2.Zero)
+                if (true == _parameters.GlowParameters?.HasDisplacement)
                 {
                     _renderer.QuadsRenderer.Draw(_renderTarget,
-                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorG.X,
-                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorG.Y,
+                        new RectangleF(Scale * _parameters.GlowParameters.DisplacementFactorG.X,
+                            Scale * _parameters.GlowParameters.DisplacementFactorG.Y,
                             _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
                         color: new RgbaColor(0, 255, 0) * _parameters.GlowParameters.SelfGlowFactor);
 
                     _renderer.QuadsRenderer.Draw(_renderTarget,
-                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorR.X,
-                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorR.Y,
+                        new RectangleF(Scale * _parameters.GlowParameters.DisplacementFactorR.X,
+                            Scale * _parameters.GlowParameters.DisplacementFactorR.Y,
                             _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
                         color: RgbaColor.Red * _parameters.GlowParameters.SelfGlowFactor);
 
                     _renderer.QuadsRenderer.Draw(_renderTarget,
-                        new RectangleF(Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorB.X,
-                            Scale * _parameters.GlowParameters.SelfGlowDisplacementFactorB.Y,
+                        new RectangleF(Scale * _parameters.GlowParameters.DisplacementFactorB.X,
+                            Scale * _parameters.GlowParameters.DisplacementFactorB.Y,
                             _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
                         color: RgbaColor.Blue * _parameters.GlowParameters.SelfGlowFactor);
+
                 }
                 else
                 {
                     _renderer.QuadsRenderer.Draw(_renderTarget,
                         new RectangleF(0, 0,
                             _glowRenderTarget.Size.Width, _glowRenderTarget.Size.Height),
-                        color: RgbaColor.White * _parameters.GlowParameters.SelfGlowFactor);
+                        color: RgbaColor.White * _parameters.GlowParameters?.SelfGlowFactor);
                 }
             }
 
             _renderer.SetRenderTarget(_renderTarget);
 
-            var blur = _parameters.GlowParameters.Blur;
-            var blurDivider = _parameters.GlowParameters.BlurDivider;
+            var blur = _parameters.GlowParameters?.Blur ?? [];
+            var blurDivider = _parameters.GlowParameters?.BlurDivider ?? 1;
             
             var offset = -new Vector2(Scale, Scale) * MathF.Floor(blur.Length / 2f);
             
@@ -171,20 +191,57 @@ public class PixelAppHost: IAppHost
                     }
                 }
             }
+        }
+        
+        if (_parameters.CrtParameters?.Interline > 0)
+        {
+            _renderer.SetRenderTarget(_renderTarget);
+            _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
             
-            _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
+            var height = _renderTarget.Size.Height / Scale;
+
+            for (var idx = 0; idx < height; ++idx)
+            {
+                _renderer.GeometryRenderer.FillRectangle(
+                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * (_parameters.CrtParameters?.Interline ?? 0));
+            }
         }
         
         if (_postRenderTarget != null)
         {
             _renderer.SetRenderTarget(_postRenderTarget);
-            
-            _renderer.QuadsRenderer.Draw(sourceTexture,
-                new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
-            
+
+            if (true == _parameters.CrtParameters?.HasDisplacement)
+            {
+                var sc = (float)_postRenderTarget.Size.Width / sourceTexture.Size.Width;
+                
+                var rOff = _parameters.CrtParameters.DisplacementFactorR * sc;
+                var gOff = _parameters.CrtParameters.DisplacementFactorG * sc;
+                var bOff = _parameters.CrtParameters.DisplacementFactorB * sc;
+                
+                _renderer.Clear(RgbaColor.Black);
+                _renderer.StateManager.SetBlendMode(BlendMode.Additive);
+                
+                _renderer.QuadsRenderer.Draw(sourceTexture,
+                    new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height) + rOff, color: 0xff0000);
+                
+                _renderer.QuadsRenderer.Draw(sourceTexture,
+                    new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height) + gOff, color: 0x00ff00);
+                
+                _renderer.QuadsRenderer.Draw(sourceTexture,
+                    new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height) + bOff, color: 0x0000ff);
+            }
+            else
+            {
+                _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
+                _renderer.QuadsRenderer.Draw(sourceTexture,
+                    new RectangleF(0, 0, _postRenderTarget.Size.Width, _postRenderTarget.Size.Height));
+            }
+
             sourceTexture = _postRenderTarget;
         }
 
+        _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
         _renderer.SetRenderTarget(null);
         
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
@@ -230,7 +287,7 @@ public class PixelAppHost: IAppHost
         }
         
         var scaleInt = (int)Math.Ceiling(scale);
-        var targetScale = Math.Min(_parameters.MaxScale, scaleInt);
+        var targetScale = Math.Max(_parameters.MinScale, Math.Min(_parameters.MaxScale, scaleInt));
         
         switch (_parameters.Mode)
         {
@@ -300,4 +357,6 @@ public class PixelAppHost: IAppHost
         _postRenderTarget?.Dispose();
         _postRenderTarget = null;
     }
+
+    
 }

@@ -79,7 +79,7 @@ public abstract class UiPixelApp : IApp
         Debug.Assert(renderer == _renderer, "renderer is not the same as the one used in the app");
         
         _renderer.Clear(RgbaColor.Black);
-        _appHost.Render(Render);
+        _appHost.Render(this, Render);
     }
     
     protected virtual void OnStart(object args)
@@ -87,9 +87,10 @@ public abstract class UiPixelApp : IApp
         
     }
 
-    private void Render()
+    private static void Render(object state)
     {
-        UiApp.Draw(_renderer, BackgroundColor);
+        var app = (UiPixelApp)state;
+        app.UiApp.Draw(app._renderer, app.BackgroundColor);
     }
 
     public virtual void OnUpdate(float elapsedTime) => UiApp.Update(elapsedTime);

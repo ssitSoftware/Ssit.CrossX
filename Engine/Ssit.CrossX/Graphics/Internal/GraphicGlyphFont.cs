@@ -74,7 +74,8 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         {
             outlineSheet = container.IoCConstruct<ITexture>(new LoadTextureParameters
             {
-                DiffuseMapStream = outlineStream
+                DiffuseMapStream = outlineStream,
+                ColorMode = LoadTextureColorMode.NoPalette
             });
         }
         
@@ -83,7 +84,8 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         {
             fillSheet = container.IoCConstruct<ITexture>(new LoadTextureParameters
             {
-                DiffuseMapStream = fillStream
+                DiffuseMapStream = fillStream,
+                ColorMode = LoadTextureColorMode.NoPalette
             });
         }
         

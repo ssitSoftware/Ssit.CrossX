@@ -20,5 +20,15 @@ public static class Blurs
         [0,0,9,0,0],
     ];
     
+    // public static readonly float[][] OptimizedGaussian9X5 =
+    // [
+    //     [0,0,0,0,9,0,0,0,0],
+    //     [0,10,18,22,30,22,18,10,0],
+    //     [9,16,25,40,60,40,25,16,9],
+    //     [0,10,18,22,30,22,18,10,0],
+    //     [0,0,0,0,9,0,0,0,0],
+    // ];
+    
     public const float Gaussian5X5Divider = 128;
+    //public const float Gaussian9X5Divider = 256;
 }

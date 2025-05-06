@@ -1,9 +1,9 @@
 using System.Numerics;
 using Ssit.CrossX.Graphics.Font;
-using Ssit.CrossX.Graphics.Internal;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Text;
 
-namespace Ssit.CrossX.Graphics.Renderer;
+namespace Ssit.CrossX.Graphics.Internal;
 
 public class TextRenderer(IQuadsRenderer quadsRenderer): ITextRenderer
 {

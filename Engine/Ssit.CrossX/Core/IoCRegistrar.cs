@@ -2,8 +2,10 @@ using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Content.Internal;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Internal;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.IoC;
@@ -25,5 +27,12 @@ public static class IoCRegistrar
             .WithSingleton<IMusicPlayer, MusicPlayer>()
             .WithSingleton<IInputMappings, InputMappings>()
             .WithSingleton<IActionScheduler, ActionScheduler>();
+    }
+    
+    public static IIoCContainerBuilder WithIndexedRenderer(this IIoCContainerBuilder builder, params RgbaColor[] palette)
+    {
+        return builder
+            .WithSingleton<IIndexedRenderer, IndexedRenderer>()
+            .WithInstance<IPaletteSource>(new PaletteSource(palette));
     }
 }

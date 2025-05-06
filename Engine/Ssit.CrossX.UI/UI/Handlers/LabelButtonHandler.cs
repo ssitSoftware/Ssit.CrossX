@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
@@ -12,20 +13,22 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInputConsumer, IFocusable where TLabelButton: LabelButton
 {
-    protected override RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColors?.GetColor(renderer, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextColor(IRenderer2 renderer) => AttachedView.TextColors?.GetColor(renderer,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColors?.GetColor(renderer,_buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) => AttachedView.TextColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, focused ?? Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
     
     public bool Enabled => _buttonHelper.IsEnabled;
     public bool DisableAllInput => _buttonHelper.IsExecutingCommand;
     
     public bool Focused { get; private set; }
+    
+    public bool IsPushed => _buttonHelper.IsPressed;
 
     public bool SkipNavigation => false;
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds) : base(parameters, fontsManager, actionDispatcher)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource, actionDispatcher)
     {
         _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, uiSounds);
     }

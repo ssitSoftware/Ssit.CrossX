@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
@@ -12,7 +13,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
     private readonly IActionDispatcher _actionDispatcher;
 
-    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher) : base(parameters, fontsManager)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IPaletteSource paletteSource, IActionDispatcher actionDispatcher) : base(parameters, fontsManager, paletteSource)
     {
         _actionDispatcher = actionDispatcher;
         OnTextChanged();
@@ -67,20 +68,9 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
     {
         base.OnDraw(renderer);
         
-        var font = GetFont();
-
         try
         {
-            renderer.TextRenderer.DrawText(
-                font: font,
-                text: AttachedView.Text,
-                position: TextRectangle,
-                align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
-                scale: TextScale,
-                color: TextColor(renderer) ?? RgbaColor.Transparent,
-                spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
-                outlineColor: TextOutlineColor(renderer) ?? RgbaColor.Transparent,
-                context: TextRenderingContext);
+            OnDrawInternal(renderer);
         }
         catch(Exception)
         {
@@ -88,5 +78,26 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
             _actionDispatcher.Enqueue(OnTextChanged);
             Parent?.GetParent<IPage>().InvalidateRendering();
         }
+    }
+
+    protected virtual void OnDrawInternal(IRenderer2 renderer)
+    {
+        DrawText(renderer, TextColor(renderer) ?? RgbaColor.Transparent, TextOutlineColor(renderer) ?? RgbaColor.Transparent, Vector2.Zero);
+    }
+
+    protected void DrawText(IRenderer2 renderer, RgbaColor color, RgbaColor outlineColor, Vector2 offset)
+    {
+        var font = GetFont();
+        
+        renderer.TextRenderer.DrawText(
+            font: font,
+            text: AttachedView.Text,
+            position: TextRectangle + offset,
+            align: AttachedView.TextAlign ?? ContentAlign.Center | ContentAlign.VCenter,
+            scale: TextScale,
+            color: color,
+            spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
+            outlineColor: outlineColor,
+            context: TextRenderingContext);
     }
 }

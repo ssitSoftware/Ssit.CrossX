@@ -9,7 +9,7 @@ public static class RendererExtensions
 {
     public static TextRenderingContext CalculateMultilineText(this IFont font, TextSource text, TextSpacing spacing, float maxWidth, float paragraphSpacing, TextRenderingContext context = null)
     {
-        if(font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
+        if (font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
 
         context ??= new TextRenderingContext();
         
@@ -19,7 +19,7 @@ public static class RendererExtensions
     
     public static TextRenderingContext CalculateText(this IFont font, TextSource text, TextSpacing spacing, TextRenderingContext context = null)
     {
-        if(font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
+        if (font is not IGlyphFont glyphFont) throw new NotSupportedException("This kind of font is not supported");
 
         context ??= new TextRenderingContext();
         

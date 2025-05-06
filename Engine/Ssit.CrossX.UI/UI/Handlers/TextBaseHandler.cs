@@ -12,12 +12,12 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
 
-    protected virtual RgbaColor? TextColor(IRenderer2 renderer) =>
-        renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : AttachedView.TextColor;
+    protected virtual RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) =>
+        renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : AttachedView.TextColor.GetColor(PaletteSource);
 
     protected virtual RgbaColor? TextOutlineColor(IRenderer2 renderer) => renderer.StateProvider.UseGlowTextures
-        ? RgbaColor.Black * (AttachedView.TextOutlineColor?.Af ?? 0f)
-        : AttachedView.TextOutlineColor;
+        ? RgbaColor.Black * (AttachedView.TextOutlineColor.GetColor(PaletteSource)?.Af ?? 0f)
+        : AttachedView.TextOutlineColor.GetColor(PaletteSource);
     
     protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : 1;
     
@@ -57,7 +57,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         }
     }
     
-    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager) : base(parameters)
+    public TextBaseHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IPaletteSource paletteSource) : base(parameters, paletteSource)
     {
         _fontsManager = fontsManager;
         if (AttachedView.Text is not null)

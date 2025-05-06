@@ -31,11 +31,11 @@ internal static class ObjectCreationHelper
     }
 
     private static bool MatchConstructor(ConstructorInfo constructor, ResolveDelegate resolveDelegate, object creationParameters, List<object> parametersList)
-    {
+    {            
+
         parametersList.Clear();
-            
+
         var parameters = constructor.GetParameters();
-            
         if (creationParameters != null && !parameters.Any(o => o.ParameterType.IsInstanceOfType(creationParameters)))
         {
             return false;
@@ -43,13 +43,13 @@ internal static class ObjectCreationHelper
 
         foreach (var parameter in parameters)
         {
-            if (!MatchParameter(parameter.ParameterType, resolveDelegate, creationParameters, out var instance))
+            if (!MatchParameter(parameter.ParameterType, resolveDelegate, creationParameters, out var instance) && !parameter.HasDefaultValue)
             {
                 return false;
             }
             parametersList.Add(instance);
         }
-            
+
         return true;
     }
 

@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Input;
 
 namespace Gunslinger.Core.Game.Objects.PlayerBehaviors;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class JumpOfPlatformBehavior(Player player, IInputMappings inputMappings) : Behavior
 {
     private bool _jumpOfRequested = false;

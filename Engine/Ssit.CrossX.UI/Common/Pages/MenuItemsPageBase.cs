@@ -42,7 +42,15 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
         return base.OnUiButton(button, inputContext);
     }
 
-    protected View CreateMenuItems<TButton>(string id, IReadOnlyList<(SharedString text, ICommand command)> items,
+    protected View CreateMenuItems<TButton>(string id,
+        IReadOnlyList<(SharedString text, ICommand command)> items,
+        int defaultButtonIndex = 0, bool isMainList = true, bool suppressBack = false)
+        where TButton : LabelButton, new()
+    {
+        return CreateMenuItems<TButton>(id, items.Select(o=> (o.text, o.command, false)).ToList(), defaultButtonIndex, isMainList, suppressBack);
+    }
+    
+    protected View CreateMenuItems<TButton>(string id, IReadOnlyList<(SharedString text, ICommand command, bool enableCommandType)> items,
         int defaultButtonIndex = 0, bool isMainList = true, bool suppressBack = false) where TButton: LabelButton, new()
     {
         var controls = new List<View>();
@@ -80,7 +88,8 @@ public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewMod
                 Text = items[i].text,
                 UniqueId = $"{id}{navId}",
                 VerticalNavigation = ($"{id}{prevIndex}", $"{id}{nextIndex}"),
-                Command = items[i].command
+                Command = items[i].command,
+                EnableCommandType = items[i].enableCommandType
             };
             MenuItemApplyStyle(button);
             controls.Add(button);

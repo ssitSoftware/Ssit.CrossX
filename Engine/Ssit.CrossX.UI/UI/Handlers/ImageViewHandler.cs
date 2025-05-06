@@ -16,7 +16,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     private ImageScalingMode ScalingMode => AttachedView.Scaling ?? ImageScalingMode.None;
     private ContentAlign ContentAlign => AttachedView.ContentAlign ?? ContentAlign.Center | ContentAlign.VCenter;
     
-    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container) : base(parameters)
+    public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container, IPaletteSource paletteSource = null) : base(parameters,paletteSource)
     {
         if (AttachedView.Source is null)
         {

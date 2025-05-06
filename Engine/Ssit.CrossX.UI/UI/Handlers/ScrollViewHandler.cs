@@ -1,4 +1,5 @@
 using System;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
@@ -11,7 +12,7 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     private bool _recalculateLayout;
     private ViewHandler _contentHandler;
 
-    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper) : base(parameters)
+    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null) : base(parameters, paletteSource)
     {
         _contentHandler = handlerMapper.Create(AttachedView.ContentView, this);
         _recalculateLayout = true;

@@ -5,7 +5,7 @@ namespace Ssit.CrossX.Core;
 
 public interface IAppHost : IDisposable
 {
-    void Resize(Size size);
+    void Resize(Size size, bool forceRecreation = false);
     void Render(object state, Action<object> renderAction);
     public Matrix3x2 Transform { get; }
     Size TargetSize { get; }

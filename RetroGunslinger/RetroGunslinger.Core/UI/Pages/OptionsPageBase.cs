@@ -18,6 +18,7 @@ public abstract class OptionsPageBase<TViewModel>: MenuItemsPageBaseEx<TViewMode
             (null, null, false),
             (Translator["Language"] + ": " + Translator["#LangName"], ViewModel.LanguageCommand, true),
             (null, null, false),
+            (Translator["CrtMode"] + ": " + ViewModel.CrtStr, ViewModel.CrtCommand, true),
             (Translator["Palette"] + ": " + ViewModel.PaletteStr, ViewModel.PaletteCommand, true),
         ]);
         return menuView;

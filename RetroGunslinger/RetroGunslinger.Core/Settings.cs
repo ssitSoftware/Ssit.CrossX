@@ -12,6 +12,7 @@ public class Settings: AppSettingsBase<Settings>
     private bool _fullscreen;
     private int _scale = 1;
     private int _palette;
+    private int _crtMode;
 
     [JsonProperty]
     public bool CameraShake
@@ -73,5 +74,12 @@ public class Settings: AppSettingsBase<Settings>
     {
         get => _palette;
         set => SetField(ref _palette, value);
+    }
+    
+    [JsonProperty]
+    public int CrtMode
+    {
+        get => _crtMode;
+        set => SetField(ref _crtMode, value);
     }
 }

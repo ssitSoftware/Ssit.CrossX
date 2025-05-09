@@ -17,7 +17,20 @@ public class GameApp: UiPixelApp
 
     private IPaletteSource _paletteSource;
     private readonly IGameTemplate _gameTemplate = new GameTemplate();
-
+    private readonly PixelAppHost.Parameters _hostParameters;
+    
+    public GameApp()
+    {
+        _hostParameters
+            = new PixelAppHost.Parameters
+            {
+                DesignSize = _gameTemplate.TargetSize,
+                MinScale = 2,
+                MaxScale = 2,
+                Mode = PixelAppHost.Mode.Height,
+            };
+    }
+    
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
         base.OnInitializeServices(builder);
@@ -37,6 +50,16 @@ public class GameApp: UiPixelApp
     {
         _paletteSource = container.Get<IPaletteSource>();
 
+        var settings = container.Get<ISettingsProvider>().Settings;
+        SetCrtMode(settings.CrtMode);
+        settings.PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName == nameof(Settings.CrtMode))
+            {
+                SetCrtMode(container.Get<ISettingsProvider>().Settings.CrtMode);
+            }
+        };
+
         container
             .InitializeInputMapping()
             .InitializeFonts();
@@ -45,6 +68,52 @@ public class GameApp: UiPixelApp
         
         base.OnInitialize(container);
         UiApp.Initialize<MainPageViewModel>();
+    }
+
+    private void SetCrtMode(int mode)
+    {
+        switch (mode)
+        {
+            case 0:
+                _hostParameters.GlowParameters = null;
+                _hostParameters.CrtParameters = null;
+                ApplyHostParameters();
+                break;
+            
+            case 1:
+                SetBasicCrt();
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.5f;
+                ApplyHostParameters();
+                break;
+            
+            case 2:
+                SetBasicCrt();
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.0f, -0.75f);
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f);
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f);
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f);
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, 0);
+                _hostParameters.CrtParameters.LampGlow = 0.3f;
+                _hostParameters.CrtParameters.LampDownSize = 6;
+                ApplyHostParameters();
+                break;
+        }
+    }
+
+    private void SetBasicCrt()
+    {
+        _hostParameters.GlowParameters = new PixelAppHost.GlowParameters
+        {
+            SelfGlowFactor = 0.3f,
+            EnableGameGlow = false,
+            Blur = Blurs.OptimizedGaussian5X5,
+            BlurDivider = Blurs.Gaussian5X5Divider
+        };
+        _hostParameters.CrtParameters = new PixelAppHost.CrtParameters
+        {
+            Interline = 0.3f,
+        };
+
     }
 
     protected override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
@@ -57,28 +126,6 @@ public class GameApp: UiPixelApp
     
     protected override IAppHost CreateAppHost(IIoCContainer container)
     {
-        return container.IoCConstruct<PixelAppHost>(new PixelAppHost.Parameters
-        {
-            DesignSize = _gameTemplate.TargetSize,
-            MinScale = 2,
-            MaxScale = 2,
-            Mode = PixelAppHost.Mode.Height,
-            GlowParameters = new PixelAppHost.GlowParameters
-            {
-                SelfGlowFactor = 0.3f,
-                EnableGameGlow = false,
-                Blur = Blurs.OptimizedGaussian5X5,
-                BlurDivider = Blurs.Gaussian5X5Divider,
-                DisplacementFactorB = new Vector2(0.0f,0.5f),
-                DisplacementFactorG = new Vector2(-0.5f,0.0f),
-                DisplacementFactorR = new Vector2(0.0f,-0.5f)
-            },
-            CrtParameters = new PixelAppHost.CrtParameters
-            {
-                Interline = 0.3f,
-                //DisplacementFactorG = new Vector2(-0.25f,0.0f),
-                //DisplacementFactorR = new Vector2(0.25f, 0)
-            }
-        });
+        return container.IoCConstruct<PixelAppHost>(_hostParameters);
     }
 }   

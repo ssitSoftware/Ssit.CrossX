@@ -30,6 +30,8 @@ public abstract class UiPixelApp : IApp
     
     private IAppHost _appHost;
     private IRenderer2 _renderer;
+
+    private Size _size;
         
     protected abstract RgbaColor BackgroundColor { get; }
     
@@ -70,8 +72,14 @@ public abstract class UiPixelApp : IApp
         
     protected void OnResize(Size size)
     {
-        _appHost.Resize(size);
+        _size = size;
+        _appHost.Resize(_size);
         UiApp.SetBounds(new RectangleF(Vector2.Zero, _appHost.TargetSize / _appHost.Scale), _appHost.Scale);
+    }
+
+    protected void ApplyHostParameters()
+    {
+        _appHost?.Resize(_size, true);
     }
         
     protected virtual void OnDraw(IRenderer2 renderer)

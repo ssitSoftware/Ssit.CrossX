@@ -20,12 +20,14 @@ public class OptionsPageViewModel: IPageCommandsSource
     public ICommand MusicVolumeCommand { get; }
     public ICommand LanguageCommand { get; }
     public ICommand PaletteCommand { get; }
+    public ICommand CrtCommand { get; }
     public ICommand FullScreenCommand { get; }
     public SyncCommand ScaleCommand { get; }
     
     public SharedStringSource SoundVolumeStr { get; } = new();
     public SharedStringSource MusicVolumeStr { get; } = new();
     public SharedStringSource PaletteStr { get; } = new();
+    public SharedStringSource CrtStr { get; } = new();
     
     public SharedStringSource FullscreenStr { get; } = new();
     
@@ -101,6 +103,23 @@ public class OptionsPageViewModel: IPageCommandsSource
             sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             UpdateStrings();
         });
+        
+        CrtCommand = new SyncCommand(o =>
+        {
+            (_, var type) = o as (object obj, ButtonCommandType type)? ?? (null, ButtonCommandType.Select);
+            if (type == ButtonCommandType.Previous)
+            {
+                _settings.CrtMode = (_settings.CrtMode + 2) % 3;
+            }
+            else
+            {
+                _settings.CrtMode = (_settings.CrtMode + 1) % 3;
+            }
+
+            _settings.Save();
+            sounds[UiSounds.ChangeValueSound]?.PlayOnce();
+            UpdateStrings();
+        });
 
         FullScreenCommand = new SyncCommand(_ =>
         {
@@ -153,7 +172,7 @@ public class OptionsPageViewModel: IPageCommandsSource
         PaletteStr.SetSource(Palette.Palettes[_settings.Palette].Name);
         FullscreenStr.SetSource(_settings.Fullscreen ? _translator["Yes"] : _translator["No"]);
         ScaleStr.SetSource($"{_settings.Scale}x");
-        
+        CrtStr.SetSource(_translator[$"Crt{_settings.CrtMode}"]);
         ScaleCommand.RaiseCanExecuteChanged();
     }
 }

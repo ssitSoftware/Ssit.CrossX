@@ -19,7 +19,7 @@ public unsafe class SdlTexture: ITexture
     private readonly SdlHandle<SDL_Texture> _textureGlow;
 
     private readonly SdlHandle<SDL_Surface> _surfaceDiff;
-    
+
     public Size Size { get; }
     public TextureMaps TextureMaps { get; }
 
@@ -136,16 +136,17 @@ public unsafe class SdlTexture: ITexture
 
     private void UpdateSdlPalette()
     {
+        
         if (_surfaceDiff is null || _surfaceDiff.Pointer is null)
         {
             return;
         }
-        
+
         SDL_SetSurfacePalette(_surfaceDiff.Pointer, _sdlPalette.PaletteHandle.Pointer);
-        
+
         var newSurface = SDL_ConvertSurface(_surfaceDiff.Pointer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
         SDL_PremultiplySurfaceAlpha(newSurface, CBool.FromBoolean(true));
-        
+
         if (_textureDiff != null && _textureDiff.Pointer != null)
         {
             SDL_UpdateTexture(_textureDiff.Pointer, null, newSurface->pixels, newSurface->pitch);
@@ -155,7 +156,7 @@ public unsafe class SdlTexture: ITexture
             var texture = SDL_CreateTextureFromSurface(_handles.Renderer, newSurface);
             _textureDiff = new SdlHandle<SDL_Texture>(texture);
         }
-        
+
         SDL_DestroySurface(newSurface);
     }
 

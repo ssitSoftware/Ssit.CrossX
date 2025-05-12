@@ -13,7 +13,7 @@ public class Palette
     public static readonly Palette[] Palettes =
     [
         new("Default", RgbaColor.Transparent, 0x100800, 0xddd8d0, 0x706868, 0xc04040),
-        new("Contrast", RgbaColor.Transparent, RgbaColor.Black, RgbaColor.White, RgbaColor.Gray, RgbaColor.Red),
+        new("Contrast", RgbaColor.Transparent, RgbaColor.Black, RgbaColor.White, 0x606060, RgbaColor.Red),
         new ("Purple", RgbaColor.Transparent, 0x150413, 0xffffd1, 0x332431, 0x6e3c3c),
         new("Cold", RgbaColor.Transparent, 0x08001f, 0xb2d5d1, 0x444d84, 0xb4643d),
         new("Marron", RgbaColor.Transparent, 0x340011, 0xf2b63f, 0x9c2032, 0xff0064),

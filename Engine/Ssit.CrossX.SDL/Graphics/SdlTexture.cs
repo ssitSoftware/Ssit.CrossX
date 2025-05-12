@@ -1,4 +1,5 @@
 using Interop.Runtime;
+using SkiaSharp;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
 
@@ -31,14 +32,14 @@ public unsafe class SdlTexture: ITexture
         {
             int width, height;
 
-            if (sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
+            if (sdlPalette == null || parameters.ColorMode == LoadTextureColorMode.NoPalette)
             {
                 (_textureDiff, width, height) =
                     LoadTexture(parameters.DiffuseMapStream, handles.Renderer, parameters.ColorMode);
             }
             else
             {
-                (_textureDiff, _surfaceDiff) = LoadIndexedImage(parameters.GlowMapStream, sdlPalette.OriginalPalette);
+                (_textureDiff, _surfaceDiff) = LoadIndexedImage(parameters.DiffuseMapStream, sdlPalette.OriginalPalette);
                 
                 width = _surfaceDiff.Pointer->w;
                 height = _surfaceDiff.Pointer->h;
@@ -85,11 +86,51 @@ public unsafe class SdlTexture: ITexture
 
     private (SdlHandle<SDL_Texture>, SdlHandle<SDL_Surface>) LoadIndexedImage(Stream stream, IReadOnlyList<RgbaColor> palette)
     {
-        // TODO: Loading paletted image!
-        SDL_Surface* surfacePtr = SDL_CreateSurface(100, 100, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+        var dict = new Dictionary<SKColor, byte>();
+
+        using var bmp = SKBitmap.Decode(stream);
+
+        var pixels = bmp.Pixels;
+
+        
+        SDL_Surface* surfacePtr = SDL_CreateSurface(bmp.Width, bmp.Height, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+        
+        var stride = surfacePtr->pitch;
+        var indices = new byte[stride * bmp.Height];
+
+        for (var y = 0; y < bmp.Height; y++)
+        {
+            for(var x = 0; x < bmp.Width; x++)
+            {
+                var color = pixels[y * bmp.Width + x];
+                
+                if (!dict.TryGetValue(color, out var index))
+                {
+                    var dist = color.Alpha < 224 ? 0 : float.MaxValue;
+                    
+                    for (var idx = 1; idx < palette.Count && dist > 0; ++idx)
+                    {
+                        var d = color.DistanceTo(palette[idx]);
+                        if (d < dist)
+                        {
+                            dist = d;
+                            index = (byte)idx;
+                        }
+                    }
+
+                    dict[color] = index;
+                }
+                indices[y*stride+x] = index;
+            }
+        }
+
+        fixed (byte* ptr = indices)
+        {
+            byte* surfPixels = (byte*)surfacePtr->pixels;
+            Buffer.MemoryCopy(ptr, surfPixels, indices.Length, indices.Length);
+        }
         
         var texturePtr = SDL_CreateTexture(_handles.Renderer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888, SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, surfacePtr->w, surfacePtr->h);
-        
         return (new SdlHandle<SDL_Texture>(texturePtr), new SdlHandle<SDL_Surface>(surfacePtr));
     }
 

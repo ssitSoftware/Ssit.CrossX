@@ -42,8 +42,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             .WithImplementation<ITexture, SdlTexture>()
             .WithImplementation<IRenderTarget, SdlRenderTarget>()
             .WithPixelCore()
-            //.WithDummyAudio();
-            .WithOpenAl();
+            .WithAudio();
         
         initializeServicesDelegate?.Invoke(builder);
 

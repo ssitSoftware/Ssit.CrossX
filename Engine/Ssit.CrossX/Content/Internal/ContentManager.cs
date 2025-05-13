@@ -12,7 +12,7 @@ namespace Ssit.CrossX.Content.Internal;
 
 internal class ContentManager: IContentManager
 {
-    private readonly IIoCContainer _ioCContainer;
+    private readonly IIoCContainer _iocContainer;
     private readonly IFilesProvider _filesProvider;
     private readonly IActionScheduler _scheduler;
 
@@ -26,10 +26,10 @@ internal class ContentManager: IContentManager
     
     private readonly Dictionary<string, ResourceInstance> _resources = new();
     private readonly Dictionary<Type, LoadResourceDelegate> _resourceLoaders = new();
-
-    public ContentManager(IIoCContainer ioCContainer, IFilesProvider filesProvider, IActionScheduler scheduler)
+    
+    public ContentManager(IIoCContainer iocContainer, IFilesProvider filesProvider, IActionScheduler scheduler)
     {
-        _ioCContainer = ioCContainer;
+        _iocContainer = iocContainer;
         _filesProvider = filesProvider;
         _scheduler = scheduler;
 
@@ -37,8 +37,29 @@ internal class ContentManager: IContentManager
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
     }
 
+    public void RemoveCache<TResource>(string path) where TResource : class, IDisposable
+    {
+        var key = GetKey<TResource>(path);
+        if (_resources.TryGetValue(key, out var resource))
+        {
+            resource.Users.Remove(Guid.Empty);
+            
+            if (resource.Users.Count == 0)
+            {
+                _resources.Remove(key);
+                _scheduler.Schedule(resource.Object.Dispose);
+            }
+        }
+    }
+    
     public ResourceHandle<TResource> Get<TResource>(string path) where TResource : class, IDisposable
     {
+        bool cache = false;
+        if (path.EndsWith('!'))
+        {
+            path = path.Substring(0, path.Length - 1);
+            cache = true;
+        }
         path = PathHelper.NormalizePath(path);
         
         var key = GetKey<TResource>(path);
@@ -46,10 +67,15 @@ internal class ContentManager: IContentManager
         if (!_resources.TryGetValue(key, out var resource))
         {
             var obj = LoadResource<TResource>(path);
-
+            
             resource = new ResourceInstance(obj);
             _resources.Add(key, resource);
 
+            if (cache)
+            {
+                resource.Users.Add(Guid.Empty);
+            }
+            
             if (obj is IInstanceCountingResource icr)
             {
                 icr.AddUser = g => resource.Users.Add(g);
@@ -109,7 +135,7 @@ internal class ContentManager: IContentManager
         }
 
         using var stream = _filesProvider.Open(path);
-        return _ioCContainer.IoCConstruct<TResource>(stream);
+        return _iocContainer.IoCConstruct<TResource>(stream);
     }
     
     private IDisposable LoadTextureFunc(string path)
@@ -122,7 +148,7 @@ internal class ContentManager: IContentManager
         var hasNormals = _filesProvider.FileExists(name + ".normal" + ext);
         var hasGlow = _filesProvider.FileExists(name + ".glow" + ext);
 
-        return _ioCContainer.IoCConstruct<ITexture>(new LoadTextureParameters
+        return _iocContainer.IoCConstruct<ITexture>(new LoadTextureParameters
         {
             DiffuseMapStream =  hasDiffuseImplicit ? _filesProvider.Open(name + ext) : hasDiffuseExplicit ? 
                 _filesProvider.Open(name + ".diffuse" + ext) : null,

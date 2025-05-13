@@ -21,5 +21,7 @@ public interface IContentManager
     /// <typeparam name="TResource">Type of resource, which custom loading should be registered.</typeparam>
     void RegisterLoader<TResource>(LoadResourceDelegate loadFunc) where TResource: class, IDisposable;
     
+    void RemoveCache<TResource>(string path) where TResource: class, IDisposable;
+    
     IFilesProvider FilesProvider { get; }
 }

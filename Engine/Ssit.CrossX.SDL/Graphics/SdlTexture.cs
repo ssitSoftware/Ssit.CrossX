@@ -149,13 +149,11 @@ public unsafe class SdlTexture: ITexture
 
         if (_textureDiff != null && _textureDiff.Pointer != null)
         {
-            SDL_UpdateTexture(_textureDiff.Pointer, null, newSurface->pixels, newSurface->pitch);
+            SDL_DestroyTexture(_textureDiff.Pointer);
         }
-        else
-        {
-            var texture = SDL_CreateTextureFromSurface(_handles.Renderer, newSurface);
-            _textureDiff = new SdlHandle<SDL_Texture>(texture);
-        }
+        
+        var texture = SDL_CreateTextureFromSurface(_handles.Renderer, newSurface);
+        _textureDiff = new SdlHandle<SDL_Texture>(texture);
 
         SDL_DestroySurface(newSurface);
     }

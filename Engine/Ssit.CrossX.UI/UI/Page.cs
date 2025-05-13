@@ -196,8 +196,21 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected abstract View CreateView();
 
+    protected virtual void OnDispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _rootHandler.Dispose();
+        }
+    }
+    
+    ~Page()
+    {
+        OnDispose(false);
+    }
+    
     void IDisposable.Dispose()
     {
-        _rootHandler.Dispose();
+        OnDispose(true);
     }
 }

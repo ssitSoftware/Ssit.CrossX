@@ -110,7 +110,12 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     protected override void OnDispose(bool disposing)
     {
         base.OnDispose(disposing);
-        AttachedView.Source.ImageChanged += OnImageChanged;
+
+        if (AttachedView.Source != null)
+        {
+            AttachedView.Source.ImageChanged += OnImageChanged;
+            AttachedView.Source.Dispose();
+        }
     }
 
     protected override void OnDraw(IRenderer2 renderer)

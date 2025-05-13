@@ -24,7 +24,7 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
             Children = [
                 new ImageView
                 {
-                  Source  = "assets:/UI/Logo.png",
+                  Source  = "assets:/UI/Logo.png!",
                   AnchorX = "50%",
                   HorizontalAlign = Align.Center,
                   VerticalAlign = Align.Start,
@@ -62,5 +62,10 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
     {
         base.MenuApplyStyle(stack);
         stack.AnchorY = "50%+20";
+    }
+
+    protected override void OnDispose(bool disposing)
+    {
+        base.OnDispose(disposing);
     }
 }

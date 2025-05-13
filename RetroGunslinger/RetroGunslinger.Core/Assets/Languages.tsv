@@ -25,4 +25,12 @@ Crt0	None	Brak
 Crt1	Modern	Nowoczesny
 Crt2	Retro	Retro
 CrtMode	Crt Mode	Tryb CRT
-Palette	Paloette	Paleta
+Palette	Palette	Paleta
+Default	Default	Domyślna
+Contrast	Contrast	Kontrastowa
+Purple	Purple	Purpurowa
+Cold	Cold	Zimna
+Chocolate	Chocolate	Czekolada
+Amber	Amber	Bursztynowa
+Fav1	Author's FAV 1	Autora #1
+Fav2	Author's FAV 2	Autora #2

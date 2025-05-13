@@ -169,7 +169,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             MusicVolumeStr.SetSource($"{vol}%");
         }
 
-        PaletteStr.SetSource(Palette.Palettes[_settings.Palette].Name);
+        PaletteStr.SetSource(_translator[Palette.Palettes[_settings.Palette].Name]);
         FullscreenStr.SetSource(_settings.Fullscreen ? _translator["Yes"] : _translator["No"]);
         ScaleStr.SetSource($"{_settings.Scale}x");
         CrtStr.SetSource(_translator[$"Crt{_settings.CrtMode}"]);

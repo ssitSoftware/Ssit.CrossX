@@ -83,7 +83,7 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
         var green = Gf * (1 - mix) + other.Gf * mix;
         var blue = Bf * (1 - mix) + other.Bf * mix;
         var alpha = Af * (1 - mix) + other.Af * mix;
-
+        
         return new RgbaColor(red, green, blue, alpha);
     }
     

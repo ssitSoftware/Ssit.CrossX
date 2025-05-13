@@ -8,7 +8,17 @@ namespace Ssit.CrossX.SDL.Audio;
 
 public static class IoCRegistrar
 {
-    public static IIoCContainerBuilder WithOpenAl(this IIoCContainerBuilder builder)
+    public static IIoCContainerBuilder WithAudio(this IIoCContainerBuilder builder)
+    {
+        if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsWindows())
+        {
+            return builder.WithOpenAl();
+        }
+        
+        return builder.WithDummyAudio();
+    }
+    
+    private static IIoCContainerBuilder WithOpenAl(this IIoCContainerBuilder builder)
     {
         return builder
             .WithSingleton<ISoundManager, AlSoundManagerImpl>()
@@ -16,7 +26,7 @@ public static class IoCRegistrar
             .WithImplementation<ISingleMusicPlayer, AlSingleMusicPlayerImpl>();
     }
 
-    public static IIoCContainerBuilder WithDummyAudio(this IIoCContainerBuilder builder)
+    private static IIoCContainerBuilder WithDummyAudio(this IIoCContainerBuilder builder)
     {
         return builder
             .WithSingleton<ISoundManager, DummySoundManagerImpl>()

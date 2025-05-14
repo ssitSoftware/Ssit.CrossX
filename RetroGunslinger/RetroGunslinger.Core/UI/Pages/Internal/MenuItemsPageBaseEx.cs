@@ -15,6 +15,7 @@ public abstract class MenuItemsPageBaseEx<TViewModel> : MenuItemsPageBase<TViewM
         {
             labelButtonEx.FocusWaveAmplitude = (labelButtonEx.Font?.FontSize ?? 12) / 9;
             labelButtonEx.FocusWaveFrequency = 1f;
+            labelButtonEx.FocusBevel = (labelButtonEx.Font?.FontSize ?? 12) / 6;
         }
     }
 

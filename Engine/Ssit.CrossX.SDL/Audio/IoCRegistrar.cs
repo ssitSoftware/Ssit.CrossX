@@ -10,7 +10,7 @@ public static class IoCRegistrar
 {
     public static IIoCContainerBuilder WithAudio(this IIoCContainerBuilder builder)
     {
-        if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsWindows())
+        if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsWindows())
         {
             return builder.WithOpenAl();
         }

@@ -13,6 +13,7 @@ namespace RetroGunslinger.Core.UI.Handlers;
 public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
 {
     private float _waveAmplitude;
+    private float _bevel;
     private float _time;
     
     public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) 
@@ -29,7 +30,10 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         
         var amplitude = (AttachedView.FocusWaveAmplitude ?? 0).Calculate(CurrentScale, 0);
         var targetAmplitude = Focused ? amplitude : 0.0f;
-
+        
+        var bevel = (AttachedView.FocusBevel ?? 0).Calculate(CurrentScale, 0);
+        var targetBevel = Focused ? bevel : 0.0f;
+        
         if (_waveAmplitude < targetAmplitude)
         {
             _waveAmplitude += dt * amplitude * 8;
@@ -40,14 +44,25 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
             _waveAmplitude -= dt * amplitude * 16;
             _waveAmplitude = MathF.Max(_waveAmplitude, targetAmplitude);
         }
+        
+        if (_bevel < targetBevel)
+        {
+            _bevel += dt * bevel * 8;
+            _bevel = MathF.Min(_bevel, targetBevel);
+        }
+        else if (_bevel > targetBevel)
+        {
+            _bevel -= dt * bevel * 16;
+            _bevel = MathF.Max(_bevel, targetBevel);
+        }
     }
 
     protected override void OnDrawInternal(IRenderer2 renderer)
     {
         var globalOffset = _waveAmplitude * MathF.Sin(_time * AttachedView.FocusWaveFrequency.GetValueOrDefault() * 2 * MathF.PI);
 
-        var offset0 = new Vector2(-0.25f, -0.5f) * _waveAmplitude + globalOffset * new Vector2(1f, 0);
-        var offset1 = new Vector2(0.5f, -1) * _waveAmplitude + globalOffset * new Vector2(1f, 0);
+        var offset0 = new Vector2(-0.25f, -0.5f) * _bevel + globalOffset * new Vector2(1f, 0);
+        var offset1 = new Vector2(0.5f, -1f) * _bevel + globalOffset * new Vector2(1f, 0);
         
         DrawText(renderer, RgbaColor.Transparent, TextOutlineColor(renderer) ?? RgbaColor.Transparent, offset0);
 

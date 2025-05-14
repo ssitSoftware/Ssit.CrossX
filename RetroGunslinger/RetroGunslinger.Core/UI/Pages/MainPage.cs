@@ -63,9 +63,4 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
         base.MenuApplyStyle(stack);
         stack.AnchorY = "50%+20";
     }
-
-    protected override void OnDispose(bool disposing)
-    {
-        base.OnDispose(disposing);
-    }
 }

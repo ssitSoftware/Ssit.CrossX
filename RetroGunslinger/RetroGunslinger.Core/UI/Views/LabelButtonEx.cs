@@ -5,6 +5,7 @@ namespace RetroGunslinger.Core.UI.Views;
 
 public class LabelButtonEx: LabelButton
 {
+    public Length? FocusBevel { get; set; }
     public Length? FocusWaveAmplitude { get; set; }
     public float? FocusWaveFrequency { get; set; }
 }

@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Engine\Ssit.CrossX.Editor\Ssit.CrossX.Editor.csproj" />
       <ProjectReference Include="..\..\Engine\Ssit.CrossX.SDL\Ssit.CrossX.SDL.csproj" />
       <ProjectReference Include="..\RetroGunslinger.Core\RetroGunslinger.Core.csproj" />
     </ItemGroup>

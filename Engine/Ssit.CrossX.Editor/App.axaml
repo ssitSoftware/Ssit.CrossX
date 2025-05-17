@@ -10,6 +10,7 @@
         <Color x:Key="ControlBackground">#202020</Color>
         <Color x:Key="HeaderBackground">#303030</Color>
         <Color x:Key="EmptyBackground">#402040</Color>
+        <Color x:Key="TilesBackground">#ff80ff</Color>
         <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
         <converters:InvalidPropertyConverter x:Key="InvalidPropertyConverter" />
         <converters:RgbaColorConverter x:Key="RgbaColorConverter" />

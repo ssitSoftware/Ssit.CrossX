@@ -82,7 +82,7 @@
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Visible">
             <controls:SkPanel
-                Background="{StaticResource EmptyBackground}"
+                Background="{StaticResource TilesBackground}"
                 ContinuousRedraw="False"
                 HorizontalAlignment="Left"
                 Margin="8,0,16,16"

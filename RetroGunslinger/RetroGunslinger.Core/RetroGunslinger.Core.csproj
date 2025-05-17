@@ -16,4 +16,8 @@
         <EmbeddedResource Include="Assets\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Assets\Game\Sounds\" />
+    </ItemGroup>
+
 </Project>

@@ -36,6 +36,7 @@ public class PixelAppHost: IAppHost
         public bool HasDisplacement => DisplacementFactorR != Vector2.Zero || DisplacementFactorG != Vector2.Zero || DisplacementFactorB != Vector2.Zero;
 
         public float LampGlow;
+        public float MotionBlur;
         public int LampDownSize = 8;
     }
 
@@ -92,7 +93,16 @@ public class PixelAppHost: IAppHost
             if (_glowRenderTarget != null)
             {
                 _renderer.SetRenderTarget(_glowRenderTarget);
-                _renderer.Clear(RgbaColor.Black);
+                if (_parameters.CrtParameters?.MotionBlur > 0)
+                {
+                    var factor = 1 - _parameters.CrtParameters.MotionBlur;
+                    _renderer.GeometryRenderer.FillRectangle(new RectangleF(Vector2.Zero, _glowRenderTarget.Size), RgbaColor.Black * factor);
+                }
+                else
+                {
+                    _renderer.Clear(RgbaColor.Black);
+                }
+
                 if (true == _parameters.GlowParameters?.EnableGameGlow)
                 {
                     _renderer.StateManager.SetGlowMode(true);
@@ -112,6 +122,12 @@ public class PixelAppHost: IAppHost
         if (_renderTarget is null)
         {
             Resize(_renderer.TargetSize);
+        }
+
+        if (_parameters.CrtParameters?.MotionBlur > 0)
+        {
+            _renderer.SetRenderTarget(_glowRenderTarget);
+            _renderer.SpriteRenderer.Draw(_renderTarget, Vector2.Zero);
         }
         
         _renderer.SetRenderTarget(_renderTarget);

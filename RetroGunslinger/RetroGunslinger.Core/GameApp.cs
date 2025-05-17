@@ -43,7 +43,7 @@ public class GameApp: UiPixelApp
             .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
             .WithInstance(_gameTemplate);
         
-        builder.WithIndexedRenderer(RgbaColor.Transparent, RgbaColor.Black, RgbaColor.White, RgbaColor.Gray, RgbaColor.Red);
+        builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0x303030, 0xff0000);
     }
 
     protected override void OnInitialize(IIoCContainer container)
@@ -75,7 +75,13 @@ public class GameApp: UiPixelApp
         switch (mode)
         {
             case 0:
-                _hostParameters.GlowParameters = null;
+                _hostParameters.GlowParameters = new PixelAppHost.GlowParameters
+                {
+                    SelfGlowFactor = 0.3f,
+                    EnableGameGlow = false,
+                    Blur = Blurs.Gaussian3X3,
+                    BlurDivider = Blurs.Gaussian3X3Divider
+                };
                 _hostParameters.CrtParameters = null;
                 ApplyHostParameters();
                 break;
@@ -88,14 +94,17 @@ public class GameApp: UiPixelApp
             
             case 2:
                 SetBasicCrt();
+                
                 _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.5f);
                 _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f);
                 _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f);
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.4f;
                 
                 _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f);
                 _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.75f, -0.0f);
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
+                _hostParameters.CrtParameters.Interline = 0.35f;
                 ApplyHostParameters();
                 break;
         }
@@ -105,7 +114,7 @@ public class GameApp: UiPixelApp
     {
         _hostParameters.GlowParameters = new PixelAppHost.GlowParameters
         {
-            SelfGlowFactor = 0.3f,
+            SelfGlowFactor = 0.35f,
             EnableGameGlow = false,
             Blur = Blurs.OptimizedGaussian5X5,
             BlurDivider = Blurs.Gaussian5X5Divider

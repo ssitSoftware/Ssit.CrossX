@@ -28,4 +28,5 @@ public interface IGameTemplate
     decimal TilesetPanelZoom { get; }
     int PreviewZoom { get; }
     RgbaColor EmptyColor { get; }
+    RgbaColor TilesBgColor => EmptyColor;
 }

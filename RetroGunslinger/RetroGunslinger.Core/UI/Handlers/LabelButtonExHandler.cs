@@ -61,8 +61,8 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     {
         var globalOffset = _waveAmplitude * MathF.Sin(_time * AttachedView.FocusWaveFrequency.GetValueOrDefault() * 2 * MathF.PI);
 
-        var offset0 = new Vector2(-0.25f, -0.5f) * _bevel + globalOffset * new Vector2(1f, 0);
-        var offset1 = new Vector2(0.5f, -1f) * _bevel + globalOffset * new Vector2(1f, 0);
+        var offset0 = new Vector2(0.0f, -0.25f) * _bevel + globalOffset * new Vector2(1f, 0);
+        var offset1 = new Vector2(0.5f, -1.25f) * _bevel + globalOffset * new Vector2(1f, 0);
         
         DrawText(renderer, RgbaColor.Transparent, TextOutlineColor(renderer) ?? RgbaColor.Transparent, offset0);
 

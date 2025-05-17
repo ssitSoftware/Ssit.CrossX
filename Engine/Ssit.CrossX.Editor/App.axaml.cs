@@ -51,6 +51,7 @@ namespace Ssit.CrossX.Editor
             Name = template.Name + " Editor";
 
             Resources["EmptyBackground"] = new Color(255, template.EmptyColor.R, template.EmptyColor.G, template.EmptyColor.B);
+            Resources["TilesBackground"] = new Color(255, template.TilesBgColor.R, template.TilesBgColor.G, template.TilesBgColor.B);
         }
 
         public override void OnFrameworkInitializationCompleted()

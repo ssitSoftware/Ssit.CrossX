@@ -85,6 +85,7 @@ public class PropertiesViewModel: BindableModel
         public void OnUpdated()
         {
             _mapFile.OnModified();
+            _editor.SelectedLayer.SortObjects();
         }
     }
     

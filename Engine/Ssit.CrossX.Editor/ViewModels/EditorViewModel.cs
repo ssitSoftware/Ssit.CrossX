@@ -496,7 +496,9 @@ namespace Ssit.CrossX.Editor.ViewModels
             }
             
             var start = MapToScreen(Vector2.Zero, offset);
-
+            
+            RenderObjects(layer, skCanvas, grContext, showObjects, start, true);
+            
             var tileSetImages = GetTileSetImages(grContext);
         
             for (var x = 0; x < layer.Width; ++x)
@@ -517,7 +519,9 @@ namespace Ssit.CrossX.Editor.ViewModels
                     var img = tileSetImages[tile.TileSet];
                     if (img is null) continue;
 
-                    var src = SKRect.Create(tile.X * origTs, tile.Y * origTs, origTs, origTs); 
+                    const float epsilon = 0.0001f;
+                    
+                    var src = SKRect.Create(tile.X * origTs + epsilon, tile.Y * origTs + epsilon, origTs-epsilon * 2, origTs - epsilon * 2); 
                     var dest = SKRect.Create(posX, posY, ts, ts);
                 
                     skCanvas.DrawImage(img, src, dest, _skPaint);
@@ -587,42 +591,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 }
             }
 
-            for (var idx = 0; idx < layer.Objects.Count; )
-            {
-                var obj = layer.Objects[idx];
-
-                if (obj.HasLogic && !showObjects)
-                {
-                    ++idx;
-                    continue;
-                }
-
-                try
-                {
-                    var editorImg = obj.HasLogic
-                        ? _instances.ObjectsContainer.Get(obj.TypeId)
-                        : _instances.ImagesContainer.Get(obj.TypeId);
-
-                    var rect = DrawObject(obj, editorImg, obj.Flipped, obj.Position, start, skCanvas, grContext,
-                        _skPaint, layer);
-
-                    if (current)
-                    {
-                        _currentObjects.Add(new MapObjectInfo
-                        {
-                            Object = obj,
-                            ScreenBounds = rect
-                        });
-                    }
-                }
-                catch (KeyNotFoundException)
-                {
-                    layer.Objects.RemoveAt(idx);
-                    continue;
-                }
-
-                ++idx;
-            }
+            RenderObjects(layer, skCanvas, grContext, showObjects, start, false);
             
             if (!IsFullscreen && current && layer == _instances.Map.MainLayer && ShowLinks && showObjects)
             {
@@ -669,6 +638,60 @@ namespace Ssit.CrossX.Editor.ViewModels
                 }
                 
                 _skPaint.StrokeWidth = 1;
+            }
+        }
+
+        private void RenderObjects(MapLayer layer, SKCanvas skCanvas, GRContext grContext, bool showObjects, Vector2 start, bool behind)
+        {
+            bool current = SelectedLayer == layer;
+            
+            for (var idx = 0; idx < layer.Objects.Count; )
+            {
+                var obj = layer.Objects[idx];
+
+                if (behind && obj.ZOrder >= 0)
+                {
+                    ++idx;
+                    continue;
+                }
+
+                if (!behind && obj.ZOrder < 0)
+                {
+                    ++idx;
+                    continue;
+                }
+
+                if (obj.HasLogic && !showObjects)
+                {
+                    ++idx;
+                    continue;
+                }
+
+                try
+                {
+                    var editorImg = obj.HasLogic
+                        ? _instances.ObjectsContainer.Get(obj.TypeId)
+                        : _instances.ImagesContainer.Get(obj.TypeId);
+
+                    var rect = DrawObject(obj, editorImg, obj.Flipped, obj.Position, start, skCanvas, grContext,
+                        _skPaint, layer);
+
+                    if (current)
+                    {
+                        _currentObjects.Add(new MapObjectInfo
+                        {
+                            Object = obj,
+                            ScreenBounds = rect
+                        });
+                    }
+                }
+                catch (KeyNotFoundException)
+                {
+                    layer.Objects.RemoveAt(idx);
+                    continue;
+                }
+
+                ++idx;
             }
         }
 

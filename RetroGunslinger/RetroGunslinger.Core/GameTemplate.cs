@@ -28,9 +28,8 @@ public class GameTemplate: IGameTemplate
     public int TileSize => 16;
     public Size TargetSize => new(480, 270);
     
-    public RgbaColor DefaultBackground => new(0xff404040);
-    public RgbaColor EmptyColor => RgbaColor.Black;//new(192, 128, 192);
-    public RgbaColor TilesBgColor => new(192, 128, 192);
+    public RgbaColor DefaultBackground => new(0x000000);
+    public RgbaColor EmptyColor => new(96, 64, 96);
     
     public GameObject.OriginAlignment ObjectsOriginAlignment =>
         GameObject.OriginAlignment.Bottom | GameObject.OriginAlignment.Center;
@@ -39,6 +38,7 @@ public class GameTemplate: IGameTemplate
     [
         new ("B", "- Background", new Size(128,96), 0.5f, 0.5f, "Background", 100, RgbaColor.White, LayerAlign.Bottom),
         
+        new ("CB2", "Close Background 2", new Size(512,96),  1, 1, "Tileset", 10, RgbaColor.White, LayerAlign.Bottom),
         new ("CB", "Close Background", new Size(512,96),  1, 1, "Tileset", 10, RgbaColor.White, LayerAlign.Bottom),
         new (LayerDescription.MainLayerId, "Main", new Size(512,96), 1, 1, "Tileset", 0, RgbaColor.White, LayerAlign.Left),
         new ("CF", "Close Foreground", new Size(512,96), 1, 1, "Tileset", -10, RgbaColor.White, LayerAlign.Bottom),
@@ -67,9 +67,10 @@ public class GameTemplate: IGameTemplate
 
     public ImageDescription[] Images { get; } =
     [
-        // new ("Trees/Tree 01", "assets:/Game/Images/Tree01"),
-        // new ("Trees/Tree 02", "assets:/Game/Images/Tree02"),
-        // new ("Trees/Tree 03", "assets:/Game/Images/Tree03"),
+        new ("Trees/Big Tree 1", "assets:/Game/Images/BigTree1"),
+        new ("Statues/Woman Statue", "assets:/Game/Images/Statue1"),
+        new ("Statues/Angel Statue", "assets:/Game/Images/Statue2"),
+        new ("Statues/Fallen Statue", "assets:/Game/Images/Statue3"),
         // new ("Foreground/Big Tree 01", "assets:/Game/Images/BigTree01"),
         // new ("Foreground/Big Tree 02", "assets:/Game/Images/BigTree02"),
         // new ("Foreground/Big Tree 03", "assets:/Game/Images/BigTree03"),
@@ -85,13 +86,14 @@ public class GameTemplate: IGameTemplate
     public MaterialInfo[] Materials { get; } =
     [
         new("Default", null, RgbaColor.LightBlue, RgbaColor.Yellow),
-        new("Grass", "GR|ASS", RgbaColor.Green, RgbaColor.GreenYellow),
-        new("Wood", "WO|OD", RgbaColor.SaddleBrown, RgbaColor.Orange),
+        new("Wood", "WOOD", RgbaColor.SaddleBrown, RgbaColor.Orange),
         new("Mud", "MUD", RgbaColor.DarkKhaki, RgbaColor.Coral),
         new("Water", "WAT|ER", RgbaColor.LightBlue, RgbaColor.LightBlue),
-        new("Ice", "ICE", RgbaColor.AliceBlue, RgbaColor.AliceBlue),
-        new("Wood Platform", "PLA|WDN", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
-        new("Metal Platform", "PLA|MET", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow)
+        new("Platform", "PLAT|FORM", RgbaColor.Gray, RgbaColor.LightGray),
+        new("Wood Platform", "PLAT|WOOD", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
+        new("Metal Platform", "PLAT|METL", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow),
+        new("Hurt", "HURT", RgbaColor.Red, RgbaColor.OrangeRed),
+        new("Ladder", "LAD|DER", RgbaColor.SandyBrown, RgbaColor.SandyBrown),
     ];
     
     public int PreviewZoom => 2;

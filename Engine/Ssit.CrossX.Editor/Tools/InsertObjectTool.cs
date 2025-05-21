@@ -149,6 +149,8 @@ public class InsertImageTool : EditorTool
             Flipped = Flipped,
             Type = GetObjectType()
         });
+
+        Editor.SelectedLayer.SortObjects();
         
         Editor.Redraw();
         Instances.Map.OnModified();

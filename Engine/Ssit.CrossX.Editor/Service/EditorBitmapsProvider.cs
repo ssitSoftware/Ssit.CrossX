@@ -12,14 +12,13 @@ public class EditorBitmapsProvider : IEditorBitmapsProvider
     public EditorBitmapsProvider(IGameTemplate gameTemplate)
     {
         var previews = new SKImage[gameTemplate.Materials.Length];
-
-        
+        using var typeface = SKTypeface.FromFamilyName("Arial Black");
         
         for (var idx = 1; idx < gameTemplate.Materials.Length; ++idx)
         {
             var material = gameTemplate.Materials[idx];
             
-            var font = new SKFont(SKTypeface.Default, 48);
+            var font = new SKFont(typeface, 48);
             var skPaint = new SKPaint(font);
             
             using var bmp = new SKBitmap(128, 128, SKColorType.Rgba8888, SKAlphaType.Unpremul);
@@ -30,7 +29,7 @@ public class EditorBitmapsProvider : IEditorBitmapsProvider
             var lines = material.ShortName.Split('|');
 
             float width;
-
+            
             var size = 48;
             while (true)
             {
@@ -47,16 +46,16 @@ public class EditorBitmapsProvider : IEditorBitmapsProvider
                 font.Dispose();
 
                 size -= 2;
-                font = new SKFont(SKTypeface.Default, size);
+                font = new SKFont(typeface, size);
                 skPaint = new SKPaint(font);
             }
 
-            
             var height = lines.Length * font.Size;
-            var y = (128 - height) / 2 + font.Size;
-
-            skPaint.Color = SKColors.White;
+            skPaint.IsAntialias = true;
+            skPaint.Color = material.PreviewColor.ToSkia();
             skPaint.IsStroke = false;
+
+            var y = (128 - height) / 2 + font.Size;
             foreach (var txt in lines)
             {
                 width = skPaint.MeasureText(txt);
@@ -64,9 +63,22 @@ public class EditorBitmapsProvider : IEditorBitmapsProvider
                 canvas.DrawText(txt, x, y, skPaint);
                 y += font.Size;
             }
+
+            y = (128 - height) / 2 + font.Size;
+            skPaint.Color = SKColors.Black;
+            skPaint.IsStroke = true;
+            skPaint.StrokeWidth = 4;
             
+            foreach (var txt in lines)
+            {
+                width = skPaint.MeasureText(txt);
+                var x = (128 - width) / 2;
+                canvas.DrawText(txt, x, y, skPaint);
+                y += font.Size;
+            }
+
             previews[idx] = SKImage.FromBitmap(bmp);
-            
+
             font.Dispose();
             skPaint.Dispose();
         }

@@ -230,6 +230,7 @@ public class MapLayer: BindableModel
         {
             Objects.Add(MapObject.Load(reader, gameTemplate));
         }
+        SortObjects();
     }
 
     internal void Save(BinaryWriter writer)
@@ -288,5 +289,10 @@ public class MapLayer: BindableModel
         }
 
         return null;
+    }
+
+    public void SortObjects()
+    {
+        Objects.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
     }
 }

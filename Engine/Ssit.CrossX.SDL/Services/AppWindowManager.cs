@@ -73,7 +73,7 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
     public void  SetTitle(string title)
     {
         using var allocator = new ArenaNativeAllocator(2048);
-        SDL_SetWindowTitle(window, allocator.AllocateCString(title));
+        SDL_SetWindowTitle(window, CString.FromString(allocator, title));
     }
 
     public void RaiseAppExiting(WindowClosingEventArgs args)

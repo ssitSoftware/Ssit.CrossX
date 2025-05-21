@@ -76,6 +76,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
         app.SetActive(true);
         
+        
+        
         if (!pointingDevices.Enable)
         {
             SDL_HideCursor();
@@ -146,7 +148,6 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             
             app.Draw(sdlRenderer);
             SDL_RenderPresent(renderer);
-            
             eventSource.OnRenderFinished();
         }
         

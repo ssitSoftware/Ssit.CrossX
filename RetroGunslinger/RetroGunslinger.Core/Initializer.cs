@@ -21,6 +21,8 @@ public static class Initializer
         var inputMappings = container.Get<IInputMappings>();
         GameControls.RegisterGameControls(inputMappings);
         
+        //RegisterGameContentTypes
+        
         return container;
     }
 

@@ -72,7 +72,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         SoundContainer.RegisterCharacterGroundSounds();
         
-        camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
+        camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 10000);
 
         Sprite.SetSequence("Idle");
         Body.IsBullet = true;
@@ -148,11 +148,14 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         base.OnFixedUpdate(dt);
     }
 
-    protected override void OnRender(IRenderer2 renderer, RgbaColor color)
-    {
-        color = color.Mix(RgbaColor.White, 0.5f);
-        base.OnRender(renderer, color); 
-    }
+    // protected override void OnRender(IRenderer2 renderer, RgbaColor color)
+    // {
+    //     //color = color.Mix(RgbaColor.White, 0.5f);
+    //     var position = Body.Position * Services.GameTemplate.TileSize;
+    //     position = new Vector2((int)(position.X * 16) / 16f, (int)(position.Y * 16) / 16f); 
+    //     
+    //     renderer.SpriteRenderer.Draw(Sprite, position, transform: Transform, color: color);
+    // }
 
     private void DetectOnGround()
     {

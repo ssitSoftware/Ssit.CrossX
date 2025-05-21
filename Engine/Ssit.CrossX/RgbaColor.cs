@@ -231,6 +231,14 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
     
     public RgbaColor AsPremultiplied() => FromNonPremultiplied(R, G, B, A);
 
+    public float DistanceTo(RgbaColor color)
+    {
+        var dr = Math.Abs(color.R - R);
+        var dg = Math.Abs(color.G - G);
+        var db = Math.Abs(color.B - B);
+
+        return MathF.Sqrt(dr * dr + dg * dg + db * db);
+    }
 
     /// <summary>
     /// Creates a new RgbaColor from a 32-bit unsigned integer representation.
@@ -310,7 +318,7 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
     /// <param name="a">The alpha component of the color, from 0 to 255.</param>
     /// <returns>A new RgbaColor with the specified non-premultiplied components.</returns>
     public static RgbaColor FromNonPremultiplied(byte r, byte g, byte b, byte a) => FromNonPremultiplied(r / 255f, g / 255f, b / 255f, a / 255f);
-
+    
     /// <summary>
     /// Creates a new RgbaColor instance from non-premultiplied RGBA values.
     /// </summary>

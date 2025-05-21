@@ -9,15 +9,18 @@ public static class GamePhysics
     {
         Default,
         Platform,
+        Hurt
     }
     
     public static class Materials
     {
         public const int Any = -1;
         public const int Default = 0;
-        public const int Water = 4;
-        public const int WoodPlatform = 6;
-        public const int MetalPlatform = 7;
+        public const int Water = 3;
+        public const int WoodPlatform = 4;
+        public const int MetalPlatform = 5;
+        public const int Platform = 6;
+        public const int Hurt = 7;
     }
     
     public const float GravityAcceleration = 56;
@@ -38,7 +41,12 @@ public static class GamePhysics
         {
             case Materials.MetalPlatform:
             case Materials.WoodPlatform:
+            case Materials.Platform:
                 return MaterialKind.Platform;
+            
+            case Materials.Hurt:
+                return MaterialKind.Hurt;
+            
             default:
                 return MaterialKind.Default;
         }

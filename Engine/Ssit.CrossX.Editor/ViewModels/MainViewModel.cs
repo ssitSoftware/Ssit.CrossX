@@ -167,6 +167,18 @@ namespace Ssit.CrossX.Editor.ViewModels
                 {
                     tool.Flipped = !tool.Flipped;
                 }
+                else if (_instances.Editor.SelectedObject != 0)
+                {
+                    var obj = _mapFile.FindObject(instances.Editor.SelectedObject);
+                    if (obj is not null)
+                    {
+                        _instances.UndoRedoServices.PushState();
+                        obj.Flipped = !obj.Flipped;
+                        _mapFile.OnModified();
+                        IsModified = true;
+                    }
+                }
+
                 EditorViewModel.Redraw();
             });
 
@@ -179,9 +191,8 @@ namespace Ssit.CrossX.Editor.ViewModels
             }
 
             TilesetSelectorViewModel = services.Create<TilesetSelectorViewModel>();
-
             TilesetsContainer = instances.TilesetsContainer;
-            
+
             Menu = GenerateMenu();
         }
         
@@ -325,16 +336,15 @@ namespace Ssit.CrossX.Editor.ViewModels
                     _filePath = path;
                     MapFile = mapFile;
                     IsModified = UpdateLayers();
-                    
+
                     _editorData.RecentMapPath = path;
                     _editorData.RequestSave();
-                    
+
                     return true;
                 }
             }
-            catch (FileNotFoundException)
-            {
-            }
+            catch (FileNotFoundException) { }
+            catch (DirectoryNotFoundException) { }
 
             return false;
         }

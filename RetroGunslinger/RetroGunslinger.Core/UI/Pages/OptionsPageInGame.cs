@@ -20,8 +20,7 @@ public class OptionsPageInGame : OptionsPageBase<OptionsPageInGameViewModel>
                 },
                 new Background
                 {
-                    // TODO: Mask image for pause screen
-                    BackgroundColor = RgbaColor.Black * 0.5f
+                    BackgroundColor = (1, 0.75f)
                 },
                 new Container
                 {

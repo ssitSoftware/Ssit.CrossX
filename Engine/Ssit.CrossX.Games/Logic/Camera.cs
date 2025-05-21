@@ -6,7 +6,7 @@ namespace Ssit.CrossX.Games.Logic;
 
 internal class Camera: ICamera
 {
-    public Vector2 LookAt { get; private set; }
+    private Vector2 _lookAt;
 
     private Body _primaryTarget;
     private Vector2 _primaryOffset;
@@ -22,14 +22,16 @@ internal class Camera: ICamera
     private float FollowFactor => _temporaryTarget != null ? _temporaryFollowFactor : _primaryFollowFactor;
     
     private Action _onTemporaryTargetFocused;
-    
+
+    public Vector2 LookAt => _lookAt;
+
     public void SetPrimaryTarget(Body body, Vector2 offset, float followFactor)
     {
         _primaryTarget = body;
         _primaryOffset = offset;
         _primaryFollowFactor = followFactor;
         
-        LookAt = _primaryTarget.Position + _primaryOffset;
+        _lookAt = _primaryTarget.Position + _primaryOffset;
     }
 
     public void SetTemporaryTarget(Body body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter)
@@ -49,10 +51,10 @@ internal class Camera: ICamera
         var target = Body.Position + Offset;
         var factor = MathF.Min(1, dt * FollowFactor);
         
-        LookAt = factor * target + (1 - factor) * LookAt;
-        LookAt = factor * target + (1 - factor) * LookAt;
+        _lookAt = factor * target + (1 - factor) * _lookAt;
+        _lookAt = factor * target + (1 - factor) * _lookAt;
 
-        if (_temporaryTarget != null && (LookAt - target).Length() < 0.5f)
+        if (_temporaryTarget != null && (_lookAt - target).Length() < 0.5f)
         {
             _onTemporaryTargetFocused?.Invoke();
             _onTemporaryTargetFocused = null;

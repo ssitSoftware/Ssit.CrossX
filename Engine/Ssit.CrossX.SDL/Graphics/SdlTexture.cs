@@ -136,7 +136,6 @@ public unsafe class SdlTexture: ITexture
 
     private void UpdateSdlPalette()
     {
-        
         if (_surfaceDiff is null || _surfaceDiff.Pointer is null)
         {
             return;

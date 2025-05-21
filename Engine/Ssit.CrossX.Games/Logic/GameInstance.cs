@@ -34,6 +34,7 @@ public class GameInstance : IGameInstance
     public float WorldDelta { get; private set; } = 1 / 120f;
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
+    private readonly IPaletteSource _paletteSource;
     private readonly MapDisplayElement _mapDisplayElement;
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -43,6 +44,8 @@ public class GameInstance : IGameInstance
     
     private bool _isDisposed;
     private float _timeToUpdate;
+
+    private int _bgColorIndex = 0;
     
     int IGameInstance.RenderPasses => 1;
     
@@ -56,12 +59,13 @@ public class GameInstance : IGameInstance
 
     void IGameInstance.RenderDebug(IRenderer2 renderer, RectangleF target, float scale) => RenderDebug(renderer, target, scale);
 
-    public GameInstance(IIoCContainer container, IContentManager contentManager, 
-        IActionScheduler scheduler, IGameTemplate gameTemplate, IInputMappings inputMappings, 
-        Parameters parameters)
+    public GameInstance(IIoCContainer container, IContentManager contentManager,
+        IActionScheduler scheduler, IGameTemplate gameTemplate,
+        Parameters parameters, IPaletteSource paletteSource = null)
     {
         _scheduler = scheduler;
         _gameTemplate = gameTemplate;
+        _paletteSource = paletteSource;
 
         using var stream = contentManager.FilesProvider.Open(parameters.MapPath);
         var map = MapFile.FromStream(stream, gameTemplate);
@@ -99,9 +103,11 @@ public class GameInstance : IGameInstance
     {
         if (_isDisposed)
             return;
-        
+
+        var bgColor = GetBgColor(_mapDisplayElement.BackgroundColor);
+
         renderer.StateManager.SaveState();
-        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : _mapDisplayElement.BackgroundColor);
+        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : bgColor);
         
         renderer.StateManager.Translate(target.TopLeft);
         renderer.StateManager.Scale(scale);
@@ -114,7 +120,33 @@ public class GameInstance : IGameInstance
 
         renderer.StateManager.RestoreState();
     }
-    
+
+    private RgbaColor GetBgColor(RgbaColor bgColor)
+    {
+        if (_paletteSource is not null)
+        {
+            if (_bgColorIndex == 0)
+            {
+                float dist = float.MaxValue;
+                for (var idx = 1; idx < _paletteSource.OriginalPalette.Count; ++idx)
+                {
+                    var srcColor = _paletteSource.OriginalPalette[idx];
+                    var d = srcColor.DistanceTo(bgColor);
+
+                    if (d < dist)
+                    {
+                        dist = d;
+                        _bgColorIndex = idx;
+                    }
+                }
+            }
+            
+            return _paletteSource.Palette[_bgColorIndex];
+        }
+
+        return bgColor;
+    }
+
     private void RenderDebug(IRenderer2 renderer, RectangleF target, float scale)
     {
         if (_isDisposed)

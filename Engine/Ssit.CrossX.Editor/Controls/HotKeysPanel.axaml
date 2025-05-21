@@ -22,10 +22,13 @@
         <!--  File Menu  -->
         <Button Command="{Binding NewCommand}" HotKey="{x:Static helpers:HotKeys.FileNew}" />
         <Button Command="{Binding OpenCommand}" HotKey="{x:Static helpers:HotKeys.FileOpen}" />
+        <Button Command="{Binding SaveCommand}" HotKey="{x:Static helpers:HotKeys.FileSave}" />
+        <Button Command="{Binding SaveAsCommand}" HotKey="{x:Static helpers:HotKeys.FileSaveAs}" />
 
         <!--  Edit Menu  -->
         <Button Command="{Binding UndoCommand}" HotKey="{x:Static helpers:HotKeys.EditUndo}" />
         <Button Command="{Binding RedoCommand}" HotKey="{x:Static helpers:HotKeys.EditRedo}" />
+        <Button Command="{Binding RedoCommand}" HotKey="{x:Static helpers:HotKeys.EditRedoAlt}" />
 
         <!--  Tools  -->
         <Button Command="{Binding EscapeCommand}" HotKey="Escape" />
@@ -45,6 +48,7 @@
             Command="{Binding EditorViewModel.SetToolCommand}"
             CommandParameter="{x:Static tools:EraserTool.Name}"
             HotKey="{x:Static helpers:HotKeys.ToolsEraser}" />
+
 
     </StackPanel>
 </UserControl>

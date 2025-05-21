@@ -28,7 +28,7 @@ internal class MainPageViewModel
                 {
                     gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                     {
-                        MapPath = "assets:/Game/Maps/Map1.map",
+                        MapPath = "assets:/Game/Maps/Map01.map",
                         ProcessWorldFunc = GamePhysics.InitPhysicsForWorld
                     });
                     gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();

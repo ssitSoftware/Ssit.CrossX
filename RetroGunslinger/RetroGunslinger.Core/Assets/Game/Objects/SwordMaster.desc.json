@@ -1,0 +1,16 @@
+{
+  "Origin": {"X": 28, "Y": 34},
+  "Size": {"Width": 10, "Height": 24},
+  "Events": [
+    {
+      "Sequence": "Run Fast",
+      "Frame": 1,
+      "Name": "Left Foot"
+    },
+    {
+      "Sequence": "Run Fast",
+      "Frame": 5,
+      "Name": "Right Foot"
+    }
+  ]
+}

@@ -47,16 +47,16 @@ public class GameTemplate: IGameTemplate
 
     public ObjectDescription[] Objects { get; } =
     [
-        // new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
-        // new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
-        // new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
+        new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
+        new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
+        new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
         // new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
-        // new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
-        // new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
+        new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
+        new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
         // new("Devices/Metal Door", typeof(MechanicalDoorImpl), "assets:/Game/Objects/Door", "Closed", typeof(MechanicalDoor.Parameters)),
         // new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
         // new("Elements/Power Plant", typeof(PowerPlant), "assets:/Game/Objects/PowerPlant", "On"),
-        // new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),
+        new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),
         // new("Elements/Tire", typeof(TireImpl), "assets:/Game/Objects/Tire", "Preview")
     ];
 

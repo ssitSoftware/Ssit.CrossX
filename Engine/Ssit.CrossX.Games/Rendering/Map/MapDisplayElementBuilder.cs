@@ -12,7 +12,6 @@ public class MapDisplayElementBuilder
     
     private IIoCContainer _container;
     private IContentManager _contentManager;
-
     private IGameTemplate _gameTemplate;
     
     public MapDisplayElementBuilder WithServices(IIoCContainer container, IContentManager contentManager)

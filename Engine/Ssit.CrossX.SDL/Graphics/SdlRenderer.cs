@@ -34,6 +34,8 @@ public unsafe class SdlRenderer: IRenderer2
 
     public ITextRenderer TextRenderer { get; }
 
+    internal bool DisableRendering;
+
     public SdlRenderer(SDL_Renderer* renderer)
     {
         _renderer = renderer;

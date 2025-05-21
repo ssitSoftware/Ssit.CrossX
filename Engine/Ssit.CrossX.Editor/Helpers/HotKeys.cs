@@ -7,8 +7,11 @@ namespace Ssit.CrossX.Editor.Helpers
     {
         public static KeyGesture FileNew { get; private set; }
         public static KeyGesture FileOpen { get; private set; }
+        public static KeyGesture FileSave { get; private set; }
+        public static KeyGesture FileSaveAs { get; private set; }
         public static KeyGesture EditUndo { get; private set; }
         public static KeyGesture EditRedo { get; private set; }
+        public static KeyGesture EditRedoAlt { get; private set; }
     
         public static KeyGesture EditorZoomIn { get; private set; }
         public static KeyGesture EditorZoomOut { get; private set; }
@@ -37,8 +40,13 @@ namespace Ssit.CrossX.Editor.Helpers
         {
             FileNew = KeyGesture.Parse("Ctrl+N");
             FileOpen = KeyGesture.Parse("Ctrl+O");
+            FileSave = KeyGesture.Parse("Ctrl+S");
+            FileSaveAs = KeyGesture.Parse("Ctrl+Shift+S");
+            
             EditUndo = KeyGesture.Parse("Ctrl+Z");
             EditRedo = KeyGesture.Parse("Ctrl+Y");
+            EditRedoAlt = KeyGesture.Parse("Ctrl+Shift+Z");
+            
             ToolsInsertTiles = KeyGesture.Parse("Ctrl+Shift+T");
             ToolsEraser = KeyGesture.Parse("Ctrl+Shift+E");
         
@@ -46,23 +54,28 @@ namespace Ssit.CrossX.Editor.Helpers
             EditorZoomOut = KeyGesture.Parse("Ctrl+-");
             TilesetZoomIn = KeyGesture.Parse("Ctrl+Shift++");
             TilesetZoomOut = KeyGesture.Parse("Ctrl+Shift+-");
-            HorizontalFlip = KeyGesture.Parse("Ctrl+H");
+            HorizontalFlip = KeyGesture.Parse("Ctrl+F");
         }
 
         private static void InitializeMacOsHotKeys()
         {
             FileNew = KeyGesture.Parse("Meta+N");
             FileOpen = KeyGesture.Parse("Meta+O");
+            FileSave = KeyGesture.Parse("Meta+S");
+            FileSaveAs = KeyGesture.Parse("Meta+Shift+S");
+            
             EditUndo = KeyGesture.Parse("Meta+Z");
             EditRedo = KeyGesture.Parse("Meta+Y");
-            ToolsInsertTiles = KeyGesture.Parse("Ctrl+Shift+T");
-            ToolsEraser = KeyGesture.Parse("Ctrl+Shift+E");
+            EditRedoAlt = KeyGesture.Parse("Meta+Shift+Z");
+            
+            ToolsInsertTiles = KeyGesture.Parse("Meta+Shift+T");
+            ToolsEraser = KeyGesture.Parse("Meta+Shift+E");
         
-            EditorZoomIn = KeyGesture.Parse("Ctrl++");
-            EditorZoomOut = KeyGesture.Parse("Ctrl+-");
-            TilesetZoomIn = KeyGesture.Parse("Ctrl+Shift++");
-            TilesetZoomOut = KeyGesture.Parse("Ctrl+Shift+-");
-            HorizontalFlip = KeyGesture.Parse("Ctrl+H");
+            EditorZoomIn = KeyGesture.Parse("Meta++");
+            EditorZoomOut = KeyGesture.Parse("Meta+-");
+            TilesetZoomIn = KeyGesture.Parse("Meta+Shift++");
+            TilesetZoomOut = KeyGesture.Parse("Meta+Shift+-");
+            HorizontalFlip = KeyGesture.Parse("Meta+F");
         }
     }
 }

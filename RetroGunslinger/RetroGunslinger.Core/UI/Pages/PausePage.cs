@@ -1,7 +1,6 @@
 using RetroGunslinger.Core.UI.Pages.Internal;
 using RetroGunslinger.Core.UI.ViewModels;
 using RetroGunslinger.Core.UI.Views;
-using Ssit.CrossX;
 using Ssit.CrossX.UI.Views;
 
 namespace RetroGunslinger.Core.UI.Pages;
@@ -27,8 +26,7 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
                 },
                 new Background
                 {
-                    // TODO: Mask image for pause screen
-                    BackgroundColor = RgbaColor.Black * 0.5f
+                    BackgroundColor = (1, 0.75f)
                 },
                 new Container
                 {

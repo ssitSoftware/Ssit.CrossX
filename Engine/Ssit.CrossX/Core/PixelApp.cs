@@ -1,6 +1,6 @@
 // using System;
 // using System.Diagnostics;
-// using Ssit.CrossX.IoC;
+// using Ssit.IoC;
 //
 // namespace Ssit.CrossX.Core;
 //

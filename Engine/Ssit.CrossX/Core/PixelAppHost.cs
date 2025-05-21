@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Core;
 

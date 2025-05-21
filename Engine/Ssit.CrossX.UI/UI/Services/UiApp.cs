@@ -1,5 +1,5 @@
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
 
 namespace Ssit.CrossX.UI.Services;

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI.Values;

@@ -5,7 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.IO;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Graphics.Internal;
 

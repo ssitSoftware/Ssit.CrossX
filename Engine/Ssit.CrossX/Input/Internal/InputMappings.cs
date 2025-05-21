@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Input.Internal;
 

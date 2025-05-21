@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.IO;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Audio.Internal;
 

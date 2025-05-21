@@ -5,7 +5,7 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IO;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 

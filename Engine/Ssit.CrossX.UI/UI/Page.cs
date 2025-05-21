@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;

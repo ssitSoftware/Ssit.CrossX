@@ -4,7 +4,7 @@ using System.Numerics;
 using Ssit.CrossX.Common;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI;

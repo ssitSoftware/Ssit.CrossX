@@ -5,7 +5,7 @@ using System.Numerics;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Template;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 

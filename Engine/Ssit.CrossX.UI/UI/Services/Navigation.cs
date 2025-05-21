@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.UI.Services;
 

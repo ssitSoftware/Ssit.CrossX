@@ -1,6 +1,6 @@
 using Ssit.CrossX.Common.Pages;
 using Ssit.CrossX.Common.Services;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;

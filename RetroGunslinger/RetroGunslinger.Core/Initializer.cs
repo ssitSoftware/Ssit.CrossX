@@ -9,7 +9,7 @@ using Ssit.CrossX.Content;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Input;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 
 namespace RetroGunslinger.Core;

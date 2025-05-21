@@ -6,7 +6,7 @@ using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Graphics.Sprites.Json;
 using Ssit.CrossX.IO;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Content.Internal;
 

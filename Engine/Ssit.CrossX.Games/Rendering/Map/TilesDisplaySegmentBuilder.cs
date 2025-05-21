@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 

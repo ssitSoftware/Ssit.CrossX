@@ -1,6 +1,6 @@
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.SDL.Audio.Al;
 using Ssit.CrossX.SDL.Audio.Dummy;
 

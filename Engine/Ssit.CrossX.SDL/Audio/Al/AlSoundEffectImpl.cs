@@ -2,7 +2,7 @@ using OpenTK.Audio.OpenAL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Content;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.SDL.Audio.Al;
 

@@ -4,7 +4,7 @@ using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 
 namespace RetroGunslinger.Core.UI.ViewModels;

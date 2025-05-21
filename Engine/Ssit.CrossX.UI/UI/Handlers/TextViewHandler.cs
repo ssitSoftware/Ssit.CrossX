@@ -1,7 +1,7 @@
 // using System;
 // using Ssit.CrossX.Graphics;
 // using Ssit.CrossX.Graphics.Font;
-// using Ssit.CrossX.IoC;
+// using Ssit.IoC;
 // using Ssit.CrossX.UI.Parameters;
 // using Ssit.CrossX.UI.Views;
 //

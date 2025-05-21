@@ -11,7 +11,7 @@ using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IO;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic.Map;
 

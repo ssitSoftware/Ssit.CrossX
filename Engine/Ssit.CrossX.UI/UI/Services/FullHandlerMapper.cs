@@ -1,4 +1,4 @@
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Views;
 

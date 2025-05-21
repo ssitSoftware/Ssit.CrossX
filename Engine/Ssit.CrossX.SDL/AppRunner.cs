@@ -4,7 +4,7 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 using Ssit.CrossX.SDL.Audio;
 using Ssit.CrossX.SDL.Common;
 using Ssit.CrossX.SDL.Graphics;

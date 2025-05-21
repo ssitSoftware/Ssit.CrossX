@@ -8,7 +8,7 @@ using Ssit.CrossX.Graphics.Internal;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
-using Ssit.CrossX.IoC;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.Core;
 

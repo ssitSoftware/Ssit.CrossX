@@ -13,7 +13,6 @@ using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Extensions;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
 
 namespace RetroGunslinger.Core.Game.Objects;
@@ -116,6 +115,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var jumpState = new State(checkLandingBehavior, jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
         var jumpToFallState = new State(checkLandingBehavior, steerInAirBehavior, jumpToFallSequenceBehavior, fallBehavior, runBehavior, idleBehavior);
         var fallState = new State(checkLandingBehavior, steerInAirBehavior, fallBehavior, runBehavior, idleBehavior);
+        var talkingState = new State();
 
         AddState("Idle", idleOrRunState);
         AddState("Run", idleOrRunState);
@@ -124,6 +124,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         AddState("Jump", jumpState);
         AddState("Jump->Fall", jumpToFallState);
         AddState("Fall", fallState);
+        AddState("Talking", talkingState);
 
         SetState("Idle");
     }
@@ -188,6 +189,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         if (state == "Jump->Fall")
         {
             state = "Jump Transition";
+        }
+
+        if (state == "Talking")
+        {
+            state = "Idle";
         }
 
         base.SetSequence(state);

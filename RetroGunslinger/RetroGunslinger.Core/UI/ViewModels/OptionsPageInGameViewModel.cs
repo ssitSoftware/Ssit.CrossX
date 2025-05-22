@@ -1,6 +1,7 @@
 using RetroGunslinger.Core.Game;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI.Services;
 
 namespace RetroGunslinger.Core.UI.ViewModels;

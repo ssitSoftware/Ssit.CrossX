@@ -6,6 +6,7 @@ using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.Utils;
 
 namespace RetroGunslinger.Core.UI.ViewModels;
 
@@ -22,14 +23,12 @@ internal class MainPageViewModel
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
             GameInstance gameInstance = null;
-            var gameDialogs = container.IoCConstruct<GameDialogs>();
+            var gameDialogs = container.IoCConstruct<GameDialogsImpl>();
             
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
             {
                 OnLoading = () =>
                 {
-                    
-                    
                     gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                     {
                         MapPath = "assets:/Game/Maps/Map01.map",

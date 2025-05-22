@@ -5,9 +5,9 @@ using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.UI.Values;
 
-namespace RetroGunslinger.Core.Game;
+namespace Ssit.CrossX.Utils;
 
-public class GameDialogs : IGameDialogs
+public class GameDialogs : IGameDialogsUi
 {
     private readonly IActionScheduler _actionScheduler;
     public event Action<int> FocusElement;

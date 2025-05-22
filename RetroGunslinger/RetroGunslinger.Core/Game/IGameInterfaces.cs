@@ -1,9 +1,10 @@
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Utils;
 
 namespace RetroGunslinger.Core.Game;
 
 public interface IGameInterfaces
 {
     IGameInstance Instance { get; }
-    IGameDialogs Dialogs { get; }
+    IGameDialogsUi Dialogs { get; }
 }

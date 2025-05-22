@@ -3,6 +3,7 @@ using System.Windows.Input;
 using RetroGunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 

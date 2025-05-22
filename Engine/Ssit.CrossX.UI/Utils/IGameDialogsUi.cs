@@ -1,21 +1,16 @@
 using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Values;
 
-namespace RetroGunslinger.Core.Game;
+namespace Ssit.CrossX.Utils;
 
-public interface IGameDialogs
+public interface IGameDialogsUi
 {
     event Action<int> FocusElement;
-    
     ICommand ReplyCommand { get; }
     SharedBool Visible { get; }
     SharedString CurrentText { get; }
     
     SharedBool[] ReplyOptionVisible { get; }
     SharedString[] ReplyOptions { get; }
-    
-    void Show(string text, string[] replyOptions, Action<int> onReply = null);
-    Task<int> ShowAsync(string text, string[] replyOptions);
 }

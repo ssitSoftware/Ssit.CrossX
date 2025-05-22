@@ -1,6 +1,8 @@
 using RetroGunslinger.Core.UI.Pages.Internal;
 using RetroGunslinger.Core.UI.ViewModels;
 using RetroGunslinger.Core.UI.Views;
+using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace RetroGunslinger.Core.UI.Pages;
@@ -24,9 +26,17 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
                     GameInstance = ViewModel.GameInterfaces.Instance,
                     Active = false
                 },
+                DialogPageHelper.CreateDialogLayer(ViewModel.GameInterfaces.Dialogs, false),
+                // new ImageView
+                // {
+                //     Source  = "assets:/UI/Mask.png!",
+                //     HorizontalAlign = Align.Fill,
+                //     VerticalAlign = Align.Fill,
+                //     Scaling = ImageScalingMode.Fill
+                // },
                 new Background
                 {
-                    BackgroundColor = (1, 0.75f)
+                    BackgroundColor = (1, 0.9f)
                 },
                 new Container
                 {
@@ -36,4 +46,15 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
             ]
         };
     }
+
+    // protected override VerticalStack CreateVerticalStack()
+    // {
+    //     return new VerticalStack
+    //     {
+    //         Padding = (8, 8),
+    //         VerticalAlign = Align.Center,
+    //         HorizontalAlign = Align.Center,
+    //         BackgroundColor = 1
+    //     };
+    // }
 }

@@ -9,7 +9,7 @@ namespace RetroGunslinger.Core.UI.Styles;
 
 public static class ButtonStyles
 {
-    public static LabelButtonEx WithDialogStyle(this LabelButtonEx button, Align align)
+    public static LabelButtonEx WithDialogStyle(this LabelButtonEx button, Align align, bool active)
     {
         button.WithDefaultStyle();
 
@@ -20,7 +20,19 @@ public static class ButtonStyles
         
         button.FocusWaveAmplitude = (button.Font?.FontSize ?? 12) / 9;
         button.FocusWaveFrequency = 1f;
-        button.FocusBevel = (button.Font?.FontSize ?? 12) / 6;
+        button.FocusBevel = (button.Font?.FontSize ?? 12) / 10;
+
+        if (!active)
+        {
+            button.TextColors = new ButtonStateColorsIndexed
+            {
+                Normal = Palette.Foreground,
+                Hover = Palette.Foreground,
+                Focused =  Palette.Foreground,
+                Pushed = Palette.Foreground,
+                Disabled = Palette.Dim
+            };
+        }
         
         return button;
     }

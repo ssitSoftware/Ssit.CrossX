@@ -1,5 +1,4 @@
 using RetroGunslinger.Core.UI.ViewModels;
-using Ssit.CrossX;
 using Ssit.CrossX.UI.Views;
 
 namespace RetroGunslinger.Core.UI.Pages;
@@ -18,9 +17,10 @@ public class OptionsPageInGame : OptionsPageBase<OptionsPageInGameViewModel>
                     GameInstance = ViewModel.GameInterfaces.Instance,
                     Active = false
                 },
+                DialogPageHelper.CreateDialogLayer(ViewModel.GameInterfaces.Dialogs, false),
                 new Background
                 {
-                    BackgroundColor = (1, 0.75f)
+                    BackgroundColor = (1, 0.9f)
                 },
                 new Container
                 {

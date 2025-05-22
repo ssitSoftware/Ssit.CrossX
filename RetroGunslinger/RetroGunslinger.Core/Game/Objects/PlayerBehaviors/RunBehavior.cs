@@ -6,8 +6,30 @@ using Ssit.CrossX.Input;
 namespace RetroGunslinger.Core.Game.Objects.PlayerBehaviors;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
+public class RunBehavior(Player player, IInputMappings inputMappings, IGameDialogs gameDialogs): Behavior
 {
+    private async void ShowDialog()
+    {
+        player.SetState("Talking");
+        
+        await gameDialogs.ShowAsync("Testowy tekst pokazuję sobie z 2 opcjami\nDruga linia jest tutaj", ["Nie", "Tak", "Nie Wiem..."]);
+        await gameDialogs.ShowAsync("O ty chamie jeden!", ["OK"]);
+        
+        player.SetState("Idle");
+    }
+    
+    protected override bool OnUpdate(float dt)
+    {
+        base.OnUpdate(dt);
+        
+        if (inputMappings[0].GetButton(GameControls.Melee) == ButtonState.JustPressed)
+        {
+            ShowDialog();
+        }
+
+        return false;
+    }
+
     protected override bool OnFixedUpdate(float dt)
     {
         if (!player.IsOnGround)

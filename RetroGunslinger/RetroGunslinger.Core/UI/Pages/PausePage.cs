@@ -21,7 +21,7 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
             Children = [
                 new GameView
                 {
-                    GameInstance = ViewModel.GameInstance,
+                    GameInstance = ViewModel.GameInterfaces.Instance,
                     Active = false
                 },
                 new Background

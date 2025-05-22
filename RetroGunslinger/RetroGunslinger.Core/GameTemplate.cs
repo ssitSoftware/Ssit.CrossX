@@ -89,7 +89,7 @@ public class GameTemplate: IGameTemplate
         new("Wood", "WOOD", RgbaColor.SaddleBrown, RgbaColor.Orange),
         new("Mud", "MUD", RgbaColor.DarkKhaki, RgbaColor.Coral),
         new("Water", "WAT|ER", RgbaColor.LightBlue, RgbaColor.LightBlue),
-        new("Platform", "PLAT|FORM", RgbaColor.Gray, RgbaColor.LightGray),
+        new("Platform", "PLAT|FORM", RgbaColor.Gray, RgbaColor.BlueViolet),
         new("Wood Platform", "PLAT|WOOD", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
         new("Metal Platform", "PLAT|METL", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow),
         new("Hurt", "HURT", RgbaColor.Red, RgbaColor.OrangeRed),

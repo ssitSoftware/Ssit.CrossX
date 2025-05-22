@@ -15,7 +15,7 @@ public class OptionsPageInGame : OptionsPageBase<OptionsPageInGameViewModel>
             Children = [
                 new GameView
                 {
-                    GameInstance = ViewModel.GameInstance,
+                    GameInstance = ViewModel.GameInterfaces.Instance,
                     Active = false
                 },
                 new Background

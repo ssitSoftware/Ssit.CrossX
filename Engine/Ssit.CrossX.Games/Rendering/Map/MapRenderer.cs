@@ -78,16 +78,37 @@ public static class MapRenderer
             renderer.StateManager.SaveState();
             renderer.StateManager.Translate(offset);
             
-            RenderLayer(renderer, layer, visibleBounds);
-
             if (layer.IsMain)
             {
-                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor);
+                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor, false);
             }
             else
             {
                 foreach (var obj in layer.DisplayObjects)
                 {
+                    if (obj.Zorder > 0)
+                    {
+                        continue;
+                    }
+                    
+                    DrawObject(renderer, visibleBounds, obj, layer.TintColor);
+                }
+            }
+            
+            RenderLayer(renderer, layer, visibleBounds);
+
+            if (layer.IsMain)
+            {
+                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor, true);
+            }
+            else
+            {
+                foreach (var obj in layer.DisplayObjects)
+                {
+                    if (obj.Zorder < 0)
+                    {
+                        continue;
+                    }
                     DrawObject(renderer, visibleBounds, obj, layer.TintColor);
                 }
             }
@@ -131,7 +152,7 @@ public static class MapRenderer
     }
 
     private static void RenderGameObjects(IRenderer2 renderer, LayerDisplayElement layer,
-        World world, RectangleF bounds, RgbaColor color)
+        World world, RectangleF bounds, RgbaColor color, bool front)
     {
         if (world is null)
             return;
@@ -139,14 +160,24 @@ public static class MapRenderer
         GameObjects.Clear();
         foreach (var obj in layer.DisplayObjects)
         {
-            GameObjects.Add(new ObjectRenderInfo(obj));
+            bool isFront = obj.Zorder >= 0;
+
+            if (isFront == front)
+            {
+                GameObjects.Add(new ObjectRenderInfo(obj));
+            }
         }
         
         foreach (var body in world.BodyList)
         {
             if (body.Owner is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {
-                GameObjects.Add(new ObjectRenderInfo(gor));
+                bool isFront = gor.ZOrder >= 0;
+
+                if (isFront == front)
+                {
+                    GameObjects.Add(new ObjectRenderInfo(gor));
+                }
             }
         }
         

@@ -22,18 +22,30 @@ internal class MainPageViewModel
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
             GameInstance gameInstance = null;
+            var gameDialogs = container.IoCConstruct<GameDialogs>();
+            
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
             {
                 OnLoading = () =>
                 {
+                    
+                    
                     gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                     {
                         MapPath = "assets:/Game/Maps/Map01.map",
-                        ProcessWorldFunc = GamePhysics.InitPhysicsForWorld
+                        ProcessWorldFunc = GamePhysics.InitPhysicsForWorld,
+                        RegisterServices = b =>
+                        {
+                            b.WithInstance<IGameDialogs>(gameDialogs);
+                        }
                     });
                     gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
                 },
-                OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance)
+                OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(new GameInterfaces
+                {
+                    Instance = gameInstance,
+                    Dialogs = gameDialogs
+                })
             });
         });
         

@@ -18,6 +18,7 @@ public class SettingsProvider : ISettingsProvider
     private readonly IGameTemplate _gameTemplate;
     private readonly IAppWindowManager _windowManager;
     private readonly IPaletteSource _paletteSource;
+    private readonly IActionScheduler _actionScheduler;
 
     public Settings Settings { get; }
     
@@ -30,6 +31,7 @@ public class SettingsProvider : ISettingsProvider
         _gameTemplate = gameTemplate;
         _windowManager = windowManager;
         _paletteSource = paletteSource;
+        _actionScheduler = actionScheduler;
 
         Settings = Settings.Load(fileStorage, "settings");
         Settings.PropertyChanged += UpdateSettings;
@@ -76,7 +78,8 @@ public class SettingsProvider : ISettingsProvider
                 break;
             
             case nameof(Settings.Palette):
-                _paletteSource.UpdatePalette(Palette.Palettes[Settings.Palette].Colors);
+                _actionScheduler.Schedule(() =>
+                    _paletteSource.UpdatePalette(Palette.Palettes[Settings.Palette].Colors));
                 break;
         }
     }

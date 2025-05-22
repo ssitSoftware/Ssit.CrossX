@@ -51,12 +51,15 @@ public class GameApp: UiPixelApp
         _paletteSource = container.Get<IPaletteSource>();
 
         var settings = container.Get<ISettingsProvider>().Settings;
+        var scheduler = container.Get<IActionScheduler>();
+        
         SetCrtMode(settings.CrtMode);
         settings.PropertyChanged += (sender, args) =>
         {
             if (args.PropertyName == nameof(Settings.CrtMode))
             {
-                SetCrtMode(container.Get<ISettingsProvider>().Settings.CrtMode);
+                scheduler.Schedule(() =>
+                    SetCrtMode(container.Get<ISettingsProvider>().Settings.CrtMode));
             }
         };
 
@@ -77,7 +80,7 @@ public class GameApp: UiPixelApp
             case 0:
                 _hostParameters.GlowParameters = new PixelAppHost.GlowParameters
                 {
-                    SelfGlowFactor = 0.3f,
+                    SelfGlowFactor = 0.2f,
                     EnableGameGlow = false,
                     Blur = Blurs.Gaussian3X3,
                     BlurDivider = Blurs.Gaussian3X3Divider
@@ -88,7 +91,7 @@ public class GameApp: UiPixelApp
             
             case 1:
                 SetBasicCrt();
-                _hostParameters.GlowParameters.SelfGlowFactor = 0.5f;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.6f;
                 ApplyHostParameters();
                 break;
             
@@ -121,7 +124,7 @@ public class GameApp: UiPixelApp
         };
         _hostParameters.CrtParameters = new PixelAppHost.CrtParameters
         {
-            Interline = 0.3f,
+            Interline = 0.25f,
         };
 
     }

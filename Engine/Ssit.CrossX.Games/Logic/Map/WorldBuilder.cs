@@ -21,6 +21,7 @@ public class WorldBuilder
     private IFilesProvider _filesProvider;
     private IGameTemplate _gameTemplate;
     private IIoCContainer _container;
+    private Action<IIoCContainerBuilder> _registerServices;
 
     public WorldBuilder WithContainer(IIoCContainer container)
     {
@@ -45,6 +46,12 @@ public class WorldBuilder
         _mapFile = file;
         return this;
     }
+    
+    public WorldBuilder WithServicesRegistrar(Action<IIoCContainerBuilder> registerServices)
+    {
+        _registerServices = registerServices;
+        return this;
+    }
 
     public (World, IIoCContainer) Build()
     {
@@ -59,6 +66,8 @@ public class WorldBuilder
         
         servicesBuilder.WithInstance(_gameTemplate);
         servicesBuilder.WithSingleton<ICamera, Camera>();
+        
+        _registerServices?.Invoke(servicesBuilder);
         
         var container = servicesBuilder.Build();
         

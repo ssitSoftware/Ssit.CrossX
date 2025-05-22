@@ -21,7 +21,7 @@ public class Palette
         new("Cold", RgbaColor.Transparent, 0x08001f, 0x8f929c, 0x3e4452, 0xb4643d),
         new("Marron", RgbaColor.Transparent, 0x340011, 0xf2b63f, 0x9c2032, 0xff0064),
         new("Chocolate", RgbaColor.Transparent, 0x2b212c, 0xedd8bd, 0x8b5760, 0x9b615c),
-        new("LCD", RgbaColor.Transparent, 0x101010, 0xa6f76e, 0x5b843f, 0xfe6a26),
+        new("LCD", RgbaColor.Transparent, 0x101810, 0xa6f76e, 0x5b843f, 0xfe8a26),
         new("Amber", RgbaColor.Transparent, 0x201000, 0xfda813, 0x462800, 0xfd4713),
         new("Fav1", RgbaColor.Transparent, 0x101010, 0xfda880, 0x562820, 0xfe3a26),
         new("Fav2", RgbaColor.Transparent, 0x101010, 0xd6d66e, 0x5b442f, 0xee5436)

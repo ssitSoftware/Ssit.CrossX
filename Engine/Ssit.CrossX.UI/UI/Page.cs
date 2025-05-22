@@ -93,7 +93,6 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected virtual void OnLoad(IInputContext inputContext)
     {
-        
     }
 
     void IPage.Update(float dt)

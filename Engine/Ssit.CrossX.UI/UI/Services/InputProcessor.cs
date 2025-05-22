@@ -300,7 +300,7 @@ internal sealed class InputProcessor: IInputContext
         
         if (handler is IChildrenContainer container)
         {
-            foreach (var child in container.Children)
+            foreach (var child in container.Children ?? [])
             {
                 var ret = FindFocusable(child, name);
                 if(ret != null) return ret;

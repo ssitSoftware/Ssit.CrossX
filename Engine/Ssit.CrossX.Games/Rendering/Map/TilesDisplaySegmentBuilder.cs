@@ -94,6 +94,16 @@ public class TilesDisplaySegmentBuilder
                         _verticesMap.Add(tile.TileSet, quads);
                     }
 
+                    float epsilon = 0.01f;
+
+                    var size = xbr - xtl;
+                    
+                    xtl.X += epsilon;
+                    xtl.Y += epsilon;
+                    
+                    xbr.X -= epsilon;
+                    xbr.Y -= epsilon;
+                    
                     quads.Add(new Quad(new RectangleF(tl, br - tl), new RectangleF(xtl, xbr - xtl)));
                 }
             }

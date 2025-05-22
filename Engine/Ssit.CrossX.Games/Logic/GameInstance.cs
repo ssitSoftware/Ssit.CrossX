@@ -10,7 +10,6 @@ using Ssit.CrossX.Games.Rendering.Map;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
-using Ssit.CrossX.Input;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic;
@@ -21,6 +20,7 @@ public class GameInstance : IGameInstance
     {
         public string MapPath { get; set; }
         public Action<World> ProcessWorldFunc { get; set; }
+        public Action<IIoCContainerBuilder> RegisterServices { get; set; }
     }
 
     private float _gameTime;
@@ -88,6 +88,7 @@ public class GameInstance : IGameInstance
             .WithMap(map)
             .WithFilesProvider(contentManager.FilesProvider)
             .WithContainer(container)
+            .WithServicesRegistrar(parameters.RegisterServices)
             .WithGameTemplate(gameTemplate);
         
         (World, Container) = worldBuilder.Build();
@@ -99,12 +100,12 @@ public class GameInstance : IGameInstance
 
     public event Action Updated;
 
-    private void Render(IRenderer2 renderer, RectangleF target, float scale)
+    protected virtual void Render(IRenderer2 renderer, RectangleF target, float scale)
     {
         if (_isDisposed)
             return;
 
-        var bgColor = GetBgColor(_mapDisplayElement.BackgroundColor);
+        var bgColor = GetBgColor();
 
         renderer.StateManager.SaveState();
         renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : bgColor);
@@ -121,8 +122,9 @@ public class GameInstance : IGameInstance
         renderer.StateManager.RestoreState();
     }
 
-    private RgbaColor GetBgColor(RgbaColor bgColor)
+    protected RgbaColor GetBgColor()
     {
+        var bgColor = _mapDisplayElement.BackgroundColor;
         if (_paletteSource is not null)
         {
             if (_bgColorIndex == 0)

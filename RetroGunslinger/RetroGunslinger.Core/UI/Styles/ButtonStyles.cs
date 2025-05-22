@@ -1,4 +1,5 @@
 using System;
+using RetroGunslinger.Core.UI.Views;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
@@ -8,6 +9,21 @@ namespace RetroGunslinger.Core.UI.Styles;
 
 public static class ButtonStyles
 {
+    public static LabelButtonEx WithDialogStyle(this LabelButtonEx button, Align align)
+    {
+        button.WithDefaultStyle();
+
+        button.VerticalAlign = Align.Center;
+        button.HorizontalAlign = align;
+        button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
+        button.Font = ("Default", 12);
+        
+        button.FocusWaveAmplitude = (button.Font?.FontSize ?? 12) / 9;
+        button.FocusWaveFrequency = 1f;
+        button.FocusBevel = (button.Font?.FontSize ?? 12) / 6;
+        
+        return button;
+    }
     public static LabelButton WithDefaultStyle(this LabelButton button)
     {
         button.Scaling = TextScaling.Pixel;

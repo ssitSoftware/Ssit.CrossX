@@ -98,7 +98,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             {
                 _settings.Palette = (_settings.Palette + 1) % Palette.Palettes.Length;
             }
-
+            
             _settings.Save();
             sounds[UiSounds.ChangeValueSound]?.PlayOnce();
             UpdateStrings();

@@ -1,67 +1,67 @@
-(0,0,11,3): Default:    Solid
-(0,3,3,6):  Default:    Solid
-(7,3,3,3):  Default:    Solid
-(3,8,4,1):  Default:    Solid
-(3,9,2,1):  Default:    Solid
-(6,9,2,3):  Default:    Solid
-(3,11,3,1): Default:    Solid
-(5,10):     Default:    Solid
-(0,12,6,1): Default:    Solid
-(0,13,2,3): Default:    Solid
-(2,14,1,3): Default:    Solid
-(3,15,2,2): Default:    Solid
-(5,16,3,1): Default:    Solid
-(0,17,6,5): Default:    Solid
-(0,22,2,1): Default:    Solid
-(6,22,3,1): Default:    Solid
-(5,23,7,1): Default:    Solid
-(0,24,5,1): Default:    Solid
-(0,25):     Default:    Solid
-(4,25):     Default:    Solid
-(0,26,2,2): Default:    Solid
-(2,27):     Default:    Solid
-(9,25,3,1): Default:    Solid
-(10,26,2,1):Default:    Solid
-
-(3,3,4,4):  Default:    Top (0.4,0.4)
-
-(3,7):      Default:    Stair (0,0.5)
-(4,7):      Default:    Stair (0.5,1)
-(5,7):      Default:    Stair (1,0.5)
-(6,7):      Default:    Stair (0.5,0)
-
-(5,9):      Default:    Bottom (1,0)
-(2,13):     Default:    Bottom (0,1)
-(5,22):     Default:    Bottom (1,0)
-(1,25):     Default:    Bottom (0,1)
-
-(3,10):     Default:    Bottom (1,0.5)
-(4,10):     Default:    Bottom (0.5,0)
-
-(3,22):     Default:    Bottom (1,0.5)
-(4,23):     Default:    Bottom (0.5,0)
-
-(2,26):     Default:    Bottom (0,0.5)
-(3,26):     Default:    Bottom (0.5,1)
-
-(3,14):     Default:    Bottom (0,0.5)
-(4,14):     Default:    Bottom (0.5,1)
-
-(0,23):     Default:    Bottom (1,0.66)
-(1,23):     Default:    Bottom (0.66,0.33)
-(2,23):     Default:    Bottom (0.33,0)
-
-(0,11):     Default:    Bottom (1,0.66)
-(1,11):     Default:    Bottom (0.66,0.33)
-(2,11):     Default:    Bottom (0.33,0)
-
-(9,22):     Default:    Bottom (0,0.33)
-(10,22):    Default:    Bottom (0.33,0.66)
-(11,22):    Default:    Bottom (0.66,1)
-
-(5,15):     Default:    Bottom (0,0.33)
-(6,15):     Default:    Bottom (0.33,0.66)
-(7,15):     Default:    Bottom (0.66,1)
+(0,0,11,3):     Default:    Solid
+(0,3,3,6):      Default:    Solid
+(7,3,3,3):      Default:    Solid
+(3,8,4,1):      Default:    Solid
+(3,9,2,1):      Default:    Solid
+(6,9,2,3):      Default:    Solid
+(3,11,3,1):     Default:    Solid
+(5,10):         Default:    Solid
+(0,12,6,1):     Default:    Solid
+(0,13,2,3):     Default:    Solid
+(2,14,1,3):     Default:    Solid
+(3,15,2,2):     Default:    Solid
+(5,16,3,1):     Default:    Solid
+(0,17,6,5):     Default:    Solid
+(0,22,2,1):     Default:    Solid
+(6,22,3,1):     Default:    Solid
+(5,23,7,1):     Default:    Solid
+(0,24,5,1):     Default:    Solid
+(0,25):         Default:    Solid
+(4,25):         Default:    Solid
+(0,26,2,2):     Default:    Solid
+(2,27):         Default:    Solid
+(9,25,3,1):     Default:    Solid
+(10,26,2,1):    Default:    Solid
+                
+(3,3,4,4):      Platform:    Top (0,0)
+                
+(3,7):          Default:    Stair (0,0.5)
+(4,7):          Default:    Stair (0.5,1)
+(5,7):          Default:    Stair (1,0.5)
+(6,7):          Default:    Stair (0.5,0)
+                
+(5,9):          Default:    Bottom (1,0)
+(2,13):         Default:    Bottom (0,1)
+(5,22):         Default:    Bottom (1,0)
+(1,25):         Default:    Bottom (0,1)
+                
+(3,10):         Default:    Bottom (1,0.5)
+(4,10):         Default:    Bottom (0.5,0)
+                
+(3,22):         Default:    Bottom (1,0.5)
+(4,23):         Default:    Bottom (0.5,0)
+                
+(2,26):         Default:    Bottom (0,0.5)
+(3,26):         Default:    Bottom (0.5,1)
+                
+(3,14):         Default:    Bottom (0,0.5)
+(4,14):         Default:    Bottom (0.5,1)
+                
+(0,23):         Default:    Bottom (1,0.66)
+(1,23):         Default:    Bottom (0.66,0.33)
+(2,23):         Default:    Bottom (0.33,0)
+                
+(0,11):         Default:    Bottom (1,0.66)
+(1,11):         Default:    Bottom (0.66,0.33)
+(2,11):         Default:    Bottom (0.33,0)
+                
+(9,22):         Default:    Bottom (0,0.33)
+(10,22):        Default:    Bottom (0.33,0.66)
+(11,22):        Default:    Bottom (0.66,1)
+                
+(5,15):         Default:    Bottom (0,0.33)
+(6,15):         Default:    Bottom (0.33,0.66)
+(7,15):         Default:    Bottom (0.66,1)
 
 (10,21,2,1):    Hurt:       Bottom (0.25,0.25)
 (2,25,2,1):     Hurt:       Bottom (0.125,0.125)

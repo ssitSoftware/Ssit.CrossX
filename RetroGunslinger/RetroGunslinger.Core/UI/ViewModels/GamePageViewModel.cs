@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
+using RetroGunslinger.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
@@ -25,7 +26,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     private readonly SyncCommand _pauseCommand;
     
     public SharedStringValue Fps { get; } = new();
-    public IGameInstance GameInstance { get; }
+    public IGameInterfaces GameInterfaces { get; }
     public SharedBoolMutable ShowDebug { get; } = new(false);
     public SharedBoolMutable ShowFps { get; } = new(false);
     
@@ -45,16 +46,16 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     private DebugMode _debugMode = DebugMode.None;
     
     public GamePageViewModel(INavigation navigation, IEventSource eventSource, 
-        IRenderer2 renderer, IGameInstance gameInstance, IKeyboard keyboard,
+        IRenderer2 renderer, IGameInterfaces gameInterfaces, IKeyboard keyboard,
         IAppHost appHost)
     {
         _eventSource = eventSource;
         _renderer = renderer;
         _keyboard = keyboard;
         _appHost = appHost;
-        _pauseCommand = new SyncCommand(() => navigation.NavigateTo<PausePageViewModel>(GameInstance));
+        _pauseCommand = new SyncCommand(() => navigation.NavigateTo<PausePageViewModel>(GameInterfaces));
 
-        GameInstance = gameInstance;
+        GameInterfaces = gameInterfaces;
         
         _eventSource.Updating += OnUpdating;
         _eventSource.RenderFinished += OnRenderFinished;
@@ -116,7 +117,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
                                "Target Resolution: {6}x{7}\n" +
                                 "Screen Resolution: {8}x{9}",
                     (int)Math.Round(_fps),
-                    (int)Math.Round(1f / GameInstance.WorldDelta),
+                    (int)Math.Round(1f / GameInterfaces.Instance.WorldDelta),
                     _renderer.QuadsRenderer.QuadsRendered,
                     _renderer.SpriteRenderer.SpritesRendered,
                     _renderer.GeometryRenderer.LinesRendered,
@@ -130,7 +131,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     public void Dispose()
     {
-        GameInstance.Dispose();
+        GameInterfaces.Instance.Dispose();
         _eventSource.Updating -= OnUpdating;
         _eventSource.RenderFinished -= OnRenderFinished;
     }

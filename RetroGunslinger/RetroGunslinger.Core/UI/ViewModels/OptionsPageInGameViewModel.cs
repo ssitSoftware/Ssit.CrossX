@@ -1,3 +1,4 @@
+using RetroGunslinger.Core.Game;
 using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.UI.Services;
@@ -10,8 +11,8 @@ public class OptionsPageInGameViewModel(
     ITranslator translator,
     ISettingsProvider settingsProvider,
     IUiSounds sounds,
-    IGameInstance gameInstance)
+    IGameInterfaces gameInterfaces)
     : OptionsPageViewModel(navigation, translator, settingsProvider, sounds)
 {
-    public IGameInstance GameInstance { get; } = gameInstance;
+    public IGameInterfaces GameInterfaces { get; } = gameInterfaces;
 }

@@ -20,4 +20,6 @@ public interface IFilesProvider
     /// <param name="path">The path of the file to check.</param>
     /// <returns>True if the file exists; otherwise, false.</returns>
     bool FileExists(string path);
+    
+    string[] GetFiles(string path, string extension = null);
 }

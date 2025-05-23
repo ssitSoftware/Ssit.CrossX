@@ -9,8 +9,6 @@ public class BundleFilesProvider: IFilesProvider
     public BundleFilesProvider()
     {
         var location = AppDomain.CurrentDomain.BaseDirectory;
-        
-        
         var dir = Path.GetDirectoryName(location) ?? string.Empty;
 
         Console.WriteLine($"Location: {dir}");
@@ -44,6 +42,11 @@ public class BundleFilesProvider: IFilesProvider
     {
         path = GetFullPath(path);
         return FileExists(path);
+    }
+
+    public string[] GetFiles(string path, string extension = null)
+    {
+        return [];
     }
 
     private string GetFullPath(string path)

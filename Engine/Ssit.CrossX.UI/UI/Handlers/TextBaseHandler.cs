@@ -63,7 +63,14 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         if (AttachedView.Text is not null)
         {
             AttachedView.Text.TextChanged += OnTextChanged;
+            AttachedView.Visible.ValueChanged += OnVisibilityChanged;
         }
+    }
+
+    private void OnVisibilityChanged()
+    {
+        OnTextChanged();
+        Parent?.GetParent<IPage>()?.RecalculateLayout();
     }
 
     public override void Init()
@@ -125,6 +132,12 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         else
         {
             height = Length.Fill;
+        }
+        
+        if (!AttachedView.Visible.Value)
+        {
+            width = 0;
+            height = 0;
         }
     }
     

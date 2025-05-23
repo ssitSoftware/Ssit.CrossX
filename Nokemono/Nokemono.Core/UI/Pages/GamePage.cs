@@ -10,26 +10,30 @@ namespace Nokemono.Core.UI.Pages;
 public class GamePage: Page<GamePageViewModel>
 {
     private IUiSounds _gameUiSounds;
-    
+    private IInputContext _inputContext;
     protected override void OnLoad(IInputContext inputContext)
     {
         base.OnLoad(inputContext);
-        
-        ViewModel.GameInterfaces.Dialogs.FocusElement += i =>
+
+        _inputContext = inputContext;
+        ViewModel.GameInterfaces.Dialogs.FocusElement += DialogsOnFocusElement;
+    }
+
+    private void DialogsOnFocusElement(int index)
+    {
+        if (index < 0)
         {
-            if (i < 0)
-            {
-                inputContext.Focus(null, this);
-                return;
-            }
-            var focusable = inputContext.FindFocusable($"Reply{i}", this);
-            inputContext.Focus(focusable, this);
-        };
+            _inputContext.Focus(null, this);
+            return;
+        }
+        var focusable = _inputContext.FindFocusable($"Reply{index}", this);
+        _inputContext.Focus(focusable, this);
     }
 
     protected override void OnDispose(bool disposing)
     {
         base.OnDispose(disposing);
+        ViewModel.GameInterfaces.Dialogs.FocusElement -= DialogsOnFocusElement;
         _gameUiSounds?.Dispose();
         _gameUiSounds = null;
     }

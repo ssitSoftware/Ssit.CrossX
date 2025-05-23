@@ -2,6 +2,8 @@ using System.Numerics;
 using Nokemono.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IO;

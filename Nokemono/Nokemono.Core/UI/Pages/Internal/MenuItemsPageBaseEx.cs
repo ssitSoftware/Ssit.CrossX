@@ -9,14 +9,7 @@ public abstract class MenuItemsPageBaseEx<TViewModel> : MenuItemsPageBase<TViewM
 {
     protected override void MenuItemApplyStyle(LabelButton button)
     {
-        button.WithDefaultStyle();
-
-        if (button is LabelButtonEx labelButtonEx)
-        {
-            labelButtonEx.FocusWaveAmplitude = (labelButtonEx.Font?.FontSize ?? 12) / 9;
-            labelButtonEx.FocusWaveFrequency = 1f;
-            labelButtonEx.FocusBevel = (labelButtonEx.Font?.FontSize ?? 12) / 8;
-        }
+        (button as LabelButtonEx)?.WithDefaultStyle();
     }
 
     protected override void MenuApplyStyle(VerticalStack stack)

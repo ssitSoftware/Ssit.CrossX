@@ -73,12 +73,12 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
         
         if (!Focused || Enabled)
         {
-            DrawText(renderer, TextColor(renderer, false) ?? RgbaColor.Transparent, RgbaColor.Transparent, offset0);
+            var lowColor = Focused ? AttachedView?.FocusedLowColor.GetColor(PaletteSource) : null;
+            DrawText(renderer, lowColor ?? TextColor(renderer, false) ?? RgbaColor.Transparent, RgbaColor.Transparent, offset0);
         }
 
         if ( MathF.Abs(globalOffset) > 0 || Focused)
         {
-            
             var color = AttachedView.TextColors?.GetColor(renderer, PaletteSource, false, true, false, Enabled);
             DrawText(renderer, color ?? RgbaColor.Transparent, RgbaColor.Transparent, offset1);
         }

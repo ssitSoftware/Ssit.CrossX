@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Ssit.CrossX.IO;
@@ -42,5 +43,11 @@ public class EmbeddedFilesProvider: IFilesProvider
     {
         path = GetResourceName(path);
         return _files.Contains(path);
+    }
+
+    public string[] GetFiles(string path, string extension = null)
+    {
+        path = GetResourceName(path);
+        return _files.Where(o => o.StartsWith(path) && (extension?.Equals(o.Split('.')[^1]) ?? true)).Select( o=>o.Substring(_prefix.Length)).ToArray();
     }
 }

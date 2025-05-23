@@ -4,6 +4,7 @@ using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.UI.Services;
 using Ssit.IoC;
 
@@ -22,6 +23,7 @@ internal class MainPageViewModel
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
             GameInstance gameInstance = null;
+            
             var gameDialogs = container.IoCConstruct<GameDialogs>();
             
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
@@ -32,9 +34,11 @@ internal class MainPageViewModel
                     {
                         MapPath = "assets:/Game/Maps/Map01.map",
                         ProcessWorldFunc = GamePhysics.InitPhysicsForWorld,
-                        RegisterServices = b =>
+                        RegisterServices = builder =>
                         {
-                            b.WithInstance<IGameDialogs>(gameDialogs);
+                            builder
+                                .WithInstance<IGameDialogs>(gameDialogs)
+                                .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs/English");
                         }
                     });
                     gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();

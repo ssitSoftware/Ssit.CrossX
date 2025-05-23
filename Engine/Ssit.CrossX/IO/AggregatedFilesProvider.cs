@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Ssit.CrossX.IO;
 
@@ -35,5 +36,17 @@ public class AggregatedFilesProvider: IFilesProvider
         }
         
         return provider.FileExists(newPath);
+    }
+
+    public string[] GetFiles(string path, string extension)
+    {
+        PathHelper.GetDriveAndPath(path, out var drive, out var newPath);
+        
+        if (!_fileProviders.TryGetValue(drive, out var provider))
+        {
+            return [];
+        }
+
+        return provider.GetFiles(newPath, extension).Select(o => drive + '/' + o).ToArray();
     }
 }

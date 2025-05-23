@@ -9,34 +9,45 @@ namespace Nokemono.Core.UI.Styles;
 
 public static class ButtonStyles
 {
-    public static LabelButtonEx WithDialogStyle(this LabelButtonEx button, Align align, bool active)
+    public static LabelButtonEx WithDialogStyle(this LabelButtonEx button)
     {
         button.WithDefaultStyle();
 
         button.VerticalAlign = Align.Center;
-        button.HorizontalAlign = align;
-        button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
+        button.HorizontalAlign = Align.Center;
+        button.Width = "100%";
+
+        button.TextAlign = ContentAlign.Center;
         button.Font = ("Default", 12);
         
-        button.FocusWaveAmplitude = (button.Font?.FontSize ?? 12) / 9;
+        button.FocusWaveAmplitude = (button.Font?.FontSize ?? 12) / 6;
         button.FocusWaveFrequency = 1f;
-        button.FocusBevel = (button.Font?.FontSize ?? 12) / 10;
+        button.FocusBevel = (button.Font?.FontSize ?? 12) / 6;
+        
+        button.Padding = (0, 4, 0, 0);
 
-        if (!active)
+        button.FocusedLowColor = 1;
+        button.TextColors = new ButtonStateColorsIndexed
         {
-            button.TextColors = new ButtonStateColorsIndexed
-            {
-                Normal = Palette.Foreground,
-                Hover = Palette.Foreground,
-                Focused =  Palette.Foreground,
-                Pushed = Palette.Foreground,
-                Disabled = Palette.Dim
-            };
-        }
+            Normal = Palette.Accent,
+            Hover = Palette.Background,
+            Focused =  Palette.Foreground,
+            Pushed = Palette.Accent,
+            Disabled = Palette.Dim
+        };
+        
+        button.BackgroundColors = new ButtonStateColorsIndexed
+        {
+            Normal = Palette.Background,
+            Hover = Palette.Background,
+            Focused =  Palette.Accent,
+            Pushed = Palette.Accent,
+            Disabled = Palette.Background
+        };
         
         return button;
     }
-    public static LabelButton WithDefaultStyle(this LabelButton button)
+    public static LabelButtonEx WithDefaultStyle(this LabelButtonEx button)
     {
         button.Scaling = TextScaling.Pixel;
         button.TextAlign = ContentAlign.Center | ContentAlign.VCenter;
@@ -47,23 +58,27 @@ public static class ButtonStyles
         button.Padding = (2, 2);
         button.KeyCommandDelay = TimeSpan.Zero;
         
+        button.FocusWaveAmplitude = (button.Font?.FontSize ?? 12) / 9;
+        button.FocusWaveFrequency = 1f;
+        button.FocusBevel = (button.Font?.FontSize ?? 12) / 8;
+        
         button.TextColors = new ButtonStateColorsIndexed
         {
             Normal = Palette.Accent,
-            Hover = Palette.Accent,
+            Hover = Palette.Background,
             Focused =  Palette.Foreground,
             Pushed = Palette.Accent,
             Disabled = Palette.Dim
         };
         
-        button.TextOutlineColors = new ButtonStateColorsIndexed
-        {
-            Normal = Palette.Background,
-            Hover = Palette.Background,
-            Focused = Palette.Background,
-            Pushed = Palette.Background,
-            Disabled = Palette.Background
-        };
+        // button.BackgroundColors = new ButtonStateColorsIndexed
+        // {
+        //     Normal = Palette.Background,
+        //     Hover = Palette.Background,
+        //     Focused =  Palette.Background,
+        //     Pushed = Palette.Background,
+        //     Disabled = Palette.Background
+        // };
         
         return button;
     }

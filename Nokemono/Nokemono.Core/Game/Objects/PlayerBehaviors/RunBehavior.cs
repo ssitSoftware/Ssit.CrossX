@@ -1,19 +1,19 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Input;
 
 namespace Nokemono.Core.Game.Objects.PlayerBehaviors;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public class RunBehavior(Player player, IInputMappings inputMappings, IGameDialogs gameDialogs): Behavior
+public class RunBehavior(Player player, IInputMappings inputMappings, INarrationSystem narrationSystem): Behavior
 {
     private async void ShowDialog()
     {
         player.SetState("Talking");
-        
-        await gameDialogs.ShowAsync("Testowy tekst pokazuję sobie z 2 opcjami\nDruga linia jest tutaj", ["Nie", "Tak", "Nie Wiem..."]);
-        await gameDialogs.ShowAsync("O ty chamie jeden!", ["OK"]);
+
+        await narrationSystem.StartNarration("Merchant");
         
         player.SetState("Idle");
     }

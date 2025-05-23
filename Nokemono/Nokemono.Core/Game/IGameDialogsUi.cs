@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Values;
 
@@ -11,6 +12,6 @@ public interface IGameDialogsUi
     SharedBool Visible { get; }
     SharedString CurrentText { get; }
     
-    SharedBool[] ReplyOptionVisible { get; }
-    SharedString[] ReplyOptions { get; }
+    IReadOnlyList<SharedBool> ReplyOptionVisible { get; }
+    IReadOnlyList<SharedString> ReplyOptions { get; }
 }

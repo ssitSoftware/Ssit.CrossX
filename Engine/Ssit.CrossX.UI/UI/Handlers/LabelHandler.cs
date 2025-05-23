@@ -24,7 +24,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         var font = GetFont();
         TextRenderingContext.Reset();
         font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
-
+        
         CalculateSizeInternal(out var width, out var height);
         CalculateAlign(out var ha, out var va);
         

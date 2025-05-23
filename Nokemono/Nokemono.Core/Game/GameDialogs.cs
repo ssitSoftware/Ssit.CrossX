@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
@@ -12,8 +13,8 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
     public event Action<int> FocusElement;    
     public SharedBool Visible => _visible;
     public SharedString CurrentText => _currentText;
-    public SharedBool[] ReplyOptionVisible => _replyOptionVisible;
-    public SharedString[] ReplyOptions => _replyOptions;
+    public IReadOnlyList<SharedBool> ReplyOptionVisible => _replyOptionVisible;
+    public IReadOnlyList<SharedString> ReplyOptions => _replyOptions;
 
     public override bool IsConversationActive => Visible.Value;
     
@@ -21,8 +22,6 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
     
     private readonly SharedBoolMutable _visible = new(false);
     private readonly SharedStringValue _currentText = new("");
-
-    private int _visibleReplays = 0;
     
     private readonly SharedBoolMutable[] _replyOptionVisible =
     [
@@ -38,7 +37,7 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
         new("")
     ];
 
-    private SyncCommand _replyCommand;
+    private readonly SyncCommand _replyCommand;
 
     public GameDialogs(IActionScheduler actionScheduler): base(actionScheduler)
     {
@@ -63,14 +62,16 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
         {
             if (!ShouldHide)
                 return;
-            
-            _replyOptions[0].SetText("");
-            _replyOptions[1].SetText("");
-            _replyOptions[2].SetText("");
 
-            _replyOptionVisible[0].SetValue(false);
-            _replyOptionVisible[1].SetValue(false);
-            _replyOptionVisible[2].SetValue(false);
+            foreach (var ro in _replyOptions)
+            {
+                ro.SetText("");
+            }
+
+            foreach (var rov in _replyOptionVisible)
+            {
+                rov.SetValue(false);
+            }
 
             _currentText.SetText("");
             _visible.SetValue(false);
@@ -81,20 +82,7 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
 
         if (obj is int index)
         {
-            switch (_visibleReplays)
-            {
-                case 1:
-                    OnReply(0);
-                    break;
-                
-                case 2:
-                    OnReply(index > 0 ? 1 : 0);
-                    break;
-                
-                case 3:
-                    OnReply(index);
-                    break;
-            }
+            OnReply(index);
         }
         else
         {
@@ -104,50 +92,27 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
 
     protected override void SetValuesForDialog(string text, string[] replyOptions)
     {
-        _replyOptionVisible[0].SetValue(false);
-        _replyOptionVisible[1].SetValue(false);
-        _replyOptionVisible[2].SetValue(false);
-
-        int focus = 0;
-
-        _visibleReplays = replyOptions.Length;
-        switch (replyOptions.Length)
+        foreach (var ro in _replyOptions)
         {
-            case 1:
-                _replyOptions[2].SetText(replyOptions[0]);
-                _replyOptionVisible[2].SetValue(true);
-                focus = 2;
-                break;
-            
-            case 2:
-                _replyOptions[0].SetText(replyOptions[0]);
-                _replyOptionVisible[0].SetValue(true);
-                
-                _replyOptions[2].SetText(replyOptions[1]);
-                _replyOptionVisible[2].SetValue(true);
-                break;
-            
-            case 3:
-                _replyOptions[0].SetText(replyOptions[0]);
-                _replyOptionVisible[0].SetValue(true);
-                
-                _replyOptions[1].SetText(replyOptions[1]);
-                _replyOptionVisible[1].SetValue(true);
-                
-                _replyOptions[2].SetText(replyOptions[2]);
-                _replyOptionVisible[2].SetValue(true);
-                break;
-            
-            default:
-                throw new InvalidOperationException();
+            ro.SetText("");
         }
-        
+
+        foreach (var rov in _replyOptionVisible)
+        {
+            rov.SetValue(false);
+        }
+
+        for (var idx = 0; idx < replyOptions.Length; idx++)
+        {
+            _replyOptions[idx].SetText(replyOptions[idx]);
+            _replyOptionVisible[idx].SetValue(true);
+        }
         _visible.SetValue(true);
         
         _currentText.SetText("");
         _currentText.SetText(text);
         
-        FocusElement?.Invoke(focus);
+        FocusElement?.Invoke(0);
         
         _replyCommand.RaiseCanExecuteChanged();
     }

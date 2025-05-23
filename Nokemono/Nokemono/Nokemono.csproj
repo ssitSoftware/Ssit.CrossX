@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Engine\Ssit.CrossX.Editor\Ssit.CrossX.Editor.csproj" />
+      <ProjectReference Include="..\..\Engine\Ssit.CrossX.SDL\Ssit.CrossX.SDL.csproj" />
+      <ProjectReference Include="..\Nokemono.Core\Nokemono.Core.csproj" />
+    </ItemGroup>
+
+</Project>

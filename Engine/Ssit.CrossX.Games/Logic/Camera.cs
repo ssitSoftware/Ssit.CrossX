@@ -1,10 +1,12 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.Games.Utils;
 
 namespace Ssit.CrossX.Games.Logic;
 
-internal class Camera: ICamera
+internal class Camera(IGameTemplate template): ICamera
 {
     private Vector2 _lookAt;
 
@@ -23,8 +25,8 @@ internal class Camera: ICamera
     
     private Action _onTemporaryTargetFocused;
 
-    public Vector2 LookAt => _lookAt;
-
+    public Vector2 LookAt => template.TrimToPixels ? _lookAt.TrimVectorToPixels(template.TileSize) : _lookAt;
+    
     public void SetPrimaryTarget(Body body, Vector2 offset, float followFactor)
     {
         _primaryTarget = body;
@@ -49,11 +51,31 @@ internal class Camera: ICamera
             return;
         
         var target = Body.Position + Offset;
-        var factor = MathF.Min(1, dt * FollowFactor);
-        
-        _lookAt = factor * target + (1 - factor) * _lookAt;
-        _lookAt = factor * target + (1 - factor) * _lookAt;
 
+        if (_primaryFollowFactor > 100000)
+        {
+            _lookAt = target;
+            return;       
+        }
+        
+        var factor = dt * FollowFactor;
+        
+        var dist = (_lookAt - target).Length();
+        dist = MathF.Max((2-dist), 1);
+
+        factor = MathF.Min(1, factor * dist);
+        
+        var newLookAt = factor * target + (1 - factor) * _lookAt;
+        var diff = newLookAt - target;
+        
+        var epsilon = 0.25f / template.TileSize;
+         if (MathF.Abs(diff.X) < epsilon && MathF.Abs(diff.Y) < epsilon)
+        {
+            newLookAt = target;
+        }
+
+        _lookAt = newLookAt;
+        
         if (_temporaryTarget != null && (_lookAt - target).Length() < 0.5f)
         {
             _onTemporaryTargetFocused?.Invoke();

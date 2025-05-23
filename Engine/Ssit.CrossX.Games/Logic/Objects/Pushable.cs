@@ -6,6 +6,7 @@ using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
+using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
@@ -90,7 +91,13 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
         var transform = (ImageTransform)(angle /steps);
         frame %= steps;
         
-        renderer.SpriteRenderer.Draw(_spriteSheet.Resource, Body.Position * Services.GameTemplate.TileSize, 
+        var pos = Body.Position * Services.GameTemplate.TileSize;
+        if (Services.GameTemplate.TrimToPixels)
+        {
+            pos = pos.TrimVectorToPixels(Services.GameTemplate.TileSize);
+        }
+        
+        renderer.SpriteRenderer.Draw(_spriteSheet.Resource, pos, 
             _sequence.Frames[frame].Source, 
             _sequence.Frames[frame].Offset + Origin, 1f, color, transform);
     }

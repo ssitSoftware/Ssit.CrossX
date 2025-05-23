@@ -2,6 +2,7 @@ using System;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
+using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
@@ -51,7 +52,12 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, SpriteInsta
 
     protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
-        renderer.SpriteRenderer.Draw(Sprite, Body.Position * Services.GameTemplate.TileSize, transform: Transform, color: color);
+        var pos = Body.Position * Services.GameTemplate.TileSize;
+        if (Services.GameTemplate.TrimToPixels)
+        {
+            pos = pos.TrimVectorToPixels(Services.GameTemplate.TileSize);
+        }
+        renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
     }
 
     protected override void OnFixedUpdate(float dt)

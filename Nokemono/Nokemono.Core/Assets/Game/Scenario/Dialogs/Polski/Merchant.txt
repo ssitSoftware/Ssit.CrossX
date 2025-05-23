@@ -1,0 +1,51 @@
+-- first meet
+Witaj wędrowcze. Jak cię zwą?
+    @playerName
+        O, @playerName. Bardzo ładnie!|Co cię tutaj sprowadza @playerName?
+
+            Nie twój interes, stary dziadu!
+                I po co to chamstwo młody człowieku?|Żegnam!
+                    Nara!
+                        :set(#metMerchantRude)
+
+            Szukam kogoś...
+                O, szukasz przyjaciela?
+                    Nie jest moim przyjacielem...
+                        Rozumiem... możesz spróbować w starej gospodzie|na południu obozu.
+                            ...
+                                Tam przewija się wiele osób.
+                                    Dzięki!
+                                        :set(#metMerchant)
+
+
+
+-- second talk after being rude
+:on(#metMerchantRude)
+:highlight()
+
+O, chamsk{playerEnding}!|Jeszcze jakieś gorzkie słowa dla starszego?
+    Nie, żegnam!
+    
+    Bardzo pana przepraszam! Potrzebuję pomocy...
+        ...
+            Szukam kogoś...
+                Hmm....|Przyjaciela?
+                    Raczej nie...
+                        Sprawdź starą gospodę na południu|obozu. Dużo osób się tam przewija...
+                            Dziękuję i jeszcze raz przepraszam!
+                                Dobra, spadaj, młokosie (hi hi)? Jak cię to zwali?
+                                    {playerName}
+                                        {playerName}...|Do zobaczenia {playerName}.
+                                            Do widzenia!
+                                                :set(#metMerchant)
+
+
+
+
+-- Regular talk after the introduction
+:on(#metMerchant)
+
+Witaj {playerName}, przyjacielu!|Chcesz coś kupić?
+    Nie, dziękuję!
+    Tak
+        :show(merchantStore)

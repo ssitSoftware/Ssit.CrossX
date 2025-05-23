@@ -10,6 +10,7 @@ public interface IGameTemplate
     string Name { get; }
     Guid Guid { get; }
     int TileSize { get; }
+    
     Size TargetSize { get; }
     
     RgbaColor DefaultBackground { get; }
@@ -19,7 +20,6 @@ public interface IGameTemplate
     ImageDescription[] Images { get; }
 
     string[] TileSets { get; }
-    
     GameObject.OriginAlignment ObjectsOriginAlignment { get; }
     
     MaterialInfo[] Materials { get; }
@@ -29,4 +29,6 @@ public interface IGameTemplate
     int PreviewZoom { get; }
     RgbaColor EmptyColor { get; }
     RgbaColor TilesBgColor => EmptyColor;
+    
+    bool TrimToPixels => false;
 }

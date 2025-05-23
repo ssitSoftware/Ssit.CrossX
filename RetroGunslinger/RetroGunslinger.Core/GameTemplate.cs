@@ -68,6 +68,7 @@ public class GameTemplate: IGameTemplate
     public ImageDescription[] Images { get; } =
     [
         new ("Trees/Big Tree 1", "assets:/Game/Images/BigTree1"),
+        new ("Trees/Big Tree 2", "assets:/Game/Images/BigTree2"),
         new ("Statues/Woman Statue", "assets:/Game/Images/Statue1"),
         new ("Statues/Angel Statue", "assets:/Game/Images/Statue2"),
         new ("Statues/Fallen Statue", "assets:/Game/Images/Statue3"),

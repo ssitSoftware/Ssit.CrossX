@@ -23,7 +23,7 @@ internal class MainPageViewModel
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
             GameInstance gameInstance = null;
-            var gameDialogs = container.IoCConstruct<GameDialogsImpl>();
+            var gameDialogs = container.IoCConstruct<GameDialogs>();
             
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Input;
+using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI.Views;
 
@@ -11,4 +12,5 @@ public interface IButtonView: IFocusableView
     TimeSpan CommandDelay { get; }
     string CommandSoundId { get; }
     bool EnableCommandType { get; }
+    IUiSounds CustomSounds { get; }
 }

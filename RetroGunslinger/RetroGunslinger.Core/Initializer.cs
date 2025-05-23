@@ -33,7 +33,8 @@ public static class Initializer
             .AddSound(UiSounds.ItemNavigateSound, "assets:/Sounds/UI/ItemNavigate.wav")
             .AddSound(UiSounds.NavigateToSound, "assets:/Sounds/UI/Navigate.wav")
             .AddSound(UiSounds.NavigateBackSound, "assets:/Sounds/UI/NavigateBack.wav")
-            .AddSound(UiSounds.ChangeValueSound, "assets:/Sounds/UI/ChangeValue.wav");
+            .AddSound(UiSounds.ChangeValueSound, "assets:/Sounds/UI/ChangeValue.wav")
+            .AddSound(UiSounds.MenuSound, "assets:/Sounds/UI/Menu.wav");
     }
 
     public static IIoCContainer InitializeMusic(this IIoCContainer container, string startPlaylist)

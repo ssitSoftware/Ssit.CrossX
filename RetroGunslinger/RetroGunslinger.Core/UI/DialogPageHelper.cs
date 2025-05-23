@@ -2,16 +2,15 @@ using RetroGunslinger.Core.Game;
 using RetroGunslinger.Core.UI.Styles;
 using RetroGunslinger.Core.UI.Views;
 using Ssit.CrossX;
-using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
-using Ssit.CrossX.Utils;
 
 namespace RetroGunslinger.Core.UI;
 
 public static class DialogPageHelper
 {
-    public static View CreateDialogLayer(IGameDialogsUi dialogs, bool active)
+    public static View CreateDialogLayer(IGameDialogsUi dialogs, bool active, IUiSounds sounds = null)
     {
         return new Container
         {
@@ -71,7 +70,8 @@ public static class DialogPageHelper
                     AnchorY = "100%-12",
                     AnchorX = "12",
                     Command = dialogs.ReplyCommand,
-                    CommandParameter = 0
+                    CommandParameter = 0,
+                    CustomSounds = sounds
                 }.WithDialogStyle(Align.Start, active),
                 new LabelButtonEx
                 {
@@ -82,7 +82,8 @@ public static class DialogPageHelper
                     AnchorY = "100%-12",
                     AnchorX = "50%",
                     Command = dialogs.ReplyCommand,
-                    CommandParameter = 1
+                    CommandParameter = 1,
+                    CustomSounds = sounds
                 }.WithDialogStyle(Align.Center, active),
                 new LabelButtonEx
                 {
@@ -93,7 +94,8 @@ public static class DialogPageHelper
                     AnchorY = "100%-12",
                     AnchorX = "100%-12",
                     Command = dialogs.ReplyCommand,
-                    CommandParameter = 2
+                    CommandParameter = 2,
+                    CustomSounds = sounds
                 }.WithDialogStyle(Align.End, active)
             ]
         };

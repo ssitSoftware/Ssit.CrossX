@@ -79,6 +79,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                     {
                         if (_viewHandler.ScreenBounds.Contains(pointer.Position))
                         {
+                            _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
                             Execute(TimeSpan.Zero, null);
                             _currentPointerId = null;
                             return true;
@@ -168,7 +169,8 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             case UiButton.Select:
                 if (IsEnabled)
                 {
-                    Execute(AttachedView.KeyCommandDelay, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);;
+                    _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
+                    Execute(AttachedView.KeyCommandDelay, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
                 }
                 break;
         }

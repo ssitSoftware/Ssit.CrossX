@@ -2,7 +2,7 @@ using System;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Values;
 
-namespace Ssit.CrossX.Utils;
+namespace RetroGunslinger.Core.Game;
 
 public interface IGameDialogsUi
 {

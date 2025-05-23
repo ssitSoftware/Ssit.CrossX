@@ -8,7 +8,6 @@ public class OptionsPageInGame : OptionsPageBase<OptionsPageInGameViewModel>
     protected override View CreateView()
     {
         var menuView = CreateMenu();
-
         return new Container
         {
             Children = [

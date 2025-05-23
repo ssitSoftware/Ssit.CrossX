@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Input;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
@@ -21,4 +22,5 @@ public class LabelButton: Label, IButtonView
     
     public string CommandSoundId { get; set; }
     public bool EnableCommandType { get; set; }
+    public IUiSounds CustomSounds { get; set; }
 }

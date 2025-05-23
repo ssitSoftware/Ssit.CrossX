@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.UI.Services;
 
-internal class UiSoundsService(IContentManager contentManager) : IUiSounds
+public class UiSoundsContainer(IContentManager contentManager) : IUiSounds
 {
     private readonly Dictionary<string, ResourceHandle<ISoundEffect>> _sounds = new();
 
@@ -27,5 +28,15 @@ internal class UiSoundsService(IContentManager contentManager) : IUiSounds
         _sounds.Add(id, sound);
 
         return this;
+    }
+
+    public void Dispose()
+    {
+        foreach (var sound in _sounds.Values)
+        {
+            sound.Dispose();
+        }
+
+        _sounds.Clear();
     }
 }

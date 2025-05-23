@@ -23,7 +23,7 @@ public static class UiBootstrapper
             .WithSingleton<IHandlerMapper, FullHandlerMapper>()
             .WithSingleton<IUiServices, UiServices>()
             .WithSingleton<IActionDispatcher, ActionDispatcher>()
-            .WithSingleton<IUiSounds, UiSoundsService>()
+            .WithSingleton<IUiSounds, UiSoundsContainer>()
             .WithSingleton<IUiApp, UiApp>();
         
         init(builder, map, handlers);

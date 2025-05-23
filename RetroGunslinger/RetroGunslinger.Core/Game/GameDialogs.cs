@@ -1,29 +1,26 @@
 using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI.Values;
 
-namespace Ssit.CrossX.Utils;
+namespace RetroGunslinger.Core.Game;
 
-public class GameDialogs : IGameDialogsUi
+public class GameDialogs : GameDialogsBase, IGameDialogsUi
 {
-    private readonly IActionScheduler _actionScheduler;
-    public event Action<int> FocusElement;
-    
+    public event Action<int> FocusElement;    
     public SharedBool Visible => _visible;
     public SharedString CurrentText => _currentText;
     public SharedBool[] ReplyOptionVisible => _replyOptionVisible;
     public SharedString[] ReplyOptions => _replyOptions;
 
-    public ICommand ReplyCommand => _replyCommand;
-
-    private Action<int> _onReply;
-    private bool _shouldHide;
+    public override bool IsConversationActive => Visible.Value;
     
-    private readonly SharedBoolMutable _visible = new SharedBoolMutable(false);
-    private readonly SharedStringValue _currentText = new SharedStringValue("");
+    public ICommand ReplyCommand => _replyCommand;
+    
+    private readonly SharedBoolMutable _visible = new(false);
+    private readonly SharedStringValue _currentText = new("");
 
     private int _visibleReplays = 0;
     
@@ -43,10 +40,9 @@ public class GameDialogs : IGameDialogsUi
 
     private SyncCommand _replyCommand;
 
-    public GameDialogs(IActionScheduler actionScheduler)
+    public GameDialogs(IActionScheduler actionScheduler): base(actionScheduler)
     {
-        _actionScheduler = actionScheduler;
-        _replyCommand = new SyncCommand(OnReply, CanReply);
+        _replyCommand = new SyncCommand(OnCommandReply, CanReply);
     }
 
     private bool CanReply(object arg)
@@ -59,13 +55,13 @@ public class GameDialogs : IGameDialogsUi
         return false;
     }
 
-    private void OnReply(object obj)
+    private void OnCommandReply(object obj)
     {
-        _shouldHide = true;
+        ShouldHide = true;
 
-        _actionScheduler.Schedule(() =>
+        ActionScheduler.Schedule(() =>
         {
-            if (!_shouldHide)
+            if (!ShouldHide)
                 return;
             
             _replyOptions[0].SetText("");
@@ -88,43 +84,26 @@ public class GameDialogs : IGameDialogsUi
             switch (_visibleReplays)
             {
                 case 1:
-                    _onReply?.Invoke(0);
+                    OnReply(0);
                     break;
                 
                 case 2:
-                    _onReply?.Invoke(index > 0 ? 1 : 0);
+                    OnReply(index > 0 ? 1 : 0);
                     break;
                 
                 case 3:
-                    _onReply?.Invoke(index);
+                    OnReply(index);
                     break;
             }
         }
-        _onReply = null;
-    }
-
-    public Task<int> ShowAsync(string text, string[] replyOptions)
-    {
-        var tcs = new TaskCompletionSource<int>();
-        
-        _actionScheduler.Schedule( () => Show(text, replyOptions, index =>
+        else
         {
-            if (!tcs.Task.IsCompleted)
-            {
-                tcs.SetResult(index);
-            }
-
-            _onReply = null;
-        }));
-        return tcs.Task;
+            OnReply(-1);
+        }
     }
 
-    public void Show(string text, string[] replyOptions, Action<int> onReply)
+    protected override void SetValuesForDialog(string text, string[] replyOptions)
     {
-        _shouldHide = false; 
-        _onReply?.Invoke(-1);
-        _onReply = null;
-        
         _replyOptionVisible[0].SetValue(false);
         _replyOptionVisible[1].SetValue(false);
         _replyOptionVisible[2].SetValue(false);
@@ -162,8 +141,7 @@ public class GameDialogs : IGameDialogsUi
             default:
                 throw new InvalidOperationException();
         }
-
-        _onReply = onReply;
+        
         _visible.SetValue(true);
         
         _currentText.SetText("");

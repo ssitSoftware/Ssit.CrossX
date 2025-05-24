@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.Common.Pages;
+namespace Ssit.CrossX.UI.Common.Pages;
 
 public class PageInputContext
 {

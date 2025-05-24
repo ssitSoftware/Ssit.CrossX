@@ -1,5 +1,6 @@
 using Nokemono.Core.Game;
-using Ssit.CrossX.Common.Services;
+using Ssit.CrossX.Games.Logic;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Services;
 
 namespace Nokemono.Core.UI.ViewModels;

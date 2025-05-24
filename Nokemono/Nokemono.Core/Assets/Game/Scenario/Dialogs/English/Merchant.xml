@@ -60,10 +60,19 @@
 
     <!-- Regular talk after the introduction -->
     <Dialog On="metMerchant">
-        <Text>Hello {playerName}, my friend! Wanna buy anything?
+        <Text>Hello {playerName} friend! Wanna buy anything?
             <Option>No, thank you</Option>
             <Option Action="showMerchantStore">Yes</Option>
-            <Option>I am just checking in...</Option>
+            <Option>How are you today?
+                <Text>I am great! Thanks for asking!
+                    <Option>That's great! Can I buy anything?
+                        <Text>Yes, yes my friend!
+                            <Option Action="showMerchantStore">...</Option>
+                        </Text>
+                    </Option>
+                    <Option>That's nice to hear. See ya!</Option>
+                </Text>
+            </Option>
         </Text>
     </Dialog>
 </Dialogs>

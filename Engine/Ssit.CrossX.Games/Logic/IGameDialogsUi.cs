@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Values;
 
-namespace Nokemono.Core.Game;
+namespace Ssit.CrossX.Games.Logic;
 
 public interface IGameDialogsUi
 {

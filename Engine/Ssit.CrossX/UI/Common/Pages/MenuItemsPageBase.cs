@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
-namespace Ssit.CrossX.Common.Pages;
+namespace Ssit.CrossX.UI.Common.Pages;
 
 public abstract class MenuItemsPageBase<TViewModel>: PageWithTranslator<TViewModel> where TViewModel: class
 {

@@ -1,6 +1,6 @@
 using Ssit.CrossX.Core;
 
-namespace Nokemono.Core.Game;
+namespace Ssit.CrossX.Games.Logic;
 
 public interface IGameInterfaces
 {

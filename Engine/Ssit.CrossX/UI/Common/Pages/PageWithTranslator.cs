@@ -1,7 +1,6 @@
-using Ssit.CrossX.Common.Services;
-using Ssit.CrossX.UI;
+using Ssit.CrossX.UI.Common.Services;
 
-namespace Ssit.CrossX.Common.Pages;
+namespace Ssit.CrossX.UI.Common.Pages;
 
 public abstract class PageWithTranslator<TViewModel> : Page<TViewModel> where TViewModel : class
 {

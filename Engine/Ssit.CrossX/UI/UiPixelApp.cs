@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Numerics;
-using Ssit.CrossX.Common;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.UI.Common;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 

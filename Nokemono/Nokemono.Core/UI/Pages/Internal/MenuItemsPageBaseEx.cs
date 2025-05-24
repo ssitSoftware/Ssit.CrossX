@@ -1,6 +1,6 @@
 using Nokemono.Core.UI.Styles;
 using Nokemono.Core.UI.Views;
-using Ssit.CrossX.Common.Pages;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Views;
 
 namespace Nokemono.Core.UI.Pages.Internal;

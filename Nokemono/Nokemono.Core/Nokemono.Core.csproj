@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Engine\Ssit.CrossX.Games\Ssit.CrossX.Games.csproj" />
-      <ProjectReference Include="..\..\Engine\Ssit.CrossX.UI\Ssit.CrossX.UI.csproj" />
     </ItemGroup>
 
     <ItemGroup>

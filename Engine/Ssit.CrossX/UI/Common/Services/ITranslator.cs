@@ -1,6 +1,6 @@
 using Ssit.CrossX.UI.Values;
 
-namespace Ssit.CrossX.Common.Services;
+namespace Ssit.CrossX.UI.Common.Services;
 
 public interface ITranslator
 {

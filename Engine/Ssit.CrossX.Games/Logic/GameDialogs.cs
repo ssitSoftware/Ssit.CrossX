@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI.Values;
 
-namespace Nokemono.Core.Game;
+namespace Ssit.CrossX.Games.Logic;
 
 public class GameDialogs : GameDialogsBase, IGameDialogsUi
 {

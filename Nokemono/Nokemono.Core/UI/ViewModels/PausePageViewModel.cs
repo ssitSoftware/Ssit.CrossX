@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Nokemono.Core.Game;
 using Ssit.CrossX.Commands;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Services;
 

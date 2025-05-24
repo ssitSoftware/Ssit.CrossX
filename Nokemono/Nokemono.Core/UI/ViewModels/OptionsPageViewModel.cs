@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
-using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.UI;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 

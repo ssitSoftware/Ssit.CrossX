@@ -3,7 +3,7 @@ using System.IO;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.UI.Values;
 
-namespace Ssit.CrossX.Common.Services;
+namespace Ssit.CrossX.UI.Common.Services;
 
 internal class Translator : ITranslator
 {

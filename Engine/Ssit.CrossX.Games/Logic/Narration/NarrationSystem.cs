@@ -10,17 +10,17 @@ namespace Ssit.CrossX.Games.Logic.Narration;
 public class NarrationSystem: INarrationSystem
 {
     private readonly IGameDialogs _dialogs;
+    private readonly IGameState _gameState;
     private readonly IActionScheduler _actionScheduler;
     public event Action<string> NarrationAction;
     public event Action NarrationUpdated;
     
-    private readonly HashSet<string> _globalTags = new();
-    
     private readonly Dictionary<string, NarrationObject> _objects = new();
     
-    public NarrationSystem(IGameDialogs dialogs, IActionScheduler actionScheduler, IFilesProvider filesProvider, string narrationDir)
+    public NarrationSystem(IGameDialogs dialogs, IGameState gameState, IActionScheduler actionScheduler, IFilesProvider filesProvider, string narrationDir)
     {
         _dialogs = dialogs;
+        _gameState = gameState;
         _actionScheduler = actionScheduler;
         
         var list = NarrationParser.ParseObjects(filesProvider, narrationDir);
@@ -50,7 +50,7 @@ public class NarrationSystem: INarrationSystem
 
             if (!string.IsNullOrWhiteSpace(tag))
             {
-                _globalTags.Add(tag);
+                _gameState.SetFlag(tag);
                 _actionScheduler.Schedule(() => NarrationUpdated?.Invoke());
             }
 
@@ -63,7 +63,7 @@ public class NarrationSystem: INarrationSystem
         }
         
         var key = GetDialogKey(subject, dialog.On);
-        _globalTags.Add(key);
+        _gameState.SetFlag(key);
 
         _actionScheduler.Schedule(() => NarrationUpdated?.Invoke());
     }
@@ -80,7 +80,7 @@ public class NarrationSystem: INarrationSystem
             var valid = true;
             foreach (var tag in dialog.On)
             {
-                if (!_globalTags.Contains(tag))
+                if (!_gameState.HasFlag(tag))
                 {
                     valid = false;
                 }
@@ -102,7 +102,7 @@ public class NarrationSystem: INarrationSystem
         if (dialog.Highlight)
         {
             var key = GetDialogKey(subject, dialog.On);
-            return !_globalTags.Contains(key);
+            return !_gameState.HasFlag(key);
         }
 
         return false;

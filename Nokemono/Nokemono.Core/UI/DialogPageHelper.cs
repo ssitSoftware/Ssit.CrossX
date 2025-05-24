@@ -1,6 +1,7 @@
 using Nokemono.Core.Game;
 using Nokemono.Core.UI.Styles;
 using Nokemono.Core.UI.Views;
+using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;

@@ -23,7 +23,6 @@ internal class MainPageViewModel
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
 
             GameInstance gameInstance = null;
-            
             var gameDialogs = container.IoCConstruct<GameDialogs>();
             
             navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
@@ -38,16 +37,14 @@ internal class MainPageViewModel
                         {
                             builder
                                 .WithInstance<IGameDialogs>(gameDialogs)
+                                .WithInstance<IGameDialogsUi>(gameDialogs)
+                                .WithSingleton<IGameState, GameState>()
                                 .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs/English");
                         }
                     });
                     gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
                 },
-                OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(new GameInterfaces
-                {
-                    Instance = gameInstance,
-                    Dialogs = gameDialogs
-                })
+                OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance.Container.IoCConstruct<GameInterfaces>())
             });
         });
         

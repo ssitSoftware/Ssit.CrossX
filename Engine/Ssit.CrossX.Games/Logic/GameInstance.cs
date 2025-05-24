@@ -88,7 +88,11 @@ public class GameInstance : IGameInstance
             .WithMap(map)
             .WithFilesProvider(contentManager.FilesProvider)
             .WithContainer(container)
-            .WithServicesRegistrar(parameters.RegisterServices)
+            .WithServicesRegistrar( b =>
+            {
+                parameters.RegisterServices(b);
+                b.WithInstance<IGameInstance>(this);
+            })
             .WithGameTemplate(gameTemplate);
         
         (World, Container) = worldBuilder.Build();

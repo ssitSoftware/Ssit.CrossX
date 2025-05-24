@@ -3,12 +3,12 @@ using Nokemono.Core.UI.Pages;
 using Nokemono.Core.UI.ViewModels;
 using Nokemono.Core.UI.Views;
 using Ssit.CrossX.Audio;
-using Ssit.CrossX.Common.Pages;
-using Ssit.CrossX.Common.Services;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.UI.Common.Pages;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Services;
 using Ssit.IoC;
 

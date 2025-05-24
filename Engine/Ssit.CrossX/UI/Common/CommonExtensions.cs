@@ -1,11 +1,11 @@
-using Ssit.CrossX.Common.Pages;
-using Ssit.CrossX.Common.Services;
-using Ssit.IoC;
+using Ssit.CrossX.UI.Common.Pages;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
+using Ssit.IoC;
 
-namespace Ssit.CrossX.Common;
+namespace Ssit.CrossX.UI.Common;
 
 public static class CommonExtensions
 {

@@ -55,20 +55,15 @@ internal class Camera(IGameTemplate template): ICamera
         if (_primaryFollowFactor > 100000)
         {
             _lookAt = target;
-            return;       
+            return;
         }
         
         var factor = dt * FollowFactor;
         
-        var dist = (_lookAt - target).Length();
-        dist = MathF.Max((2-dist), 1);
-
-        factor = MathF.Min(1, factor * dist);
-        
         var newLookAt = factor * target + (1 - factor) * _lookAt;
         var diff = newLookAt - target;
         
-        var epsilon = 0.25f / template.TileSize;
+        var epsilon = 0.125f / template.TileSize;
          if (MathF.Abs(diff.X) < epsilon && MathF.Abs(diff.Y) < epsilon)
         {
             newLookAt = target;

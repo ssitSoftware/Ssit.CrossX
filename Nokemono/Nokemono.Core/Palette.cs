@@ -24,7 +24,8 @@ public class Palette
         new("LCD", RgbaColor.Transparent, 0x101810, 0xa6f76e, 0x5b843f, 0xfe8a26),
         new("Amber", RgbaColor.Transparent, 0x201000, 0xfda813, 0x462800, 0xfd4713),
         new("Fav1", RgbaColor.Transparent, 0x101010, 0xfda880, 0x562820, 0xfe3a26),
-        new("Fav2", RgbaColor.Transparent, 0x101010, 0xd6d66e, 0x5b442f, 0xee5436)
+        new("Fav2", RgbaColor.Transparent, 0x101010, 0xd6d66e, 0x5b442f, 0xee5436),
+        new("Game Boy", RgbaColor.Transparent, 0x081820, 0xb3c6a6, 0x346856, 0x88c070)
     ];
     
     public string Name { get; }

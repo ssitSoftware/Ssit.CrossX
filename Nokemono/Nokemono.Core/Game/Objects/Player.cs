@@ -72,7 +72,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         SoundContainer.RegisterCharacterGroundSounds();
         
-        camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 6);
+        camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 5);
         
         Sprite.SetSequence("Idle");
         Body.IsBullet = true;

@@ -67,7 +67,7 @@ public class GamePage: Page<GamePageViewModel>
                     Font = ("Default", 12),
                     TextColor = Palette.Foreground,
                     TextOutlineColor = Palette.Background,
-                    Scaling = TextScaling.Pixel,
+                    Scaling = TextScaling.None,
                     Visible = ViewModel.ShowFps
                 }
             ]

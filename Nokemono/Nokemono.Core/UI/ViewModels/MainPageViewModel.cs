@@ -15,56 +15,50 @@ namespace Nokemono.Core.UI.ViewModels;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
 [SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
-internal class MainPageViewModel
+internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container, ITranslator translator)
 {
-    public MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container, ITranslator translator)
+    public SyncCommand StartGameCommand => _startGameCommand ??= new SyncCommand(OnStartGame);
+    private SyncCommand _startGameCommand;
+    
+    public SyncCommand OptionsCommand { get; } = new(_ =>
     {
-        StartGameCommand = new SyncCommand(() =>
-        {
-            sounds[UiSounds.NavigateToSound]?.PlayOnce();
+        sounds[UiSounds.NavigateToSound]?.PlayOnce();
+        navigation.NavigateTo<OptionsPageViewModel>();
+    });
+    
+    public SyncCommand ExitCommand { get; } = new( () =>
+    {
+        sounds[UiSounds.NavigateToSound]?.PlayOnce();
+        windowManager.Close();
+    });
 
-            GameInstance gameInstance = null;
-            var gameDialogs = container.IoCConstruct<GameDialogs>();
+    private void OnStartGame()
+    {
+        sounds[UiSounds.NavigateToSound]?.PlayOnce();
+
+        GameInstance gameInstance = null;
+        var gameDialogs = container.IoCConstruct<GameDialogs>();
             
-            navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
+        navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
+        {
+            OnLoading = () =>
             {
-                OnLoading = () =>
+                gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
                 {
-                    gameInstance = container.IoCConstruct<GameInstance>(new GameInstance.Parameters
+                    MapPath = "assets:/Game/Maps/Map01.map",
+                    ProcessWorldFunc = GamePhysics.InitPhysicsForWorld,
+                    RegisterServices = builder =>
                     {
-                        MapPath = "assets:/Game/Maps/Map01.map",
-                        ProcessWorldFunc = GamePhysics.InitPhysicsForWorld,
-                        RegisterServices = builder =>
-                        {
-                            builder
-                                .WithInstance<IGameDialogs>(gameDialogs)
-                                .WithInstance<IGameDialogsUi>(gameDialogs)
-                                .WithSingleton<IGameState, GameState>()
-                                .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs");
-                        }
-                    });
-                    gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
-                },
-                OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance.Container.IoCConstruct<GameInterfaces>())
-            });
-        });
-        
-        OptionsCommand = new SyncCommand(_ =>
-        {
-            sounds[UiSounds.NavigateToSound]?.PlayOnce();
-            navigation.NavigateTo<OptionsPageViewModel>();
-        });
-        
-        ExitCommand = new SyncCommand( () =>
-        {
-            sounds[UiSounds.NavigateToSound]?.PlayOnce();
-            windowManager.Close();
+                        builder
+                            .WithInstance<IGameDialogs>(gameDialogs)
+                            .WithInstance<IGameDialogsUi>(gameDialogs)
+                            .WithSingleton<IGameState, GameState>()
+                            .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs");
+                    }
+                });
+                gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
+            },
+            OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance.Container.IoCConstruct<GameInterfaces>())
         });
     }
-
-    public SyncCommand StartGameCommand { get; }
-    
-    public SyncCommand OptionsCommand { get; }
-    
-    public SyncCommand ExitCommand { get; }
 }

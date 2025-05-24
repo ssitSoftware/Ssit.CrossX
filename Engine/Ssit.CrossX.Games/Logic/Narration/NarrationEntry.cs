@@ -1,11 +1,13 @@
+using System.Collections.Generic;
+
 namespace Ssit.CrossX.Games.Logic.Narration;
 
 internal class NarrationEntry
 {
-    public string Text { get; }
+    public Dictionary<string, string> Text { get; }
     public NarrationOption[] Options { get; }
 
-    public NarrationEntry(string text, NarrationOption[] options)
+    public NarrationEntry(Dictionary<string, string> text, NarrationOption[] options)
     {
         Text = text;
         Options = options;

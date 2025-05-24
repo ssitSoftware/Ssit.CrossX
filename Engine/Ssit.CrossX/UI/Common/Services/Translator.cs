@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Ssit.CrossX.IO;
@@ -70,6 +71,7 @@ internal class Translator : ITranslator
         }
 
         UpdateLanguage(_languages[_language]);
+        LanguageChanged?.Invoke();
     }
 
     private void UpdateLanguage(Dictionary<string, string> dict)
@@ -84,6 +86,8 @@ internal class Translator : ITranslator
             str.SetText(val.Value);
         }
     }
+
+    public event Action LanguageChanged;
 
     public SharedString this[string key]
     {

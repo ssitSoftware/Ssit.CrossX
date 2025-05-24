@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.Xml;
 
@@ -54,20 +55,52 @@ internal static class NarrationParser
 
         var highlight = node.Attribute("Highlight")?.ToLowerInvariant() == "true";
         var on = new HashSet<string>(node.Attribute("On")?.Split('|') ?? []);
+
+        var defaultLang = node.Attribute("DefaultLanguage") ?? "en";
         
         var entry = ParseEntry(node.Nodes[0]);
         if (entry == null)
             return null;
         
-        return new NarrationDialog(on, highlight, entry);
+        return new NarrationDialog(on, highlight, defaultLang, entry);
     }
 
+    private static bool IsSpecialTag(string tag)
+    {
+        switch (tag)
+        {
+            case "Option":
+            case "Text":
+                return true;
+        }
+        return false;
+    }
+
+    private static Dictionary<string, string> GetTexts(XNode node)
+    {
+        var dict = new Dictionary<string, string>();
+        foreach (var cn in node.Nodes)
+        {
+            if (IsSpecialTag(cn.Tag))
+                continue;
+            
+            var text = cn.Value.Trim('\n', ' ', '\t', '\r').Replace('|', '\n');
+            if (string.IsNullOrWhiteSpace(text))
+                continue;
+            
+            dict.Add(cn.Tag, text);
+        }
+
+        return dict;
+    }
+    
     private static NarrationEntry ParseEntry(XNode node)
     {
         if (node.Tag != "Text")
             return null;
 
-        var text = node.Value.Trim('\n', ' ', '\t', '\r').Replace('|', '\n');
+        var text = GetTexts(node);
+        
         var list = new List<NarrationOption>();
 
         foreach (var cn in node.Nodes)
@@ -92,16 +125,17 @@ internal static class NarrationParser
         
         var action = node.Attribute("Action");
         var set = node.Attribute("Set");
-        var text = node.Value.Trim('\n', ' ', '\t', '\r');
+        var text = GetTexts(node);
 
         NarrationEntry entry = null;
         
-        if(node.Nodes.Count > 1)
+        if(node.Nodes.Count(o => o.Tag == "Text") > 1)
             throw new InvalidDataException();
 
-        if (node.Nodes.Count == 1)
+        var entryNode = node.Nodes.FirstOrDefault(o => o.Tag == "Text");
+        if (entryNode != null)
         {
-            entry = ParseEntry(node.Nodes[0]);
+            entry = ParseEntry(entryNode);
         }
         
         return new NarrationOption(text, entry, action, set);

@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Assets\Game\Scenario\Dialogs\Polski\" />
       <Folder Include="Assets\Game\Sounds\" />
     </ItemGroup>
 

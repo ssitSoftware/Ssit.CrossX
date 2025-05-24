@@ -5,6 +5,7 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Narration;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Services;
 using Ssit.IoC;
 
@@ -16,7 +17,7 @@ namespace Nokemono.Core.UI.ViewModels;
 [SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
 internal class MainPageViewModel
 {
-    public MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container)
+    public MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container, ITranslator translator)
     {
         StartGameCommand = new SyncCommand(() =>
         {
@@ -39,7 +40,7 @@ internal class MainPageViewModel
                                 .WithInstance<IGameDialogs>(gameDialogs)
                                 .WithInstance<IGameDialogsUi>(gameDialogs)
                                 .WithSingleton<IGameState, GameState>()
-                                .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs/English");
+                                .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs");
                         }
                     });
                     gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();

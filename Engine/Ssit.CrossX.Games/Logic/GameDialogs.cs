@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.Games.Logic;
 
 public class GameDialogs : GameDialogsBase, IGameDialogsUi
 {
+    private readonly ITranslator _translator;
     public event Action<int> FocusElement;    
     public SharedBool Visible => _visible;
     public SharedString CurrentText => _currentText;
@@ -38,9 +40,17 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
 
     private readonly SyncCommand _replyCommand;
 
-    public GameDialogs(IActionScheduler actionScheduler): base(actionScheduler)
+    public GameDialogs(IActionScheduler actionScheduler, ITranslator translator): base(actionScheduler)
     {
+        _translator = translator;
         _replyCommand = new SyncCommand(OnCommandReply, CanReply);
+        
+        _translator.LanguageChanged += TranslatorOnLanguageChanged;
+    }
+
+    private void TranslatorOnLanguageChanged()
+    {
+        OnCommandReply(null);
     }
 
     private bool CanReply(object arg)
@@ -114,5 +124,10 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
         FocusElement?.Invoke(0);
         
         _replyCommand.RaiseCanExecuteChanged();
+    }
+
+    public void Dispose()
+    {
+        _translator.LanguageChanged -= TranslatorOnLanguageChanged;
     }
 }

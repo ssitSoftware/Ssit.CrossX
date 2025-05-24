@@ -5,7 +5,7 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.Games.Logic;
 
-public interface IGameDialogsUi
+public interface IGameDialogsUi: IDisposable
 {
     event Action<int> FocusElement;
     ICommand ReplyCommand { get; }

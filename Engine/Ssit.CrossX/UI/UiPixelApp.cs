@@ -28,7 +28,7 @@ public abstract class UiPixelApp : IApp
     protected IUiApp UiApp { get; private set; }
     public bool IsActive { get; private set; }
     
-    private IAppHost _appHost;
+    protected IAppHost AppHost { get; private set; }
     private IRenderer2 _renderer;
 
     private Size _size;
@@ -42,15 +42,15 @@ public abstract class UiPixelApp : IApp
             UiApp?.Dispose();
             UiApp = null;
                 
-            _appHost?.Dispose();
-            _appHost = null;
+            AppHost?.Dispose();
+            AppHost = null;
         }
     }
 
     protected virtual void OnInitialize(IIoCContainer container)
     {
         _renderer = container.Get<IRenderer2>();
-        _appHost = CreateAppHost(container);
+        AppHost = CreateAppHost(container);
             
         UiApp = container.InitializeUi(OnInitializeUi);
         OnResize(_renderer.TargetSize);
@@ -59,8 +59,8 @@ public abstract class UiPixelApp : IApp
     protected virtual void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
     {
         builder
-            .WithInstance<IInputCoordinateSystem>(new InputCoordinateSystem(_appHost))
-            .WithInstance(_appHost)
+            .WithInstance<IInputCoordinateSystem>(new InputCoordinateSystem(AppHost))
+            .WithInstance(AppHost)
             .WithCommonUi();
 
         handlers.AddCommonUiMaping();
@@ -73,13 +73,13 @@ public abstract class UiPixelApp : IApp
     protected void OnResize(Size size)
     {
         _size = size;
-        _appHost.Resize(_size);
-        UiApp.SetBounds(new RectangleF(Vector2.Zero, _appHost.TargetSize / _appHost.Scale), _appHost.Scale);
+        AppHost.Resize(_size);
+        UiApp.SetBounds(new RectangleF(Vector2.Zero, AppHost.TargetSize / AppHost.Scale), AppHost.Scale);
     }
 
     protected void ApplyHostParameters()
     {
-        _appHost?.Resize(_size, true);
+        AppHost?.Resize(_size, true);
     }
         
     protected virtual void OnDraw(IRenderer2 renderer)
@@ -87,7 +87,7 @@ public abstract class UiPixelApp : IApp
         Debug.Assert(renderer == _renderer, "renderer is not the same as the one used in the app");
         
         _renderer.Clear(RgbaColor.Black);
-        _appHost.Render(this, Render);
+        AppHost.Render(this, Render);
     }
     
     protected virtual void OnStart(object args)

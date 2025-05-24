@@ -25,7 +25,7 @@ internal class Camera(IGameTemplate template): ICamera
     
     private Action _onTemporaryTargetFocused;
 
-    public Vector2 LookAt => template.TrimToPixels ? _lookAt.TrimVectorToPixels(template.TileSize) : _lookAt;
+    public Vector2 LookAt => _lookAt.TrimVectorToPixels(template.TrimToPixels);
     
     public void SetPrimaryTarget(Body body, Vector2 offset, float followFactor)
     {

@@ -31,7 +31,7 @@ public class GameTemplate: IGameTemplate
     public RgbaColor DefaultBackground => new(0x000000);
     public RgbaColor EmptyColor => new(96, 64, 96);
 
-    public bool TrimToPixels => false;
+    public int TrimToPixels => 32;
     
     public GameObject.OriginAlignment ObjectsOriginAlignment =>
         GameObject.OriginAlignment.Bottom | GameObject.OriginAlignment.Center;

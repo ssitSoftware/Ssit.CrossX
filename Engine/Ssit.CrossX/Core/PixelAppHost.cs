@@ -234,7 +234,7 @@ public class PixelAppHost: IAppHost
 
             if (true == _parameters.CrtParameters?.HasDisplacement)
             {
-                var sc = (float)_postRenderTarget.Size.Width / sourceTexture.Size.Width;
+                var sc = (float)_postRenderTarget.Size.Width / DesignTargetSize.Width;
                 
                 var rOff = _parameters.CrtParameters.DisplacementFactorR * sc;
                 var gOff = _parameters.CrtParameters.DisplacementFactorG * sc;

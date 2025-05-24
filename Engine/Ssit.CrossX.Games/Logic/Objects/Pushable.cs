@@ -92,10 +92,7 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
         frame %= steps;
         
         var pos = Body.Position * Services.GameTemplate.TileSize;
-        if (Services.GameTemplate.TrimToPixels)
-        {
-            pos = pos.TrimVectorToPixels(Services.GameTemplate.TileSize);
-        }
+        pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
         
         renderer.SpriteRenderer.Draw(_spriteSheet.Resource, pos, 
             _sequence.Frames[frame].Source, 

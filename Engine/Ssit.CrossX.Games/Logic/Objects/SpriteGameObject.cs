@@ -53,10 +53,7 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, SpriteInsta
     protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
         var pos = Body.Position * Services.GameTemplate.TileSize;
-        if (Services.GameTemplate.TrimToPixels)
-        {
-            pos = pos.TrimVectorToPixels(Services.GameTemplate.TileSize);
-        }
+        pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
         renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
     }
 

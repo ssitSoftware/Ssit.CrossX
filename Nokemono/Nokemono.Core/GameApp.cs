@@ -99,14 +99,16 @@ public class GameApp: UiPixelApp
             
             case 2:
                 SetBasicCrt();
+
+                var scale = 1;
                 
-                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.5f);
-                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f);
-                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f);
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.5f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f) * scale;
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.4f;
                 
-                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f);
-                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.75f, -0.0f);
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.375f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.375f, -0.0f) * scale;
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
                 _hostParameters.CrtParameters.Interline = 0.35f;

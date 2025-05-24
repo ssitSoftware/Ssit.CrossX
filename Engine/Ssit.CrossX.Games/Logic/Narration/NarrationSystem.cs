@@ -13,7 +13,6 @@ public class NarrationSystem: INarrationSystem
     private readonly IGameState _gameState;
     private readonly IActionScheduler _actionScheduler;
     public event Action<string> NarrationAction;
-    public event Action NarrationUpdated;
     
     private readonly Dictionary<string, NarrationObject> _objects = new();
     
@@ -51,7 +50,6 @@ public class NarrationSystem: INarrationSystem
             if (!string.IsNullOrWhiteSpace(tag))
             {
                 _gameState.SetFlag(tag);
-                _actionScheduler.Schedule(() => NarrationUpdated?.Invoke());
             }
 
             if (!string.IsNullOrWhiteSpace(action))
@@ -64,8 +62,6 @@ public class NarrationSystem: INarrationSystem
         
         var key = GetDialogKey(subject, dialog.On);
         _gameState.SetFlag(key);
-
-        _actionScheduler.Schedule(() => NarrationUpdated?.Invoke());
     }
 
     private NarrationDialog GetDialog(string subject)

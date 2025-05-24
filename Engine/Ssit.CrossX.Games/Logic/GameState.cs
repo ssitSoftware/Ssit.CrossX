@@ -1,11 +1,20 @@
-using System.Collections.Generic;
+using System;
+using System.Collections.Concurrent;
+using Ssit.CrossX.Core;
 
 namespace Ssit.CrossX.Games.Logic;
 
-public class GameState : IGameState
+public class GameState(IActionScheduler actionScheduler) : IGameState
 {
-    private readonly HashSet<string> _flags = new();
+    public event Action StateUpdated;
     
-    public bool HasFlag(string flag) => _flags.Contains(flag);
-    public void SetFlag(string flag) => _flags.Add(flag);
+    private readonly ConcurrentDictionary<string, bool> _flags = new();
+    
+    public bool HasFlag(string flag) => _flags.TryGetValue(flag, out _);
+
+    public void SetFlag(string flag)
+    {
+        _flags.TryAdd(flag, true);
+        actionScheduler.Schedule(() => StateUpdated?.Invoke());
+    }
 }

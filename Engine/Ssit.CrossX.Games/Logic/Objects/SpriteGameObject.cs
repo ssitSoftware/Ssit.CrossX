@@ -25,6 +25,12 @@ public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, SpriteInsta
 
     void IGameObjectRenderer2.Render(IRenderer2 renderer, RgbaColor color) => OnRender(renderer, color);
     
+    public bool FaceLeft
+    {
+        get => Transform == ImageTransform.FlipHorizontal;
+        set => Transform = value ? ImageTransform.FlipHorizontal : ImageTransform.None;
+    }
+    
     protected SpriteGameObject(GameObjectsServices services, ObjectCreationParameters parameters)
     {
         ZOrder = parameters.ZOrder;

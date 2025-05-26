@@ -42,6 +42,12 @@ public class NarrationSystem: INarrationSystem
         return text;
     }
     
+    public bool HasNarration(string subject)
+    {
+        var dialog = GetDialog(subject);
+        return dialog != null;
+    }
+    
     public async Task StartNarration(string subject)
     {
         var dialog = GetDialog(subject);
@@ -122,8 +128,8 @@ public class NarrationSystem: INarrationSystem
 
         if (dialog.Highlight)
         {
-            var key = GetDialogKey(subject, dialog.On);
-            return !_gameState.HasFlag(key);
+            //var key = GetDialogKey(subject, dialog.On);
+            return true;//!_gameState.HasFlag(key);
         }
 
         return false;

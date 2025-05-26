@@ -8,4 +8,5 @@ public interface INarrationSystem
     event Action<string> NarrationAction;
     Task StartNarration(string subject);
     bool HasRequest(string subject);
+    bool HasNarration(string subject);
 }

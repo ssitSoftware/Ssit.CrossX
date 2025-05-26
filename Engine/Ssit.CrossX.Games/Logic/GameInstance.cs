@@ -31,6 +31,7 @@ public class GameInstance : IGameInstance
         1f / 300f, 1f / 240f, 1f / 200f, 1f / 165f, 1f / 150f, 1f / 144f, 1f / 120f
     ];
 
+    public event Action<float> FixedUpdate;
     public float WorldDelta { get; private set; } = 1 / 120f;
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
@@ -234,6 +235,8 @@ public class GameInstance : IGameInstance
                     updatable2.FixedUpdate(worldDelta);
                 }
             }
+            
+            FixedUpdate?.Invoke(worldDelta);
             
             World.Step(worldDelta);
             _timeToUpdate -= worldDelta;

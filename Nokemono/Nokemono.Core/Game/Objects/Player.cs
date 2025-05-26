@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using Nokemono.Core.Game.Objects.PlayerBehaviors;
 using Ssit.CrossX;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic;
@@ -12,14 +14,14 @@ using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Extensions;
-using Ssit.CrossX.Graphics;
-using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
 
 namespace Nokemono.Core.Game.Objects;
 
 public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 {
+    private readonly IGameInstance _gameInstance;
+
     public class PlayerStats
     {
         // Player statistics
@@ -40,12 +42,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         [EditorFloat(10, 20)] public float Speed { get; set; }
     }
 
-    public bool FaceLeft
-    {
-        get => Transform == ImageTransform.FlipHorizontal;
-        set => Transform = value ? ImageTransform.FlipHorizontal : ImageTransform.None;
-    }
-
     public ILogicOperable OperableInRange { get; private set; }
     public List<Vector2> InAirVelocity { get; } = [];
     public bool IsOnStaticGround { get; private set; }
@@ -60,9 +56,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     public readonly ContextSoundContainer SoundContainer;
 
-    public Player(GameObjectsServices services, ICamera camera, ObjectCreationParameters<Parameters> parameters)
+    private float? _walkToPositionX;
+    private TaskCompletionSource _walkToTaskCompletionSource;
+    
+    public INpcCharacter NpcCharacterInRange { get; set; }
+
+    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters)
     {
+        _gameInstance = gameInstance;
         InitializeSprite("assets:/Game/Objects/SwordMaster");
         
         SoundContainer = services.Container.IoCConstruct<ContextSoundContainer>(new ContextSoundContainer.Parameters
@@ -111,12 +113,13 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var steerInAirBehavior = Services.Container.IoCConstruct<SteerInAirBehavior>(this);
         var operateBehavior = Services.Container.IoCConstruct<OperateBehavior>(this);
         var checkLandingBehavior = Services.Container.IoCConstruct<CheckLandingBehavior>(this);
+        var talkBehavior = Services.Container.IoCConstruct<TalkBehavior>(this);
 
-        var idleOrRunState = new State(operateBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, idleBehavior);
+        var idleOrRunState = new State(operateBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, talkBehavior, idleBehavior);
         var jumpState = new State(checkLandingBehavior, jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
         var jumpToFallState = new State(checkLandingBehavior, steerInAirBehavior, jumpToFallSequenceBehavior, fallBehavior, runBehavior, idleBehavior);
         var fallState = new State(checkLandingBehavior, steerInAirBehavior, fallBehavior, runBehavior, idleBehavior);
-        var talkingState = new State();
+        var emptyState = new State();
 
         AddState("Idle", idleOrRunState);
         AddState("Run", idleOrRunState);
@@ -125,7 +128,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         AddState("Jump", jumpState);
         AddState("Jump->Fall", jumpToFallState);
         AddState("Fall", fallState);
-        AddState("Talking", talkingState);
+        AddState("Talking", emptyState);
+        AddState("WalkTo", emptyState);
 
         SetState("Idle");
     }
@@ -148,6 +152,23 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         }
         
         base.OnFixedUpdate(dt);
+
+        if (_walkToPositionX.HasValue)
+        {
+            float factor = MathF.Min(1, dt * 7);
+            var x = factor * _walkToPositionX.Value + (1 - factor) * Body.Position.X;
+            Body.Position = Body.Position with { X = x };
+            
+            if (MathF.Abs(Body.Position.X - _walkToPositionX.Value) < 0.1f)
+            {
+                if (!_walkToTaskCompletionSource.Task.IsCompleted)
+                {
+                    _walkToTaskCompletionSource.SetResult();
+                }
+
+                _walkToPositionX = null;
+            }
+        }
     }
 
     private void DetectOnGround()
@@ -197,25 +218,54 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             state = "Idle";
         }
 
+        if (state == "WalkTo")
+        {
+            state = "Walk";
+        }
+
         base.SetSequence(state);
         DetectOnGround();
     }
 
-    public void SetInRange(ILogicOperable operable, Fixture fixture, bool inRange)
+    public bool SetInRange(ILogicOperable operable, Fixture fixture, bool inRange)
     {
         if (_detectorFixture != fixture)
         {
-            return;
+            return false;
         }
 
         if (inRange)
         {
             OperableInRange = operable;
+            return true;
         }
         else if (OperableInRange == operable)
         {
             OperableInRange = null;
+            return true;
         }
+        return false;
+    }
+    
+    public bool SetInRange(INpcCharacter npcCharacter, Fixture fixture, bool inRange)
+    {
+        if (_detectorFixture != fixture)
+        {
+            return false;
+        }
+
+        if (inRange)
+        {
+            NpcCharacterInRange = npcCharacter;
+            return true;
+        }
+        else if (NpcCharacterInRange == npcCharacter)
+        {
+            NpcCharacterInRange = null;
+            return true;
+        }
+
+        return false;
     }
 
     protected override void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
@@ -227,5 +277,19 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     {
         base.OnDispose(disposing);
         SoundContainer.Dispose();
+    }
+    
+    public async Task WalkTo(float targetPosX)
+    {
+        SetState("WalkTo");
+
+        _walkToPositionX = targetPosX;
+        
+        var dir = MathF.Sign(targetPosX - Body.Position.X);
+        FaceLeft = dir < 0;
+
+        _walkToTaskCompletionSource = new TaskCompletionSource();
+        await _walkToTaskCompletionSource.Task;
+        _walkToTaskCompletionSource = null;
     }
 }

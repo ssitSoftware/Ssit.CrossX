@@ -10,6 +10,9 @@ internal static class GameControls
     public const string Melee = nameof(Melee);
     public const string Special = nameof(Special);
     public const string Operate = nameof(Operate);
+    
+    public const string CameraX = nameof(CameraX);
+    public const string CameraY = nameof(CameraY);
 
     public static void RegisterGameControls(IInputMappings mappings)
     {
@@ -28,6 +31,10 @@ internal static class GameControls
             .MapAxis(Horizontal, GameControllerAxis.LeftX)
             .MapAxis(Vertical, GameControllerAxis.LeftY)
             .MapAxis(Horizontal, Key.Left, Key.Right)
-            .MapAxis(Vertical, Key.Up, Key.Down);
+            .MapAxis(Vertical, Key.Up, Key.Down)
+            .MapAxis(CameraX, GameControllerAxis.RightX)
+            .MapAxis(CameraY, GameControllerAxis.RightY);
+        //.MapAxis(CameraX, Key.A, Key.D)
+        //.MapAxis(CameraY, Key.W, Key.S);
     }
 }

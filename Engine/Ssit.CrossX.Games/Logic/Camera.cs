@@ -3,10 +3,11 @@ using System.Numerics;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Games.Utils;
+using Ssit.CrossX.Input;
 
 namespace Ssit.CrossX.Games.Logic;
 
-internal class Camera(IGameTemplate template): ICamera
+internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICamera
 {
     private Vector2 _lookAt;
 
@@ -20,12 +21,14 @@ internal class Camera(IGameTemplate template): ICamera
     private float _temporaryFollowFactor;
     
     private Body Body => _temporaryTarget ?? _primaryTarget;
-    private Vector2 Offset => _temporaryTarget != null ? _temporaryOffset :_primaryOffset;
+    private Vector2 Offset => _temporaryTarget != null ? _temporaryOffset : _primaryOffset + _cameraMove * 6;
     private float FollowFactor => _temporaryTarget != null ? _temporaryFollowFactor : _primaryFollowFactor;
     
     private Action _onTemporaryTargetFocused;
 
     public Vector2 LookAt => _lookAt.TrimVectorToPixels(template.TrimToPixels);
+
+    private Vector2 _cameraMove;
     
     public void SetPrimaryTarget(Body body, Vector2 offset, float followFactor)
     {
@@ -49,7 +52,23 @@ internal class Camera(IGameTemplate template): ICamera
     {
         if (Body is null)
             return;
-        
+
+        var moveX = inputMappings[0].GetAxis("CameraX");
+        var moveY = inputMappings[0].GetAxis("CameraY");
+
+        var dir = new Vector2(moveX, moveY);
+        _cameraMove = dir; 
+        // var factor = MathF.Min(1, dt * MathF.Max(0, 1- dir.Length()) * 10);
+        //
+        // _cameraMove = (1-factor) * _cameraMove + Vector2.Zero * factor;
+        // _cameraMove += dir * dt * 6;
+        //
+        // var len = MathF.Min(_cameraMove.Length(), 1);
+        // if (len > 0)
+        // {
+        //     _cameraMove = Vector2.Normalize(_cameraMove) * len;
+        // }
+
         var target = Body.Position + Offset;
 
         if (_primaryFollowFactor > 100000)
@@ -58,7 +77,7 @@ internal class Camera(IGameTemplate template): ICamera
             return;
         }
         
-        var factor = dt * FollowFactor;
+        var factor = MathF.Min(1, dt * FollowFactor);
         
         var newLookAt = factor * target + (1 - factor) * _lookAt;
         var diff = newLookAt - target;

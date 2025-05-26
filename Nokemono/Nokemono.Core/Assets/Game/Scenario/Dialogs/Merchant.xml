@@ -94,7 +94,7 @@
                                                     <Option>  <en>{playerName}</en>en>
                                                         
                                                         <Text>  <en>{playerName}...|See you later {playerName}.</en>
-                                                                <pl>{playerName}...|Do zobaczenia {playerName}.</pl>
+                                                                <pl>{playerName}...|Do zobaczenia {playerName}.</pl> 
                                                             
                                                             <Option Set="metMerchant">  <en>Bye!</en>
                                                                                         <pl>Do zobaczenia!</pl>

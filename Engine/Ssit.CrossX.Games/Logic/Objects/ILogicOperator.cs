@@ -4,5 +4,6 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 
 public interface ILogicOperator
 {
-    void SetInRange(ILogicOperable operable, Fixture operatorFixture, bool inRange);
+    bool SetInRange(ILogicOperable operable, Fixture operatorFixture, bool inRange);
+    bool SetInRange(INpcCharacter npc, Fixture operatorFixture, bool inRange);
 }

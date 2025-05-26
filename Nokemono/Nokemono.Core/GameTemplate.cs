@@ -50,6 +50,7 @@ public class GameTemplate: IGameTemplate
     public ObjectDescription[] Objects { get; } =
     [
         new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
+        new("NPC/Merchant", typeof(Merchant), "assets:/Game/Objects/Merchant", "Idle"),
         new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
         new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
         // new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),

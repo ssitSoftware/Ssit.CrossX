@@ -9,23 +9,20 @@ public class Palette
     public const byte Foreground = 2;
     public const byte Dim = 3;
     public const byte Accent = 4;
+    public const byte ButtonAccent = 5;
 
     public static readonly Palette[] Palettes =
     [
-        new("Default", RgbaColor.Transparent, 0x100008, 0xfff1e8, 0x5f574f, 0xff004d),
-        new("Contrast", RgbaColor.Transparent, RgbaColor.Black, RgbaColor.White, 0x606060, RgbaColor.Red),
-        new("Soft", RgbaColor.Transparent, 0x100800, 0xddd8d0, 0x706868,  0xc04040),
-        new("Purple", RgbaColor.Transparent, 0x150413, 0xffffd1, 0x332431, 0x6e3c3c),
-        new("Blue", RgbaColor.Transparent, 0x080830, 0xb0b0ff, 0x6060a0, 0x600880),
-        new("Silver", RgbaColor.Transparent, 0x080808, 0xb6bac5, 0x4d5465, 0xae4080),
-        new("Cold", RgbaColor.Transparent, 0x08001f, 0x8f929c, 0x3e4452, 0xb4643d),
-        new("Marron", RgbaColor.Transparent, 0x340011, 0xf2b63f, 0x9c2032, 0xff0064),
-        new("Chocolate", RgbaColor.Transparent, 0x2b212c, 0xedd8bd, 0x8b5760, 0x9b615c),
-        new("LCD", RgbaColor.Transparent, 0x101810, 0xa6f76e, 0x5b843f, 0xfe8a26),
-        new("Amber", RgbaColor.Transparent, 0x201000, 0xfda813, 0x462800, 0xfd4713),
-        new("Fav1", RgbaColor.Transparent, 0x101010, 0xfda880, 0x562820, 0xfe3a26),
-        new("Fav2", RgbaColor.Transparent, 0x101010, 0xd6d66e, 0x5b442f, 0xee5436),
-        new("Game Boy", RgbaColor.Transparent, 0x081820, 0xb3c6a6, 0x346856, 0x88c070)
+        new("Default", RgbaColor.Transparent, RgbaColor.Black, RgbaColor.White, 0x606060, RgbaColor.Red, RgbaColor.Red),
+        new("Soft", RgbaColor.Transparent, 0x201008, 0xddd0c0, 0x706050, 0xb06060, 0xb06060),
+        new("Purple", RgbaColor.Transparent, 0x150413, 0xd0d0c1, 0x332431, 0x6e3c3c, 0x6e3c3c),
+        new("Marron", RgbaColor.Transparent, 0x340011, 0xda7239, 0x781526, 0xcc4d36, 0x781526),
+        new("Chocolate", RgbaColor.Transparent, 0x2b212c, 0xc09788, 0x65414b, 0x9b615c, 0x65414b),
+        new("Amber", RgbaColor.Transparent, 0x201000, 0xfda813, 0x462800, 0xfd4713, 0xfd4713),
+        new("Fav2", RgbaColor.Transparent, 0x101010, 0xd6d66e, 0x5b442f, 0xee5436, 0xee5436),
+        new("Game Boy", RgbaColor.Transparent, 0x081820, 0x9cad91, 0x346856, 0x88c070, 0x346856),
+        new("Game Boy + Red", RgbaColor.Transparent, 0x081820, 0x9cad91, 0x346856, 0xa05634, 0xa05634),
+        new("Game Boy BW", RgbaColor.Transparent, 0x141414, 0x9f9f9f, 0x4e4e4e, 0x989898, 0x4e4e4e)
     ];
     
     public string Name { get; }

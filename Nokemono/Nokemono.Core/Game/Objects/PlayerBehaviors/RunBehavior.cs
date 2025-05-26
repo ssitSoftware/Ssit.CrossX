@@ -7,28 +7,9 @@ using Ssit.CrossX.Input;
 namespace Nokemono.Core.Game.Objects.PlayerBehaviors;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public class RunBehavior(Player player, IInputMappings inputMappings, INarrationSystem narrationSystem): Behavior
+public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
 {
-    private async void ShowDialog()
-    {
-        player.SetState("Talking");
-
-        await narrationSystem.StartNarration("Merchant");
-        
-        player.SetState("Idle");
-    }
-    
-    protected override bool OnUpdate(float dt)
-    {
-        base.OnUpdate(dt);
-        
-        if (inputMappings[0].GetButton(GameControls.Melee) == ButtonState.JustPressed)
-        {
-            ShowDialog();
-        }
-
-        return false;
-    }
+    private float _runSlow = 0;
 
     protected override bool OnFixedUpdate(float dt)
     {
@@ -40,9 +21,11 @@ public class RunBehavior(Player player, IInputMappings inputMappings, INarration
         
         if (amplitude > 0.25f)
         {
+            _runSlow -= dt;
+            _runSlow = MathF.Max(0, _runSlow);
             move = MathF.Sign(move);
             
-            player.SetState("Run Fast");
+            player.SetState(_runSlow > 0 ? "Run" : "Run Fast");
             player.FaceLeft = move < 0;
 
             var newVelocityX = CalculateRunVelocity(player.Body.LinearVelocity.X, move, dt);
@@ -55,6 +38,11 @@ public class RunBehavior(Player player, IInputMappings inputMappings, INarration
             
             return true;
         }
+        else
+        {
+            _runSlow += dt;
+            _runSlow = MathF.Min(GamePhysics.RunSlowTime, _runSlow);
+        }
         
         return false;
     }
@@ -66,8 +54,9 @@ public class RunBehavior(Player player, IInputMappings inputMappings, INarration
         
         if (amplitude < GamePhysics.RunAccelerationSpeed)
         {
-            amplitude += dt * GamePhysics.RunAcceleration;
-            amplitude = MathF.Max(GamePhysics.MinRunSpeed, amplitude);
+            var factor = (GamePhysics.RunSlowTime - _runSlow) / GamePhysics.RunSlowTime;
+            amplitude += dt * GamePhysics.RunAcceleration * factor;
+            amplitude = MathF.Max( GamePhysics.MinRunSpeed, amplitude);
         }
         else
         {

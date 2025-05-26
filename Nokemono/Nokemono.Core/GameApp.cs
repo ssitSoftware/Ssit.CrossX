@@ -45,7 +45,7 @@ public class GameApp: UiPixelApp
             .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
             .WithInstance(_gameTemplate);
         
-        builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0xff0000);
+        builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0xff0000, 0xff0000);
     }
 
     protected override void OnInitialize(IIoCContainer container)

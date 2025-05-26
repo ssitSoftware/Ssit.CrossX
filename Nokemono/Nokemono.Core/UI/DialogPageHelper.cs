@@ -18,8 +18,8 @@ public static class DialogPageHelper
             Visible = dialogs.Visible,
             BackgroundColor = 2,
             HorizontalAlign = Align.Center,
-            VerticalAlign = Align.Center,
-            AnchorY = "50%",
+            VerticalAlign = Align.Start,
+            AnchorY = 10,
             Width = "75%",
             Height = "48%",
             Children =

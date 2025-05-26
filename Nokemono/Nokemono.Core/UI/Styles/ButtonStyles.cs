@@ -29,10 +29,10 @@ public static class ButtonStyles
         button.FocusedLowColor = 1;
         button.TextColors = new ButtonStateColorsIndexed
         {
-            Normal = Palette.Accent,
+            Normal = Palette.ButtonAccent,
             Hover = Palette.Background,
             Focused =  Palette.Foreground,
-            Pushed = Palette.Accent,
+            Pushed = Palette.ButtonAccent,
             Disabled = Palette.Dim
         };
         
@@ -40,8 +40,8 @@ public static class ButtonStyles
         {
             Normal = Palette.Background,
             Hover = Palette.Background,
-            Focused =  Palette.Accent,
-            Pushed = Palette.Accent,
+            Focused =  Palette.ButtonAccent,
+            Pushed = Palette.ButtonAccent,
             Disabled = Palette.Background
         };
         
@@ -64,10 +64,10 @@ public static class ButtonStyles
         
         button.TextColors = new ButtonStateColorsIndexed
         {
-            Normal = Palette.Accent,
+            Normal = Palette.ButtonAccent,
             Hover = Palette.Background,
             Focused =  Palette.Foreground,
-            Pushed = Palette.Accent,
+            Pushed = Palette.ButtonAccent,
             Disabled = Palette.Dim
         };
         

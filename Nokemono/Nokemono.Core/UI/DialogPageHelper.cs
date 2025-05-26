@@ -19,7 +19,7 @@ public static class DialogPageHelper
             BackgroundColor = 2,
             HorizontalAlign = Align.Center,
             VerticalAlign = Align.Start,
-            AnchorY = 10,
+            AnchorY = 16,
             Width = "75%",
             Height = "48%",
             Children =

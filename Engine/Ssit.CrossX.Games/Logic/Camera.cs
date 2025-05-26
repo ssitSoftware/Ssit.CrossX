@@ -48,6 +48,13 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
         _temporaryFollowFactor = followFactor;
     }
 
+    public void RemoveTemporaryTarget()
+    {
+        _temporaryTarget = null;
+        _temporaryOffset = Vector2.Zero;
+        _temporaryReturnTime = 0f;
+    }
+
     public void Update(float dt)
     {
         if (Body is null)

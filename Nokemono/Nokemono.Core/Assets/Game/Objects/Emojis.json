@@ -1,109 +1,136 @@
 { "frames": [
    {
     "filename": "Exclamation|0",
-    "frame": { "x": 1, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 1, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "Exclamation|1",
-    "frame": { "x": 13, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 16, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "Exclamation|2",
-    "frame": { "x": 25, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 31, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "Exclamation|3",
-    "frame": { "x": 13, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 16, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "None|0",
-    "frame": { "x": 37, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 46, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "CanTalk|0",
-    "frame": { "x": 49, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 61, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "CanTalk|1",
-    "frame": { "x": 61, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 76, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 200
+    "duration": 100
+   },
+   {
+    "filename": "CanTalk|2",
+    "frame": { "x": 91, "y": 1, "w": 15, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "CanTalk|3",
+    "frame": { "x": 76, "y": 1, "w": 15, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
    },
    {
     "filename": "ExclamationTalk|0",
-    "frame": { "x": 73, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 106, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "ExclamationTalk|1",
-    "frame": { "x": 85, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 121, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 200
+    "duration": 100
+   },
+   {
+    "filename": "ExclamationTalk|2",
+    "frame": { "x": 136, "y": 1, "w": 15, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "ExclamationTalk|3",
+    "frame": { "x": 121, "y": 1, "w": 15, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
    },
    {
     "filename": "Talking|0",
-    "frame": { "x": 97, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 151, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 200
    },
    {
     "filename": "Talking|1",
-    "frame": { "x": 109, "y": 1, "w": 12, "h": 12 },
+    "frame": { "x": 166, "y": 1, "w": 15, "h": 16 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 200
-   },
-   {
-    "filename": "Talking|2",
-    "frame": { "x": 121, "y": 1, "w": 12, "h": 12 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 2, "y": 1, "w": 12, "h": 12 },
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 15, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 200
    }
@@ -113,14 +140,14 @@
   "version": "1.3.13-arm64",
   "image": "Emojis.png",
   "format": "RGBA8888",
-  "size": { "w": 134, "h": 14 },
+  "size": { "w": 182, "h": 18 },
   "scale": "1",
   "frameTags": [
    { "name": "Exclamation", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" },
    { "name": "None", "from": 4, "to": 4, "direction": "forward", "color": "#000000ff" },
-   { "name": "CanTalk", "from": 5, "to": 6, "direction": "forward", "color": "#000000ff" },
-   { "name": "ExclamationTalk", "from": 7, "to": 8, "direction": "forward", "color": "#000000ff" },
-   { "name": "Talking", "from": 9, "to": 11, "direction": "forward", "color": "#000000ff" }
+   { "name": "CanTalk", "from": 5, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "ExclamationTalk", "from": 9, "to": 12, "direction": "forward", "color": "#000000ff" },
+   { "name": "Talking", "from": 13, "to": 14, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }

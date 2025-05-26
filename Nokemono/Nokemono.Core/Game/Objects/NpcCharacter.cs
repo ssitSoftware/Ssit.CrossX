@@ -1,7 +1,9 @@
+using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Ssit.CrossX;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Map;
@@ -20,32 +22,67 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
 {
     private readonly IGameState _gameState;
     private readonly INarrationSystem _narrationSystem;
-    protected Vector2 EmojiOffset { get; set; } = new(0, -2);
+    private readonly ICamera _camera;
+    private readonly IActionScheduler _actionScheduler;
+    protected Vector2 EmojiOffset { get; init; } = new (0, -2);
     private readonly SpriteInstance _emojiInstance;
 
-    public float TalkingDistance { get; protected set; } = 1.2f;
+    public float? TalkingDistance { get; private set; }
+    protected Vector2 CameraOffset { get; init; }
+    
     public string NarrationId { get; protected set; }
 
     private bool _inPlayerRange;
     
-    Vector2 INpcCharacter.Position => Body.Position;
+    Body INpcCharacter.Body => Body;
+
+    public void PrepareCameraForTalking()
+    {
+        _actionScheduler.Schedule(() =>
+        {
+            _camera.SetTemporaryTarget(Body, CameraOffset, 4, null, TimeSpan.FromDays(10));
+        });
+    }
     
     public async Task StartConversation(float position)
     {
-        FaceLeft = position < Body.Position.X;
-        _emojiInstance.SetSequence("Talking");
+        var tcs = new TaskCompletionSource();
+        _actionScheduler.Schedule(() =>
+        {
+            _camera.SetTemporaryTarget(Body, CameraOffset, 4, null, TimeSpan.FromDays(10));
+
+            FaceLeft = position < Body.Position.X;
+            _emojiInstance.SetSequence("Talking");
+            tcs.SetResult();
+        });
+
+        await tcs.Task;
+        await Task.Delay(50);
         
         await _narrationSystem.StartNarration(NarrationId);
-        GameStateOnStateUpdated();
+
+        var tcs2 = new TaskCompletionSource();
+        
+        _actionScheduler.Schedule(() =>
+        {
+            GameStateOnStateUpdated();
+            _camera.RemoveTemporaryTarget();
+            tcs2.SetResult();
+        });
+        
+        await tcs2.Task;
     }
     
     public bool CanStartConversation => _narrationSystem.HasNarration(NarrationId);
 
-    protected NpcCharacter(GameObjectsServices services, IContentManager contentManager, IGameState gameState, INarrationSystem narrationSystem, ObjectCreationParameters parameters)
+    protected NpcCharacter(GameObjectsServices services, IContentManager contentManager, IGameState gameState, 
+        INarrationSystem narrationSystem, ICamera camera, IActionScheduler actionScheduler, ObjectCreationParameters parameters)
         : base(services, parameters)
     {
         _gameState = gameState;
         _narrationSystem = narrationSystem;
+        _camera = camera;
+        _actionScheduler = actionScheduler;
 
         using var go = contentManager.Get<GameObject>("assets:/Game/Objects/Emojis");
 
@@ -53,12 +90,15 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
         _emojiInstance.SetSequence("None");
         
         _gameState.StateUpdated += GameStateOnStateUpdated;
-        
+    }
+
+    protected void CreateTalkingArea(float size, float talkingDistance)
+    {
         Body.BodyType = BodyType.Static;
-        
-        Body.CreateFixture(new CircleShape(1.25f, 0.1f));
-        
+        Body.CreateFixture(new CircleShape(size, 0.1f));
         Body.IsSensor = true;
+
+        TalkingDistance = talkingDistance;
         
         Body.OnCollision += BodyOnOnCollision;
         Body.OnSeparation += BodyOnOnSeparation;

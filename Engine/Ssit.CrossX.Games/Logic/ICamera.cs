@@ -9,5 +9,6 @@ public interface ICamera
     Vector2 LookAt { get; }
     void SetPrimaryTarget(Body body, Vector2 offset, float followFactor);
     void SetTemporaryTarget(Body body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter);
+    void RemoveTemporaryTarget();
     void Update(float dt);
 }

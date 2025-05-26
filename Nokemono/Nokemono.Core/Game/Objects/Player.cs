@@ -20,7 +20,9 @@ namespace Nokemono.Core.Game.Objects;
 
 public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 {
+    private readonly ICamera _camera;
     private readonly IGameInstance _gameInstance;
+    private readonly IActionScheduler _actionScheduler;
 
     public class PlayerStats
     {
@@ -61,10 +63,12 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     
     public INpcCharacter NpcCharacterInRange { get; set; }
 
-    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, ObjectCreationParameters<Parameters> parameters)
+    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, ObjectCreationParameters<Parameters> parameters)
         : base(services, parameters)
     {
+        _camera = camera;
         _gameInstance = gameInstance;
+        _actionScheduler = actionScheduler;
         InitializeSprite("assets:/Game/Objects/SwordMaster");
         
         SoundContainer = services.Container.IoCConstruct<ContextSoundContainer>(new ContextSoundContainer.Parameters
@@ -224,6 +228,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         {
             state = "Walk";
         }
+        
+        if (state == "Run")
+        {
+            state = "Walk";
+        }
 
         base.SetSequence(state);
         DetectOnGround();
@@ -241,7 +250,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             OperableInRange = operable;
             return true;
         }
-        else if (OperableInRange == operable)
+
+        if (OperableInRange == operable)
         {
             OperableInRange = null;
             return true;
@@ -261,7 +271,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             NpcCharacterInRange = npcCharacter;
             return true;
         }
-        else if (NpcCharacterInRange == npcCharacter)
+
+        if (NpcCharacterInRange == npcCharacter)
         {
             NpcCharacterInRange = null;
             return true;
@@ -293,5 +304,36 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _walkToTaskCompletionSource = new TaskCompletionSource();
         await _walkToTaskCompletionSource.Task;
         _walkToTaskCompletionSource = null;
+    }
+
+    public async void TalkToNpc(INpcCharacter npc)
+    {
+        Body.LinearVelocity = Vector2.Zero;
+        npc.PrepareCameraForTalking();
+        
+        SetState("WalkTo");
+        
+        var faceLeft = Body.Position.X > npc.Body.Position.X;
+            
+        var dist = npc.TalkingDistance;
+
+        if (dist.HasValue)
+        {
+            var targetPosX = npc.Body.Position.X + (faceLeft ? dist.Value : -dist.Value);
+            await WalkTo(targetPosX);
+        }
+
+        _actionScheduler.Schedule(() =>
+        {
+            SetState("Talking");
+            FaceLeft = faceLeft;
+        });
+        
+        await npc.StartConversation(Body.Position.X);
+
+        _actionScheduler.Schedule(() =>
+        {
+            SetState("Idle");
+        });
     }
 }

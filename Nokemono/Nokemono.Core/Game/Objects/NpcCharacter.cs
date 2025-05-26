@@ -23,7 +23,7 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
     protected Vector2 EmojiOffset { get; set; } = new(0, -2);
     private readonly SpriteInstance _emojiInstance;
 
-    public float TalkingDistance { get; protected set; } = 0.9f;
+    public float TalkingDistance { get; protected set; } = 1.2f;
     public string NarrationId { get; protected set; }
 
     private bool _inPlayerRange;
@@ -56,10 +56,7 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
         
         Body.BodyType = BodyType.Static;
         
-        Body.CreateFixture(new CircleShape(0.98f, 0.1f)
-        {
-            Position = new Vector2(-0f, -0.98f)
-        });
+        Body.CreateFixture(new CircleShape(1.25f, 0.1f));
         
         Body.IsSensor = true;
         

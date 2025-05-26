@@ -155,9 +155,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         if (_walkToPositionX.HasValue)
         {
-            float factor = MathF.Min(1, dt * 7);
-            var x = factor * _walkToPositionX.Value + (1 - factor) * Body.Position.X;
-            Body.Position = Body.Position with { X = x };
+            var offset = MathF.Min(GamePhysics.WalkSpeed * dt, MathF.Abs(_walkToPositionX.Value - Body.Position.X));;
+            var dir = MathF.Sign(_walkToPositionX.Value - Body.Position.X);
+            
+            Body.LinearVelocity -= new Vector2(0, GamePhysics.GravityAcceleration * dt);
+            Body.Position += new Vector2(dir * offset, 0);
             
             if (MathF.Abs(Body.Position.X - _walkToPositionX.Value) < 0.1f)
             {

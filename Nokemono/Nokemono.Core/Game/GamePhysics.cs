@@ -31,7 +31,7 @@ public static class GamePhysics
     public const float MinRunSpeed = 4;
     public const float RunAccelerationSpeed = 10;
     public const float RunAcceleration = 80;
-    public const float RunSlowAcceleration = 30;
+    public const float WalkSpeed = 3;
     public const float RunSlowTime = 0.2f;
     public const float AirBrakeDeceleration = 8;
     public const float AirSteerAcceleration = 24;

@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Input;
 
 namespace Nokemono.Core.Game.Objects.PlayerBehaviors;
@@ -10,6 +9,7 @@ namespace Nokemono.Core.Game.Objects.PlayerBehaviors;
 public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
 {
     private float _runSlow = 0;
+    private int _lastDir = 0;
 
     protected override bool OnFixedUpdate(float dt)
     {
@@ -21,6 +21,12 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         
         if (amplitude > 0.25f)
         {
+            if (MathF.Sign(move) != _lastDir)
+            {
+                _runSlow = GamePhysics.RunSlowTime;
+                _lastDir = MathF.Sign(move);
+            }
+            
             _runSlow -= dt;
             _runSlow = MathF.Max(0, _runSlow);
             move = MathF.Sign(move);
@@ -38,12 +44,9 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
             
             return true;
         }
-        else
-        {
-            _runSlow += dt;
-            _runSlow = MathF.Min(GamePhysics.RunSlowTime, _runSlow);
-        }
         
+        _runSlow += dt;
+        _runSlow = MathF.Min(GamePhysics.RunSlowTime, _runSlow);
         return false;
     }
     

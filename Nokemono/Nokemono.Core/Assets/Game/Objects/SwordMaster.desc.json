@@ -11,6 +11,16 @@
       "Sequence": "Run Fast",
       "Frame": 5,
       "Name": "Right Foot"
+    },
+    {
+      "Sequence": "Walk",
+      "Frame": 3,
+      "Name": "Left Foot"
+    },
+    {
+      "Sequence": "Walk",
+      "Frame": 7,
+      "Name": "Right Foot"
     }
   ]
 }

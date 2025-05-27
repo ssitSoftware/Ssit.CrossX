@@ -41,7 +41,14 @@ public class NarrationSystem: INarrationSystem
             }
             else
             {
-                _objects.Add(obj.Name, obj);
+                if (_objects.TryGetValue(obj.Name, out var narrationObject))
+                {
+                    narrationObject.Concat(obj.Dialogs);
+                }
+                else
+                {
+                    _objects.Add(obj.Name, obj);
+                }
             }
         }
     }
@@ -118,6 +125,9 @@ public class NarrationSystem: INarrationSystem
 
     private bool IsDialogValid(NarrationDialog dialog)
     {
+        if (dialog is null)
+            return false;
+        
         foreach (var tag in dialog.On)
         {
             if (!_gameState.HasFlag(tag))

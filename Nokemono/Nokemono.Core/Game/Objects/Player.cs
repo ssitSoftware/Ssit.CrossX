@@ -291,7 +291,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     protected override void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
-        SoundContainer.Play(@event.EventName, GroundMaterial);
+        SoundContainer.Play(@event.EventName, GroundMaterial, CurrentState == "Run" ? 0.33f : 1);
     }
 
     protected override void OnDispose(bool disposing)

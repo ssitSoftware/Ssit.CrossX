@@ -40,7 +40,9 @@ public class GamePage: Page<GamePageViewModel>
     {
         base.OnUpdate(dt);
 
-        if (Services.Get<IKeyboard>().GetKey(Key.RightBracket) == ButtonState.JustPressed)
+        if (Services.Get<IKeyboard>().GetKey(Key.RightBracket) == ButtonState.JustPressed
+            || (Services.Get<IGameControllers>().GetButton(0, GameControllerButton.RightShoulder) == ButtonState.JustPressed &&
+                Services.Get<IGameControllers>().GetButton(0, GameControllerButton.Back).IsDown))
         {
             var settings = Services.Get<ISettingsProvider>().Settings;
             settings.Palette = (settings.Palette + 1) % Palette.Palettes.Length;
@@ -50,7 +52,9 @@ public class GamePage: Page<GamePageViewModel>
             _showPaletteNameTime = 1.25f;
         }
         
-        if (Services.Get<IKeyboard>().GetKey(Key.LeftBracket) == ButtonState.JustPressed)
+        if (Services.Get<IKeyboard>().GetKey(Key.LeftBracket) == ButtonState.JustPressed
+            || (Services.Get<IGameControllers>().GetButton(0, GameControllerButton.LeftShoulder) == ButtonState.JustPressed &&
+                Services.Get<IGameControllers>().GetButton(0, GameControllerButton.Back).IsDown))
         {
             var settings = Services.Get<ISettingsProvider>().Settings;
             settings.Palette = (settings.Palette + Palette.Palettes.Length - 1) % Palette.Palettes.Length;

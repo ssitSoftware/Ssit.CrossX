@@ -62,38 +62,40 @@ internal unsafe class SdlGameController: IDisposable
             
             return SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button).Value == 1;
         }
+        
+        const float minAxisValueForButton = 0.85f;
 
         switch (button)
         {
             case GameControllerButton.LeftStickLeft:
-                return GetAxis(GameControllerAxis.LeftX) < -0.5f;
+                return GetAxis(GameControllerAxis.LeftX) < -minAxisValueForButton;
             
             case GameControllerButton.LeftStickRight:
-                return GetAxis(GameControllerAxis.LeftX) > 0.5f;
+                return GetAxis(GameControllerAxis.LeftX) > minAxisValueForButton;
             
             case GameControllerButton.LeftStickUp:
-                return GetAxis(GameControllerAxis.LeftY) < -0.5f;
+                return GetAxis(GameControllerAxis.LeftY) < -minAxisValueForButton;
             
             case GameControllerButton.LeftStickDown:
-                return GetAxis(GameControllerAxis.LeftY) > 0.5f;
+                return GetAxis(GameControllerAxis.LeftY) > minAxisValueForButton;
             
             case GameControllerButton.RightStickLeft:
-                return GetAxis(GameControllerAxis.RightX) < -0.5f;
+                return GetAxis(GameControllerAxis.RightX) < -minAxisValueForButton;
             
             case GameControllerButton.RightStickRight:
-                return GetAxis(GameControllerAxis.RightX) > 0.5f;
+                return GetAxis(GameControllerAxis.RightX) > minAxisValueForButton;
             
             case GameControllerButton.RightStickUp:
-                return GetAxis(GameControllerAxis.RightY) < -0.5f;
+                return GetAxis(GameControllerAxis.RightY) < -minAxisValueForButton;
             
             case GameControllerButton.RightStickDown:
-                return GetAxis(GameControllerAxis.RightY) > 0.5f;
+                return GetAxis(GameControllerAxis.RightY) > minAxisValueForButton;
             
             case GameControllerButton.LeftTrigger:
-                return GetAxis(GameControllerAxis.LeftTrigger) > 0.5f;
+                return GetAxis(GameControllerAxis.LeftTrigger) > minAxisValueForButton;
             
             case GameControllerButton.RightTrigger:
-                return GetAxis(GameControllerAxis.RightTrigger) > 0.5f;
+                return GetAxis(GameControllerAxis.RightTrigger) > minAxisValueForButton;
         }
         
         return false;

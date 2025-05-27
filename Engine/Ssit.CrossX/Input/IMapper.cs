@@ -37,16 +37,18 @@ public interface IMapper
     /// </summary>
     /// <param name="buttonName">The name to map to the game controller button.</param>
     /// <param name="button">The game controller button to map.</param>
+    /// <param name="alt">Alternative game controller button to map.</param>
     /// <return>An instance of IMapper to allow for method chaining.</return>
-    public IMapper MapButton(string buttonName, GameControllerButton button);
+    public IMapper MapButton(string buttonName, GameControllerButton button, GameControllerButton alt = GameControllerButton.None);
 
     /// <summary>
     /// Maps a specified key to a button action on the input controller.
     /// </summary>
     /// <param name="buttonName">The name of the button action to map.</param>
     /// <param name="key">The key to map to the button action.</param>
+    /// <param name="alt">Alternative key to map to the button action.</param>
     /// <returns>The current instance of <see cref="IMapper"/> to allow for method chaining.</returns>
-    public IMapper MapButton(string buttonName, Key key);
+    public IMapper MapButton(string buttonName, Key key, Key alt = Key.None);
 
     /// <summary>
     /// Clears all the current input mappings, including axis and button mappings.

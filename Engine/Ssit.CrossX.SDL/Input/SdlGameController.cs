@@ -101,6 +101,9 @@ internal unsafe class SdlGameController: IDisposable
     
     public ButtonState GetButton(GameControllerButton button)
     {
+        if ( button == GameControllerButton.None)
+            return ButtonState.Empty;
+        
         bool isDown = IsButtonDown(button);
         bool wasDown = _previousButtons.Contains(button);
 

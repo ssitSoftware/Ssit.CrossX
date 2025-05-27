@@ -23,7 +23,7 @@ internal static class GameControls
             .MapButton(Melee, Key.X)
             .MapButton(Special, Key.Z)
             .MapButton(Operate, Key.Z)
-            .MapButton(Walk, Key.LeftShift)
+            .MapButton(Walk, Key.LeftShift, Key.RightShift)
             .MapButton(Jump, GameControllerButton.A)
             .MapButton(Melee, GameControllerButton.X)
             .MapButton(Special, GameControllerButton.B)

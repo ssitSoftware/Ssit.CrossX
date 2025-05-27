@@ -5,6 +5,7 @@ namespace Ssit.CrossX.Input;
 /// </summary>
 public enum Key
 {
+    None = -1,
     A = 4,
     B = 5,
     C = 6,

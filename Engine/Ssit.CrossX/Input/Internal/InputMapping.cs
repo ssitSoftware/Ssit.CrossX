@@ -6,8 +6,8 @@ namespace Ssit.CrossX.Input.Internal;
 internal class InputMapping : IMapper, IInputMapping
 {
     private readonly Dictionary<string, GameControllerAxis> _axisToAxisMappings = new ();
-    private readonly Dictionary<string, GameControllerButton> _buttonToButtonMapping = new ();
-    private readonly Dictionary<string, Key> _keyToButtonMapping = new ();
+    private readonly Dictionary<string, (GameControllerButton, GameControllerButton)> _buttonToButtonMapping = new ();
+    private readonly Dictionary<string, (Key, Key)> _keyToButtonMapping = new ();
     
     private readonly Dictionary<string, (GameControllerButton, GameControllerButton)> _buttonsToAxisMapping = new ();
     private readonly Dictionary<string, (Key, Key)> _keysToAxisMapping = new ();
@@ -40,15 +40,15 @@ internal class InputMapping : IMapper, IInputMapping
         return this;
     }
 
-    public IMapper MapButton(string buttonName, GameControllerButton button)
+    public IMapper MapButton(string buttonName, GameControllerButton button, GameControllerButton alt = GameControllerButton.None)
     {
-        _buttonToButtonMapping[buttonName] = button;
+        _buttonToButtonMapping[buttonName] = (button, alt);
         return this;
     }
 
-    public IMapper MapButton(string buttonName, Key key)
+    public IMapper MapButton(string buttonName, Key key, Key alt = Key.None)
     {
-        _keyToButtonMapping[buttonName] = key;
+        _keyToButtonMapping[buttonName] = (key, alt);
         return this;
     }
 
@@ -69,17 +69,20 @@ internal class InputMapping : IMapper, IInputMapping
         
         if (_buttonToButtonMapping.TryGetValue(button, out var btn))
         {
-            var state = _gameControllers.GetButton(_player, btn);
-            isDown = state.IsDown;
-            wasDown = state.IsDown ^ state.IsChanged;
+            var state = _gameControllers.GetButton(_player, btn.Item1);
+            var state2 = _gameControllers.GetButton(_player, btn.Item2);
+
+            isDown = state.IsDown || state2.IsDown;
+            wasDown = state.IsDown ^ (state.IsChanged || state2.IsChanged);
         }
 
         if (_keyToButtonMapping.TryGetValue(button, out var key))
         {
-            var state = _keyboard.GetKey(key);
-            
-            isDown |= state.IsDown;
-            wasDown |= state.IsDown ^ state.IsChanged;
+            var state = _keyboard.GetKey(key.Item1);
+            var state2 = _keyboard.GetKey(key.Item2);
+
+            isDown |= state.IsDown || state2.IsDown;
+            wasDown |= state.IsDown ^ (state.IsChanged || state2.IsChanged);
         }
 
         return new(isDown, isDown != wasDown);

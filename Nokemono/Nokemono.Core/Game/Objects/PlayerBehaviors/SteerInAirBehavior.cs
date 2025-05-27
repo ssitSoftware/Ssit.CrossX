@@ -8,6 +8,17 @@ namespace Nokemono.Core.Game.Objects.PlayerBehaviors;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Behavior
 {
+    private float _factor = 0;
+    
+    protected override void OnEnterState()
+    {
+        base.OnEnterState();
+
+        var factor = (int)(2 * MathF.Abs(player.Body.LinearVelocity.X) / GamePhysics.RunSpeed);
+
+        _factor = (factor + 2) / 4f;
+    }
+
     protected override bool OnFixedUpdate(float dt)
     {
         if (player.IsOnGround)
@@ -40,14 +51,14 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
         var sign = MathF.Sign(move);
         var amplitude = linearVelocityX * sign;
 
-        if (amplitude < GamePhysics.RunSpeed)
+        if (amplitude < GamePhysics.RunSpeed * _factor)
         {
-            amplitude += dt * GamePhysics.AirSteerAcceleration;
+            amplitude += dt * GamePhysics.AirSteerAcceleration * _factor;
             amplitude = MathF.Min(GamePhysics.RunSpeed, amplitude);
         }
         else
         {
-            amplitude = MathF.Max(GamePhysics.RunSpeed, amplitude);
+            amplitude = MathF.Max(GamePhysics.RunSpeed * _factor, amplitude);
         }
         return sign * amplitude;
     }

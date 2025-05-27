@@ -10,6 +10,7 @@ internal static class GameControls
     public const string Melee = nameof(Melee);
     public const string Special = nameof(Special);
     public const string Operate = nameof(Operate);
+    public const string Walk = nameof(Walk);
     
     public const string CameraX = nameof(CameraX);
     public const string CameraY = nameof(CameraY);
@@ -22,10 +23,12 @@ internal static class GameControls
             .MapButton(Melee, Key.X)
             .MapButton(Special, Key.Z)
             .MapButton(Operate, Key.Z)
+            .MapButton(Walk, Key.LeftShift)
             .MapButton(Jump, GameControllerButton.A)
             .MapButton(Melee, GameControllerButton.X)
             .MapButton(Special, GameControllerButton.B)
             .MapButton(Operate, GameControllerButton.B)
+            .MapButton(Walk, GameControllerButton.RightShoulder)
             .MapAxis(Horizontal, GameControllerButton.DPadLeft, GameControllerButton.DPadRight)
             .MapAxis(Vertical, GameControllerButton.DPadUp, GameControllerButton.DPadDown)
             .MapAxis(Horizontal, GameControllerAxis.LeftX)

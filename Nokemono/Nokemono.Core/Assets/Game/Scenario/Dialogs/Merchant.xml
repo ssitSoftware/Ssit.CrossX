@@ -2,11 +2,11 @@
 <Dialogs Name="Merchant" DefaultLanguage="en">
     
     <!-- Player meets Merchant for the first time --> 
-    <Dialog>
+    <Dialog Highlight="True">
         <Text>  <en>Hello wanderer.|What's your name?</en>
                 <pl>Witaj wędrowcze.|Jak cię zwą?</pl>
             
-            <Option>  <en>{playerName}</en>
+            <Option Set="merchantWelcome">  <en>{playerName}</en>
                 
                 <Text>  <en>Ah, {playerName}. Nice one!|What brings you here {playerName}?</en>
                         <pl>O, {playerName}. Całkiem ładnie!|Co cię tutaj sprowadza {playerName}?</pl>

@@ -3,6 +3,7 @@ using System.Numerics;
 using Nokemono.Core.Game;
 using Nokemono.Core.Game.Objects;
 using Nokemono.Core.Game.Objects.Devices;
+using Nokemono.Core.Game.Objects.Npc;
 using Nokemono.Core.Game.Objects.Pushables;
 using Ssit.CrossX;
 using Ssit.CrossX.Games;
@@ -52,6 +53,7 @@ public class GameTemplate: IGameTemplate
         new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
         new("NPC/Merchant", typeof(Merchant), "assets:/Game/Objects/Merchant", "Idle"),
         new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
+        new("Logic/Story Trigger", typeof(StoryTrigger), "assets:/Editor/StoryTrigger", "Default", typeof(StoryTrigger.Parameters)),
         new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
         // new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
         new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),

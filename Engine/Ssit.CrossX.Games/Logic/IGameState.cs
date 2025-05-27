@@ -6,5 +6,5 @@ public interface IGameState
 {
     event Action StateUpdated;
     bool HasFlag(string flag);
-    void SetFlag(string flag);
+    void SetFlags(string flag);
 }

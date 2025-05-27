@@ -7,7 +7,7 @@ using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Games.Logic.Objects;
 
-namespace Nokemono.Core.Game.Objects;
+namespace Nokemono.Core.Game.Objects.Npc;
 
 public class Merchant : NpcCharacter
 {

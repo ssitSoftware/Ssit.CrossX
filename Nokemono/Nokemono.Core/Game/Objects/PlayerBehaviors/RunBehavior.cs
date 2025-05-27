@@ -21,7 +21,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
         
         if (amplitude > 0.25f)
         {
-            if (MathF.Sign(move) != _lastDir)
+            if (MathF.Sign(move) != _lastDir || inputMappings[player.PlayerIndex].GetButton(GameControls.Walk).IsDown)
             {
                 _runSlow = GamePhysics.RunSlowTime;
                 _lastDir = MathF.Sign(move);

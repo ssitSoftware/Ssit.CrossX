@@ -17,6 +17,7 @@ public class NarrationSystem: INarrationSystem
     public event Action<string> NarrationAction;
     
     private readonly Dictionary<string, NarrationObject> _objects = new();
+    private readonly Dictionary<string, NarrationDialog> _specialDialogs = new();
     
     public NarrationSystem(IGameDialogs dialogs, IGameState gameState, IActionScheduler actionScheduler, IFilesProvider filesProvider, ITranslator translator, string narrationDir)
     {
@@ -28,7 +29,20 @@ public class NarrationSystem: INarrationSystem
         var list = NarrationParser.ParseObjects(filesProvider, narrationDir);
         foreach (var obj in list)
         {
-            _objects.Add(obj.Name, obj);
+            if (string.IsNullOrWhiteSpace(obj.Name))
+            {
+                foreach(var dlg in obj.Dialogs)
+                {
+                    if (!string.IsNullOrWhiteSpace(dlg.Id))
+                    {
+                        _specialDialogs.Add(dlg.Id, dlg);
+                    }
+                }
+            }
+            else
+            {
+                _objects.Add(obj.Name, obj);
+            }
         }
     }
 
@@ -44,7 +58,7 @@ public class NarrationSystem: INarrationSystem
     
     public bool HasNarration(string subject)
     {
-        var dialog = GetDialog(subject);
+        var dialog = GetDialog(subject) ?? GetSpecialConversation(subject);
         return dialog != null;
     }
     
@@ -53,7 +67,11 @@ public class NarrationSystem: INarrationSystem
         var dialog = GetDialog(subject);
         if (dialog == null)
         {
-            return;
+            dialog = GetSpecialConversation(subject);
+            if (dialog is null)
+            {
+                return;
+            }
         }
 
         var entry = dialog.Entry;
@@ -76,11 +94,11 @@ public class NarrationSystem: INarrationSystem
             }
 
             var action = entry.Options[result].Action;
-            var tag = entry.Options[result].SetTag;
+            var tags = entry.Options[result].SetTags;
 
-            if (!string.IsNullOrWhiteSpace(tag))
+            if (!string.IsNullOrWhiteSpace(tags))
             {
-                _gameState.SetFlag(tag);
+                _gameState.SetFlags(tags);
             }
 
             if (!string.IsNullOrWhiteSpace(action))
@@ -90,9 +108,32 @@ public class NarrationSystem: INarrationSystem
             
             entry = entry.Options[result].Entry;
         }
-        
-        var key = GetDialogKey(subject, dialog.On);
-        _gameState.SetFlag(key);
+    }
+
+    private NarrationDialog GetSpecialConversation(string id)
+    {
+        _specialDialogs.TryGetValue(id, out var dialog);
+        return IsDialogValid(dialog) ? dialog : null;
+    }
+
+    private bool IsDialogValid(NarrationDialog dialog)
+    {
+        foreach (var tag in dialog.On)
+        {
+            if (!_gameState.HasFlag(tag))
+            {
+                return false;
+            }
+        }
+
+        foreach (var tag in dialog.Off)
+        {
+            if (_gameState.HasFlag(tag))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private NarrationDialog GetDialog(string subject)
@@ -104,16 +145,7 @@ public class NarrationSystem: INarrationSystem
         
         foreach (var dialog in narrationObject.Dialogs.Reverse())
         {
-            var valid = true;
-            foreach (var tag in dialog.On)
-            {
-                if (!_gameState.HasFlag(tag))
-                {
-                    valid = false;
-                }
-            }
-
-            if (valid)
+            if (IsDialogValid(dialog))
             {
                 return dialog;
             }
@@ -133,10 +165,5 @@ public class NarrationSystem: INarrationSystem
         }
 
         return false;
-    }
-
-    private string GetDialogKey(string subject, IEnumerable<string> ons)
-    {
-        return "shown-" + subject +":" + string.Join("|", ons); 
     }
 }

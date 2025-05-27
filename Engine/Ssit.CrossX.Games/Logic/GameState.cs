@@ -12,9 +12,13 @@ public class GameState(IActionScheduler actionScheduler) : IGameState
     
     public bool HasFlag(string flag) => _flags.TryGetValue(flag, out _);
 
-    public void SetFlag(string flag)
+    public void SetFlags(string flags)
     {
-        _flags.TryAdd(flag, true);
+        foreach (var flag in flags.Split('|'))
+        {
+            _flags.TryAdd(flag, true);
+        }
+
         actionScheduler.Schedule(() => StateUpdated?.Invoke());
     }
 }

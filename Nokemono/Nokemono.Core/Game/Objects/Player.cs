@@ -192,6 +192,9 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         foreach (var fixture in _queryList)
         {
+            if (fixture.IsSensor)
+                continue;
+            
             if (fixture.Body == Body)
                 continue;
 
@@ -238,6 +241,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         DetectOnGround();
     }
 
+    public bool CheckInRange(Fixture fixture)
+    {
+        return _detectorFixture == fixture;
+    }
+    
     public bool SetInRange(ILogicOperable operable, Fixture fixture, bool inRange)
     {
         if (_detectorFixture != fixture)
@@ -306,20 +314,20 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _walkToTaskCompletionSource = null;
     }
 
-    public async void TalkToNpc(INpcCharacter npc)
+    public async void TalkToNpc(INpcCharacter npc, string conversationId = null)
     {
         Body.LinearVelocity = Vector2.Zero;
         npc.PrepareCameraForTalking();
-        
-        SetState("WalkTo");
-        
-        var faceLeft = Body.Position.X > npc.Body.Position.X;
-            
-        var dist = npc.TalkingDistance;
 
-        if (dist.HasValue)
+        var faceLeft = Body.Position.X > npc.Body.Position.X;
+        
+        if (conversationId is null)
         {
-            var targetPosX = npc.Body.Position.X + (faceLeft ? dist.Value : -dist.Value);
+            SetState("WalkTo");
+
+            var dist = npc.TalkingDistance;
+            
+            var targetPosX = npc.Body.Position.X + (faceLeft ? dist : -dist);
             await WalkTo(targetPosX);
         }
 
@@ -329,7 +337,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             FaceLeft = faceLeft;
         });
         
-        await npc.StartConversation(Body.Position.X);
+        await npc.StartConversation(Body.Position.X, conversationId);
 
         _actionScheduler.Schedule(() =>
         {

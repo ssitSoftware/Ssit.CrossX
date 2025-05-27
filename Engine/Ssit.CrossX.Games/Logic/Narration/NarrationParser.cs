@@ -54,7 +54,10 @@ internal static class NarrationParser
             throw new InvalidDataException();
 
         var highlight = node.Attribute("Highlight")?.ToLowerInvariant() == "true";
+        
+        var id = node.Attribute("Id");
         var on = new HashSet<string>(node.Attribute("On")?.Split('|') ?? []);
+        var off = new HashSet<string>(node.Attribute("Off")?.Split('|') ?? []);
 
         var defaultLang = node.Attribute("DefaultLanguage") ?? "en";
         
@@ -62,7 +65,7 @@ internal static class NarrationParser
         if (entry == null)
             return null;
         
-        return new NarrationDialog(on, highlight, defaultLang, entry);
+        return new NarrationDialog(id, on, off, highlight, defaultLang, entry);
     }
 
     private static bool IsSpecialTag(string tag)

@@ -38,7 +38,7 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
     
     public bool CanStartConversation => _narrationSystem.HasNarration(NarrationId);
 
-    protected NpcCharacter(GameObjectsServices services, IContentManager contentManager, IGameState gameState, 
+    protected NpcCharacter(GameObjectsServices services, IContentManager contentManager, IGameState gameState,
         INarrationSystem narrationSystem, ICamera camera, IActionScheduler actionScheduler, ObjectCreationParameters parameters)
         : base(services, parameters)
     {
@@ -79,17 +79,31 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
     public async Task StartConversation(float position, string conversationId = null)
     {
         var tcs = new TaskCompletionSource();
+        
         _actionScheduler.Schedule(() =>
         {
-            _camera.SetTemporaryTarget(Body, CameraOffset, 4, null, TimeSpan.FromDays(10));
+            _camera.SetTemporaryTarget(Body, CameraOffset, 4, () =>
+            {
+                if (!tcs.Task.IsCompleted)
+                {
+                    tcs.SetResult();
+                }
+            }, TimeSpan.FromDays(10));
 
             FaceLeft = position < Body.Position.X;
             _emojiInstance.SetSequence("Talking");
-            tcs.SetResult();
+            
+            if (conversationId is null && !tcs.Task.IsCompleted)
+            {
+                tcs.SetResult();
+            }
         });
 
+        if (conversationId == null)
+        {
+            await Task.Delay(50);
+        }
         await tcs.Task;
-        await Task.Delay(50);
         
         await _narrationSystem.StartNarration(conversationId ?? NarrationId);
 

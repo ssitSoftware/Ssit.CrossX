@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dialogs Name="Merchant-WatchOut" DefaultLanguage="en">
+    
+    <Dialog On="metMerchant" Off="merchantWatchOut">
+        
+        <Text>  <en>Hey! Watch out on that abyss!</en>
+                <pl>Hej! Uważaj na tamtą przepaść!</pl>
+            
+            <Option Set="merchantWatchOut"> <en>...</en> 
+            </Option>
+            
+        </Text>
+    </Dialog>
+    
+</Dialogs>

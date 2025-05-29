@@ -12,7 +12,7 @@ using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
 
 namespace Nokemono.Core.Game.Objects;
 
-public class StoryTrigger: IDisposable
+public class StoryTrigger: IDisposable, IUpdatable
 {
     private readonly INarrationSystem _narrationSystem;
 
@@ -20,15 +20,14 @@ public class StoryTrigger: IDisposable
     {
         [EditorLink(typeof(INpcCharacter))] public int Npc { get; set; }
         [Editor] public string ConversationId { get; set; }
-        [EditorInt(1, 20)] public int Width { get; } = 1;
-        [EditorInt(1, 20)] public int Height { get; } = 2;
     }
 
     private INpcCharacter _npc;
     private readonly string _conversationId;
 
     private readonly Body _body;
-    private bool _inPlayerRange;
+    private ILogicOperator _operatorInRange;
+    private bool _storyTriggered;
     
     public StoryTrigger(GameObjectsServices services, INarrationSystem narrationSystem, ObjectCreationParameters<Parameters> parameters)
     {
@@ -39,9 +38,10 @@ public class StoryTrigger: IDisposable
         _body = new Body(services.World);
         _body.BodyType = BodyType.Static;
         _body.SetTransform(parameters.Position, 0);
+        _body.Owner = this;
 
-        var halfWidth = parameters.Parameters.Width / 2f;
-        var height = parameters.Parameters.Height;
+        var halfWidth = 0.5f;
+        var height = 4f;
         
         _body.CreateFixture(new PolygonShape(new Vertices([
             new Vector2(-halfWidth, 0),
@@ -55,6 +55,15 @@ public class StoryTrigger: IDisposable
         _body.OnCollision += BodyOnOnCollision;
         _body.OnSeparation += BodyOnOnSeparation;
     }
+    
+    void IUpdatable.PostFixedUpdate()
+    {
+        if (_storyTriggered) return;
+
+        if (!_narrationSystem.HasNarration(_conversationId)) return;
+        
+        _storyTriggered = _operatorInRange?.TalkToNpc(_npc, _conversationId) ?? false;
+    }
 
     private void BodyOnOnSeparation(Fixture fixtureA, Fixture fixtureB)
     {
@@ -62,23 +71,22 @@ public class StoryTrigger: IDisposable
         {
             if (lo.CheckInRange(fixtureB))
             {
-                _inPlayerRange = false;
+                _operatorInRange = null;
+                _storyTriggered = false;
             }
         }
     }
 
     private bool BodyOnOnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
     {
-        var wasInRange = _inPlayerRange;
         if (fixtureB.Body.Owner is ILogicOperator lo)
         {
-            _inPlayerRange |= lo.CheckInRange(fixtureB);
-
-            if (_inPlayerRange && !wasInRange)
+            if (_operatorInRange != lo)
             {
-                if (_narrationSystem.HasNarration(_conversationId))
+                if (lo.CheckInRange(fixtureB))
                 {
-                    lo.TalkToNpc(_npc, _conversationId);
+                    _operatorInRange = lo;
+                    _storyTriggered = false;
                 }
             }
         }
@@ -89,7 +97,6 @@ public class StoryTrigger: IDisposable
     public void Dispose()
     {
         _body.OnCollision -= BodyOnOnCollision;
-        _body.OnSeparation -= BodyOnOnSeparation;   
-        _body.Dispose();
+        _body.OnSeparation -= BodyOnOnSeparation;
     }
 }

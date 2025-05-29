@@ -16,14 +16,20 @@ public static class GameInitializer
         container
             .RegisterSound("Left Foot", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultL.wav", 0.55f)
             .RegisterSound("Right Foot", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultR.wav", 0.55f)
+            .RegisterSound("Left Foot Silent", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultL.wav", 0.16f)
+            .RegisterSound("Right Foot Silent", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultR.wav", 0.16f)
             .RegisterSound("Jump", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultJump.wav", 0.65f)
             .RegisterSound("Land", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultLand.wav", 0.65f)
             .RegisterSound("Left Foot", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalL.wav", 0.95f)
             .RegisterSound("Right Foot", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalR.wav", 0.95f)
+            .RegisterSound("Left Foot Silent", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalL.wav", 0.3f)
+            .RegisterSound("Right Foot Silent", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalR.wav", 0.3f)
             .RegisterSound("Jump", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalJump.wav", 0.95f)
             .RegisterSound("Land", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalLand.wav", 0.95f)
             .RegisterSound("Left Foot", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterL.wav")
             .RegisterSound("Right Foot", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterR.wav")
+            .RegisterSound("Left Foot Silent", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterL.wav", 0.3f)
+            .RegisterSound("Right Foot Silent", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterR.wav", 0.3f)
             .RegisterSound("Jump", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterR.wav")
             .RegisterSound("Land", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterLand.wav");
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
@@ -10,6 +11,7 @@ namespace Ssit.CrossX.Games.Logic;
 
 public class GameDialogs : GameDialogsBase, IGameDialogsUi
 {
+    private readonly IActionScheduler _actionScheduler;
     private readonly ITranslator _translator;
     public event Action<int> FocusElement;    
     public SharedBool Visible => _visible;
@@ -39,9 +41,11 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
     ];
 
     private readonly SyncCommand _replyCommand;
+    private bool _waitForOptions;
 
     public GameDialogs(IActionScheduler actionScheduler, ITranslator translator): base(actionScheduler)
     {
+        _actionScheduler = actionScheduler;
         _translator = translator;
         _replyCommand = new SyncCommand(OnCommandReply, CanReply);
         
@@ -55,6 +59,9 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
 
     private bool CanReply(object arg)
     {
+        if (_waitForOptions)
+            return false;
+        
         if (arg is int index)
         {
             return _replyOptionVisible[index].Value;
@@ -84,7 +91,7 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
 
             _currentText.SetText("");
             _visible.SetValue(false);
-
+            
             _replyCommand.RaiseCanExecuteChanged();
             FocusElement?.Invoke(-1);
         });
@@ -116,12 +123,25 @@ public class GameDialogs : GameDialogsBase, IGameDialogsUi
             _replyOptions[idx].SetText(replyOptions[idx]);
             _replyOptionVisible[idx].SetValue(true);
         }
+        
+        _waitForOptions = true;
+        _replyCommand.RaiseCanExecuteChanged();
+        
+        FocusElement?.Invoke(-1);
         _visible.SetValue(true);
         
         _currentText.SetText("");
         _currentText.SetText(text);
         
-        FocusElement?.Invoke(0);
+        Task.Delay(500).ContinueWith(t =>
+        {
+            _actionScheduler.Schedule(() =>
+            {
+                _waitForOptions = false;
+                _replyCommand.RaiseCanExecuteChanged();
+                FocusElement?.Invoke(0);
+            });
+        });
         
         _replyCommand.RaiseCanExecuteChanged();
     }

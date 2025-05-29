@@ -1,4 +1,4 @@
 {
-  "Origin": {"X": 8, "Y": 16},
-  "Size": {"Width": 16, "Height": 16}
+  "Origin": {"X": 8, "Y": 64},
+  "Size": {"Width": 16, "Height": 64}
 }

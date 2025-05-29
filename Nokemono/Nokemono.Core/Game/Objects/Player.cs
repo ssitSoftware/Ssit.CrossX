@@ -126,7 +126,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var emptyState = new State();
 
         AddState("Idle", idleOrRunState);
-        AddState("Run", idleOrRunState);
+        AddState("Walk", idleOrRunState);
         AddState("Run Fast", idleOrRunState);
 
         AddState("Jump", jumpState);
@@ -231,11 +231,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         {
             state = "Walk";
         }
-        
-        if (state == "Run")
-        {
-            state = "Walk";
-        }
 
         base.SetSequence(state);
         DetectOnGround();
@@ -291,7 +286,12 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     protected override void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
-        SoundContainer.Play(@event.EventName, GroundMaterial, CurrentState == "Run" ? 0.33f : 1);
+        if (CurrentState == "WalkTo")
+        {
+            return;
+        }
+        
+        SoundContainer.Play(@event.EventName, GroundMaterial);
     }
 
     protected override void OnDispose(bool disposing)
@@ -314,8 +314,20 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _walkToTaskCompletionSource = null;
     }
 
+    bool ILogicOperator.TalkToNpc(INpcCharacter npc, string conversationId)
+    {
+        if (!IsOnGround)
+            return false;
+        
+        TalkToNpc(npc, conversationId);
+        return true;
+    }
+
     public async void TalkToNpc(INpcCharacter npc, string conversationId = null)
     {
+        if (!IsOnGround)
+            return;
+        
         Body.LinearVelocity = Vector2.Zero;
         npc.PrepareCameraForTalking();
 

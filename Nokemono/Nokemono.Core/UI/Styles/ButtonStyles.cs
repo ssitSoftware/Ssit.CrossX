@@ -33,7 +33,7 @@ public static class ButtonStyles
             Hover = Palette.Background,
             Focused =  Palette.Foreground,
             Pushed = Palette.ButtonAccent,
-            Disabled = Palette.Dim
+            Disabled = Palette.Background
         };
         
         button.BackgroundColors = new ButtonStateColorsIndexed

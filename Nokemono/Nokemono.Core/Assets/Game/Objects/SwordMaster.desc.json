@@ -15,12 +15,12 @@
     {
       "Sequence": "Walk",
       "Frame": 3,
-      "Name": "Left Foot"
+      "Name": "Left Foot Silent"
     },
     {
       "Sequence": "Walk",
       "Frame": 7,
-      "Name": "Right Foot"
+      "Name": "Right Foot Silent"
     }
   ]
 }

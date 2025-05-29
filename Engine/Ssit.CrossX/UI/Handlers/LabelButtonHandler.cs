@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
@@ -39,7 +41,19 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     public void CancelPointer(int pointerId, IInputContext context) => _buttonHelper.CancelPointer(pointerId, context);
 
-    public bool OnUiButton(UiButton button, IInputContext context) => _buttonHelper.OnUiButton(button, context);
+    public bool OnUiButton(UiButton button, IInputContext context)
+    {
+        try
+        {
+            return _buttonHelper.OnUiButton(button, context);
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+        }
+
+        return false;
+    }
 
     public void SetFocus()
     {

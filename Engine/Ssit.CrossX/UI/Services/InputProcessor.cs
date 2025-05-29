@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Handlers;
@@ -45,15 +46,22 @@ internal sealed class InputProcessor: IInputContext
 
     private void OnUiButton(IPage page, UiButton button)
     {
-        if (true == page.FocusedElement?.DisableAllInput)
-            return;
-        
-        if (page.OnUiButton(button, this))
+        try
         {
-            return;
+            if (true == page.FocusedElement?.DisableAllInput)
+                return;
+            
+            if (page.OnUiButton(button, this))
+            {
+                return;
+            }
+
+            page.FocusedElement?.OnUiButton(button, this);
         }
-        
-        page.FocusedElement?.OnUiButton(button, this);
+        catch (Exception ex)
+        {
+            Debugger.Break();
+        }
     }
     
     public void Process()

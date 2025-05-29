@@ -31,15 +31,15 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
             _runSlow = MathF.Max(0, _runSlow);
             move = MathF.Sign(move);
             
-            player.SetState(_runSlow > 0 ? "Run" : "Run Fast");
+            player.SetState(_runSlow > 0 ? "Walk" : "Run Fast");
             player.FaceLeft = move < 0;
 
             var newVelocityX = CalculateRunVelocity(player.Body.LinearVelocity.X, move, dt);
             player.Body.LinearVelocity = player.Body.LinearVelocity with {X = newVelocityX};
             
-            if (MathF.Abs(player.Body.LinearVelocity.X) < 1 && player.IsOnStaticGround)
+            if (MathF.Abs(player.Body.LinearVelocity.X) < GamePhysics.WalkSpeed && player.IsOnStaticGround)
             {
-                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -3f };
+                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -4f };
             }
             
             return true;

@@ -45,7 +45,7 @@ public class Settings: AppSettingsBase<Settings>
     [JsonProperty]
     public bool Fullscreen
     {
-        get => _fullscreen;
+        get => true;
         set => SetField(ref _fullscreen, value);
     }
     

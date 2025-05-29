@@ -33,4 +33,4 @@ public static class IoCRegistrar
             .WithImplementation<ISoundEffect, DummySoundEffectImpl>()
             .WithImplementation<ISingleMusicPlayer, DummySingleMusicPlayerImpl>();
     }
-}
+ }

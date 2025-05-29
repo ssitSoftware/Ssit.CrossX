@@ -24,6 +24,7 @@ public class PixelAppHost: IAppHost
         public int MinScale = 1;
         public GlowParameters GlowParameters;
         public CrtParameters CrtParameters;
+        public bool PixelPerfect = false;
     }
     
     public class CrtParameters
@@ -289,6 +290,11 @@ public class PixelAppHost: IAppHost
         var scale = MathF.Min((float)_renderer.TargetSize.Width / sourceTexture.Size.Width,
             (float)_renderer.TargetSize.Height / sourceTexture.Size.Height);
 
+        if (_parameters.PixelPerfect)
+        { 
+            scale = 1;
+        }
+
         var targetSize = sourceTexture.Size.ToVector() * scale;
         var targetRect = new RectangleF((_renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
 
@@ -328,7 +334,7 @@ public class PixelAppHost: IAppHost
                 break;
         }
         
-        var scaleInt = (int)Math.Ceiling(scale);
+        var scaleInt = _parameters.PixelPerfect ? (int)Math.Floor(scale) : (int)Math.Ceiling(scale);
         var targetScale = Math.Max(_parameters.MinScale, Math.Min(_parameters.MaxScale, scaleInt));
         
         switch (_parameters.Mode)
@@ -350,7 +356,7 @@ public class PixelAppHost: IAppHost
 
     private void ResizeInternal(Size size, bool forceRecreation)
     {
-        var targetScale = (int)Math.Ceiling((float)_finalScale / Scale);
+        var targetScale = _parameters.PixelPerfect ? (int)Math.Floor((float)_finalScale / Scale) : (int)Math.Ceiling((float)_finalScale / Scale);
         
         var postRenderSize = _postRenderTarget?.Size ?? Size.Zero;
         

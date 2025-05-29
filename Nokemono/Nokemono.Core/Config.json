@@ -1,0 +1,113 @@
+{
+  "palettes": [
+    {
+      "name": "Default",
+      "colors": ["#201008", "#ddd0c0", "#706050", "#a05050"],
+      "button-accent-color": 3
+    },
+    {
+      "name": "Contrast",
+      "colors": ["#000000", "#ffffff", "#606060", "#ff0000"],
+      "button-accent-color": 3
+    },
+    {
+      "name": "Purple",
+      "colors": ["#150413", "#d0d0c1", "#332431", "#6e3c3c"],
+      "button-accent-color": 3
+    },
+    {
+      "name": "Marron",
+      "colors": ["#340011", "#da7239", "#781526", "#cc4d36"],
+      "button-accent-color": 2
+    },
+    {
+      "name": "Chocolate",
+      "colors": ["#2b212c", "#c09788", "#65414b", "#9b615c"],
+      "button-accent-color": 2
+    },
+    {
+      "name": "Game Boy",
+      "colors": ["#081820", "#9cad91", "#346856", "#88c070"],
+      "button-accent-color": 2
+    },
+    {
+      "name": "Game Boy + Red",
+      "colors": ["#081820", "#9cad91", "#346856", "#a05634"],
+      "button-accent-color": 3
+    },
+    {
+      "name": "Game Boy BW",
+      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#989898"],
+      "button-accent-color": 2
+    }
+  ],
+  "input-mapping": {
+    "--help": {
+      "button-names": "A, B, X, Y, LeftStick, RightStick, LeftShoulder, RightShoulder, DPadUp, DPadDown, DPadLeft, DPadRight",
+      "axes-names": "LeftX, LeftY, RightX, RightY, LeftTrigger, RightTrigger, DPadX, DPadY"
+    },
+    "axes": [
+      {
+        "id": "Horizontal",
+        "axis": "LeftX",
+        "buttons": {
+          "negative": "DPadLeft",
+          "positive": "DPadRight"
+        },
+        "keys": {
+          "negative": "Left",
+          "positive": "Right"
+        }
+      },
+      {
+        "id": "Vertical",
+        "axis": "LeftY",
+        "buttons": {
+          "negative": "DPadUp",
+          "positive": "DPadDown"
+        },
+        "keys": {
+          "negative": "Up",
+          "positive": "Down"
+        }
+      },
+      {
+        "id": "CameraX",
+        "axis": "RightX"
+      },
+      {
+        "id": "CameraY",
+        "axis": "RightY"
+      }
+    ],
+    "buttons": [
+      {
+        "id": "Jump",
+        "button": "A",
+        "key": "C",
+        "alt-key": "Space"
+      },
+      {
+        "id": "Melee",
+        "button": "X",
+        "key": "X"
+      },
+      {
+        "id": "Operate",
+        "button": "B",
+        "key": "V"
+      },
+      {
+        "id": "Special",
+        "button": "Y",
+        "key": "Z"
+      },
+      {
+        "id": "Walk",
+        "button": "RightShoulder",
+        "key": "LeftShift",
+        "alt-key": "RightShift"
+      }
+    ]
+  }
+}

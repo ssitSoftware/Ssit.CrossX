@@ -1,4 +1,4 @@
-using Nokemono.Core.Game;
+using Nokemono.Core.Configuration;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Services;
@@ -11,8 +11,9 @@ public class OptionsPageInGameViewModel(
     ITranslator translator,
     ISettingsProvider settingsProvider,
     IUiSounds sounds,
-    IGameInterfaces gameInterfaces)
-    : OptionsPageViewModel(navigation, translator, settingsProvider, sounds)
+    IGameInterfaces gameInterfaces,
+    Config config)
+    : OptionsPageViewModel(navigation, translator, settingsProvider, sounds, config)
 {
     public IGameInterfaces GameInterfaces { get; } = gameInterfaces;
 }

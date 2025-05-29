@@ -1,3 +1,4 @@
+using Nokemono.Core.Configuration;
 using Nokemono.Core.UI.Handlers;
 using Nokemono.Core.UI.Pages;
 using Nokemono.Core.UI.ViewModels;
@@ -19,9 +20,27 @@ public static class Initializer
     public static IIoCContainer InitializeInputMapping(this IIoCContainer container)
     {
         var inputMappings = container.Get<IInputMappings>();
-        GameControls.RegisterGameControls(inputMappings);
+        var config = container.Get<Config>();
+
+        foreach (var axis in config.InputMapping.Axes)
+        {
+            inputMappings.Mapper(0).MapAxis(axis.Id, axis.Axis);
+            if (axis.Buttons is not null)
+            {
+                inputMappings.Mapper(0).MapAxis(axis.Id, axis.Buttons.Negative, axis.Buttons.Positive);
+            }
+
+            if (axis.Keys is not null)
+            {
+                inputMappings.Mapper(0).MapAxis(axis.Id, axis.Keys.Negative, axis.Keys.Positive);
+            }
+        }
         
-        //RegisterGameContentTypes
+        foreach (var btn in config.InputMapping.Buttons)
+        {
+            inputMappings.Mapper(0).MapButton(btn.Id, btn.Button, btn.AltButton);
+            inputMappings.Mapper(0).MapButton(btn.Id, btn.Key, btn.AltKey);
+        }
         
         return container;
     }

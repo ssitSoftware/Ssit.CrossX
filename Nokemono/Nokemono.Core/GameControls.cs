@@ -1,3 +1,4 @@
+using Nokemono.Core.Configuration;
 using Ssit.CrossX.Input;
 
 namespace Nokemono.Core;
@@ -22,11 +23,11 @@ internal static class GameControls
             .MapButton(Jump, Key.C)
             .MapButton(Melee, Key.X)
             .MapButton(Special, Key.Z)
-            .MapButton(Operate, Key.Z)
+            .MapButton(Operate, Key.V)
             .MapButton(Walk, Key.LeftShift, Key.RightShift)
             .MapButton(Jump, GameControllerButton.A)
             .MapButton(Melee, GameControllerButton.X)
-            .MapButton(Special, GameControllerButton.B)
+            .MapButton(Special, GameControllerButton.Y)
             .MapButton(Operate, GameControllerButton.B)
             .MapButton(Walk, GameControllerButton.RightShoulder)
             .MapAxis(Horizontal, GameControllerButton.DPadLeft, GameControllerButton.DPadRight)
@@ -37,7 +38,5 @@ internal static class GameControls
             .MapAxis(Vertical, Key.Up, Key.Down)
             .MapAxis(CameraX, GameControllerAxis.RightX)
             .MapAxis(CameraY, GameControllerAxis.RightY);
-        //.MapAxis(CameraX, Key.A, Key.D)
-        //.MapAxis(CameraY, Key.W, Key.S);
     }
 }

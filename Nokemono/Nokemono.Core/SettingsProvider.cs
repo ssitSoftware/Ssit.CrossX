@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Nokemono.Core.Configuration;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Template;
@@ -19,12 +20,14 @@ public class SettingsProvider : ISettingsProvider
     private readonly IAppWindowManager _windowManager;
     private readonly IPaletteSource _paletteSource;
     private readonly IActionScheduler _actionScheduler;
+    private readonly Config _config;
 
     public Settings Settings { get; }
     
     public SettingsProvider(IMusicPlayer musicPlayer, ISoundManager soundManager, IFileStorage fileStorage, 
         IGameTemplate gameTemplate, IAppWindowManager windowManager,
-        IPaletteSource paletteSource, IActionScheduler actionScheduler)
+        IPaletteSource paletteSource, IActionScheduler actionScheduler,
+        Config config)
     {
         _musicPlayer = musicPlayer;
         _soundManager = soundManager;
@@ -32,6 +35,7 @@ public class SettingsProvider : ISettingsProvider
         _windowManager = windowManager;
         _paletteSource = paletteSource;
         _actionScheduler = actionScheduler;
+        _config = config;
 
         Settings = Settings.Load(fileStorage, "settings");
         Settings.PropertyChanged += UpdateSettings;
@@ -79,7 +83,7 @@ public class SettingsProvider : ISettingsProvider
             
             case nameof(Settings.Palette):
                 _actionScheduler.Schedule(() =>
-                    _paletteSource.UpdatePalette(Palette.Palettes[Settings.Palette].Colors));
+                    _paletteSource.UpdatePalette(_config.Palettes[Settings.Palette % _config.Palettes.Length].Colors));
                 break;
         }
     }

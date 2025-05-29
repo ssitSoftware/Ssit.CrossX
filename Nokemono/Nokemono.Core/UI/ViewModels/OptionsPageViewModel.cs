@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Nokemono.Core.Configuration;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Common.Services;
@@ -11,6 +12,7 @@ namespace Nokemono.Core.UI.ViewModels;
 public class OptionsPageViewModel: IPageCommandsSource
 {
     private readonly ITranslator _translator;
+    private readonly Config _config;
     private readonly Settings _settings;
     
     ICommand IPageCommandsSource.MenuCommand => null;
@@ -33,9 +35,10 @@ public class OptionsPageViewModel: IPageCommandsSource
     
     public SharedStringSource ScaleStr { get; } = new();
 
-    public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISettingsProvider settingsProvider, IUiSounds sounds)
+    public OptionsPageViewModel(INavigation navigation, ITranslator translator, ISettingsProvider settingsProvider, IUiSounds sounds, Config config)
     {
         _translator = translator;
+        _config = config;
         _settings = settingsProvider.Settings;
 
         BackCommand = new SyncCommand( () =>
@@ -92,11 +95,11 @@ public class OptionsPageViewModel: IPageCommandsSource
             (_, var type) = o as (object obj, ButtonCommandType type)? ?? (null, ButtonCommandType.Select);
             if (type == ButtonCommandType.Previous)
             {
-                _settings.Palette = (_settings.Palette + Palette.Palettes.Length - 1) % Palette.Palettes.Length;
+                _settings.Palette = (_settings.Palette + config.Palettes.Length - 1) % config.Palettes.Length;
             }
             else
             {
-                _settings.Palette = (_settings.Palette + 1) % Palette.Palettes.Length;
+                _settings.Palette = (_settings.Palette + 1) % config.Palettes.Length;
             }
             
             _settings.Save();
@@ -169,7 +172,7 @@ public class OptionsPageViewModel: IPageCommandsSource
             MusicVolumeStr.SetSource($"{vol}%");
         }
 
-        PaletteStr.SetSource(_translator[Palette.Palettes[_settings.Palette].Name]);
+        PaletteStr.SetSource(_translator[_config.Palettes[_settings.Palette].Name]);
         FullscreenStr.SetSource(_settings.Fullscreen ? _translator["Yes"] : _translator["No"]);
         ScaleStr.SetSource($"{_settings.Scale}x");
         CrtStr.SetSource(_translator[$"Crt{_settings.CrtMode}"]);

@@ -17,6 +17,14 @@
 
     <ItemGroup>
       <Folder Include="Assets\Game\Sounds\" />
+      <Folder Include="Properties\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Config.json" />
+      <Content Include="Config.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

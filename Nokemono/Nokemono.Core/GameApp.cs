@@ -1,4 +1,5 @@
 using System.Numerics;
+using Nokemono.Core.Configuration;
 using Nokemono.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
@@ -43,9 +44,10 @@ public class GameApp: UiPixelApp
             .WithInstance(filesProvider)
             .WithSingleton<ISettingsProvider, SettingsProvider>()
             .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
-            .WithInstance(_gameTemplate);
+            .WithInstance(_gameTemplate)
+            .WithSingleton<Config, Config>();
         
-        builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0xff0000, 0xff0000);
+        builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0xff0000, 0xff00ff);
     }
 
     protected override void OnInitialize(IIoCContainer container)

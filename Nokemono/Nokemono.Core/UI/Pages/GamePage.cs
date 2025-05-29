@@ -1,3 +1,4 @@
+using Nokemono.Core.Configuration;
 using Nokemono.Core.UI.ViewModels;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Input;
@@ -45,10 +46,10 @@ public class GamePage: Page<GamePageViewModel>
                 Services.Get<IGameControllers>().GetButton(0, GameControllerButton.Back).IsDown))
         {
             var settings = Services.Get<ISettingsProvider>().Settings;
-            settings.Palette = (settings.Palette + 1) % Palette.Palettes.Length;
+            settings.Palette = (settings.Palette + 1) % Services.Get<Config>().Palettes.Length;
             settings.Save();
             
-            _paletteName.SetText(Palette.Palettes[settings.Palette].Name);
+            _paletteName.SetText(Services.Get<Config>().Palettes[settings.Palette].Name);
             _showPaletteNameTime = 1.25f;
         }
         
@@ -57,10 +58,10 @@ public class GamePage: Page<GamePageViewModel>
                 Services.Get<IGameControllers>().GetButton(0, GameControllerButton.Back).IsDown))
         {
             var settings = Services.Get<ISettingsProvider>().Settings;
-            settings.Palette = (settings.Palette + Palette.Palettes.Length - 1) % Palette.Palettes.Length;
+            settings.Palette = (settings.Palette + Services.Get<Config>().Palettes.Length - 1) % Services.Get<Config>().Palettes.Length;
             settings.Save();
             
-            _paletteName.SetText(Palette.Palettes[settings.Palette].Name);
+            _paletteName.SetText(Services.Get<Config>().Palettes[settings.Palette].Name);
             _showPaletteNameTime = 1.25f;
         }
 

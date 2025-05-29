@@ -291,7 +291,7 @@ public class PixelAppHost: IAppHost
             (float)_renderer.TargetSize.Height / sourceTexture.Size.Height);
 
         if (_parameters.PixelPerfect)
-        { 
+        {
             scale = 1;
         }
 

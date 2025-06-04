@@ -1,6 +1,8 @@
 {
+  "player-name": "Sebastian",
   "palettes": [
     {
+      "comment": "0: Background, 1: Foreground, 2: Dim (Background Objects), 3: Accent (Blood, Danger, etc.)",
       "name": "Default",
       "colors": ["#201008", "#ddd0c0", "#706050", "#a05050"],
       "button-accent-color": 3
@@ -12,7 +14,7 @@
     },
     {
       "name": "Purple",
-      "colors": ["#150413", "#d0d0c1", "#332431", "#6e3c3c"],
+      "colors": ["#150413", "#d0d0c1", "#523c4e", "#6e3c3c"],
       "button-accent-color": 3
     },
     {
@@ -41,10 +43,11 @@
       "button-accent-color": 2
     }
   ],
-  "input-mapping": {
-    "--help": {
-      "button-names": "A, B, X, Y, LeftStick, RightStick, LeftShoulder, RightShoulder, DPadUp, DPadDown, DPadLeft, DPadRight",
-      "axes-names": "LeftX, LeftY, RightX, RightY, LeftTrigger, RightTrigger, DPadX, DPadY"
+  "input-mapping": {  
+    "--comment": {
+      "button names": "A, B, X, Y, LeftStick, RightStick, LeftShoulder, RightShoulder, DPadUp, DPadDown, DPadLeft, DPadRight",
+      "axis names": "LeftX, LeftY, RightX, RightY, LeftTrigger, RightTrigger, DPadX, DPadY",
+      "keyboard key names": "Try the regular key names like Enter, LeftShift, etc. Letters are just letters: f.e. 'D' and numbers are D0, D1, D2... "
     },
     "axes": [
       {
@@ -73,11 +76,19 @@
       },
       {
         "id": "CameraX",
-        "axis": "RightX"
+        "axis": "RightX",
+        "keys": {
+          "negative": "A",
+          "positive": "D"
+        }
       },
       {
         "id": "CameraY",
-        "axis": "RightY"
+        "axis": "RightY",
+        "keys": {
+          "negative": "W",
+          "positive": "S"
+        }
       }
     ],
     "buttons": [
@@ -88,19 +99,20 @@
         "alt-key": "Space"
       },
       {
+        "id": "Operate",
+        "button": "B",
+        "key": "Z",
+        "alt-key": "Enter"
+      },
+      {
         "id": "Melee",
         "button": "X",
         "key": "X"
       },
       {
-        "id": "Operate",
-        "button": "B",
-        "key": "V"
-      },
-      {
         "id": "Special",
         "button": "Y",
-        "key": "Z"
+        "key": "V"
       },
       {
         "id": "Walk",

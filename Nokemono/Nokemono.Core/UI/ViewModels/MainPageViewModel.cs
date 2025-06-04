@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Nokemono.Core.Configuration;
 using Nokemono.Core.Game;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
@@ -15,7 +16,7 @@ namespace Nokemono.Core.UI.ViewModels;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
 [SuppressMessage("ReSharper", "HeapView.ClosureAllocation")]
-internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container, ITranslator translator)
+internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppWindowManager windowManager, IIoCContainer container, Config config)
 {
     public SyncCommand StartGameCommand => _startGameCommand ??= new SyncCommand(OnStartGame);
     private SyncCommand _startGameCommand;
@@ -57,6 +58,7 @@ internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppW
                     }
                 });
                 gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
+                gameInstance.Container.Get<INarrationSystem>().SetValue("playerName", config.PlayerName);
             },
             OnLoaded = () => navigation.NavigateTo<GamePageViewModel>(gameInstance.Container.IoCConstruct<GameInterfaces>())
         });

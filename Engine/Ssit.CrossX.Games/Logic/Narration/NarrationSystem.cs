@@ -18,6 +18,8 @@ public class NarrationSystem: INarrationSystem
     
     private readonly Dictionary<string, NarrationObject> _objects = new();
     private readonly Dictionary<string, NarrationDialog> _specialDialogs = new();
+
+    private readonly Dictionary<string, string> _values = new();
     
     public NarrationSystem(IGameDialogs dialogs, IGameState gameState, IActionScheduler actionScheduler, IFilesProvider filesProvider, ITranslator translator, string narrationDir)
     {
@@ -59,7 +61,15 @@ public class NarrationSystem: INarrationSystem
         {
             text = dict.GetValueOrDefault(defaultId, "????");
         }
-        text = text.Replace("{playerName}", "Micah");
+
+        foreach (var vals in _values)
+        {
+            if (text.Contains(vals.Key))
+            {
+                text = text.Replace(vals.Key, _translator[vals.Value].ToString());
+            }
+        }
+        
         return text;
     }
     
@@ -68,7 +78,13 @@ public class NarrationSystem: INarrationSystem
         var dialog = GetDialog(subject) ?? GetSpecialConversation(subject);
         return dialog != null;
     }
-    
+
+    public INarrationSystem SetValue(string key, string value)
+    {
+        _values['{'+key+'}'] = value;
+        return this;
+    }
+
     public async Task StartNarration(string subject)
     {
         var dialog = GetDialog(subject);
@@ -157,7 +173,7 @@ public class NarrationSystem: INarrationSystem
         {
             if (IsDialogValid(dialog))
             {
-                return dialog;
+                return dialog.Entry is not null ? dialog : null;
             }
         }
 

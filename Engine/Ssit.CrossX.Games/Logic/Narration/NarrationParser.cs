@@ -61,10 +61,7 @@ internal static class NarrationParser
 
         var defaultLang = node.Attribute("DefaultLanguage") ?? "en";
         
-        var entry = ParseEntry(node.Nodes[0]);
-        if (entry == null)
-            return null;
-        
+        var entry = ParseEntry(node.Nodes.FirstOrDefault());
         return new NarrationDialog(id, on, off, highlight, defaultLang, entry);
     }
 
@@ -99,7 +96,7 @@ internal static class NarrationParser
     
     private static NarrationEntry ParseEntry(XNode node)
     {
-        if (node.Tag != "Text")
+        if ("Text" != node?.Tag)
             return null;
 
         var text = GetTexts(node);

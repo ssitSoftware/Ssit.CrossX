@@ -50,7 +50,7 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
             Density = 1000
         });
 
-        Body.Friction = 1;
+        Body.Friction = 1.5f;
         Body.Mass = 1000;
         
         PlatformExtension.Attach(Body, 0.25f);

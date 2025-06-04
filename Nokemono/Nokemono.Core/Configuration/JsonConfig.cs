@@ -10,4 +10,7 @@ public class JsonConfig
     
     [JsonProperty("input-mapping")]
     public MappingDesc InputMapping { get; set; }
+
+    [JsonProperty("player-name")]
+    public string PlayerName { get; set; }
 }

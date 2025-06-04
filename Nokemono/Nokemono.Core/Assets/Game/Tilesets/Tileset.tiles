@@ -24,10 +24,10 @@
                 
 (3,3,4,4):      Platform:    Top (0,0)
                 
-(3,7):          Default:    Stair (0,0.5)
-(4,7):          Default:    Stair (0.5,1)
-(5,7):          Default:    Stair (1,0.5)
-(6,7):          Default:    Stair (0.5,0)
+(3,7):          Default:    Bottom (0,0.5)
+(4,7):          Default:    Bottom (0.5,1)
+(5,7):          Default:    Bottom (1,0.5)
+(6,7):          Default:    Bottom (0.5,0)
                 
 (5,9):          Default:    Bottom (1,0)
 (5,22):         Default:    Bottom (1,0)

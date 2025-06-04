@@ -92,7 +92,6 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         private List<Fixture> _fixtureList;
         private JointEdge _jointList;
         private ContactEdge _contactList;
-        private bool _ignoreGravity;
         private bool _ignoreCcd;
         private bool _isDisposed;
 
@@ -572,12 +571,10 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// Gets or sets a value indicating whether this body ignores gravity.
         /// </summary>
         /// <value><c>true</c> if  it ignores gravity; otherwise, <c>false</c>.</value>
-        public bool IgnoreGravity
-        {
-            get => _ignoreGravity;
-            set => _ignoreGravity = value;
-        }
+        public bool IgnoreGravity { get; set; }
 
+        public Vector2? Gravity { get; set; }
+        
         /// <summary>
         /// Get the world position of the center of mass.
         /// </summary>

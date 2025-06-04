@@ -99,7 +99,7 @@ public class GameTemplate: IGameTemplate
         new("Wood Platform", "PLAT|WOOD", RgbaColor.SaddleBrown, RgbaColor.LightGoldenrodYellow),
         new("Metal Platform", "PLAT|METL", RgbaColor.DarkGray, RgbaColor.LightGoldenrodYellow),
         new("Hurt", "HURT", RgbaColor.Red, RgbaColor.OrangeRed),
-        new("Ladder", "LAD|DER", RgbaColor.SandyBrown, RgbaColor.SandyBrown),
+        new("Ladder", "LAD|DER", RgbaColor.SandyBrown, RgbaColor.SandyBrown)
     ];
     
     public int PreviewZoom => 2;

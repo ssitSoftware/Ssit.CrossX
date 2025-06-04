@@ -3,8 +3,8 @@
     
     <Dialog On="metMerchant" Off="merchantWatchOut">
         
-        <Text>  <en>Hey! Watch out on that abyss!</en>
-                <pl>Hej! Uważaj na tamtą przepaść!</pl>
+        <Text>  <en>Hey {playerName}!|Watch out on that abyss!</en>
+                <pl>Hej {playerName}!|Uważaj na tamtą przepaść!</pl>
             
             <Option Set="merchantWatchOut"> <en>...</en> 
             </Option>

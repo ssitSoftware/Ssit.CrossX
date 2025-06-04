@@ -68,7 +68,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
 
     private void OnUpdating(float dt)
     {
-        if (_keyboard.GetKey(Key.D) == ButtonState.JustPressed)
+        if (_keyboard.GetKey(Key.F8) == ButtonState.JustPressed)
         {
             _debugMode = (DebugMode)(((int)_debugMode + 1) % Enum.GetValues(typeof(DebugMode)).Length);
 

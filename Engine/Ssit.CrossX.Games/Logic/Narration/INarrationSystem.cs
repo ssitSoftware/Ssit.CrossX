@@ -9,4 +9,5 @@ public interface INarrationSystem
     Task StartNarration(string subject);
     bool HasRequest(string subject);
     bool HasNarration(string subject);
+    INarrationSystem SetValue(string key, string value);
 }

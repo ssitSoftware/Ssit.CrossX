@@ -14,9 +14,16 @@ public class SteerInAirBehavior(Player player, IInputMappings inputMappings): Be
     {
         base.OnEnterState();
 
+        var sign = player.Body.LinearVelocity.X * inputMappings[player.PlayerIndex].GetAxis(GameControls.Horizontal);
+
         var factor = (int)(2 * MathF.Abs(player.Body.LinearVelocity.X) / GamePhysics.RunSpeed);
+        if (sign > 0)
+        {
+            factor += Math.Min(1, (int)(2 * MathF.Abs(inputMappings[player.PlayerIndex].GetAxis(GameControls.Horizontal))));
+        }
 
         _factor = (factor + 2) / 4f;
+        _factor = MathF.Min(1, _factor);
     }
 
     protected override bool OnFixedUpdate(float dt)

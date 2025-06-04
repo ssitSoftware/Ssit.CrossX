@@ -114,11 +114,12 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 {
                     // Integrate velocities.
 
+                    var bodyGravity = b.Gravity ?? gravity;
                     // FPE: Only apply gravity if the body wants it.
                     if (b.IgnoreGravity)
                         v += h * (b._invMass * b._force);
                     else
-                        v += h * (b.GravityScale * gravity + b._invMass * b._force);
+                        v += h * (b.GravityScale * bodyGravity + b._invMass * b._force);
 
                     w += h * b._invI * b._torque;
 

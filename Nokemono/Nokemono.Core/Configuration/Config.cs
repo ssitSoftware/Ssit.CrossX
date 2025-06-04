@@ -10,7 +10,8 @@ public class Config
 {
     public Palette[] Palettes { get; private set; }
     public MappingDesc InputMapping { get; private set; }
-    
+    public string PlayerName { get; private set; }
+
     public Config()
     {
         var location = Assembly.GetExecutingAssembly().Location;
@@ -27,10 +28,6 @@ public class Config
         {
             Default();
         }
-        catch(DirectoryNotFoundException)
-        {
-            Default();
-        }
     }
 
     private void Fill(JsonConfig data)
@@ -44,10 +41,12 @@ public class Config
         }
 
         InputMapping = data.InputMapping;
+        PlayerName = data.PlayerName;
     }
 
     private void Default()
     {
         Palettes = Palette.DefaultPalettes;
+        PlayerName = "Lukas";
     }
 }

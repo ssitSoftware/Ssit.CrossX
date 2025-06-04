@@ -43,6 +43,7 @@ public enum Key
     D9 = 38,
     D0 = 39,
     Return = 40,
+    Enter = Return,
     Escape = 41,
     Backspace = 42,
     Tab = 43,

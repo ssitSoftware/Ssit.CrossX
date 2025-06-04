@@ -1,6 +1,3 @@
-using Nokemono.Core.Configuration;
-using Ssit.CrossX.Input;
-
 namespace Nokemono.Core;
 
 internal static class GameControls
@@ -12,31 +9,4 @@ internal static class GameControls
     public const string Special = nameof(Special);
     public const string Operate = nameof(Operate);
     public const string Walk = nameof(Walk);
-    
-    public const string CameraX = nameof(CameraX);
-    public const string CameraY = nameof(CameraY);
-
-    public static void RegisterGameControls(IInputMappings mappings)
-    {
-        mappings.Mapper(0)
-            .Clear()
-            .MapButton(Jump, Key.C)
-            .MapButton(Melee, Key.X)
-            .MapButton(Special, Key.Z)
-            .MapButton(Operate, Key.V)
-            .MapButton(Walk, Key.LeftShift, Key.RightShift)
-            .MapButton(Jump, GameControllerButton.A)
-            .MapButton(Melee, GameControllerButton.X)
-            .MapButton(Special, GameControllerButton.Y)
-            .MapButton(Operate, GameControllerButton.B)
-            .MapButton(Walk, GameControllerButton.RightShoulder)
-            .MapAxis(Horizontal, GameControllerButton.DPadLeft, GameControllerButton.DPadRight)
-            .MapAxis(Vertical, GameControllerButton.DPadUp, GameControllerButton.DPadDown)
-            .MapAxis(Horizontal, GameControllerAxis.LeftX)
-            .MapAxis(Vertical, GameControllerAxis.LeftY)
-            .MapAxis(Horizontal, Key.Left, Key.Right)
-            .MapAxis(Vertical, Key.Up, Key.Down)
-            .MapAxis(CameraX, GameControllerAxis.RightX)
-            .MapAxis(CameraY, GameControllerAxis.RightY);
-    }
 }

@@ -24,9 +24,10 @@ public static class GamePhysics
     }
     
     public const float GravityAcceleration = 56;
-    public const float JumpVelocity = 11f;
+    public const float JumpVelocity = 10f;
+    public const float JumpVelocityInc = 0.75f;
     public const float JumpHoldAccel = 32;
-    public const float JumpHoldAccelInc = 2;
+    public const float JumpHoldAccelInc = 1.25f;
     public const float RunSpeed = 12;
     public const float MinRunSpeed = 4;
     public const float RunAccelerationSpeed = 10;
@@ -69,7 +70,7 @@ public static class GamePhysics
 
         if (body.IsStatic)
         {
-            body.Friction = 1;
+            body.Friction = 1.5f;
             foreach (var fix in body.FixtureList)
             {
                 fix.Shape.Density = 1000;

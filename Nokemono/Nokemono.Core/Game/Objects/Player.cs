@@ -15,6 +15,7 @@ using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Extensions;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.Input;
 
 namespace Nokemono.Core.Game.Objects;
 
@@ -23,14 +24,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     private readonly ICamera _camera;
     private readonly IGameInstance _gameInstance;
     private readonly IActionScheduler _actionScheduler;
+    private readonly IKeyboard _keyboard;
 
     public class PlayerStats
     {
         // Player statistics
-        [EditorInt(0, 3)] public int Jump { get; set; }
-        [EditorInt(-1, 3)] public int WallClimb { get; set; } = -1;
-        [EditorInt(-1, 3)] public int Dash { get; set; } = -1;
-        [EditorInt(-1, 3)] public int MagneticJump { get; set; } = -1;
+        public int Jump { get; set; }
+        public int WallClimb { get; set; } = -1;
+        public int Dash { get; set; } = -1;
+        public int MagneticJump { get; set; } = -1;
     }
 
     public PlayerStats Stats { get; } = new();
@@ -63,12 +65,14 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     
     public INpcCharacter NpcCharacterInRange { get; set; }
 
-    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, ObjectCreationParameters<Parameters> parameters)
+    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
+        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard)
         : base(services, parameters)
     {
         _camera = camera;
         _gameInstance = gameInstance;
         _actionScheduler = actionScheduler;
+        _keyboard = keyboard;
         InitializeSprite("assets:/Game/Objects/SwordMaster");
         
         SoundContainer = services.Container.IoCConstruct<ContextSoundContainer>(new ContextSoundContainer.Parameters
@@ -100,8 +104,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         Body.Mass = 80;
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
-        Stats.Jump = 3;
-
+        
+        Stats.Jump = 0;
         InitializeStates(); 
     }
 
@@ -165,7 +169,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             Body.LinearVelocity -= new Vector2(0, GamePhysics.GravityAcceleration * dt);
             Body.Position += new Vector2(dir * offset, 0);
             
-            if (MathF.Abs(Body.Position.X - _walkToPositionX.Value) < 0.1f)
+            if (MathF.Abs(Body.Position.X - _walkToPositionX.Value) < 0.025f)
             {
                 if (!_walkToTaskCompletionSource.Task.IsCompleted)
                 {
@@ -314,6 +318,21 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _walkToTaskCompletionSource = null;
     }
 
+    protected override void OnUpdate(float dt)
+    {
+        base.OnUpdate(dt);
+
+        if (_keyboard.GetKey(Key.Minus) == ButtonState.JustPressed)
+        {
+            Stats.Jump = Math.Max(0, Stats.Jump - 1);
+        }
+        
+        if (_keyboard.GetKey(Key.Equals) == ButtonState.JustPressed)
+        {
+            Stats.Jump = Math.Min(4, Stats.Jump + 1);
+        }
+    }
+
     bool ILogicOperator.TalkToNpc(INpcCharacter npc, string conversationId)
     {
         if (!IsOnGround)
@@ -351,6 +370,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         
         await npc.StartConversation(Body.Position.X, conversationId);
 
+        var tcs = new TaskCompletionSource();
+        _camera.SetTemporaryTarget(Body, new Vector2(0, -2f), 5, () =>
+        {
+            tcs.SetResult();
+        }, TimeSpan.Zero);
+
+        await Task.Delay(50);
+        await Task.WhenAny(tcs.Task, Task.Delay(200));
+        
         _actionScheduler.Schedule(() =>
         {
             SetState("Idle");

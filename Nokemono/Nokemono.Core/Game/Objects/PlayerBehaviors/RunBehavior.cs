@@ -35,11 +35,12 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
             player.FaceLeft = move < 0;
 
             var newVelocityX = CalculateRunVelocity(player.Body.LinearVelocity.X, move, dt);
+                
             player.Body.LinearVelocity = player.Body.LinearVelocity with {X = newVelocityX};
             
             if (MathF.Abs(player.Body.LinearVelocity.X) < GamePhysics.WalkSpeed && player.IsOnStaticGround)
             {
-                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -4f };
+                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -4f }; 
             }
             
             return true;
@@ -54,12 +55,14 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
     {
         var sign = MathF.Sign(move);
         var amplitude = linearVelocityX * sign;
+
+        var momentumVelocity = sign * player.MomentumOffset.X / dt;
         
         if (amplitude < GamePhysics.RunAccelerationSpeed)
         {
             var factor = (GamePhysics.RunSlowTime - _runSlow) / GamePhysics.RunSlowTime;
             amplitude += dt * GamePhysics.RunAcceleration * factor;
-            amplitude = MathF.Max( GamePhysics.MinRunSpeed, amplitude);
+            amplitude = MathF.Max(GamePhysics.MinRunSpeed + momentumVelocity, amplitude);
         }
         else
         {

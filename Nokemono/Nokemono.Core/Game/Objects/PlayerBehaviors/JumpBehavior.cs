@@ -33,7 +33,9 @@ public class JumpBehavior(Player player, IInputMappings inputMappings) : Behavio
                 currentX = MathF.Sign(currentX) * maxAmplitude;
             }
             
-            player.Body.LinearVelocity = new Vector2(currentX, currentY - GamePhysics.JumpVelocity);
+            var velocity = GamePhysics.JumpVelocity + GamePhysics.JumpVelocityInc * player.Stats.Jump;
+            
+            player.Body.LinearVelocity = new Vector2(currentX, currentY - velocity);
             player.Body.Position -= new Vector2(0, 0.11f); 
             
             player.MomentumOffset = Vector2.Zero;

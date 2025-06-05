@@ -33,7 +33,11 @@ public class StoryTrigger: IDisposable, IUpdatable
     {
         _narrationSystem = narrationSystem;
         _conversationId = parameters.Parameters.ConversationId;
-        parameters.LinkMap.RequestLink<INpcCharacter>(parameters.Parameters.Npc, t => _npc = t);
+
+        if (parameters.Parameters.Npc != 0)
+        {
+            parameters.LinkMap.RequestLink<INpcCharacter>(parameters.Parameters.Npc, t => _npc = t);
+        }
 
         _body = new Body(services.World);
         _body.BodyType = BodyType.Static;

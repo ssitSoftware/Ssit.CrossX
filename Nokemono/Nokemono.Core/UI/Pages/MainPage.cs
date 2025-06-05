@@ -1,6 +1,7 @@
 using Nokemono.Core.UI.Pages.Internal;
 using Nokemono.Core.UI.ViewModels;
 using Nokemono.Core.UI.Views;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
@@ -32,6 +33,19 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
                   Scaling = ImageScalingMode.None,
                   Width = Length.Auto,
                   Height = Length.Auto
+                },
+                new Label
+                {
+                    Text = Translator["THE LOST BARRELS"],
+                    HorizontalAlign = Align.End,
+                    TextAlign = ContentAlign.Right,
+                    VerticalAlign = Align.Start,
+                    AnchorY = 70,
+                    AnchorX = "84%",
+                    Font = ("Default", 12),
+                    TextColor = Palette.Foreground,
+                    TextOutlineColor = Palette.Background,
+                    Scaling = TextScaling.Pixel
                 },
                 menuView,
                 new Label

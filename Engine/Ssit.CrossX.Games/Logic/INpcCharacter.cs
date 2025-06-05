@@ -1,4 +1,3 @@
-using System.Numerics;
 using System.Threading.Tasks;
 using Ssit.CrossX.Games.Physics.Dynamics;
 

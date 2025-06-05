@@ -9,6 +9,7 @@ using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Map;
+using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
@@ -62,17 +63,24 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     private float? _walkToPositionX;
     private TaskCompletionSource _walkToTaskCompletionSource;
-    
+    private INarrationSystem _narrationSystem;
+    private readonly IGameState _gameState;
+
     public INpcCharacter NpcCharacterInRange { get; set; }
 
     public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
-        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard)
+        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState)
         : base(services, parameters)
     {
         _camera = camera;
         _gameInstance = gameInstance;
         _actionScheduler = actionScheduler;
         _keyboard = keyboard;
+        _narrationSystem = narrationSystem;
+        _gameState = gameState;
+
+        _gameState.StateUpdated += OnGameStateUpdated;
+        
         InitializeSprite("assets:/Game/Objects/SwordMaster");
         
         SoundContainer = services.Container.IoCConstruct<ContextSoundContainer>(new ContextSoundContainer.Parameters
@@ -106,7 +114,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
         
         Stats.Jump = 0;
-        InitializeStates(); 
+        InitializeStates();
+    }
+
+    private void OnGameStateUpdated()
+    {
+        if (_narrationSystem.HasNarration("Player"))
+        {
+            TalkToSelf("Player");
+        }
     }
 
     private void InitializeStates()
@@ -300,6 +316,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     protected override void OnDispose(bool disposing)
     {
+        _gameState.StateUpdated -= OnGameStateUpdated;
         base.OnDispose(disposing);
         SoundContainer.Dispose();
     }
@@ -338,8 +355,39 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         if (!IsOnGround)
             return false;
         
+        if (npc is null)
+        {
+            TalkToSelf(conversationId);
+        }
+        
         TalkToNpc(npc, conversationId);
         return true;
+    }
+
+    private async void TalkToSelf(string conversationId)
+    {
+        Body.LinearVelocity = Vector2.Zero;
+        _camera.SetTemporaryTarget(Body, new Vector2(0,-4), 4, null, TimeSpan.FromDays(10));
+        
+        SetState("Talking");
+        
+        await _narrationSystem.StartNarration(conversationId);
+
+        var tcs2 = new TaskCompletionSource();
+        _actionScheduler.Schedule(() =>
+        {
+            _camera.RemoveTemporaryTarget();
+            tcs2.SetResult();
+        });
+        
+        await tcs2.Task;
+        await Task.Delay(200);
+        
+        _actionScheduler.Schedule(() =>
+        { 
+            SetState("Idle");
+            OnGameStateUpdated();
+        });
     }
 
     public async void TalkToNpc(INpcCharacter npc, string conversationId = null)

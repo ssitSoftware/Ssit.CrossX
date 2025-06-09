@@ -32,7 +32,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
     /// <summary>
     /// This is an internal class.
     /// </summary>
-    public class Island
+    internal class Island
     {
         private ContactManager _contactManager;
         private ContactSolver _contactSolver = new();

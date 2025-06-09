@@ -24,7 +24,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
     /// <summary>
     /// This is an internal structure.
     /// </summary>
-    public struct TimeStep
+    internal struct TimeStep
     {
         /// <summary>
         /// Time step (Delta time)
@@ -43,21 +43,21 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
     }
 
     /// This is an internal structure.
-    public struct Position
+    internal struct Position
     {
         public Vector2 c;
         public float a;
     }
 
     /// This is an internal structure.
-    public struct Velocity
+    internal struct Velocity
     {
         public Vector2 v;
         public float w;
     }
 
     /// Solver Data
-    public struct SolverData
+    internal struct SolverData
     {
         public TimeStep step;
         public Position[] positions;

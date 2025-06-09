@@ -80,7 +80,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics.Contacts
         }
     }
 
-    public class ContactSolver
+    internal class ContactSolver
     {
         public TimeStep _step;
         public Position[] _positions;

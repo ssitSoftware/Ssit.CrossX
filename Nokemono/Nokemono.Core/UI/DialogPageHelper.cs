@@ -1,4 +1,3 @@
-using Nokemono.Core.Game;
 using Nokemono.Core.UI.Styles;
 using Nokemono.Core.UI.Views;
 using Ssit.CrossX.Games.Logic;

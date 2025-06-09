@@ -1121,7 +1121,7 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
         /// </summary>
         public bool Enabled { get; set; }
 
-        public Island Island { get; private set; }
+        internal Island Island { get; private set; }
 
         /// <summary>
         /// Add a rigid body.

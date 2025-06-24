@@ -91,7 +91,6 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
             }, TimeSpan.FromDays(10));
 
             FaceLeft = position < Body.Position.X;
-            _emojiInstance.SetSequence("Talking");
             
             if (conversationId is null && !tcs.Task.IsCompleted)
             {
@@ -104,6 +103,8 @@ public abstract class NpcCharacter : SpriteGameObject, INpcCharacter
             await Task.Delay(50);
         }
         await tcs.Task;
+        
+        _emojiInstance.SetSequence("Talking");
         
         await _narrationSystem.StartNarration(conversationId ?? NarrationId);
 

@@ -64,17 +64,7 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
         var moveY = inputMappings[0].GetAxis("CameraY");
 
         var dir = new Vector2(moveX, moveY);
-        _cameraMove = dir; 
-        // var factor = MathF.Min(1, dt * MathF.Max(0, 1- dir.Length()) * 10);
-        //
-        // _cameraMove = (1-factor) * _cameraMove + Vector2.Zero * factor;
-        // _cameraMove += dir * dt * 6;
-        //
-        // var len = MathF.Min(_cameraMove.Length(), 1);
-        // if (len > 0)
-        // {
-        //     _cameraMove = Vector2.Normalize(_cameraMove) * len;
-        // }
+        _cameraMove = dir;
 
         var target = Body.Position + Offset;
 

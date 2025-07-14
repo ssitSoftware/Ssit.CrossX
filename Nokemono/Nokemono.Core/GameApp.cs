@@ -84,7 +84,7 @@ public class GameApp: UiPixelApp
             case 0:
                 _hostParameters.GlowParameters = new PixelAppHost.GlowParameters
                 {
-                    SelfGlowFactor = 0.2f,
+                    SelfGlowFactor = 0.4f,
                     EnableGameGlow = false,
                     Blur = Blurs.Gaussian3X3,
                     BlurDivider = Blurs.Gaussian3X3Divider
@@ -95,7 +95,7 @@ public class GameApp: UiPixelApp
             
             case 1:
                 SetBasicCrt();
-                _hostParameters.GlowParameters.SelfGlowFactor = 0.6f;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
                 ApplyHostParameters();
                 break;
             
@@ -104,13 +104,14 @@ public class GameApp: UiPixelApp
 
                 var scale = 1;
                 
-                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.5f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.75f, 0.0f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f) * scale;
-                _hostParameters.GlowParameters.SelfGlowFactor = 0.4f;
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.25f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.25f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.25f) * scale;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
                 
-                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.3125f, 0.0f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.3215f, -0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, -0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
                 _hostParameters.CrtParameters.Interline = 0.35f;
@@ -125,7 +126,7 @@ public class GameApp: UiPixelApp
         {
             SelfGlowFactor = 0.35f,
             EnableGameGlow = false,
-            Blur = Blurs.OptimizedGaussian5X5,
+            Blur = Blurs.Gaussian5X5,
             BlurDivider = Blurs.Gaussian5X5Divider
         };
         _hostParameters.CrtParameters = new PixelAppHost.CrtParameters

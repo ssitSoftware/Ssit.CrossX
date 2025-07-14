@@ -24,21 +24,24 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     private bool _isOpen;
     private Fixture _staticFixture;
 
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, System.Drawing.SizeF size, float topHandleHeight)
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, Vector2 offset, SizeF size, float topHandleHeight = 0)
     {
         BoundsRect = new RectangleF(-size.Width, -size.Height, size.Width * 2, size.Height * 2);
         BoundsRect = BoundsRect.Inflate(1, 1);
         
-        Body.CreateFixture(new EdgeShape(new Vector2(-size.Width / 2, 0), new Vector2(-size.Width / 2, -size.Height)));
-        Body.CreateFixture(new EdgeShape(new Vector2(size.Width, 0), new Vector2(size.Width, -size.Height)));
-        
-        _staticFixture = Body.CreateFixture(new ChainShape(new Vertices([
-            new Vector2(-size.Width / 2, -size.Height), 
-            new Vector2(size.Width, -size.Height),
-            new Vector2(size.Width, -size.Height + topHandleHeight),
-            new Vector2(-size.Width / 2, -size.Height + topHandleHeight),
-        ]), true));
-        
+        Body.CreateFixture(new EdgeShape(new Vector2(-size.Width / 2, 0) + offset, new Vector2(-size.Width / 2, -size.Height) + offset));
+        Body.CreateFixture(new EdgeShape(new Vector2(size.Width, 0) + offset, new Vector2(size.Width, -size.Height) + offset));
+
+        if (topHandleHeight > 0)
+        {
+            _staticFixture = Body.CreateFixture(new ChainShape(new Vertices([
+                new Vector2(-size.Width / 2, -size.Height) + offset,
+                new Vector2(size.Width, -size.Height) + offset,
+                new Vector2(size.Width, -size.Height + topHandleHeight) + offset,
+                new Vector2(-size.Width / 2, -size.Height + topHandleHeight) + offset,
+            ]), true));
+        }
+
         Body.BodyType = BodyType.Static;
         
         AddState("Opening", null);
@@ -53,7 +56,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         parameters.LinkMap.RequestLink<ISwitch>(parameters.Parameters.Switch, s =>
         {
             _switch = s;
-            _isOpen = _switch.IsOn ^ _inverse;
+            _isOpen = (_switch?.IsOn ?? false) ^ _inverse;
             _inProgress = false;
             UpdateState();
         });
@@ -62,11 +65,15 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     private void UpdateState()
     {
         _inProgress = false;
-        
+
         SetState(_isOpen ? "Open" : "Closed");
-        
+
         Body.IsSensor = _isOpen;
-        _staticFixture.IsSensor = false;
+
+        if (_staticFixture != null)
+        {
+            _staticFixture.IsSensor = false;
+        }
     }
     
     protected override void OnFixedUpdate(float dt)

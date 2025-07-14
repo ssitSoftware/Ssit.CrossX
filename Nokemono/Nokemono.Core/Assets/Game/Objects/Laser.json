@@ -1,0 +1,74 @@
+{ "frames": [
+   {
+    "filename": "Closed|0",
+    "frame": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Opening|0",
+    "frame": { "x": 17, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Opening|1",
+    "frame": { "x": 34, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Opening|2",
+    "frame": { "x": 51, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Closed|4",
+    "frame": { "x": 68, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Closed|5",
+    "frame": { "x": 85, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 33
+   },
+   {
+    "filename": "Open|0",
+    "frame": { "x": 102, "y": 0, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 16, "h": 48 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "Laser.png",
+  "format": "RGBA8888",
+  "size": { "w": 118, "h": 48 },
+  "scale": "1"
+ }
+}

@@ -58,7 +58,7 @@ public class GameTemplate: IGameTemplate
         // new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
         new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
         new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
-        // new("Devices/Metal Door", typeof(MechanicalDoorImpl), "assets:/Game/Objects/Door", "Closed", typeof(MechanicalDoor.Parameters)),
+        new("Devices/Laser Door", typeof(LaserDoorImpl), "assets:/Game/Objects/Laser", "Closed", typeof(MechanicalDoor.Parameters)),
         // new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
         // new("Elements/Power Plant", typeof(PowerPlant), "assets:/Game/Objects/PowerPlant", "On"),
         new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),

@@ -1,8 +1,10 @@
 using Nokemono.Core.UI.Pages.Internal;
 using Nokemono.Core.UI.ViewModels;
 using Nokemono.Core.UI.Views;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
@@ -10,6 +12,12 @@ namespace Nokemono.Core.UI.Pages;
 
 internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
 {
+    protected override void OnLoad(IInputContext inputContext)
+    {
+        base.OnLoad(inputContext);
+        Services.Get<IMusicPlayer>().ChangePlaylist("Menu");
+    }
+    
     protected override View CreateView()
     {
         var menuView = CreateMenuItems<LabelButtonEx>("MainMenu",

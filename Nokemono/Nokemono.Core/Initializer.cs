@@ -62,9 +62,14 @@ public static class Initializer
             
         musicPlayer.RegisterPlaylist("Menu", 
             new MusicPlaylist()
-                .Add("bundle:/Music/Menu.ogg")
+                .Add("bundle:/Music/Desolate.ogg")
         );
-        musicPlayer.ChangePlaylist( startPlaylist);
+        
+        musicPlayer.RegisterPlaylist("Game", 
+            new MusicPlaylist()
+                .Add("bundle:/Music/Spiral.ogg")
+        );
+        musicPlayer.ChangePlaylist(startPlaylist);
         return container;
     }
 

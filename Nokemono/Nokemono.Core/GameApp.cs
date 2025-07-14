@@ -70,8 +70,8 @@ public class GameApp: UiPixelApp
         container
             .InitializeInputMapping()
             .InitializeFonts()
-            .InitializeGame();
-            //.InitializeMusic("Menu");
+            .InitializeGame()
+            .InitializeMusic("Menu");
         
         base.OnInitialize(container);
         UiApp.Initialize<MainPageViewModel>();
@@ -109,8 +109,8 @@ public class GameApp: UiPixelApp
                 _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.75f) * scale;
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.4f;
                 
-                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.375f, 0.0f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.375f, -0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.3125f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.3215f, -0.0f) * scale;
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
                 _hostParameters.CrtParameters.Interline = 0.35f;

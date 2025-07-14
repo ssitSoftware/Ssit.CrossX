@@ -75,6 +75,6 @@ public readonly struct ButtonState : IEquatable<ButtonState>
 
     public static bool operator !=(ButtonState b1, ButtonState b2)
     {
-        return !(b1 == b2);
+        return b1.IsChanged != b2.IsChanged || b1.IsDown != b2.IsDown;
     }
 }

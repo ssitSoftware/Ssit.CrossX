@@ -93,6 +93,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 5);
         
         Sprite.SetSequence("Idle");
+
+        Body.SetTransform(parameters.Position - new Vector2(0, 0.25f), 0);
         Body.IsBullet = true;
         Body.FixedRotation = true;
         Body.Friction = 1f;

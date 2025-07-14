@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Nokemono.Core.Game;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Logic;
@@ -48,7 +49,7 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
     
     public GamePageViewModel(INavigation navigation, IEventSource eventSource, 
         IRenderer2 renderer, IGameInterfaces gameInterfaces, IKeyboard keyboard,
-        IAppHost appHost)
+        IAppHost appHost, IMusicPlayer musicPlayer)
     {
         _eventSource = eventSource;
         _renderer = renderer;
@@ -60,6 +61,8 @@ public class GamePageViewModel: IPageCommandsSource, IDisposable
         
         _eventSource.Updating += OnUpdating;
         _eventSource.RenderFinished += OnRenderFinished;
+        
+        musicPlayer.ChangePlaylist("Game");
     }
 
     private void OnRenderFinished()

@@ -104,9 +104,9 @@ public class GameApp: UiPixelApp
 
                 var scale = 1;
                 
-                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.25f, -0.25f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.25f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.25f) * scale;
+                 _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.5f, 0.0f) * scale;
+                 _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
+                 _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
                 
                 _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, -0.0f) * scale;
@@ -114,7 +114,7 @@ public class GameApp: UiPixelApp
                 _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
-                _hostParameters.CrtParameters.Interline = 0.35f;
+                _hostParameters.CrtParameters.Interline = 0.45f;
                 ApplyHostParameters();
                 break;
         }

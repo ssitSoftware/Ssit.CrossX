@@ -28,6 +28,11 @@
       "button-accent-color": 2
     },
     {
+      "name": "Blue",
+      "colors": ["#181030", "#8080ff", "#606090", "#5010a0"],
+      "button-accent-color": 3
+    },
+    {
       "name": "Game Boy",
       "colors": ["#081820", "#9cad91", "#346856", "#88c070"],
       "button-accent-color": 2

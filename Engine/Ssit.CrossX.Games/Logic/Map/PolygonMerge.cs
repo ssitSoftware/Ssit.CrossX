@@ -28,8 +28,8 @@ public static class PolygonMerge
 
         public Vector2? GetNextPoint(Vector2 point)
         {
-            if(VectorEquals(P0, point)) return P1;
-            if(VectorEquals(P1, point)) return P0;
+            if (VectorEquals(P0, point)) return P1;
+            if (VectorEquals(P1, point)) return P0;
             return null;
         }
     }

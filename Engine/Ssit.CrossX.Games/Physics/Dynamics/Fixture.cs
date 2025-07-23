@@ -343,6 +343,11 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
             }
         }
 
+        public bool CheckCollision(ref Aabb aabb)
+        {
+            return Shape.CheckCollision(ref aabb, ref Body._xf);
+        }
+
         /// <summary>
         /// Determines whether collisions are ignored between this fixture and the provided fixture.
         /// </summary>

@@ -40,7 +40,7 @@ public class RunBehavior(Player player, IInputMappings inputMappings): Behavior
             
             if (MathF.Abs(player.Body.LinearVelocity.X) < GamePhysics.WalkSpeed && player.IsOnStaticGround)
             {
-                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -4f }; 
+                player.Body.LinearVelocity = player.Body.LinearVelocity with { Y = -4f };
             }
             
             return true;

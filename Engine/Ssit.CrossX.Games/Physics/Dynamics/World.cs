@@ -1345,6 +1345,23 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
                 return true;
             }, ref aabb);
         }
+        
+        public void QueryCollisionAabbs(List<Fixture> fixtures, ref Aabb aabb, Body excludeBody)
+        {
+            QueryAabbs(fixtures, ref aabb);
+
+            for (var idx = 0; idx < fixtures.Count;)
+            {
+                var fixture = fixtures[idx];
+                if (fixture.IsSensor || fixture.Body == excludeBody || false == fixture.CheckCollision(ref aabb))
+                {
+                    fixtures.RemoveAt(idx);
+                    continue;
+                }
+                
+                ++idx;
+            }
+        }
 
         /// <summary>
         /// Ray-cast the world for all fixtures in the path of the ray. Your callback

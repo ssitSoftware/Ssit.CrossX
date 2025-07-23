@@ -132,7 +132,7 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             aabb.UpperBound = new Vector2(p.X + Radius, p.Y + Radius);
         }
 
-        protected override sealed void ComputeProperties()
+        protected sealed override void ComputeProperties()
         {
             float area = Settings.Pi * _2radius;
             MassData.Area = area;

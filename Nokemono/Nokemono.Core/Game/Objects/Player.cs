@@ -14,6 +14,7 @@ using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
 using Ssit.CrossX.Games.Physics.Extensions;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
@@ -41,7 +42,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     void IMomentumReceiver.OnMomentumPassed(Vector2 offset) => MomentumOffset = offset;
 
     public int PlayerIndex { get; } = 0;
-
+    
     public class Parameters
     {
         [EditorFloat(10, 20)] public float Speed { get; set; }
@@ -53,7 +54,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public bool IsOnGround { get; set; }
     public bool IsOnPlatform { get; private set; }
     public int GroundMaterial { get; private set; }
-
+    
     public Vector2 MomentumOffset { get; set; }
 
     private readonly List<Fixture> _queryList = new();
@@ -114,7 +115,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         Body.Mass = 80;
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
-        
         Stats.Jump = 0;
         InitializeStates();
     }
@@ -210,20 +210,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var rightX = FaceLeft ? 0.3f : 0.15f;
 
         var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.05f), Body.Position + new Vector2(rightX, 0.2f));
-        Services.World.QueryAabbs(_queryList, ref aabb);
+        Services.World.QueryCollisionAabbs(_queryList, ref aabb, Body);
 
         foreach (var fixture in _queryList)
         {
-            if (fixture.IsSensor)
-                continue;
-            
-            if (fixture.Body == Body)
-                continue;
-
             IsOnGround = true;
+            
             IsOnPlatform &=
                 GamePhysics.GetMaterialKind(fixture.Body.MaterialIndex) == GamePhysics.MaterialKind.Platform;
-
+            
             if (!fixture.Body.IsStatic)
             {
                 IsOnStaticGround = false;
@@ -231,7 +226,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
             GroundMaterial = Math.Max(fixture.Body.MaterialIndex, GroundMaterial);
         }
-
+        
         IsOnStaticGround &= IsOnGround;
         IsOnPlatform &= IsOnGround;
         _queryList.Clear();

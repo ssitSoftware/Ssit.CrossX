@@ -19,6 +19,8 @@ public struct Aabb
     /// </summary>
     public Vector2 UpperBound;
 
+    
+    
     public Aabb(Vector2 min, Vector2 max)
         : this(ref min, ref max)
     {

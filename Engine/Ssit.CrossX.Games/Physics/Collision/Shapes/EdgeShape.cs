@@ -197,6 +197,16 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             }
             return true;
         }
+        
+        public override bool CheckCollision(ref Aabb aabb, ref Transform transform)
+        {
+            var rect = (RectangleF)aabb;
+            
+            Vector2 v1 = MathUtils.Mul(ref transform, _vertex1);
+            Vector2 v2 = MathUtils.Mul(ref transform, _vertex2);
+
+            return MathUtils.LineIntersectsRect(v1, v2, rect);
+        }
 
         public override void ComputeAABB(out Aabb aabb, ref Transform transform, int childIndex)
         {

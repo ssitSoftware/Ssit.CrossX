@@ -251,5 +251,19 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
         /// Used for the buoyancy controller
         /// </summary>
         public abstract float ComputeSubmergedArea(ref Vector2 normal, float offset, ref Transform xf, out Vector2 sc);
+
+        public virtual bool CheckCollision(ref Aabb aabb, ref Transform transform)
+        {
+            for (var idx = 0; idx < ChildCount; ++idx)
+            {
+                ComputeAABB(out var myAabb, ref transform, 0);
+                if (aabb.Intersects(ref myAabb))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

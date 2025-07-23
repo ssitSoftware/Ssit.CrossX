@@ -118,6 +118,12 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             }
         }
 
+        public override bool CheckCollision(ref Aabb aabb, ref Transform transform)
+        {
+            
+            return base.CheckCollision(ref aabb, ref transform);
+        }
+
         public Vertices Normals { get { return _normals; } }
 
         public override int ChildCount { get { return 1; } }

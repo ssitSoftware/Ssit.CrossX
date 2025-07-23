@@ -92,6 +92,26 @@ namespace Ssit.CrossX.Games.Physics.Collision.Shapes
             get { return Vertices.Count - 1; }
         }
 
+        public override bool CheckCollision(ref Aabb aabb, ref Transform transform)
+        {
+            var rect = (RectangleF)aabb;
+            for (var idx = 0; idx < Vertices.Count; idx++)
+            {
+                var v1 = Vertices[idx];
+                var v2 = Vertices[(idx + 1) % Vertices.Count];
+                
+                v1 = MathUtils.Mul(ref transform, v1);
+                v2 = MathUtils.Mul(ref transform, v2);
+
+                if (MathUtils.LineIntersectsRect(v1, v2, rect))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Establish connectivity to a vertex that precedes the first vertex.
         /// Don't call this for loops.

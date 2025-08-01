@@ -80,7 +80,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                         if (_viewHandler.ScreenBounds.Contains(pointer.Position))
                         {
                             _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
-                            Execute(TimeSpan.Zero, null);
+                            Execute(TimeSpan.Zero, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
                             _currentPointerId = null;
                             return true;
                         }

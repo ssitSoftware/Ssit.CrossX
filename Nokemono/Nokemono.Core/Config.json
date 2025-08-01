@@ -4,7 +4,7 @@
     {
       "comment": "0: Background, 1: Foreground, 2: Dim (Background Objects), 3: Accent (Blood, Danger, etc.)",
       "name": "Default",
-      "colors": ["#201008", "#ddd0c0", "#706050", "#a05050"],
+      "colors": ["#081004", "#ddeec0", "#506050", "#a03030"],
       "button-accent-color": 3
     },
     {

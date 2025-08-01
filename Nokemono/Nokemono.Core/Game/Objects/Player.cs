@@ -206,8 +206,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         IsOnStaticGround = true;
         GroundMaterial = 0;
 
-        var leftX = FaceLeft ? 0.15f : 0.3f;
-        var rightX = FaceLeft ? 0.3f : 0.15f;
+        var leftX = FaceLeft ? 0.2f : 0.3f;
+        var rightX = FaceLeft ? 0.3f : 0.2f;
 
         var aabb = new Aabb(Body.Position - new Vector2(leftX, 0.05f), Body.Position + new Vector2(rightX, 0.2f));
         Services.World.QueryCollisionAabbs(_queryList, ref aabb, Body);

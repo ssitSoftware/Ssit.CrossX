@@ -14,14 +14,14 @@ using Ssit.IoC;
 
 namespace Nokemono.Core;
 
-public class GameApp: UiPixelApp
+public class GameApp : UiPixelApp
 {
     protected override RgbaColor BackgroundColor => _paletteSource.Palette[1];
 
     private IPaletteSource _paletteSource;
     private readonly IGameTemplate _gameTemplate = new GameTemplate();
     private readonly PixelAppHost.Parameters _hostParameters;
-    
+
     public GameApp()
     {
         _hostParameters
@@ -33,11 +33,11 @@ public class GameApp: UiPixelApp
                 Mode = PixelAppHost.Mode.Height,
             };
     }
-    
+
     protected override void OnInitializeServices(IIoCContainerBuilder builder)
     {
         base.OnInitializeServices(builder);
-        
+
         var filesProvider = _gameTemplate.AssetsProvider;
 
         builder
@@ -46,7 +46,7 @@ public class GameApp: UiPixelApp
             .WithInstance<IFileStorage>(new FilesStorage("Gunslinger"))
             .WithInstance(_gameTemplate)
             .WithSingleton<Config, Config>();
-        
+
         builder.WithIndexedRenderer(RgbaColor.Transparent, 0x000000, 0xffffff, 0x606060, 0xff0000, 0xff00ff);
     }
 
@@ -56,7 +56,7 @@ public class GameApp: UiPixelApp
 
         var settings = container.Get<ISettingsProvider>().Settings;
         var scheduler = container.Get<IActionScheduler>();
-        
+
         SetCrtMode(settings.CrtMode);
         settings.PropertyChanged += (sender, args) =>
         {
@@ -72,7 +72,7 @@ public class GameApp: UiPixelApp
             .InitializeFonts()
             .InitializeGame()
             .InitializeMusic("Menu");
-        
+
         base.OnInitialize(container);
         UiApp.Initialize<MainPageViewModel>();
     }
@@ -92,30 +92,58 @@ public class GameApp: UiPixelApp
                 _hostParameters.CrtParameters = null;
                 ApplyHostParameters();
                 break;
-            
+
             case 1:
                 SetBasicCrt();
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
+                _hostParameters.CrtParameters.Distortion = 0.985f;
                 ApplyHostParameters();
                 break;
-            
-            case 2:
-                SetBasicCrt();
 
-                var scale = 1;
-                
-                 _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.5f, 0.0f) * scale;
-                 _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
-                 _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
+            case 2:
+            {
+                SetBasicCrt();
+                var scale = 0.75f;
+
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.5f, 0.0f) * scale;
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
-                
-                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, -0.0f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
+
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.5f, 0.0f) * scale;
                 _hostParameters.CrtParameters.LampGlow = 0.3f;
                 _hostParameters.CrtParameters.LampDownSize = 6;
                 _hostParameters.CrtParameters.Interline = 0.45f;
+                _hostParameters.CrtParameters.Distortion = 1.05f;
+                _hostParameters.CrtParameters.Vignette = 0.33f;
+                _hostParameters.CrtParameters.VignetteSize = 5f;
                 ApplyHostParameters();
+            }
+                break;
+            
+            case 3:
+            {
+                SetBasicCrt();
+                var scale = 1.0f;
+
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.5f, -0.25f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
+
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, -0.25f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
+                _hostParameters.CrtParameters.LampGlow = 0.5f;
+                _hostParameters.CrtParameters.LampDownSize = 6;
+                _hostParameters.CrtParameters.Interline = 0.45f;
+                _hostParameters.CrtParameters.Distortion = 1.15f;
+                _hostParameters.CrtParameters.Vignette = 0.5f;
+                _hostParameters.CrtParameters.VignetteSize = 3f;
+                ApplyHostParameters();
+            }
                 break;
         }
     }
@@ -133,19 +161,19 @@ public class GameApp: UiPixelApp
         {
             Interline = 0.25f,
         };
-
     }
 
-    protected override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
+    protected override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap,
+        IHandlerMapper handlers)
     {
         base.OnInitializeUi(builder, navigationMap, handlers);
-        
+
         navigationMap.InitializeNavigation();
         handlers.InitializeCustomViews();
     }
-    
+
     protected override IAppHost CreateAppHost(IIoCContainer container)
     {
         return container.IoCConstruct<PixelAppHost>(_hostParameters);
     }
-}   
+}

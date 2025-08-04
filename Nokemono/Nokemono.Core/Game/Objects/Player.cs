@@ -62,10 +62,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     public readonly ContextSoundContainer SoundContainer;
 
+    private readonly INarrationSystem _narrationSystem;
+    private readonly IGameState _gameState;
+    
     private float? _walkToPositionX;
     private TaskCompletionSource _walkToTaskCompletionSource;
-    private INarrationSystem _narrationSystem;
-    private readonly IGameState _gameState;
 
     public INpcCharacter NpcCharacterInRange { get; set; }
 

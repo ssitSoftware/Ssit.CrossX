@@ -112,11 +112,11 @@ public class OptionsPageViewModel: IPageCommandsSource
             (_, var type) = o as (object obj, ButtonCommandType type)? ?? (null, ButtonCommandType.Select);
             if (type == ButtonCommandType.Previous)
             {
-                _settings.CrtMode = (_settings.CrtMode + 2) % 3;
+                _settings.CrtMode = (_settings.CrtMode + 3) % 4;
             }
             else
             {
-                _settings.CrtMode = (_settings.CrtMode + 1) % 3;
+                _settings.CrtMode = (_settings.CrtMode + 1) % 4;
             }
 
             _settings.Save();

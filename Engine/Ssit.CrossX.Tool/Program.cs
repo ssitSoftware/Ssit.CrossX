@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using SkiaSharp;
 using Ssit.CrossX.Tools;
 using Ssit.CrossX.Xml;
 
@@ -39,6 +40,14 @@ public static class Program
 
                         Console.WriteLine(fullPath);
                         tasks.Add(converter.Generate());
+                        break;
+                    
+                    case ".png":
+                        if (file.EndsWith("_to1bit.png"))
+                        {
+                            tasks.Add(Task.Run(() =>
+                                OneBitImageTool.ConvertTo1BitAndAddOutline(fullPath, SKColors.White, SKColors.Black)));
+                        }
                         break;
                 }
             }

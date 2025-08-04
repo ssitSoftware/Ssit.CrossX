@@ -9,7 +9,7 @@
     },
     {
       "name": "Contrast",
-      "colors": ["#000000", "#ffffff", "#606060", "#ff0000"],
+      "colors": ["#000000", "#ffffff", "#505050", "#ff0000"],
       "button-accent-color": 3
     },
     {
@@ -28,6 +28,11 @@
       "button-accent-color": 2
     },
     {
+      "name": "Green",
+      "colors": ["#081800", "#80ff80", "#205010", "#80f040"],
+      "button-accent-color": 2
+    },
+    {
       "name": "Blue",
       "colors": ["#181030", "#8080ff", "#302080", "#5010c0"],
       "button-accent-color": 3
@@ -35,6 +40,11 @@
     {
       "name": "Dark",
       "colors": ["#200020", "#27e080", "#481858", "#a01770"],
+      "button-accent-color": 3
+    },
+    {
+      "name": "Dark2",
+      "colors": ["#200020", "#e08027", "#485818", "#ff0000"],
       "button-accent-color": 3
     },
     {

@@ -3,11 +3,11 @@ using Ssit.CrossX.Games.Logic.Objects;
 
 namespace Nokemono.Core.Game.Objects.Devices;
 
-public sealed class SwitchImpl : Switch
+public sealed class LeverImpl : Switch
 {
-    public SwitchImpl(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters)
+    public LeverImpl(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters)
     {
-        InitializeSprite("assets:/Game/Objects/Switch");
+        InitializeSprite("assets:/Game/Objects/Lever");
         InitializePhysics(parameters, 0.5f);
     }
 

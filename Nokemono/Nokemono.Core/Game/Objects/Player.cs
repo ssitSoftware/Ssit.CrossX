@@ -72,6 +72,8 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     public INpcCharacter NpcCharacterInRange { get; set; }
 
+    private List<IHittable> _hittableList = new();
+    
     public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
         ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState)
         : base(services, parameters)
@@ -346,34 +348,60 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var gameTemplate = Services.GameTemplate;
         
         var size = new Vector2(parameters.Width, parameters.Height) / gameTemplate.TileSize;
-        var neg  = new Vector2(parameters.NegWidth, 0) / gameTemplate.TileSize;
 
         var aabb = FaceLeft ? 
-            new Aabb(Body.Position - size, Body.Position + neg) :
-            new Aabb(Body.Position - neg, Body.Position + size with { Y = -size.Y });
+            new Aabb(Body.Position - size, Body.Position) :
+            new Aabb(Body.Position, Body.Position + size with { Y = -size.Y });
         
         Services.World.QueryAabbs(_queryList, ref aabb);
-
-        float dist = float.MaxValue;
-        IHittable hittable = null;
+        
+        _hittableList.Clear();
         
         foreach (var fixture in _queryList)
         {
             if (fixture.Body == Body)
                 continue;
 
-            if (fixture.Body.Owner is IHittable hittableObj && hittableObj.Active)
+            if (fixture.Body.Position.X > Body.Position.X && FaceLeft ||
+                fixture.Body.Position.X < Body.Position.X && !FaceLeft)
             {
-                var d = Vector2.Distance(fixture.Body.Position, Body.Position);
-                if (d < dist)
+                continue;
+            }
+                    
+            if (fixture.Body.Owner is IHittable hittableObj)
+            {
+                _hittableList.Add(hittableObj);
+            }
+        }
+
+        for (var idx = 0; idx < _hittableList.Count; idx++)
+        {
+            for (var idx2 = 0; idx2 < _hittableList.Count - 1; idx2++)
+            {
+                var h1 = _hittableList[idx2];
+                var h2 = _hittableList[idx2 + 1];
+                
+                var d1 = MathF.Abs(h1.Position.X - Body.Position.X);
+                var d2 = MathF.Abs(h2.Position.X - Body.Position.X);
+
+                if (d2 < d1)
                 {
-                    dist = d;
-                    hittable = hittableObj;
+                    _hittableList[idx2] = h2;
+                    _hittableList[idx2 + 1] = h1;
                 }
             }
         }
 
-        hittable?.Hit(new Vector2(FaceLeft  ? -1 :  1, 0), parameters.Value.Calculate(1));
+        var dir = new Vector2(FaceLeft ? -1 : 1, 0);
+        var power = parameters.Value.Calculate(1);
+        
+        for (var idx = 0; idx < _hittableList.Count; idx++)
+        {
+            if (_hittableList[idx].Hit(dir, power))
+            {
+                break;
+            }
+        }
     }
 
     protected override void OnDispose(bool disposing)

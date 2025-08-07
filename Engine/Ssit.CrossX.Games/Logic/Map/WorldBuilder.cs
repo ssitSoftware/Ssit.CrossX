@@ -138,8 +138,17 @@ public class WorldBuilder
                 }
             }
         }
+
+        try
+        {
+            GenerateObjects(_mapFile.MainLayer.Objects, container);
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+
         
-        GenerateObjects(_mapFile.MainLayer.Objects, container);
         return (world, container);
     }
 

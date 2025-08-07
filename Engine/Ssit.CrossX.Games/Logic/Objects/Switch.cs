@@ -61,13 +61,12 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
 
     private void UpdateState()
     {
-        var wasOn = IsOn;
+        var wasOn = CurrentState  is "On" or "TurnOn";
         IsOn = _anotherToggle?.IsOn ?? IsOn;
-        
-        SetState(IsOn ? "On" : "Off");
 
         if (wasOn != IsOn)
         {
+            SetState(IsOn ?  "TurnOn" : "TurnOff");
             OnChanged?.Invoke();
         }
     }
@@ -87,6 +86,21 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
             lo.SetInRange(this,  fixtureB, true);
         }
         return true;
+    }
+
+    protected override void OnAnimationFinished(string sequenceName)
+    {
+        base.OnAnimationFinished(sequenceName);
+        switch (sequenceName)
+        {
+            case "TurnOn":
+                SetState("On");
+                break;
+            
+            case "TurnOff":
+                SetState("Off");
+                break;
+        }
     }
 
     public virtual void Toggle()

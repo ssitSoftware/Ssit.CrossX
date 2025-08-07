@@ -56,14 +56,14 @@ public class GameTemplate: IGameTemplate
         new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
         new("Logic/Story Trigger", typeof(StoryTrigger), "assets:/Editor/StoryTrigger", "Default", typeof(StoryTrigger.Parameters)),
         new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),
-        // new("Devices/Switch", typeof(SwitchImpl), "assets:/Game/Objects/Switch", "Off", typeof(Switch.Parameters)),
+        new("Devices/Lever", typeof(LeverImpl), "assets:/Game/Objects/Lever", "Off", typeof(Switch.Parameters)),
         new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
         new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
         new("Devices/Laser Door", typeof(LaserDoorImpl), "assets:/Game/Objects/Laser", "Closed", typeof(MechanicalDoor.Parameters)),
         // new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
         // new("Elements/Power Plant", typeof(PowerPlant), "assets:/Game/Objects/PowerPlant", "On"),
         new("Elements/Dummy", typeof(Dummy), "assets:/Game/Objects/Dummy", "Idle"),
-        new("Elements/Barrel", typeof(Barrel), "assets:/Game/Objects/Barrel", "Idle", typeof(Barrel.Parameters)),
+        new("Elements/Barrel", typeof(Barrel), "assets:/Game/Objects/Barrel", "Idle", typeof(Breakable.Parameters)),
         new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),
         // new("Elements/Tire", typeof(TireImpl), "assets:/Game/Objects/Tire", "Preview")
     ];

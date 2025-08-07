@@ -20,7 +20,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     
     private ISwitch _switch;
     private bool _inverse;
-    private bool _inProgress;
+    
     protected bool IsOpen { get; private set; }
     private Fixture _staticFixture;
 
@@ -57,15 +57,12 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         {
             _switch = s;
             IsOpen = (_switch?.IsOn ?? false) ^ _inverse;
-            _inProgress = false;
             UpdateState();
         });
     }
 
     private void UpdateState()
     {
-        _inProgress = false;
-
         SetState(IsOpen ? "Open" : "Closed");
 
         Body.IsSensor = IsOpen;
@@ -80,8 +77,9 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     {
         base.OnFixedUpdate(dt);
 
-        if (_inProgress)
+        if (CurrentState is "Opening" or "Closing")
             return;
+            
         
         var open = (_switch?.IsOn ?? false) ^ _inverse;
 
@@ -89,7 +87,6 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         {
             if (!IsOpen)
             {
-                _inProgress = true;
                 SetState("Opening");
             }
         }
@@ -97,7 +94,6 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         {
             if (IsOpen)
             {
-                _inProgress = true;
                 SetState("Closing");
             }
         }

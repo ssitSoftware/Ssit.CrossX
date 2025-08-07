@@ -31,7 +31,7 @@ public class Dummy: SpriteGameObject, IHittable
 
     private readonly ContextSoundContainer _soundContainer;
     
-    public bool Active => true;
+    Vector2 IHittable.Position => Body.Position;
     
     public Dummy(GameObjectsServices services, ObjectCreationParameters parameters, IPaletteSource paletteSource, IFontsManager fontsManager) : base(services, parameters)
     {
@@ -100,7 +100,7 @@ public class Dummy: SpriteGameObject, IHittable
         }
     }
 
-    public void Hit(Vector2 dir, float power)
+    public bool Hit(Vector2 dir, float power)
     {
         SetState(dir.X > 0 ? "Right" : "Left");
         _hitValues.Add(new HitValue
@@ -109,6 +109,7 @@ public class Dummy: SpriteGameObject, IHittable
         });
         
         _soundContainer.Play("Hit", pitch: 0);
+        return true;
     }
 
     protected override void OnAnimationFinished(string sequenceName)

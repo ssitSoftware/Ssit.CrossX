@@ -354,16 +354,26 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         
         Services.World.QueryAabbs(_queryList, ref aabb);
 
+        float dist = float.MaxValue;
+        IHittable hittable = null;
+        
         foreach (var fixture in _queryList)
         {
             if (fixture.Body == Body)
                 continue;
-            
-            if (fixture.Body.Owner is IHittable hittable)
+
+            if (fixture.Body.Owner is IHittable hittableObj && hittableObj.Active)
             {
-                hittable.Hit( FaceLeft ? new Vector2(-1, 0) : new Vector2(1, 0), parameters.Value.Calculate(1));
+                var d = Vector2.Distance(fixture.Body.Position, Body.Position);
+                if (d < dist)
+                {
+                    dist = d;
+                    hittable = hittableObj;
+                }
             }
         }
+
+        hittable?.Hit(new Vector2(FaceLeft  ? -1 :  1, 0), parameters.Value.Calculate(1));
     }
 
     protected override void OnDispose(bool disposing)

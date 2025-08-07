@@ -19,6 +19,9 @@ public class Barrel: SpriteGameObject, IHittable
     private readonly ContextSoundContainer _soundContainer;
     
     private bool _isBroken;
+
+    public bool Active => !_isBroken;
+    
     public Barrel(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) : base(services, parameters)
     {
         BoundsRect = new RectangleF(-2, -2, 4, 4);
@@ -51,7 +54,7 @@ public class Barrel: SpriteGameObject, IHittable
             return;
         
         SetState("Breaking");
-        _soundContainer.Play("Break");
+        _soundContainer.Play("Break", pitch: 0);
         _isBroken = true;
     }
 

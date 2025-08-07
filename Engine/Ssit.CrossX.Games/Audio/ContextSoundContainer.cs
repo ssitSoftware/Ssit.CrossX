@@ -41,7 +41,7 @@ public class ContextSoundContainer: IDisposable
         return this;
     }
 
-    public void Play(string name, int material = -1, float volume = 1)
+    public void Play(string name, int material = -1, float volume = 1, float pitch = 1)
     {
         if (!_instances.TryGetValue((name, material), out var instance))
         {
@@ -56,9 +56,14 @@ public class ContextSoundContainer: IDisposable
             instance.Item1.Stop();
         }
 
+        if (pitch == 0)
+        {
+            pitch = Random.Shared.NextSingle() / 5f + 0.9f;
+        }
+
         instance.Item1.Parameters = new SoundParameters
         {
-            Pitch = 1,
+            Pitch = pitch,
             Volume = instance.Item2 * volume
         };
 

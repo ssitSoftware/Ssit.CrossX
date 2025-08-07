@@ -21,7 +21,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     private ISwitch _switch;
     private bool _inverse;
     private bool _inProgress;
-    private bool _isOpen;
+    protected bool IsOpen { get; private set; }
     private Fixture _staticFixture;
 
     protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, Vector2 offset, SizeF size, float topHandleHeight = 0)
@@ -56,7 +56,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         parameters.LinkMap.RequestLink<ISwitch>(parameters.Parameters.Switch, s =>
         {
             _switch = s;
-            _isOpen = (_switch?.IsOn ?? false) ^ _inverse;
+            IsOpen = (_switch?.IsOn ?? false) ^ _inverse;
             _inProgress = false;
             UpdateState();
         });
@@ -66,9 +66,9 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     {
         _inProgress = false;
 
-        SetState(_isOpen ? "Open" : "Closed");
+        SetState(IsOpen ? "Open" : "Closed");
 
-        Body.IsSensor = _isOpen;
+        Body.IsSensor = IsOpen;
 
         if (_staticFixture != null)
         {
@@ -87,7 +87,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
 
         if (open)
         {
-            if (!_isOpen)
+            if (!IsOpen)
             {
                 _inProgress = true;
                 SetState("Opening");
@@ -95,7 +95,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         }
         else
         {
-            if (_isOpen)
+            if (IsOpen)
             {
                 _inProgress = true;
                 SetState("Closing");
@@ -110,12 +110,12 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         switch (sequenceName)
         {
             case "Opening":
-                _isOpen = true;
+                IsOpen = true;
                 UpdateState();
                 break;
             
             case "Closing":
-                _isOpen = false;
+                IsOpen = false;
                 UpdateState();
                 break;
         }

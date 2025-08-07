@@ -31,6 +31,8 @@ public class Dummy: SpriteGameObject, IHittable
 
     private readonly ContextSoundContainer _soundContainer;
     
+    public bool Active => true;
+    
     public Dummy(GameObjectsServices services, ObjectCreationParameters parameters, IPaletteSource paletteSource, IFontsManager fontsManager) : base(services, parameters)
     {
         _paletteSource = paletteSource;
@@ -106,7 +108,7 @@ public class Dummy: SpriteGameObject, IHittable
             Text = $"{(int)(power*10)}"
         });
         
-        _soundContainer.Play("Hit");
+        _soundContainer.Play("Hit", pitch: 0);
     }
 
     protected override void OnAnimationFinished(string sequenceName)

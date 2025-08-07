@@ -62,6 +62,8 @@ public class GameTemplate: IGameTemplate
         new("Devices/Laser Door", typeof(LaserDoorImpl), "assets:/Game/Objects/Laser", "Closed", typeof(MechanicalDoor.Parameters)),
         // new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
         // new("Elements/Power Plant", typeof(PowerPlant), "assets:/Game/Objects/PowerPlant", "On"),
+        new("Elements/Dummy", typeof(Dummy), "assets:/Game/Objects/Dummy", "Idle"),
+        new("Elements/Barrel", typeof(Barrel), "assets:/Game/Objects/Barrel", "Idle", typeof(Barrel.Parameters)),
         new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),
         // new("Elements/Tire", typeof(TireImpl), "assets:/Game/Objects/Tire", "Preview")
     ];

@@ -30,10 +30,10 @@
     },
     {
       "Sequence": "Slash 1",
-      "Frame": 1,
+      "Frame": 2,
       "Name": "Hit",
       "Parameters": {
-        "Width": 52,
+        "Width": 48,
         "Height": 16,
         "Value": {
           "Multiplier": 1,
@@ -53,10 +53,10 @@
     },
     {
       "Sequence": "Slash 2",
-      "Frame": 1,
+      "Frame": 2,
       "Name": "Hit",
       "Parameters": {
-        "Width": 52,
+        "Width": 48,
         "Height": 16,
         "Value": {
           "Multiplier": 1.5,
@@ -66,10 +66,10 @@
     },
     {
       "Sequence": "Spin Attack",
-      "Frame": 1,
+      "Frame": 2,
       "Name": "Hit",
       "Parameters": {
-        "Width": 52,
+        "Width": 48,
         "NegWidth": 26,
         "Height": 16,
         "Value": {
@@ -80,10 +80,11 @@
     },
     {
       "Sequence": "Slam",
-      "Frame": 1,
+      "Frame": 2,
       "Name": "Hit",
       "Parameters": {
-        "Width": 52,
+        "Width": 48,
+        "NegWidth": -20,
         "Height": 32,
         "Value": {
           "Multiplier": 4,

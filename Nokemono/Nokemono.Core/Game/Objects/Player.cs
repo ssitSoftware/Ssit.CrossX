@@ -66,7 +66,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     private readonly INarrationSystem _narrationSystem;
     private readonly IGameState _gameState;
-    private readonly IGameTemplate _gameTemplate;
 
     private float? _walkToPositionX;
     private TaskCompletionSource _walkToTaskCompletionSource;
@@ -74,8 +73,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public INpcCharacter NpcCharacterInRange { get; set; }
 
     public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
-        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState,
-        IGameTemplate gameTemplate)
+        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState)
         : base(services, parameters)
     {
         _camera = camera;
@@ -84,7 +82,6 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _keyboard = keyboard;
         _narrationSystem = narrationSystem;
         _gameState = gameState;
-        _gameTemplate = gameTemplate;
 
         _gameState.StateUpdated += OnGameStateUpdated;
         
@@ -346,17 +343,22 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     private void ProcessAttack(AttackParameters parameters)
     {
-        var size = new Vector2(parameters.Width, parameters.Height) / _gameTemplate.TileSize;
-        var neg  = new Vector2(parameters.NegWidth, 0) / _gameTemplate.TileSize;
+        var gameTemplate = Services.GameTemplate;
+        
+        var size = new Vector2(parameters.Width, parameters.Height) / gameTemplate.TileSize;
+        var neg  = new Vector2(parameters.NegWidth, 0) / gameTemplate.TileSize;
 
         var aabb = FaceLeft ? 
             new Aabb(Body.Position - size, Body.Position + neg) :
             new Aabb(Body.Position - neg, Body.Position + size with { Y = -size.Y });
         
-        Services.World.QueryCollisionAabbs(_queryList, ref aabb, Body);
+        Services.World.QueryAabbs(_queryList, ref aabb);
 
         foreach (var fixture in _queryList)
         {
+            if (fixture.Body == Body)
+                continue;
+            
             if (fixture.Body.Owner is IHittable hittable)
             {
                 hittable.Hit( FaceLeft ? new Vector2(-1, 0) : new Vector2(1, 0), parameters.Value.Calculate(1));

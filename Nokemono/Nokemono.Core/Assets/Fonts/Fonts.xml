@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Fonts>
     <Font Name="Default" Family="Futura"
-          Sizes="12,18,22" 
+          Sizes="10,12,18,22" 
           Weight="Bold" 
           Italic="false"
           Antialiasing="false" 

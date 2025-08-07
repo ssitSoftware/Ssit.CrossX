@@ -18,8 +18,6 @@ public struct Aabb
     /// The upper vertex
     /// </summary>
     public Vector2 UpperBound;
-
-    
     
     public Aabb(Vector2 min, Vector2 max)
         : this(ref min, ref max)
@@ -28,8 +26,14 @@ public struct Aabb
 
     public Aabb(ref Vector2 min, ref Vector2 max)
     {
-        LowerBound = min;
-        UpperBound = max;
+        var minX  = MathF.Min(min.X, max.X);
+        var maxX  = MathF.Max(min.X, max.X);
+        
+        var minY  = MathF.Min(min.Y, max.Y);
+        var maxY  = MathF.Max(min.Y, max.Y);
+        
+        LowerBound = new Vector2(minX, minY);
+        UpperBound = new Vector2(maxX, maxY);
     }
 
     public Aabb(Vector2 center, float width, float height)

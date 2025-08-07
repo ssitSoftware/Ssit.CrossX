@@ -14,7 +14,7 @@ public class AttackParameters
     }
     
     public float Width { get; set; }
-    public float NegWidth { get; set; } = -0.5f;
+    public float NegWidth { get; set; } = -1.0f;
     public float Height { get; set; }
     public AttackValue Value { get; set; }
 }

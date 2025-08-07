@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,7 +45,7 @@ public class SpriteInstance : IDisposable
 
     private Sprite.SpriteSequence _currentSequence;
 
-    private readonly Dictionary<(string, int), Event> _events;
+    private readonly Dictionary<(string, int), Event[]> _events;
 
     public IHandler Handler { get; set; }
     
@@ -57,19 +58,26 @@ public class SpriteInstance : IDisposable
         _events = PrepareEvents(events);
     }
 
-    private Dictionary<(string, int), Event> PrepareEvents(IReadOnlyList<Event> events)
+    private Dictionary<(string, int), Event[]> PrepareEvents(IReadOnlyList<Event> events)
     {
         if(events is null) return null;
         if(events.Count == 0) return null;
         
-        var dict = new Dictionary<(string, int), Event>();
+        var dict = new Dictionary<(string, int), List<Event>>();
         
         foreach (var @event in events)
         {
-            dict.Add((@event.SequenceName, @event.Frame), @event);
+            var key = (@event.SequenceName, @event.Frame);
+            if (!dict.TryGetValue(key, out var list))
+            {
+                list = new List<Event>();
+                dict.Add(key, list);
+            }
+            list.Add(@event);
         }
 
-        return dict;
+        return new Dictionary<(string, int), Event[]>(dict.Select(x =>
+            new KeyValuePair<(string, int), Event[]>(x.Key, x.Value.ToArray())));
     }
 
     public void SetSequence(string sequenceName, bool resetPosition = false)
@@ -151,9 +159,12 @@ public class SpriteInstance : IDisposable
 
         if (frame != _lastFrame)
         {
-            if(_events != null && _events.TryGetValue((currentSequence, frame), out var @event))
+            if(_events != null && _events.TryGetValue((currentSequence, frame), out var events))
             {
-                Handler?.OnSpriteEvent(this, @event);
+                foreach (var @event in events)
+                {
+                    Handler?.OnSpriteEvent(this, @event);
+                }
             }
         }
 

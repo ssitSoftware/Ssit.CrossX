@@ -44,7 +44,7 @@ public class PixelAppHost: IAppHost
         
         public float Distortion = 0f;
         public float Vignette = 0f;
-        public float VignetteSize = 0f;
+        public float VignettePower = 0f;
     }
 
     public class GlowParameters
@@ -352,7 +352,7 @@ public class PixelAppHost: IAppHost
     {
         var distortion = _parameters.CrtParameters?.Distortion ?? 0;
         var vignette = _parameters.CrtParameters?.Vignette ?? 0;
-        var vignetteSize = _parameters.CrtParameters?.VignetteSize ?? 0;
+        var vignetteSize = _parameters.CrtParameters?.VignettePower ?? 0;
         
         var stepsX = 32;
         var stepsY = 32;
@@ -439,18 +439,33 @@ public class PixelAppHost: IAppHost
         });
     }
     
-    private RgbaColor CalculateDistortionColor(Vector2 pos, Vector2 center, Vector2 size, float factor, float vignette, float vignetteSize)
+    private RgbaColor CalculateDistortionColor(Vector2 pos, Vector2 center, Vector2 size, float factor, float vignette, float vignettePower)
     {
         var normPos = (pos - center) / size;
         float radius = normPos.Length() / 1.42f;
-
+        float theta = MathF.Atan2(normPos.Y, normPos.X);
+        
         radius = 1 - radius;
-        radius *= vignetteSize / factor;
         
         radius = MathF.Pow(radius, factor);
+        
+        radius = 1 - radius;
+        
+        var f2 = factor > 1 ? factor : 2 - factor;
+        var f = MathF.Pow(1.42f, 1 / (f2 * f2));
+        radius *= f;
+        
+        pos.X = radius * MathF.Cos(theta);
+        pos.Y = radius * MathF.Sin(theta);
+        
+        pos = pos * size + center;
 
-        radius = MathF.Min(1, MathF.Max(0, radius));
-        return RgbaColor.White.Mix(new RgbaColor(radius, radius, radius, 1), vignette);
+        var dist1 = (normPos - center).Length();
+        var dist2 = (pos - center).Length();
+
+        var distortion =MathF.Max(0, 1 -  MathF.Pow(dist2 / dist1, vignettePower));
+        
+        return RgbaColor.White.Mix(new RgbaColor(distortion, distortion, distortion, 1), vignette);
     }
 
     private Vector2 CalculateDistortion(Vector2 pos, Vector2 center, Vector2 size, float factor)

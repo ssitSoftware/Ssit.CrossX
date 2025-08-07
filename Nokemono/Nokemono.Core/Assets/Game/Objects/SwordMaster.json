@@ -513,33 +513,6 @@
     "duration": 100
    },
    {
-    "filename": "Slash 1|4",
-    "frame": { "x": 387, "y": 0, "w": 73, "h": 30 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 10, "y": 11, "w": 69, "h": 26 },
-    "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
-   },
-   {
-    "filename": "Slash 1|5",
-    "frame": { "x": 541, "y": 31, "w": 71, "h": 26 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 12, "y": 10, "w": 67, "h": 22 },
-    "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
-   },
-   {
-    "filename": "Slash 1|6",
-    "frame": { "x": 436, "y": 146, "w": 26, "h": 21 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 12, "y": 16, "w": 22, "h": 17 },
-    "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
-   },
-   {
     "filename": "Slash 2|0",
     "frame": { "x": 436, "y": 146, "w": 26, "h": 21 },
     "rotated": false,
@@ -572,15 +545,6 @@
     "rotated": false,
     "trimmed": true,
     "spriteSourceSize": { "x": 28, "y": 7, "w": 46, "h": 25 },
-    "sourceSize": { "w": 90, "h": 37 },
-    "duration": 100
-   },
-   {
-    "filename": "Slash 2|4",
-    "frame": { "x": 54, "y": 40, "w": 50, "h": 31 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 27, "y": 6, "w": 46, "h": 27 },
     "sourceSize": { "w": 90, "h": 37 },
     "duration": 100
    },

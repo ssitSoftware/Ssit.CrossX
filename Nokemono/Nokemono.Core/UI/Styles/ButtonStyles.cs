@@ -27,6 +27,16 @@ public static class ButtonStyles
         button.Padding = (0, 4, 0, 0);
 
         button.FocusedLowColor = 1;
+        
+        button.TextOutlineColors = new ButtonStateColorsIndexed
+        {
+            Normal = Palette.Transparent,
+            Hover = Palette.Transparent,
+            Focused =  Palette.Background,
+            Pushed = Palette.Transparent,
+            Disabled = Palette.Transparent
+        };
+        
         button.TextColors = new ButtonStateColorsIndexed
         {
             Normal = Palette.ButtonAccent,

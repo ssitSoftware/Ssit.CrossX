@@ -1,6 +1,12 @@
 {
-  "Origin": {"X": 30, "Y": 36},
-  "Size": {"Width": 10, "Height": 24},
+  "Origin": {
+    "X": 30,
+    "Y": 36
+  },
+  "Size": {
+    "Width": 10,
+    "Height": 24
+  },
   "Events": [
     {
       "Sequence": "Run Fast",
@@ -21,6 +27,69 @@
       "Sequence": "Walk",
       "Frame": 7,
       "Name": "Right Foot Silent"
+    },
+    {
+      "Sequence": "Slash 1",
+      "Frame": 1,
+      "Name": "Hit",
+      "Parameters": {
+        "Width": 52,
+        "Height": 16,
+        "Value": {
+          "Multiplier": 1,
+          "Add": 1
+        }
+      }
+    },
+    {
+      "Sequence": "Slash 1",
+      "Frame": 2,
+      "Name": "Combo"
+    },
+    {
+      "Sequence": "Slash 2",
+      "Frame": 2,
+      "Name": "Combo"
+    },
+    {
+      "Sequence": "Slash 2",
+      "Frame": 1,
+      "Name": "Hit",
+      "Parameters": {
+        "Width": 52,
+        "Height": 16,
+        "Value": {
+          "Multiplier": 1.5,
+          "Add": 2
+        }
+      }
+    },
+    {
+      "Sequence": "Spin Attack",
+      "Frame": 1,
+      "Name": "Hit",
+      "Parameters": {
+        "Width": 52,
+        "NegWidth": 26,
+        "Height": 16,
+        "Value": {
+          "Multiplier": 2,
+          "Add": 3
+        }
+      }
+    },
+    {
+      "Sequence": "Slam",
+      "Frame": 1,
+      "Name": "Hit",
+      "Parameters": {
+        "Width": 52,
+        "Height": 32,
+        "Value": {
+          "Multiplier": 4,
+          "Add": 3
+        }
+      }
     }
   ]
 }

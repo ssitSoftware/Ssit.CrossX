@@ -22,7 +22,7 @@ public static class GameInitializer
             .RegisterSound("Land", GamePhysics.Materials.Any, "assets:/Game/Sounds/Ground/DefaultLand.wav", 0.65f)
             .RegisterSound("Left Foot", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalL.wav", 0.95f)
             .RegisterSound("Right Foot", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalR.wav", 0.95f)
-            .RegisterSound("Left Foot Silent", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalL.wav", 0.3f)
+            .RegisterSound("Left Foot Silent", GamePhysics.Materials.MetalPlatform,  "assets:/Game/Sounds/Ground/MetalL.wav", 0.3f)
             .RegisterSound("Right Foot Silent", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalR.wav", 0.3f)
             .RegisterSound("Jump", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalJump.wav", 0.95f)
             .RegisterSound("Land", GamePhysics.Materials.MetalPlatform, "assets:/Game/Sounds/Ground/MetalLand.wav", 0.95f)
@@ -32,5 +32,14 @@ public static class GameInitializer
             .RegisterSound("Right Foot Silent", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterR.wav", 0.3f)
             .RegisterSound("Jump", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterR.wav")
             .RegisterSound("Land", GamePhysics.Materials.Water, "assets:/Game/Sounds/Ground/WaterLand.wav");
+    }
+    
+    public static void RegisterCharacterEffectSounds(this ContextSoundContainer container)
+    {
+        container
+            .RegisterSound("Slash 1", GamePhysics.Materials.Any, "assets:/Game/Sounds/Effects/Slash1.wav")
+            .RegisterSound("Slash 2", GamePhysics.Materials.Any, "assets:/Game/Sounds/Effects/Slash2.wav")
+            .RegisterSound("Spin Attack", GamePhysics.Materials.Any, "assets:/Game/Sounds/Effects/Slash3.wav")
+            .RegisterSound("Slam", GamePhysics.Materials.Any, "assets:/Game/Sounds/Effects/Slam.wav");
     }
 }

@@ -184,7 +184,7 @@ public class NarrationSystem: INarrationSystem
     {
         var dialog = GetDialog(subject);
 
-        if (dialog.Highlight)
+        if (true == dialog?.Highlight)
         {
             //var key = GetDialogKey(subject, dialog.On);
             return true;//!_gameState.HasFlag(key);

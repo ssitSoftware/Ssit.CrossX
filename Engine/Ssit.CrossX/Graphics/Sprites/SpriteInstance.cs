@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.Graphics.Sprites;
@@ -14,14 +15,12 @@ public class SpriteInstance : IDisposable
         void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse);
     }
     
-    public class Event(string sequenceName, int frame, string eventName, string parameters)
+    public class Event(string sequenceName, int frame, string eventName, JObject parameters)
     {
         internal readonly int Frame = frame;
-        
         public string EventName { get; } = eventName;
         public string SequenceName { get; } = sequenceName;
-
-        public TParameters GetParameters<TParameters>() where TParameters: class, new() => JsonConvert.DeserializeObject<TParameters>(parameters);
+        public TParameters GetParameters<TParameters>() where TParameters: class, new() => parameters.ToObject<TParameters>();
     }
     
     private readonly Vector2 _origin;

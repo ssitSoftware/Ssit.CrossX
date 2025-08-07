@@ -54,7 +54,7 @@ internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppW
                             .WithInstance<IGameDialogs>(gameDialogs)
                             .WithInstance<IGameDialogsUi>(gameDialogs)
                             .WithSingleton<IGameState, GameState>()
-                            .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario/Dialogs");
+                            .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario");
                     }
                 });
                 gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();

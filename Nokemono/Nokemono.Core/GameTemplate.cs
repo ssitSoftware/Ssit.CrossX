@@ -27,7 +27,7 @@ public class GameTemplate: IGameTemplate
         .AddProvider("bundle:", new BundleFilesProvider());
     
     public int TileSize => 16;
-    public Size TargetSize => new(480, 270);
+    public Size TargetSize => new(360, 270);
     
     public RgbaColor DefaultBackground => new(0x000000);
     public RgbaColor EmptyColor => new(96, 64, 96);
@@ -52,6 +52,7 @@ public class GameTemplate: IGameTemplate
     [
         new("Player", typeof(Player), "assets:/Game/Objects/SwordMaster", "Idle", typeof(Player.Parameters)),
         new("NPC/Merchant", typeof(Merchant), "assets:/Game/Objects/Merchant", "Idle"),
+        new("NPC/Herbalist", typeof(Herbalist), "assets:/Game/Objects/Herbalist", "Idle"),
         new("Logic/Target", typeof(Target), "assets:/Editor/Target", "Default", typeof(Target.Parameters)),
         new("Logic/Story Trigger", typeof(StoryTrigger), "assets:/Editor/StoryTrigger", "Default", typeof(StoryTrigger.Parameters)),
         new("Devices/Elevator", typeof(ElevatorImpl), "assets:/Game/Objects/Elevator", "Off", typeof(Elevator.Parameters)),

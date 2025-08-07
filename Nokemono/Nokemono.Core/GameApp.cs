@@ -3,8 +3,6 @@ using Nokemono.Core.Configuration;
 using Nokemono.Core.UI.ViewModels;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IO;
@@ -30,7 +28,7 @@ public class GameApp : UiPixelApp
                 DesignSize = _gameTemplate.TargetSize,
                 MinScale = 2,
                 MaxScale = 2,
-                Mode = PixelAppHost.Mode.Height,
+                Mode = PixelAppHost.Mode.WidthAndHeightKeepAspect,
             };
     }
 
@@ -90,13 +88,17 @@ public class GameApp : UiPixelApp
                     BlurDivider = Blurs.Gaussian3X3Divider
                 };
                 _hostParameters.CrtParameters = null;
+                _hostParameters.Mode = PixelAppHost.Mode.Height; 
                 ApplyHostParameters();
                 break;
 
             case 1:
                 SetBasicCrt();
                 _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
-                _hostParameters.CrtParameters.Distortion = 0.985f;
+                _hostParameters.CrtParameters.Distortion = 1.03f;
+                
+                _hostParameters.Mode = PixelAppHost.Mode.Height;
+                
                 ApplyHostParameters();
                 break;
 
@@ -108,17 +110,20 @@ public class GameApp : UiPixelApp
                 _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
                 _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
                 _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.5f, 0.0f) * scale;
-                _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.8f;
 
                 _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
                 _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
                 _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.5f, 0.0f) * scale;
-                _hostParameters.CrtParameters.LampGlow = 0.3f;
-                _hostParameters.CrtParameters.LampDownSize = 6;
+                _hostParameters.CrtParameters.LampGlow = 0.4f;
+                _hostParameters.CrtParameters.LampDownSize = 4;
                 _hostParameters.CrtParameters.Interline = 0.45f;
-                _hostParameters.CrtParameters.Distortion = 1.05f;
-                _hostParameters.CrtParameters.Vignette = 0.33f;
-                _hostParameters.CrtParameters.VignetteSize = 5f;
+                _hostParameters.CrtParameters.Distortion = 1.075f;
+                _hostParameters.CrtParameters.Vignette = 0.5f;
+                _hostParameters.CrtParameters.VignettePower = 1.5f;
+                
+                _hostParameters.Mode = PixelAppHost.Mode.Height;
+                
                 ApplyHostParameters();
             }
                 break;
@@ -128,20 +133,23 @@ public class GameApp : UiPixelApp
                 SetBasicCrt();
                 var scale = 1.0f;
 
-                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(0.5f, -0.25f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
-                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
-                _hostParameters.GlowParameters.SelfGlowFactor = 0.75f;
+                _hostParameters.GlowParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
+                _hostParameters.GlowParameters.DisplacementFactorB = new Vector2(0.75f, 0.0f) * scale;
+                _hostParameters.GlowParameters.SelfGlowFactor = 0.8f;
 
-                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(0.5f, -0.25f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(-0.5f, 0.0f) * scale;
-                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.0f, 0.5f) * scale;
-                _hostParameters.CrtParameters.LampGlow = 0.5f;
-                _hostParameters.CrtParameters.LampDownSize = 6;
-                _hostParameters.CrtParameters.Interline = 0.45f;
-                _hostParameters.CrtParameters.Distortion = 1.15f;
-                _hostParameters.CrtParameters.Vignette = 0.5f;
-                _hostParameters.CrtParameters.VignetteSize = 3f;
+                _hostParameters.CrtParameters.DisplacementFactorR = new Vector2(-0.5f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale;
+                _hostParameters.CrtParameters.DisplacementFactorB = new Vector2(0.75f, 0.0f) * scale;
+                _hostParameters.CrtParameters.LampGlow = 0.8f;
+                _hostParameters.CrtParameters.LampDownSize = 4;
+                _hostParameters.CrtParameters.Interline = 0.5f;
+                _hostParameters.CrtParameters.Distortion = 1.12f;
+                _hostParameters.CrtParameters.Vignette = 1f;
+                _hostParameters.CrtParameters.VignettePower = 2f;
+                
+                _hostParameters.Mode = PixelAppHost.Mode.Height;
+                
                 ApplyHostParameters();
             }
                 break;

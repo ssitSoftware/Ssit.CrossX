@@ -53,6 +53,7 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         {
             case ImageTransform.FlipHorizontal:
                 flip = SDL_FlipMode.SDL_FLIP_HORIZONTAL;
+                
                 break;
             
             case ImageTransform.FlipVertical:
@@ -86,11 +87,18 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         if (origin != null)
         {
             offset = origin.Value;
+
+            if (imageTransform == ImageTransform.FlipHorizontal)
+            {
+                offset.X = (sourceRectangle?.Width ?? texture.Size.Width) - origin.Value.X;
+            }
+            
         }
         else if (sourceRectangle != null)
         {
             offset = (sourceRectangle.Value.Size / 2f).ToVector();
         }
+        
         position -= offset * scale;
         
         var sourceRect = sourceRectangle ?? new RectangleF(0, 0, texture.Size.Width, texture.Size.Height);

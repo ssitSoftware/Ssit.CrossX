@@ -79,7 +79,11 @@ public abstract class UiPixelApp : IApp
 
     protected void ApplyHostParameters()
     {
-        AppHost?.Resize(_size, true);
+        if (AppHost is null)
+            return;
+        
+        AppHost.Resize(_size, true);
+        UiApp.SetBounds(new RectangleF(Vector2.Zero, AppHost.TargetSize / AppHost.Scale), AppHost.Scale);
     }
         
     protected virtual void OnDraw(IRenderer2 renderer)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Nokemono.Core.Game.Objects.PlayerBehaviors;
+using Nokemono.Core.Game.Parameters;
 using Ssit.CrossX;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
@@ -16,6 +17,7 @@ using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
 using Ssit.CrossX.Games.Physics.Extensions;
+using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
 
@@ -64,14 +66,16 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
     private readonly INarrationSystem _narrationSystem;
     private readonly IGameState _gameState;
-    
+    private readonly IGameTemplate _gameTemplate;
+
     private float? _walkToPositionX;
     private TaskCompletionSource _walkToTaskCompletionSource;
 
     public INpcCharacter NpcCharacterInRange { get; set; }
 
     public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
-        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState)
+        ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState,
+        IGameTemplate gameTemplate)
         : base(services, parameters)
     {
         _camera = camera;
@@ -80,6 +84,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         _keyboard = keyboard;
         _narrationSystem = narrationSystem;
         _gameState = gameState;
+        _gameTemplate = gameTemplate;
 
         _gameState.StateUpdated += OnGameStateUpdated;
         
@@ -91,6 +96,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         });
 
         SoundContainer.RegisterCharacterGroundSounds();
+        SoundContainer.RegisterCharacterEffectSounds();
         
         camera.SetPrimaryTarget(Body, new Vector2(0, -2f), 5);
         
@@ -141,11 +147,15 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         var operateBehavior = Services.Container.IoCConstruct<OperateBehavior>(this);
         var checkLandingBehavior = Services.Container.IoCConstruct<CheckLandingBehavior>(this);
         var talkBehavior = Services.Container.IoCConstruct<TalkBehavior>(this);
-
-        var idleOrRunState = new State(operateBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, talkBehavior, idleBehavior);
+        var attackBehavior = Services.Container.IoCConstruct<AttackBehavior>(this);
+        var attackingBehavior = Services.Container.IoCConstruct<AttackingBehavior>(this);
+        
+        var idleOrRunState = new State(operateBehavior, attackBehavior, jumpOfPlatformBehavior, jumpBehavior, runBehavior, fallBehavior, talkBehavior, idleBehavior);
         var jumpState = new State(checkLandingBehavior, jumpingBehavior, steerInAirBehavior, fallBehavior, idleBehavior);
         var jumpToFallState = new State(checkLandingBehavior, steerInAirBehavior, jumpToFallSequenceBehavior, fallBehavior, runBehavior, idleBehavior);
         var fallState = new State(checkLandingBehavior, steerInAirBehavior, fallBehavior, runBehavior, idleBehavior);
+        
+        var slashState = new State(attackingBehavior);
         var emptyState = new State();
 
         AddState("Idle", idleOrRunState);
@@ -157,6 +167,14 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         AddState("Fall", fallState);
         AddState("Talking", emptyState);
         AddState("WalkTo", emptyState);
+        
+        AddState("Slash 1", slashState);
+        AddState("Slash 2", slashState);
+        AddState("Slash 3", slashState);
+        
+        AddState("Slam", slashState);
+        
+        AddState("Spin Attack", slashState);
 
         SetState("Idle");
     }
@@ -223,7 +241,7 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
             if (!fixture.Body.IsStatic)
             {
                 IsOnStaticGround = false;
-            } 
+            }
 
             GroundMaterial = Math.Max(fixture.Body.MaterialIndex, GroundMaterial);
         }
@@ -248,6 +266,11 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         if (state == "WalkTo")
         {
             state = "Walk";
+        }
+        
+        if (state == "Slash 3")
+        {
+            state = "Slash 1";
         }
 
         base.SetSequence(state);
@@ -310,6 +333,35 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
         }
         
         SoundContainer.Play(@event.EventName, GroundMaterial);
+        CallStateEvent(@event.EventName, 0);
+
+        switch (@event.EventName)
+        {
+            case "Hit":
+                var ap = @event.GetParameters<AttackParameters>();
+                ProcessAttack(ap);
+                break;
+        }
+    }
+
+    private void ProcessAttack(AttackParameters parameters)
+    {
+        var size = new Vector2(parameters.Width, parameters.Height) / _gameTemplate.TileSize;
+        var neg  = new Vector2(parameters.NegWidth, 0) / _gameTemplate.TileSize;
+
+        var aabb = FaceLeft ? 
+            new Aabb(Body.Position - size, Body.Position + neg) :
+            new Aabb(Body.Position - neg, Body.Position + size with { Y = -size.Y });
+        
+        Services.World.QueryCollisionAabbs(_queryList, ref aabb, Body);
+
+        foreach (var fixture in _queryList)
+        {
+            if (fixture.Body.Owner is IHittable hittable)
+            {
+                hittable.Hit( FaceLeft ? new Vector2(-1, 0) : new Vector2(1, 0), parameters.Value.Calculate(1));
+            }
+        }
     }
 
     protected override void OnDispose(bool disposing)

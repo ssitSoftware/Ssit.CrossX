@@ -61,6 +61,11 @@
       "name": "Game Boy BW",
       "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#989898"],
       "button-accent-color": 2
+    },
+    {
+      "name": "Pale",
+      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#9f7070"],
+      "button-accent-color": 2
     }
   ],
   "input-mapping": {  

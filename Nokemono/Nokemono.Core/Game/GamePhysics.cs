@@ -38,6 +38,7 @@ public static class GamePhysics
     public const float AirBrakeDeceleration = 8;
     public const float AirSteerAcceleration = 24;
     public const float PlayerGroundDistToFall = 2f;
+    public const float PlayerAttackShiftVelocity = 8;
     
     public static MaterialKind GetMaterialKind(int material)
     {

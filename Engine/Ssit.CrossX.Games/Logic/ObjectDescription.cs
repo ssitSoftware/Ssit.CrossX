@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Ssit.CrossX.Games.Logic;
 
@@ -14,7 +15,7 @@ public class ObjectDescription
         public string Name { get; set; }
         public string Sequence { get; set; }
         public int Frame { get; set; }
-        public string Parameters { get; set; }
+        public JObject Parameters { get; set; }
     }
     
     private class Desc

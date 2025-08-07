@@ -8,13 +8,13 @@
                 <pl>Dobrze, gdzie ja jestem?</pl>
 
                 <Text>
-                    <pl>U mnie w domu pod lasem. Znalazłam cię nieprzytomną tam w górze strumienia.</pl>
+                    <pl>U mnie w domu pod lasem. Znalazłam cię|nieprzytomną tam w górze strumienia.</pl>
 
                     <Option>
                         <pl>Kim jesteś?</pl>
 
                         <Text>
-                            <pl>Jestem tylko prostą zielarką, która uciekła od smrodu miasta.</pl>
+                            <pl>Jestem tylko prostą zielarką,|która uciekła od smrodu miasta.</pl>
 
                             <Option Set="HerbalistIntroduction">
                                 <pl>...</pl>
@@ -46,7 +46,7 @@
                 <pl>Czy widziałaś gdzieś moją broń?</pl>
 
                 <Text>
-                    <pl>Broń? Oj nie, ja nie dotykam takich rzeczy. Gdy cię znalazłam leżałaś prawie naga na trawie pod drzewem.</pl>
+                    <pl>Broń? Oj nie, ja nie dotykam takich rzeczy.|Gdy cię znalazłam leżałaś prawie naga|na trawie pod drzewem.</pl>
 
                     <Option Set="HerbalistAskWeapon">
                         <pl>O nie...</pl>
@@ -58,12 +58,12 @@
                             <pl>Na Światłość, kim ty jesteś dziewczyno?</pl>
 
                             <Option>
-                                <pl>Jestem z zakonu rewolwerowców. Potrzebuję mojej broni!</pl>
+                                <pl>Jestem rewolwerowcem. Potrzebuję broni!</pl>
 
                                 <Text>
-                                    <pl>Rewolwerowiec tutaj? Cóż za dziwny zbieg okoliczności…|Przykro mi dziecko, ale nie widziałam żadnej broni.</pl>
+                                    <pl>Rewolwerowiec tutaj? Cóż za dziwny zbieg|okoliczności… Przykro mi dziecko,|ale nie widziałam żadnej broni.</pl>
 
-                                    <Option set="HerbalistGunslingerIntro">
+                                    <Option Set="HerbalistGunslingerIntro">
                                         <pl>Muszę jej poszukać!</pl>
                                     </Option>
                                 </Text>
@@ -77,13 +77,13 @@
                 <pl>Gdzie schowałaś moją broń kobieto?</pl>
                 
                 <Text>
-                    <pl>Słucham? Dziecko, ja się takich rzeczy nie tykam. Nie miałaś ze sobą żadnej broni.</pl>
+                    <pl>Słucham?|Dziecko, ja się takich rzeczy nie tykam.|Nie miałaś ze sobą żadnej broni.</pl>
                     
                     <Option>
                         <pl>Jesteś pewna?</pl>
                         
                         <Text>
-                            <pl>Oczywiście. Gdy cię znalazłam leżałaś prawie naga na trawie pod drzewem.</pl>
+                            <pl>Oczywiście. Gdy cię znalazłam leżałaś prawie|naga na trawie pod drzewem.</pl>
                             
                             <Option Set="HerbalistAskWeapon">
                                 <pl>O nie...</pl>
@@ -94,13 +94,13 @@
                     <Option>
                         <pl>Kłamiesz!</pl>
                         <Text>
-                            <pl>Dziecko, nie bądź niewdzięczna! Przyjęłam cię pod swój dach i się tobą zajęłam, gdy byłaś nieprzytomna.</pl>
+                            <pl>Dziecko, nie bądź niewdzięczna!|Przyjęłam cię pod swój dach i się|tobą zajęłam, gdy byłaś nieprzytomna.</pl>
                             
                             <Option>
                                 <pl>...</pl>
                                 
                                 <Text>
-                                    <pl>Poza tym po co mi jakakolwiek broń? Jestem zielarką.</pl>
+                                    <pl>Poza tym po co mi jakakolwiek broń?|Jestem zielarką.</pl>
                                     
                                     <Option Set="HerbalistAskWeapon">
                                         <pl>Masz rację, przepraszam.</pl>
@@ -117,13 +117,13 @@
     <Dialog Highlight="True" On="HerbalistAskWeapon">
         
         <Text>
-            <pl>A tak w ogóle to kim ty jesteś, że nosisz ze sobą broń?</pl>
+            <pl>A tak w ogóle to kim ty jesteś,|że nosisz ze sobą broń?</pl>
             
             <Option>
                 <pl>Jestem z zakonu rewolwerowców.</pl>
                 
                 <Text>
-                    <pl>Rewolwerowiec tutaj? Cóż za dziwny zbieg okoliczności…</pl>
+                    <pl>Rewolwerowiec tutaj?|Cóż za dziwny zbieg okoliczności…</pl>
                     
                     <Option Set="HerbalistGunslingerIntro">
                         <pl>...</pl>
@@ -136,13 +136,13 @@
     <Dialog Highlight="True" On="HerbalistGunslingerIntro">
         
         <Text>
-            <pl>Tak sobie myślę, że mogłabyś poszukać w okolicach strumienia pod wielkim drzewem</pl>
+            <pl>Tak sobie myślę, że mogłabyś poszukać|w okolicach strumienia pod wielkim drzewem</pl>
             
             <Option>
                 <pl>Dlaczego?</pl>
                 
                 <Text>
-                    <pl>Tam cię znalazłam. Jest tam wiele rozpadlin i zarośli.</pl>
+                    <pl>Tam cię znalazłam.|Jest tam wiele rozpadlin i zarośli.</pl>
                     
                     <Option Set="FindWeapon.TaskStarted">
                         <pl>Idę!</pl>

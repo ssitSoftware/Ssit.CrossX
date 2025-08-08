@@ -1,9 +1,26 @@
+using Ssit.CrossX;
 using Ssit.CrossX.Games.Audio;
+using Ssit.CrossX.Games.Rendering;
 
 namespace Nokemono.Core.Game;
 
+public static class GameConstants
+{
+    public const int BloodParticles = 1;
+    public const int ShredsParticles = 2;
+    public const int DustParticles = 3;
+}
+
 public static class GameInitializer
 {
+    public static void InitGameParticles(this IParticleSystem particleSystem)
+    {
+        particleSystem
+            .RegisterParticleGroup(GameConstants.BloodParticles, "assets:/Game/Objects/Blood.png", new Size(8,8), 0.25f)
+            .RegisterParticleGroup(GameConstants.ShredsParticles, "assets:/Game/Objects/Shred.png", new Size(8,8), 1)
+            .RegisterParticleGroup(GameConstants.DustParticles, "assets:/Game/Objects/Dust.png", new Size(3,3), 1f);
+    }
+    
     public static void InitGameSounds(this ICommonSoundContainer sounds)
     {
         sounds
@@ -11,7 +28,8 @@ public static class GameInitializer
             .RegisterSound("RockerSwitchOff", "assets:/Game/Sounds/Devices/RockerSwitchOff.wav")
             .RegisterSound("Bzzz", "assets:/Game/Sounds/Effects/Bzzz.wav")
             .RegisterSound("WoodBreak", "assets:/Game/Sounds/Effects/WoodBreak.wav")
-            .RegisterSound("SwordFlesh", "assets:/Game/Sounds/Effects/SwordIntoFlesh.wav");
+            .RegisterSound("SwordFlesh", "assets:/Game/Sounds/Effects/SwordIntoFlesh.wav")
+            .RegisterSound("HitDummy", "assets:/Game/Sounds/Effects/Thump.wav");
     }
 
     public static void RegisterCharacterGroundSounds(this ContextSoundContainer container)

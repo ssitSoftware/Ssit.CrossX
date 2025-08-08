@@ -15,9 +15,9 @@ using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Physics.Dynamics.Contacts;
 using Ssit.CrossX.Games.Physics.Extensions;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.Games.Rendering;
+using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
 
@@ -26,7 +26,6 @@ namespace Nokemono.Core.Game.Objects;
 public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 {
     private readonly ICamera _camera;
-    private readonly IGameInstance _gameInstance;
     private readonly IActionScheduler _actionScheduler;
     private readonly IKeyboard _keyboard;
 
@@ -73,13 +72,14 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
     public INpcCharacter NpcCharacterInRange { get; set; }
 
     private List<IHittable> _hittableList = new();
-    
-    public Player(GameObjectsServices services, ICamera camera, IGameInstance gameInstance, IActionScheduler actionScheduler, 
+    private readonly int _particleContext;
+
+    public Player(GameObjectsServices services, ICamera camera, IActionScheduler actionScheduler, 
         ObjectCreationParameters<Parameters> parameters, IKeyboard keyboard, INarrationSystem narrationSystem, IGameState gameState)
         : base(services, parameters)
     {
+        _particleContext = services.ParticleSystem.RequestContextId();
         _camera = camera;
-        _gameInstance = gameInstance;
         _actionScheduler = actionScheduler;
         _keyboard = keyboard;
         _narrationSystem = narrationSystem;
@@ -343,6 +343,13 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
                 var ap = @event.GetParameters<AttackParameters>();
                 ProcessAttack(ap);
                 break;
+            
+            // case "Left Foot":
+            // case "Right Foot":
+            //     Services.ParticleSystem.SpreadParticles(_particleContext, GameConstants.DustParticles, 4, Body.Position, 
+            //         new Vector2(FaceLeft ? -1 : 1, -1), new Vector2(0, GamePhysics.GravityAcceleration / 8), 1, 2, 
+            //         0.15f ,0.3f, MathF.PI / 6);
+            //     break;
         }
     }
 
@@ -405,6 +412,12 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
                 break;
             }
         }
+    }
+
+    protected override void OnRender(IRenderer2 renderer, RgbaColor color)
+    {
+        base.OnRender(renderer, color);
+        Services.ParticleSystem.Draw(renderer, _particleContext);
     }
 
     protected override void OnDispose(bool disposing)

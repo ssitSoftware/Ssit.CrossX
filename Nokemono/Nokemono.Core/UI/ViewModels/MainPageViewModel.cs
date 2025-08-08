@@ -6,7 +6,7 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Narration;
-using Ssit.CrossX.UI.Common.Services;
+using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.UI.Services;
 using Ssit.IoC;
 
@@ -39,7 +39,10 @@ internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppW
 
         GameInstance gameInstance = null;
         var gameDialogs = container.IoCConstruct<GameDialogs>();
-            
+        
+        var particleSystem = container.IoCConstruct<ParticleSystem>();
+        particleSystem.InitGameParticles();
+        
         navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
         {
             OnLoading = () =>
@@ -53,10 +56,14 @@ internal class MainPageViewModel(INavigation navigation, IUiSounds sounds, IAppW
                         builder
                             .WithInstance<IGameDialogs>(gameDialogs)
                             .WithInstance<IGameDialogsUi>(gameDialogs)
+                            .WithInstance<IParticleSystem>(particleSystem)
                             .WithSingleton<IGameState, GameState>()
                             .WithSingleton<INarrationSystem, NarrationSystem>("assets:/Game/Scenario");
                     }
                 });
+
+                particleSystem.Attach(gameInstance.World);
+                
                 gameInstance.Container.Get<ICommonSoundContainer>().InitGameSounds();
                 gameInstance.Container.Get<INarrationSystem>().SetValue("playerName", config.PlayerName);
             },

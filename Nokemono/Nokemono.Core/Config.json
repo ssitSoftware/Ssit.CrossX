@@ -4,12 +4,12 @@
     {
       "comment": "0: Background, 1: Foreground, 2: Dim (Background Objects), 3: Accent (Blood, Danger, etc.)",
       "name": "Default",
-      "colors": ["#141810", "#ddf0c0", "#384030", "#f04828"],
+      "colors": ["#141810", "#ddf0c0", "#384030", "#902808"],
       "button-accent-color": 3
     },
     {
       "name": "Black & White & Red",
-      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#ff2000"],
+      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#901000"],
       "button-accent-color": 3
     },
     {

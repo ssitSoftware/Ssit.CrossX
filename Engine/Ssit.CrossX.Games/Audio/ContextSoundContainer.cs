@@ -5,28 +5,20 @@ using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.Games.Audio;
 
-public class ContextSoundContainer: IDisposable
+public class ContextSoundContainer(IContentManager contentManager, ContextSoundContainer.Parameters parameters)
+    : IDisposable
 {
     public class Parameters
     {
         public ISoundEmitter Emitter;
     }
-    
-    private readonly IContentManager _contentManager;
-    private readonly Parameters _parameters;
 
     private readonly Dictionary<(string, int), (ISoundEffectInstance, float)> _instances = new();
     private readonly List<ResourceHandle<ISoundEffect>> _sounds = new();
-    
-    public ContextSoundContainer(IContentManager contentManager, Parameters parameters)
-    {
-        _contentManager = contentManager;
-        _parameters = parameters;
-    }
 
     public ContextSoundContainer RegisterSound(string name, int material, string path, float volume = 1)
     {
-        var sound = _contentManager.Get<ISoundEffect>(path);
+        var sound = contentManager.Get<ISoundEffect>(path);
         var instance = sound.Resource.CreateInstance();
         
         instance.Parameters = new SoundParameters
@@ -34,7 +26,7 @@ public class ContextSoundContainer: IDisposable
             Volume = 1,
             Pitch = 1
         };
-        instance.Emitter = _parameters.Emitter;
+        instance.Emitter = parameters.Emitter;
         
         _sounds.Add(sound);
         _instances.Add((name, material), (instance, volume));

@@ -9,8 +9,6 @@ namespace Nokemono.Core.Game.Objects.Devices;
 
 public class LaserDoorImpl : MechanicalDoor, IHittable
 {
-    private readonly ContextSoundContainer _soundContainer;
-    
     Vector2 IHittable.Position => Body.Position;
     
     public LaserDoorImpl(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters) 
@@ -19,12 +17,6 @@ public class LaserDoorImpl : MechanicalDoor, IHittable
         InitializeSprite("assets:/Game/Objects/Laser");
         InitializePhysics(parameters, new Vector2(-0.0625f, 0), new SizeF(0.3125f, 3));
         Body.MaterialIndex = GamePhysics.Materials.Hurt;
-        
-        _soundContainer = services.Container.IoCConstruct<ContextSoundContainer>(new ContextSoundContainer.Parameters
-        {
-            Emitter = null 
-        });
-        _soundContainer.RegisterSound("Hit", GamePhysics.Materials.Any, "assets:/Game/Sounds/Effects/Bzzz.wav");
     }
 
     public bool Hit(Vector2 dir, float power)
@@ -32,7 +24,7 @@ public class LaserDoorImpl : MechanicalDoor, IHittable
         if (IsOpen)
             return false;
         
-        _soundContainer.Play("Hit", pitch: 0);
+        Services.CommonSoundContainer.Play("Bzzz", pitch: 0);
         return true;
     }
 

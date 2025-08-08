@@ -19,7 +19,7 @@ public static class DialogPageHelper
             HorizontalAlign = Align.Center,
             VerticalAlign = Align.Start,
             AnchorY = 16,
-            Width = 340,
+            Width = 380,
             Height = "48%",
             Children =
             [

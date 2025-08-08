@@ -118,7 +118,10 @@ public class Player : SpriteGameObject, IMomentumReceiver, ILogicOperator
 
         Body.CreateFixture(new EdgeShape(new Vector2(-0.29f, -0.3f), new Vector2(-0.29f, -1.2f)));
         Body.CreateFixture(new EdgeShape(new Vector2(0.29f, -0.3f), new Vector2(0.29f, -1.2f)));
-
+        
+        Body.CollidesWith = Category.Cat1;
+        Body.CollisionCategories = Category.Cat1;
+        
         Body.Mass = 80;
         BoundsRect = new RectangleF(-1.5f, -4, 3, 5);
         Stats.Jump = 0;

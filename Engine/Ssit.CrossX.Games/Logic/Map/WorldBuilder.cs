@@ -119,6 +119,7 @@ public class WorldBuilder
             var staticBody = new Body(world, Vector2.Zero);
             
             staticBody.MaterialIndex = materials.FindIndex(o=>o.Name == pair.Key);
+            staticBody.CollisionCategories = Category.All;
             
             foreach (var col in lines)
             {

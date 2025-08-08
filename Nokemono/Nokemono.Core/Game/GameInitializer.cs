@@ -8,7 +8,10 @@ public static class GameInitializer
     {
         sounds
             .RegisterSound("RockerSwitchOn", "assets:/Game/Sounds/Devices/RockerSwitchOn.wav")
-            .RegisterSound("RockerSwitchOff", "assets:/Game/Sounds/Devices/RockerSwitchOff.wav");
+            .RegisterSound("RockerSwitchOff", "assets:/Game/Sounds/Devices/RockerSwitchOff.wav")
+            .RegisterSound("Bzzz", "assets:/Game/Sounds/Effects/Bzzz.wav")
+            .RegisterSound("WoodBreak", "assets:/Game/Sounds/Effects/WoodBreak.wav")
+            .RegisterSound("SwordFlesh", "assets:/Game/Sounds/Effects/SwordIntoFlesh.wav");
     }
 
     public static void RegisterCharacterGroundSounds(this ContextSoundContainer container)

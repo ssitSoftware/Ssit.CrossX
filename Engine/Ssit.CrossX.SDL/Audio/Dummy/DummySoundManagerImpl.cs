@@ -11,6 +11,7 @@ public class DummySoundManagerImpl: ISoundManager
     }
 
     public event Action MasterVolumeUpdated;
+    public event Action Disposing;
 
     public float MasterVolume
     {

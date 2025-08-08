@@ -34,7 +34,7 @@ internal class AlSoundEffectInstanceImpl: ISoundEffectInstance
         if (state is ALSourceState.Stopped)
         {
             CleanUpSource();
-            Finished?.Invoke();
+            Finished?.Invoke(this);
         }
     }
 
@@ -51,7 +51,7 @@ internal class AlSoundEffectInstanceImpl: ISoundEffectInstance
         _soundEffect.RemoveUser?.Invoke(Guid);
     }
 
-    public event Action Finished;
+    public event Action<ISoundEffectInstance> Finished;
 
     public ISoundEmitter Emitter
     {
@@ -155,7 +155,7 @@ internal class AlSoundEffectInstanceImpl: ISoundEffectInstance
         if (_sourceHandle != 0)
         {
             CleanUpSource();
-            Finished?.Invoke();
+            Finished?.Invoke(this);
         }
     }
 

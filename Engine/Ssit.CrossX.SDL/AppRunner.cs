@@ -10,6 +10,7 @@ using Ssit.CrossX.SDL.Common;
 using Ssit.CrossX.SDL.Graphics;
 using Ssit.CrossX.SDL.Input;
 using Ssit.CrossX.SDL.Services;
+
 using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL;
@@ -25,7 +26,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
     private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate)
     {
-        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD);
+        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD |  SDL_InitFlags.SDL_INIT_AUDIO);
+        
         
         var builder = IoC.IoC.NewBuilder();
         var keyboard = new SdlKeyboard();

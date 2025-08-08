@@ -15,6 +15,8 @@ public interface ISoundManager: IDisposable
     /// It provides the new volume level as a parameter, represented as a value between 0.0 and 1.0.
     /// </remarks>
     event Action MasterVolumeUpdated;
+
+    event Action Disposing;
     
     /// <summary>
     /// Gets or sets the master volume level for the sound.

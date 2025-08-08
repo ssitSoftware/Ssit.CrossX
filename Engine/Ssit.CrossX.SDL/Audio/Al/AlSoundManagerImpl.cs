@@ -9,6 +9,7 @@ internal class AlSoundManagerImpl: ISoundManager
     private readonly float[] _listenerOrientation = new float[6];
 
     public event Action MasterVolumeUpdated;
+    public event Action Disposing;
 
     public float MasterVolume
     {
@@ -82,6 +83,8 @@ internal class AlSoundManagerImpl: ISoundManager
     
     public void Dispose()
     {
+        Disposing?.Invoke();
+        
         if (_context != ALContext.Null)
         {
             ALC.DestroyContext(_context);

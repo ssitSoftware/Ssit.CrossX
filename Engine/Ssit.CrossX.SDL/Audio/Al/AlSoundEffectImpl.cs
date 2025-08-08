@@ -41,7 +41,7 @@ internal class AlSoundEffectImpl: ISoundEffect, IInstanceCountingResource
         
         _instances.Add(instance);
         
-        instance.Finished += () =>
+        instance.Finished += i =>
         {
             _instances.Remove(instance);
             instance.Dispose();

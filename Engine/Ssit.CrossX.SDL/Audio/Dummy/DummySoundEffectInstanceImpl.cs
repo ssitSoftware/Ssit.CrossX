@@ -8,7 +8,7 @@ public class DummySoundEffectInstanceImpl: ISoundEffectInstance
     {
     }
 
-    public event Action Finished;
+    public event Action<ISoundEffectInstance> Finished;
     public ISoundEmitter Emitter { get; set; }
     public SoundParameters Parameters { get; set; }
     public bool IsPlaying => false;

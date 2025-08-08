@@ -3,6 +3,7 @@ using System.Numerics;
 using Nokemono.Core.Game;
 using Nokemono.Core.Game.Objects;
 using Nokemono.Core.Game.Objects.Devices;
+using Nokemono.Core.Game.Objects.Enemies;
 using Nokemono.Core.Game.Objects.Npc;
 using Nokemono.Core.Game.Objects.Pushables;
 using Ssit.CrossX;
@@ -27,7 +28,7 @@ public class GameTemplate: IGameTemplate
         .AddProvider("bundle:", new BundleFilesProvider());
     
     public int TileSize => 16;
-    public Size TargetSize => new(360, 270);
+    public Size TargetSize => new(480, 270);
     
     public RgbaColor DefaultBackground => new(0x000000);
     public RgbaColor EmptyColor => new(96, 64, 96);
@@ -60,12 +61,11 @@ public class GameTemplate: IGameTemplate
         new("Devices/Virtual Switch", typeof(VirtualSwitch), "assets:/Editor/LogicalSwitch", "Toggle", typeof(VirtualSwitch.Parameters)),
         new("Devices/Switch Aggregator", typeof(SwitchAggregator), "assets:/Editor/LogicalSwitch", "Logical", typeof(SwitchAggregator.Parameters)),
         new("Devices/Laser Door", typeof(LaserDoorImpl), "assets:/Game/Objects/Laser", "Closed", typeof(MechanicalDoor.Parameters)),
-        // new("Devices/Detector", typeof(DetectorImpl), "assets:/Game/Objects/Detector", "Off"),
-        // new("Elements/Power Plant", typeof(PowerPlant), "assets:/Game/Objects/PowerPlant", "On"),
         new("Elements/Dummy", typeof(Dummy), "assets:/Game/Objects/Dummy", "Idle"),
         new("Elements/Barrel", typeof(Barrel), "assets:/Game/Objects/Barrel", "Idle", typeof(Breakable.Parameters)),
         new("Elements/Crate", typeof(CrateImpl), "assets:/Game/Objects/Crate", "Preview", typeof(CrateImpl.Parameters)),
-        // new("Elements/Tire", typeof(TireImpl), "assets:/Game/Objects/Tire", "Preview")
+        
+        new("Enemies/Slicer", typeof(Slicer), "assets:/Game/Objects/Slicer", "Walk", typeof(Slicer.Parameters))
     ];
 
     public string[] TileSets { get; } =

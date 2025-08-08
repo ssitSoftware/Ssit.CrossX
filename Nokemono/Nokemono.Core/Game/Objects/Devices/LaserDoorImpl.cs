@@ -24,7 +24,7 @@ public class LaserDoorImpl : MechanicalDoor, IHittable
         if (IsOpen)
             return false;
         
-        Services.CommonSoundContainer.Play("Bzzz", pitch: 0);
+        Services.CommonSoundContainer.Play("Bzzz");
         return true;
     }
 

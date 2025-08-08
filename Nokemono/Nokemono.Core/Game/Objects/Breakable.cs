@@ -39,7 +39,7 @@ public abstract class Breakable: SpriteGameObject, IHittable
             return false;
         
         SetState("Breaking");
-        Services.CommonSoundContainer.Play("WoodBreak", pitch: 0);
+        Services.CommonSoundContainer.Play("WoodBreak", 0.5f);
         _isBroken = true;
         return false;
     }

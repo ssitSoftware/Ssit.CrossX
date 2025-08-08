@@ -78,15 +78,15 @@ public class Slicer: SpriteGameObject, IHittable
     
     public bool Hit(Vector2 dir, float power)
     {
-        Services.CommonSoundContainer.Play("SwordFlesh");
+        var sqPower = MathF.Sqrt(MathF.Sqrt(power));
+        
+        Services.CommonSoundContainer.Play("SwordFlesh", MathF.Min(1, MathF.Sqrt(power) / 3f));
         Body.ApplyLinearImpulse(dir * 10 * Body.Mass, Body.Position);
 
         dir.Y -= 0.7f;
         dir = Vector2.Normalize(dir);
         
         _hitValuePresenter.AddValue((int)(power*10), Body.Position);
-        
-        var sqPower = MathF.Sqrt(MathF.Sqrt(power));
         
         Services.ParticleSystem.SpreadParticles(_particleSystemContext, GameConstants.BloodParticles,  (int)(power * power + 2), Body.Position - new Vector2(0, 0.5f), 
             dir, new Vector2(0, GamePhysics.GravityAcceleration / 2), 8, 12 * sqPower, 0.125f, 0.5f, MathF.PI / 6);

@@ -105,7 +105,8 @@ public static class Initializer
             .Map<OptionsPageInGameViewModel, OptionsPageInGame>()
             .Map<GamePageViewModel, GamePage>()
             .Map<LoadingPageViewModel, LoadingPage>()
-            .Map<PausePageViewModel, PausePage>();
+            .Map<PausePageViewModel, PausePage>()
+            .Map<StartupPageViewModel, StartupPage>();
     }
 
     public static void InitializeCustomViews(this IHandlerMapper mapper)

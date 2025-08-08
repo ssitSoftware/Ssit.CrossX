@@ -33,6 +33,17 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
             Children = [
                 new ImageView
                 {
+                    Source = "assets:/UI/PoweredBy.png!",
+                    AnchorX = "100%-10",
+                    AnchorY = "100%-10",
+                    HorizontalAlign = Align.End,
+                    VerticalAlign = Align.End,
+                    Scaling = ImageScalingMode.None,
+                    Width = Length.Auto,
+                    Height = Length.Auto
+                },
+                new ImageView
+                {
                   Source  = "assets:/UI/Logo.png!",
                   AnchorX = "50%",
                   HorizontalAlign = Align.Center,
@@ -58,8 +69,8 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
                 menuView,
                 new Label
                 {
-                    Text = "© 2025 ebatianoGames Sebastian Sejud™.\n" + Translator["All rights reserved."],
-                    AnchorX = "50%",
+                    Text = "© 2025 ebatianoGames™.\n" + Translator["All rights reserved."],
+                    AnchorX = "33%",
                     AnchorY = "100%-8",
                     HorizontalAlign = Align.Center,
                     VerticalAlign = Align.End,
@@ -83,6 +94,9 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
     protected override void MenuApplyStyle(VerticalStack stack)
     {
         base.MenuApplyStyle(stack);
-        stack.AnchorY = "50%+25";
+        stack.AnchorY = "50%+15";
+        stack.AnchorX = "33%";
+        stack.Width = "50%";
+        stack.HorizontalAlign = Align.Center;
     }
 }

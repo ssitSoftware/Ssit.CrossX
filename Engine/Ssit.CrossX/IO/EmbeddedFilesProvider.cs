@@ -50,4 +50,9 @@ public class EmbeddedFilesProvider: IFilesProvider
         path = GetResourceName(path);
         return _files.Where(o => o.StartsWith(path) && (extension?.Equals(o.Split('.')[^1]) ?? true)).Select( o=>o.Substring(_prefix.Length)).ToArray();
     }
+
+    public string GetPhisicalFilePath(string path)
+    {
+        throw new NotSupportedException();
+    }
 }

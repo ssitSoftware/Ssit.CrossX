@@ -1,9 +1,8 @@
 using SDL;
 using Ssit.CrossX.Audio;
-
 using static SDL.SDL3_mixer;
 
-namespace Ssit.CrossX.SDL.Audio.Sdl;
+namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlSoundManagerImpl: ISoundManager
 {
@@ -50,7 +49,7 @@ public unsafe class SdlSoundManagerImpl: ISoundManager
     public void Dispose()
     {
         Disposing?.Invoke();
-        //Mix_CloseAudio();
+        Mix_CloseAudio();
         Mix_Quit();
     }
 

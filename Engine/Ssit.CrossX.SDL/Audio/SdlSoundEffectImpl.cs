@@ -1,10 +1,10 @@
-using Ssit.CrossX.Audio;
-using Ssit.IoC;
 using SDL;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.SDL.Common;
+using Ssit.IoC;
 using static SDL.SDL3_mixer;
 
-namespace Ssit.CrossX.SDL.Audio.Sdl;
+namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlSoundEffectImpl: ISoundEffect
 {
@@ -19,7 +19,7 @@ public unsafe class SdlSoundEffectImpl: ISoundEffect
         _iocContainer = iocContainer;
         _soundManager = soundManager;
 
-        _soundManager.Disposing += SoundManagerOnDisposing;
+        _soundManager.Disposing += Dispose;
         
         var path = Path.ChangeExtension(Path.GetTempPath(), Guid.NewGuid() + ".wav");
         using (var fileStream = File.Open(path, FileMode.Create))
@@ -32,14 +32,6 @@ public unsafe class SdlSoundEffectImpl: ISoundEffect
         _chunk = new SdlHandle<Mix_Chunk>(chunk);
         
         File.Delete(path);
-    }
-
-    private void SoundManagerOnDisposing()
-    {
-        _soundManager.Disposing -= Dispose;
-        
-        _instances.Clear();
-        _chunk.OnDisposed();
     }
 
     public void Dispose()

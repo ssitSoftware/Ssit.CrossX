@@ -4,7 +4,7 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.SDL.Common;
 using static SDL.SDL3_mixer;
 
-namespace Ssit.CrossX.SDL.Audio.Sdl;
+namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
 {

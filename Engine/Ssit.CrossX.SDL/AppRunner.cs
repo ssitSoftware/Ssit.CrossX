@@ -1,5 +1,6 @@
 
 using SDL;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
@@ -42,8 +43,10 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             .WithInstance<IGameControllers>(gameControllers)
             .WithImplementation<ITexture, SdlTexture>()
             .WithImplementation<IRenderTarget, SdlRenderTarget>()
-            .WithPixelCore()
-            .WithAudio();
+            .WithSingleton<ISoundManager, SdlSoundManagerImpl>()
+            .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
+            .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
+            .WithPixelCore();
         
         initializeServicesDelegate?.Invoke(builder);
 
@@ -68,7 +71,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             builder.WithSingleton<ISdlPalette, SdlPalette>();
         }
         
-        using var services = builder.Build();
+        var services = builder.Build();
         
         appWindowManager.Initialize(services.Get<IActionScheduler>());
         
@@ -149,6 +152,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             SDL_RenderPresent(renderer);
             eventSource.OnRenderFinished();
         }
+        
+        services.Dispose();
         
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);

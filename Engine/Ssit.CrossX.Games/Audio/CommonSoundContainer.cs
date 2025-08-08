@@ -16,19 +16,14 @@ internal class CommonSoundContainer(IContentManager contentManager) : ICommonSou
         return this;
     }
 
-    public void Play(string name, float pitch = 1, ISoundEmitter emitter = null)
+    public void Play(string name, float volume = 1, ISoundEmitter emitter = null)
     {
         if (!_sounds.TryGetValue(name, out var sound))
         {
             return;
         }
         
-        if (pitch == 0)
-        {
-            pitch = Random.Shared.NextSingle() / 5f + 0.9f;
-        }
-        
-        sound.Item1.Resource.PlayOnce(volume: sound.Item2, emitter: emitter, pitch: pitch);
+        sound.Item1.Resource.PlayOnce(volume: sound.Item2 * volume, emitter: emitter);
     }
 
     public void Dispose()

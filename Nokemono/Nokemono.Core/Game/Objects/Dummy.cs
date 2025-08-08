@@ -63,12 +63,12 @@ public class Dummy: SpriteGameObject, IHittable
         
         _hitValuePresenter.AddValue((int)(power*10), Body.Position);
         
-        Services.CommonSoundContainer.Play("HitDummy", pitch: 0);
+        var sqPower = MathF.Sqrt(MathF.Sqrt(power));
+        
+        Services.CommonSoundContainer.Play("HitDummy", MathF.Min(1, MathF.Sqrt(power) / 3f));
         
         dir.Y -= 0.7f;
         dir = Vector2.Normalize(dir);
-        
-        var sqPower = MathF.Sqrt(MathF.Sqrt(power));
         
         Services.ParticleSystem.SpreadParticles(_particleSystemContext, GameConstants.ShredsParticles,  (int)(power * power + 2), Body.Position - new Vector2(0, 0.5f), 
             dir, new Vector2(0, GamePhysics.GravityAcceleration / 4), 4, 6 * sqPower, 0.125f, 0.33f, MathF.PI / 6);

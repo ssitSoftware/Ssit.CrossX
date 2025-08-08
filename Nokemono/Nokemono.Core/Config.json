@@ -2,14 +2,19 @@
   "player-name": "Sebastian",
   "palettes": [
     {
-      "comment": "0: Background, 1: Foreground, 2: Dim (Background Objects), 3: Accent (Blood, Danger, etc.)",
       "name": "Default",
-      "colors": ["#081004", "#ddeec0", "#506050", "#a03030"],
+      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#ff2000"],
       "button-accent-color": 3
     },
     {
-      "name": "Contrast",
-      "colors": ["#000000", "#ffffff", "#505050", "#ff0000"],
+      "name": "Black & White",
+      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#989898"],
+      "button-accent-color": 2
+    },
+    {
+      "comment": "0: Background, 1: Foreground, 2: Dim (Background Objects), 3: Accent (Blood, Danger, etc.)",
+      "name": "Gray & Green",
+      "colors": ["#141810", "#ddf0c0", "#384030", "#a03030"],
       "button-accent-color": 3
     },
     {
@@ -56,16 +61,6 @@
       "name": "Game Boy + Red",
       "colors": ["#081820", "#9cad91", "#346856", "#a05634"],
       "button-accent-color": 3
-    },
-    {
-      "name": "Game Boy BW",
-      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#989898"],
-      "button-accent-color": 2
-    },
-    {
-      "name": "Pale",
-      "colors": ["#141414", "#9f9f9f", "#4e4e4e", "#9f7070"],
-      "button-accent-color": 2
     }
   ],
   "input-mapping": {  

@@ -1,8 +1,10 @@
-using bottlenoselabs.Interop;
+
+using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
 
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
+using static SDL.SDL3_image;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
@@ -50,7 +52,7 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
         
         fixed (RgbaColor* palettePtr = _palette)
         {
-            Rgba8U* ptr = (Rgba8U*)palettePtr;
+            SDL_Color* ptr = (SDL_Color*)palettePtr;
             SDL_SetPaletteColors(PaletteHandle.Pointer, ptr, 0, _palette.Length);
         }
     }

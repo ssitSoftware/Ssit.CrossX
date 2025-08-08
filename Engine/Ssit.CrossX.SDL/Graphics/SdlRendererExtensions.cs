@@ -1,7 +1,8 @@
+using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.SDL.Common;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
@@ -29,17 +30,14 @@ public static class SdlRendererExtensions
     {
         switch (mode)
         {
-            case BlendMode.None:
-                return SDL_BLENDMODE_NONE;
-            
             case BlendMode.AlphaBlend:
-                return SDL_BLENDMODE_BLEND_PREMULTIPLIED;
+                return SDL_BlendMode.SDL_BLENDMODE_BLEND;
             
             case BlendMode.Additive:
-                return SDL_BLENDMODE_ADD;
+                return SDL_BlendMode.SDL_BLENDMODE_ADD;;
             
             case BlendMode.Multiply:
-                return SDL_BLENDMODE_MUL;
+                return SDL_BlendMode.SDL_BLENDMODE_MUL;;
         }
         return SDL_BLENDMODE_NONE;
     }
@@ -50,9 +48,6 @@ public static class SdlRendererExtensions
         {
             case TextureFilter.Linear:
                 return SDL_ScaleMode.SDL_SCALEMODE_LINEAR;
-            
-            case TextureFilter.Nearest:
-                return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;
         }
 
         return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;

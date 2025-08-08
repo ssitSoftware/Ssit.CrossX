@@ -1,3 +1,4 @@
+using SDL;
 using Ssit.CrossX.Input;
 
 namespace Ssit.CrossX.SDL.Input;
@@ -37,7 +38,7 @@ internal class SdlGameControllers: IGameControllers
         }
     }
 
-    public void ProcessEvent(bottlenoselabs.Interop.SDL.SDL_Event e)
+    public void ProcessEvent(SDL_Event e)
     {
         foreach (var controller in _controllers)
         {

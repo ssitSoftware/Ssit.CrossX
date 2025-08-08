@@ -1,8 +1,8 @@
 using System.Numerics;
-using bottlenoselabs.Interop;
+using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
@@ -93,7 +93,13 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         for (var idx = 0; idx < count; ++idx)
         {
             var vert = vertices[idx];
-            _verticesArray[idx].color = new Rgba32F(vert.Color.ToUInt32Inverted());
+            _verticesArray[idx].color = new SDL_FColor
+                {
+                    r = vert.Color.Rf,
+                    g = vert.Color.Gf,
+                    b = vert.Color.Bf,
+                    a = vert.Color.Af,
+                };
             
             _verticesArray[idx].position = new SDL_FPoint
             {

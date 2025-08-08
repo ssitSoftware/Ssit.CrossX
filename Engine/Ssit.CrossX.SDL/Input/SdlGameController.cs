@@ -1,6 +1,7 @@
+using SDL;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.SDL.Common;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Input;
 
@@ -33,15 +34,15 @@ internal unsafe class SdlGameController: IDisposable
         
         if (axis == GameControllerAxis.DPadX)
         {
-            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_LEFT).Value == 1 ? -1 : 0;
-            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_RIGHT).Value == 1 ? 1 : 0;
+            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_LEFT) == true ? -1 : 0;
+            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_RIGHT) == true ? 1 : 0;
             return value;
         }
         
         if (axis == GameControllerAxis.DPadY)
         {
-            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_UP).Value == 1 ? -1 : 0;
-            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_DOWN).Value == 1 ? 1 : 0;
+            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_UP) == true ? -1 : 0;
+            value += SDL_GetGamepadButton(gamepad,  SDL_GamepadButton.SDL_GAMEPAD_BUTTON_DPAD_DOWN) == true ? 1 : 0;
             return value;
         }
         
@@ -60,7 +61,7 @@ internal unsafe class SdlGameController: IDisposable
                 return false;
             }
             
-            return SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button).Value == 1;
+            return SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button) == true;
         }
         
         const float minAxisValueForButton = 0.85f;
@@ -169,9 +170,9 @@ internal unsafe class SdlGameController: IDisposable
         {
             for (int i = 0; i < count; i++)
             {
-                if (SDL_IsGamepad(joysticks[i]).Value == 1)
+                if (SDL_IsGamepad(joysticks[i]) == true)
                 {
-                    if (!AttachedControllers.Add(joysticks[i]))
+                    if (!AttachedControllers.Add((uint)joysticks[i]))
                         continue;
 
                     var gp = SDL_OpenGamepad(joysticks[i]);

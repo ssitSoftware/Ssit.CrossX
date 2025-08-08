@@ -1,5 +1,5 @@
-using System.Runtime.InteropServices;
-using Interop.Runtime;
+
+using SDL;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
@@ -10,7 +10,7 @@ using Ssit.CrossX.SDL.Common;
 using Ssit.CrossX.SDL.Graphics;
 using Ssit.CrossX.SDL.Input;
 using Ssit.CrossX.SDL.Services;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL;
 
@@ -25,8 +25,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
     private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate)
     {
-        Initialize();
-        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
+        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD);
         
         var builder = IoC.IoC.NewBuilder();
         var keyboard = new SdlKeyboard();
@@ -48,8 +47,8 @@ public static class AppRunner<TApp> where TApp : IApp, new()
 
         using var app = new TApp();
         
-        var window = SDL_CreateWindow(CString.FromIntPtr(IntPtr.Zero), 800, 600, 0);
-        var renderer = SDL_CreateRenderer(window, null);
+        var window = SDL_CreateWindow("", 800, 600, 0);
+        var renderer = SDL_CreateRenderer(window, (byte*)null);
         SDL_SetRenderVSync(renderer, 1);
         
         var appWindowManager = new AppWindowManager(window, renderer);

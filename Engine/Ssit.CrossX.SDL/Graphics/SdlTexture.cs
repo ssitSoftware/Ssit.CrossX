@@ -1,10 +1,10 @@
-using Interop.Runtime;
+using SDL;
 using SkiaSharp;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
 
-using static bottlenoselabs.Interop.SDL_image;
-using static bottlenoselabs.Interop.SDL; 
+using static SDL.SDL3_image;
+using static SDL.SDL3; 
 
 namespace Ssit.CrossX.SDL.Graphics;
 
@@ -144,7 +144,7 @@ public unsafe class SdlTexture: ITexture
         SDL_SetSurfacePalette(_surfaceDiff.Pointer, _sdlPalette.PaletteHandle.Pointer);
 
         var newSurface = SDL_ConvertSurface(_surfaceDiff.Pointer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
-        SDL_PremultiplySurfaceAlpha(newSurface, CBool.FromBoolean(true));
+        SDL_PremultiplySurfaceAlpha(newSurface, true);
 
         if (_textureDiff != null && _textureDiff.Pointer != null)
         {
@@ -168,8 +168,9 @@ public unsafe class SdlTexture: ITexture
         
         fixed (byte* ptr = bytes)
         {
-            var io = SDL_IOFromMem(ptr, (ulong)bytes.Length);
-            surface = IMG_Load_IO(io, CBool.FromBoolean(true));
+            nint ptrN = (nint)ptr;
+            var io = SDL_IOFromMem(ptrN, (nuint)bytes.Length);
+            surface = IMG_Load_IO(io, true);
         }
 
         if (surface->format != SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888)
@@ -208,7 +209,7 @@ public unsafe class SdlTexture: ITexture
             }
         }
 
-        if (SDL_PremultiplySurfaceAlpha(surface, CBool.FromBoolean(true)).Value == 0)
+        if (SDL_PremultiplySurfaceAlpha(surface, true) == false)
         {
             throw new InvalidProgramException("SDL_PremultiplySurfaceAlpha failed");
         }

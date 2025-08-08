@@ -1,4 +1,4 @@
-using static bottlenoselabs.Interop.SDL;
+using SDL;
 
 namespace Ssit.CrossX.SDL.Common;
 

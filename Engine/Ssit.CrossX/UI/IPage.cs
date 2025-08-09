@@ -2,6 +2,7 @@ using System;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Transitions;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI;
@@ -18,6 +19,7 @@ internal interface IPage: IViewParent, IDisposable
     float TransitionTime { get; set; }
     float TransitionProgress { get; set; }
     float Scale { get; }
+    TransitionType TransitionType { get; set; }
     void SignalRecalculationPending();
     void InvalidateRendering();
 }

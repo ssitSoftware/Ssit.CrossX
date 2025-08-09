@@ -23,7 +23,8 @@ public class StartupPage: Page<StartupPageViewModel>
                     VerticalAlign = Align.End,
                     Scaling = ImageScalingMode.None,
                     Width = Length.Auto,
-                    Height = Length.Auto
+                    Height = Length.Auto,
+                    Visible = ViewModel.ShowPoweredBy
                 }
             ]
         };

@@ -9,7 +9,7 @@ namespace Nokemono.Core.UI.ViewModels;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("ReSharper", "HeapView.ObjectAllocation.Possible")]
 [NoHistory]
-internal class LoadingPageViewModel: IDisposable
+internal class LoadingPageViewModel
 {
     public class Parameters
     {
@@ -17,26 +17,18 @@ internal class LoadingPageViewModel: IDisposable
         public Action OnLoading { get; set; }
     }
     
-    private readonly IEventSource _eventSource;
     private readonly Parameters _parameters;
-    
-    public LoadingPageViewModel(IEventSource eventSource, Parameters parameters)
+    private readonly IActionScheduler _actionScheduler;
+
+    public LoadingPageViewModel(Parameters parameters, IActionScheduler actionScheduler)
     {
-        _eventSource = eventSource;
         _parameters = parameters;
-        eventSource.RenderFinished += EventSourceOnRenderFinished;
+        _actionScheduler = actionScheduler;
     }
 
-    private void EventSourceOnRenderFinished()
+    public void StartLoading()
     { 
-        _eventSource.RenderFinished -= EventSourceOnRenderFinished;
-        
         _parameters.OnLoading();
-        _parameters.OnLoaded();
-    }
-
-    public void Dispose()
-    {
-        _eventSource.RenderFinished -= EventSourceOnRenderFinished;
+        _actionScheduler.Schedule(_parameters.OnLoaded);
     }
 }

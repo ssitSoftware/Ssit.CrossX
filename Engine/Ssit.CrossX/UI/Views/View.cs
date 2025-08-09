@@ -1,6 +1,8 @@
 using System;
+using System.Numerics;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Transitions;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
@@ -20,6 +22,8 @@ public abstract class View: IHandlerView
 
     public SharedBool Visible { get; set; } = true;
 
+    public ITransition[] Transitions { get; set; }
+    
     ViewHandler IHandlerView.Handler => Handler;
     
     public Type CustomHandlerType

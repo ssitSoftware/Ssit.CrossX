@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Ssit.CrossX.UI.Transitions;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.UI.Services;
@@ -31,6 +32,9 @@ internal class Navigation: INavigation
     public IPage CurrentPage { get; private set; }
     public bool PreviousPageOnTop { get; private set; }
     
+    public int NavigationStackCount => _navigationStack.Count;
+    public bool ParallelTransitions { get; set; }
+    
     public Navigation(NavigationMap navigationMap, IIoCContainer iocContainer, IUiServices uiServices, IUiApp uiApp)
     {
         _navigationMap = navigationMap;
@@ -39,8 +43,6 @@ internal class Navigation: INavigation
         _uiApp = uiApp as UiApp;
     }
 
-    public int NavigationStackCount => _navigationStack.Count;
-    
     public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
     {
         if (_navigationStack.Count > 0)
@@ -58,9 +60,12 @@ internal class Navigation: INavigation
 
         if (PreviousPage != null)
         {
-            PreviousPage.TransitionProgress = 1;
+            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionType = TransitionType.NavigateFrom;
         }
+        
         CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionType = TransitionType.NavigateTo;
         
         PreviousPageOnTop = false;
     }
@@ -93,9 +98,11 @@ internal class Navigation: INavigation
         
         if (PreviousPage != null)
         {
-            PreviousPage.TransitionProgress = 1;
+            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionType = TransitionType.NavigateBackFrom;
         }
         CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionType = TransitionType.NavigateBackTo;
     }
 
     public void NavigateBackTo<TViewModel>() where TViewModel : class
@@ -135,9 +142,11 @@ internal class Navigation: INavigation
         
         if (PreviousPage != null)
         {
-            PreviousPage.TransitionProgress = 1;
+            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionType = TransitionType.NavigateBackFrom;
         }
         CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionType = TransitionType.NavigateBackTo;
     }
 
     private IPage InitializePage(object vm, string focusedId)
@@ -164,16 +173,38 @@ internal class Navigation: INavigation
 
     public void Update(float dt)
     {
-        if (PreviousPage?.TransitionProgress >= 1)
+        if (PreviousPage?.TransitionProgress < 1)
         {
-            PreviousPage?.Dispose();
-            PreviousPage = null;
+            PreviousPage.Update(dt);
+            
+            var transitionTime = MathF.Max(PreviousPage.TransitionTime, 0.0011f);
+            PreviousPage.TransitionProgress += dt * 1 / transitionTime;
+            
+            if (PreviousPage?.TransitionProgress >= 1)
+            {
+                PreviousPage?.Dispose();
+                PreviousPage = null;
+            }
         }
-        
-        PreviousPage?.Update(dt);
-        CurrentPage?.Update(dt);
 
-        if (PreviousPage is null)
+        if (ParallelTransitions || PreviousPage is null)
+        {
+            if (CurrentPage?.TransitionProgress > 0)
+            {
+                var transitionTime = MathF.Max(CurrentPage.TransitionTime, 0.0011f);
+                CurrentPage.TransitionProgress -= dt * 1 / transitionTime;
+
+                if (CurrentPage?.TransitionProgress <= 0)
+                {
+                    CurrentPage.TransitionProgress = 0;
+                    CurrentPage.TransitionType = 0;
+                }
+            }
+            
+            CurrentPage?.Update(dt);
+        }
+
+        if (PreviousPage is null && _objectsToDisposeOnTransitionFinished.Count > 0)
         {
             foreach (var disposable in _objectsToDisposeOnTransitionFinished)
             {

@@ -72,7 +72,7 @@ public class GameApp : UiPixelApp
             .InitializeMusic("Menu");
 
         base.OnInitialize(container);
-        UiApp.Initialize<MainPageViewModel>();
+        UiApp.Initialize<StartupPageViewModel>();
     }
 
     private void SetCrtMode(int mode)

@@ -17,7 +17,7 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
     protected override void OnLoad(IInputContext inputContext)
     {
         base.OnLoad(inputContext);
-        TransitionTime = 0.2f;
+        TransitionTime = 0.3f;
         Services.Get<IMusicPlayer>().ChangePlaylist("Menu");
     }
     
@@ -38,7 +38,8 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
                 ForTransitions = TransitionType.Navigation,
                 Offset = new Vector2(0, -200),
                 Power = 3,
-                ProgressMin = 0.25f
+                ProgressMin = 0.125f,
+                ProgressMax = 0.75f
             }
         ];
         
@@ -137,9 +138,10 @@ internal class MainPage: MenuItemsPageBaseEx<MainPageViewModel>
             new TranslationTransition
             {
                 ForTransitions = TransitionType.Navigation,
-                Offset = new Vector2(-240, 0),
+                Offset = new Vector2(-300, 0),
                 Power = 3,
-                ProgressMin = 0f
+                ProgressMin = 0.1f,
+                ProgressMax = 0.8f,
             }
         ];
     }

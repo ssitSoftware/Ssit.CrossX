@@ -9,7 +9,7 @@ public class OptionsPage : OptionsPageBase<OptionsPageViewModel>
 {
     protected override View CreateView()
     {
-        TransitionTime = 0.2f;
+        TransitionTime = 0.3f;
         
         var menu = CreateMenu();
         menu.Transitions =
@@ -17,7 +17,7 @@ public class OptionsPage : OptionsPageBase<OptionsPageViewModel>
             new TranslationTransition
             {
                 ForTransitions = TransitionType.Navigation,
-                Offset = new Vector2(0, 270),
+                Offset = new Vector2(360, 0),
                 Power = 3,
                 ProgressMin = 0.2f
             }

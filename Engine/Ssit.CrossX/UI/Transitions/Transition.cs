@@ -20,7 +20,7 @@ public abstract class Transition : ITransition
         
         renderer.StateManager.SaveState();
         
-        progress = ProgressMin + (ProgressMax - ProgressMin) * progress;
+        progress = MathF.Max(0, Math.Min(1, (progress - ProgressMin) / (ProgressMax - ProgressMin)));
         progress = MathF.Pow(progress, Power);
         
         OnApply(renderer, progress);

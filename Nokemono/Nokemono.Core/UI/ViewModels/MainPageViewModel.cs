@@ -1,7 +1,4 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
-using System.Threading.Tasks;
 using Nokemono.Core.Configuration;
 using Nokemono.Core.Game;
 using Ssit.CrossX.Commands;
@@ -11,7 +8,6 @@ using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Logic.Narration;
 using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.UI.Services;
-using Ssit.CrossX.UI.Values;
 using Ssit.IoC;
 
 namespace Nokemono.Core.UI.ViewModels;

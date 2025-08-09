@@ -34,11 +34,7 @@ public class PausePageViewModel : IPageCommandsSource
         ExitCommand = new SyncCommand( ()=>
         {
             sounds[UiSounds.NavigateToSound]?.PlayOnce();
-            navigation.NavigateTo<LoadingPageViewModel>(new LoadingPageViewModel.Parameters
-            {
-                OnLoading = () => { },
-                OnLoaded = navigation.NavigateBackTo<MainPageViewModel>
-            });
+            navigation.NavigateBackTo<MainPageViewModel>();
         });
         
         sounds[UiSounds.MenuSound]?.PlayOnce();

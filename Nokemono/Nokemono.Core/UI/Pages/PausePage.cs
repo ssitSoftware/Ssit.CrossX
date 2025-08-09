@@ -11,7 +11,7 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
 {
     protected override View CreateView()
     {
-        TransitionTime = 0.3f;
+        TransitionTime = 0.15f;
         
         var menuView = CreateMenuItems<LabelButtonEx>("Pause",
         [
@@ -25,16 +25,12 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
             new TranslationTransition
             {
                 ForTransitions = TransitionType.NavigateFrom | TransitionType.NavigateBackTo,
-                Offset = new Vector2(0, -270),
-                Power = 3,
-                ProgressMin = 0.2f
+                Offset = new Vector2(-360, 0),
+                Power = 2
             },
-            new TranslationTransition
+            new HideTransition
             {
-                ForTransitions = TransitionType.NavigateTo | TransitionType.NavigateBackFrom,
-                Offset = new Vector2(0, 270),
-                Power = 3,
-                ProgressMin = 0.2f
+                ForTransitions = TransitionType.NavigateBackFrom
             }
         ];
         
@@ -47,16 +43,14 @@ public class PausePage: MenuItemsPageBaseEx<PausePageViewModel>
                     Active = false
                 },
                 DialogPageHelper.CreateDialogLayer(ViewModel.GameInterfaces.Dialogs, false),
-                // new ImageView
-                // {
-                //     Source  = "assets:/UI/Mask.png!",
-                //     HorizontalAlign = Align.Fill,
-                //     VerticalAlign = Align.Fill,
-                //     Scaling = ImageScalingMode.Fill
-                // },
                 new Background
                 {
-                    BackgroundColor = (1, 0.9f)
+                    BackgroundColor = (1, 0.9f),
+                    Transitions = [
+                        new HideTransition
+                        {
+                            ForTransitions = TransitionType.NavigateBackFrom
+                        }]
                 },
                 new Container
                 {

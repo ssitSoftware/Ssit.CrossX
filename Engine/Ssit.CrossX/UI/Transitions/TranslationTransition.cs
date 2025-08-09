@@ -13,3 +13,11 @@ public class TranslationTransition: Transition
         renderer.StateManager.Translate(offset);
     }
 }
+
+public class HideTransition: Transition
+{
+    protected override void OnApply( IRenderer2 renderer, float progress)
+    {
+        renderer.StateManager.Scale(0);
+    }
+}

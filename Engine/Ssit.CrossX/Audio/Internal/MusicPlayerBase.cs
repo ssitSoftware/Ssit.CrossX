@@ -19,7 +19,7 @@ public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
     protected abstract int GetSongPosition();
     protected abstract void SwitchSong(Song song, int fadeTime, int startPosition = 0);
 
-    public void ChangePlaylist(string name, int fadeTimeMs = 0, bool resetProgress = false)
+    public void ChangePlaylist(string name, int fadeTimeMs = 250, bool resetProgress = false)
     {
         var newPlaylist = _playlists[name];
         

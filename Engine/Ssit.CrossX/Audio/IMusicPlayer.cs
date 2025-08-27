@@ -22,7 +22,7 @@ public interface IMusicPlayer
     /// <param name="name">The name of the playlist to switch to.</param>
     /// <param name="fadeTimeMs">The time it takes to fade out the current playlist and fade in the new one, in milliseconds.</param>
     /// <param name="resetProgress">Specifies whether to reset the new playlist's progress to the start.</param>
-    void ChangePlaylist(string name, int fadeTimeMs = 0, bool resetProgress = false);
+    void ChangePlaylist(string name, int fadeTimeMs = 250, bool resetProgress = false);
 
     /// <summary>Advances to the next track in the current playlist.</summary>
     /// <param name="fadeTimeMs">The time in milliseconds to fade out the current track and fade in the next track.</param>

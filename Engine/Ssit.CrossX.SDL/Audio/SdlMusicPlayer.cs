@@ -49,15 +49,20 @@ public unsafe class SdlMusicPlayer(IActionScheduler actionScheduler, IFilesProvi
         
         _oldMusic = _currentMusic;
         _currentMusic = new SdlHandle<Mix_Music>(Mix_LoadMUS(filesProvider.GetPhisicalFilePath(song.Path)));
+        
+        Mix_FadeOutMusic(fadeTime / 2);
 
         if (_currentMusic.Pointer == null)
         {
-            Mix_HaltMusic();
-            return;
+            Task.Delay(TimeSpan.FromMilliseconds(fadeTime / 2))
+                .ContinueWith(t => actionScheduler.Schedule(Mix_HaltMusic));
         }
-        
-        Mix_FadeInMusic(_currentMusic.Pointer, short.MaxValue, fadeTime);
-        Mix_SetMusicPosition(pos);
+        else
+        {
+            Task.Delay(TimeSpan.FromMilliseconds(fadeTime / 2))
+                .ContinueWith(t =>
+                    actionScheduler.Schedule(() => Mix_FadeInMusicPos(_currentMusic.Pointer, -1, fadeTime / 2, pos)));
+        }
 
         Task.Delay(TimeSpan.FromMilliseconds(fadeTime * 2)).ContinueWith(
             t => actionScheduler.Schedule(() =>

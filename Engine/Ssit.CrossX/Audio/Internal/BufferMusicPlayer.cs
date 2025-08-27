@@ -47,7 +47,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
         }
     }
 
-    public void Dispose()
+    protected override void OnDispose()
     {
         var players = _musicPlayers.ToArray();
         _musicPlayers.Clear();

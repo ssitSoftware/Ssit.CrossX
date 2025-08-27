@@ -5,6 +5,7 @@ using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Transitions;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
@@ -44,6 +45,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     }
 
     float IPage.Scale => Scale;
+    public TransitionType TransitionType { get; set; }
+    
     void IPage.SignalRecalculationPending() => _recalculationNeeded = true;
 
     protected virtual float Scale { get; private set; } = 1;
@@ -112,7 +115,13 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         }
     }
 
-    bool IPage.OnUiButton(UiButton button, IInputContext inputContext) => OnUiButton(button, inputContext);
+    bool IPage.OnUiButton(UiButton button, IInputContext inputContext)
+    {
+        if (TransitionProgress > 0)
+            return false;
+        
+        return OnUiButton(button, inputContext);   
+    }
 
     protected virtual void OnUpdate(float dt)
     {

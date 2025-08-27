@@ -30,13 +30,14 @@ internal static class NarrationParser
 
         if (node.Tag != "Dialogs")
             return null;
-
+        
         var name = node.Attribute("Name");
+        var defaultLang = node.Attribute("DefaultLanguage") ?? "en";
         
         var dialogs = new List<NarrationDialog>();
         foreach (var cn in node.Nodes)
         {
-            var dialog = ParseDialog(cn);
+            var dialog = ParseDialog(cn, defaultLang);
             if (dialog != null)
             {
                 dialogs.Add(dialog);
@@ -45,7 +46,7 @@ internal static class NarrationParser
         return new NarrationObject(name, dialogs);
     }
 
-    private static NarrationDialog ParseDialog(XNode node)
+    private static NarrationDialog ParseDialog(XNode node, string defaultLanguage)
     {
         if (node.Tag != "Dialog")
             return null;
@@ -59,7 +60,7 @@ internal static class NarrationParser
         var on = new HashSet<string>(node.Attribute("On")?.Split('|') ?? []);
         var off = new HashSet<string>(node.Attribute("Off")?.Split('|') ?? []);
 
-        var defaultLang = node.Attribute("DefaultLanguage") ?? "en";
+        var defaultLang = node.Attribute("DefaultLanguage") ?? defaultLanguage;
         
         var entry = ParseEntry(node.Nodes.FirstOrDefault());
         return new NarrationDialog(id, on, off, highlight, defaultLang, entry);

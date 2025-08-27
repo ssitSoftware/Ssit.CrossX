@@ -140,6 +140,19 @@ internal class ContentManager: IContentManager
     
     private IDisposable LoadTextureFunc(string path)
     {
+        LoadTextureColorMode mode = LoadTextureColorMode.Default;
+        var parts = path.Split('|');
+        
+        if (parts.Length > 1)
+        {
+            if (!Enum.TryParse(parts[1], true, out mode))
+            {
+                mode = LoadTextureColorMode.Default;
+            }
+
+            path = parts[0];
+        }
+        
         var name = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path));
         var ext = Path.GetExtension(path);
 
@@ -154,7 +167,8 @@ internal class ContentManager: IContentManager
                 _filesProvider.Open(name + ".diffuse" + ext) : null,
             
             NormalMapStream = hasNormals ? _filesProvider.Open(name + ".normal" + ext) : null,
-            GlowMapStream = hasGlow ? _filesProvider.Open(name + ".glow" + ext) : null
+            GlowMapStream = hasGlow ? _filesProvider.Open(name + ".glow" + ext) : null,
+            ColorMode = mode
         });
     }
 }

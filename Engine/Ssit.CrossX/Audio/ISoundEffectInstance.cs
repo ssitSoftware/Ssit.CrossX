@@ -10,7 +10,7 @@ public interface ISoundEffectInstance: IDisposable
     /// <summary>
     /// Event that is triggered when the playback of the sound effect instance is finished.
     /// </summary>
-    event Action Finished;
+    event Action<ISoundEffectInstance> Finished;
 
     /// <summary>
     /// Gets or sets the sound emitter associated with the sound effect instance.

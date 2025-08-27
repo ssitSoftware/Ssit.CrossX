@@ -34,7 +34,7 @@ public abstract class ViewHandler: IDisposable
         if (((IHandlerView)View).Handler != null) throw new InvalidOperationException();
         View.Handler = this;
     }
-    
+
     protected Length CalculateLengthWithPadding(Length length, Length? pad1, Length? pad2)
     {
         var p1 = pad1 ?? Length.Zero;
@@ -79,15 +79,37 @@ public abstract class ViewHandler: IDisposable
     public virtual void SetBounds(RectangleF rectangleF)
     {
         Bounds = rectangleF;
+        UpdateScreenBounds();
+    }
+
+    private void UpdateScreenBounds()
+    {
         var offset = Parent?.ScreenBounds.TopLeft ?? Vector2.Zero;
         ScreenBounds = new RectangleF(offset + Bounds.TopLeft, Bounds.Size);
     }
-    
+
     public virtual void Draw(IRenderer2 renderer)
     {
         if (View.Visible.Value)
         {
+            if (View.Transitions?.Length > 0)
+            {
+                var page = Parent?.GetParent<IPage>();
+                for (var idx = 0; idx < View.Transitions.Length; ++idx)
+                {
+                    View.Transitions[idx].Apply(renderer, page?.TransitionType ?? 0, page?.TransitionProgress ?? 0);
+                }
+            }
+            
             OnDraw(renderer);
+            
+            if (View.Transitions?.Length > 0)
+            {
+                for (var idx = View.Transitions.Length - 1; idx >=0 ; --idx)
+                {
+                    View.Transitions[idx].Finish(renderer);
+                }
+            }
         }
     }
 

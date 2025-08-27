@@ -1,14 +1,15 @@
-using Interop.Runtime;
+
+using SDL;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Input;
 
 public unsafe class SdlKeyboard: KeyboardBase
 {
     private readonly int _keyCount;
-    private readonly CBool* _keys;
+    private readonly SDLBool* _keys;
 
     private bool[] _currentKeys;
     private bool[] _previousKeys;
@@ -34,7 +35,7 @@ public unsafe class SdlKeyboard: KeyboardBase
         (_currentKeys, _previousKeys) = (_previousKeys, _currentKeys);
         for (var idx = 0; idx < _keyCount; ++idx)
         {
-            _currentKeys[idx] = _keys[idx].Value != 0;
+            _currentKeys[idx] = _keys[idx] == true;
         }
     }
 }

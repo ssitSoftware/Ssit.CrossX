@@ -24,7 +24,6 @@ public static class IoCRegistrar
         return builder
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
-            .WithSingleton<IMusicPlayer, MusicPlayer>()
             .WithSingleton<IInputMappings, InputMappings>()
             .WithSingleton<IActionScheduler, ActionScheduler>();
     }

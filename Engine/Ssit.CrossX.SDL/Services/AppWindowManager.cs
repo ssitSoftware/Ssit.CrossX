@@ -1,6 +1,6 @@
-using Interop.Runtime;
+using SDL;
 using Ssit.CrossX.Core;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Services;
 
@@ -28,9 +28,9 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         _actionScheduler.Schedule(() =>
             {
                 var flags = SDL_GetWindowFlags(window);
-                if ((flags.Data & SDL_WINDOW_FULLSCREEN) == 0)
+                if ((flags & SDL_WindowFlags.SDL_WINDOW_FULLSCREEN) == 0)
                 {
-                    SDL_SetWindowFullscreen(window, CBool.FromBoolean(true));
+                    SDL_SetWindowFullscreen(window, true);
                 }
             }
         );
@@ -41,9 +41,9 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         _actionScheduler.Schedule(() =>
         {
             var flags = SDL_GetWindowFlags(window);
-            if ((flags.Data & SDL_WINDOW_FULLSCREEN) != 0)
+            if ((flags & SDL_WindowFlags.SDL_WINDOW_FULLSCREEN) != 0)
             {
-                SDL_SetWindowFullscreen(window, CBool.FromBoolean(false));
+                SDL_SetWindowFullscreen(window, false);
             }
 
             _windowSize = size;
@@ -55,7 +55,7 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
     public void EnsureWindowSize()
     {
         var flags = SDL_GetWindowFlags(window);
-        if ((flags.Data & SDL_WINDOW_FULLSCREEN) != 0)
+        if ((flags & SDL_WindowFlags.SDL_WINDOW_FULLSCREEN) != 0)
         {
             return;
         }
@@ -70,11 +70,7 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         }
     }
 
-    public void  SetTitle(string title)
-    {
-        using var allocator = new ArenaNativeAllocator(2048);
-        SDL_SetWindowTitle(window, CString.FromString(allocator, title));
-    }
+    public void SetTitle(string title) => SDL_SetWindowTitle(window, title);
 
     public void RaiseAppExiting(WindowClosingEventArgs args)
     {

@@ -22,4 +22,11 @@ public interface IFilesProvider
     bool FileExists(string path);
     
     string[] GetFiles(string path, string extension = null);
+
+    /// <summary>
+    /// Retrieves the physical file path for the specified virtual path.
+    /// </summary>
+    /// <param name="path">The virtual path of the file.</param>
+    /// <returns>The physical file path corresponding to the provided virtual path.</returns>
+    string GetPhisicalFilePath(string path);
 }

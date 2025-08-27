@@ -49,6 +49,11 @@ public class BundleFilesProvider: IFilesProvider
         return [];
     }
 
+    public string GetPhisicalFilePath(string path)
+    {
+        return GetFullPath(path);
+    }
+
     private string GetFullPath(string path)
     {
         path = PathHelper.NormalizePath(path);

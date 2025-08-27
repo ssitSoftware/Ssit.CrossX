@@ -6,4 +6,5 @@ public interface INavigation
     void NavigateBack();
     void NavigateBackTo<TViewModel>() where TViewModel : class;
     int NavigationStackCount { get; }
+    bool ParallelTransitions { get; set; }
 }

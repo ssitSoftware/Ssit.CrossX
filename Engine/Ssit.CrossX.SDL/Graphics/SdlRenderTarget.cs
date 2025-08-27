@@ -1,6 +1,7 @@
+using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
-using static bottlenoselabs.Interop.SDL;
+using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Graphics;
 

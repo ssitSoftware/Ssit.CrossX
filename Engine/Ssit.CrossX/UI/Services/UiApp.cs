@@ -71,7 +71,10 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
 
         if (Navigation.CurrentPage is not null)
         {
-            Navigation.CurrentPage.Draw(renderer);
+            if (Navigation.ParallelTransitions || Navigation.PreviousPage is null)
+            {
+                Navigation.CurrentPage.Draw(renderer);
+            }
         }
 
         if (Navigation.PreviousPageOnTop && Navigation.PreviousPage is not null)

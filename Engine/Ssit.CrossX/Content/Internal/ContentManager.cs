@@ -100,7 +100,6 @@ internal class ContentManager: IContentManager
     {
         var handle = new ResourceHandleManaged<TResource>((TResource)resource.Object, key, g =>
         {
-            
             resource.Users.Remove(g);
             if (resource.Users.Count == 0)
             {

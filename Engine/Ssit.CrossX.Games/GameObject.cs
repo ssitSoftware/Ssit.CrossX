@@ -124,7 +124,7 @@ public class GameObject: IDisposable
     
     public SpriteInstance CreateSpriteInstance()
     {
-        if ( _contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
+        if (_contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
         if (!HasSprite) throw new InvalidOperationException("GameObject has no sprite");
         
         var events = Description.Events?.Select( o=>new SpriteInstance.Event(o.Sequence, o.Frame, o.Name, o.Parameters)).ToArray();
@@ -134,7 +134,7 @@ public class GameObject: IDisposable
 
     public ResourceHandle<ITexture> RequestTexture()
     {
-        if ( _contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
+        if (_contentManager is null) throw new InvalidOperationException("GameObject has no content manager");
         return _contentManager.Get<ITexture>(ResourcePath);
     }
     

@@ -9,9 +9,9 @@ using Ssit.CrossX.Graphics.Sprites;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 
-public abstract class SpriteGameObject: Brain, IGameObjectRenderer2, SpriteInstance.IHandler, IDisposable
+public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, SpriteInstance.IHandler, IDisposable
 {
-    protected GameObjectsServices Services { get; }
+    public GameObjectsServices Services { get; }
     public Body Body { get; }
     public SpriteInstance Sprite { get; private set; }
     

@@ -1,64 +1,63 @@
-using System;
 using System.Collections.Generic;
 
 namespace Ssit.CrossX.Games.Logic;
 
-public abstract class Brain: IUpdatable
+public class Brain<TObject>(TObject owner)
+    where TObject : class
 {
-    private readonly Dictionary<string, State> _states = new();
-    private State _currentState;
-
-    protected virtual void OnAnimationFinished(string sequenceName) => _currentState?.SequenceFinished(sequenceName);
+    public delegate void StateFunc(Brain<TObject> brain);
     
-    protected virtual void CallStateEvent(string eventName, float parameter) => _currentState?.Event(eventName, parameter);
+    public TObject Owner { get; } = owner;
+
+    private StateFunc _currentState;
     
-    public string CurrentState { get; private set; }
+    private readonly Dictionary<string, object> _parameters = new();
+    private readonly HashSet<string> _flags = new();
 
-    void IUpdatable.Update(float dt) => OnUpdate(dt);
-    void IUpdatable.FixedUpdate(float dt) => OnFixedUpdate(dt);
-    void IUpdatable.PostFixedUpdate() => OnPostFixedUpdate();
-
-    protected virtual void OnUpdate(float dt)
+    public Brain<TObject> ResetFlags()
     {
-        _currentState?.Update(dt);
-        SetSequence(CurrentState);
+        _flags.Clear();
+        return this;
     }
     
-    protected virtual void OnFixedUpdate(float dt)
+    public bool this[string flag]
     {
-        _currentState?.FixedUpdate(dt);
-        SetSequence(CurrentState);
+        get => _flags.Contains(flag);
+        set
+        {
+            if (value)
+            {
+                _flags.Add(flag);
+            }
+            else
+            {
+                _flags.Remove(flag);
+            }
+        }
     }
     
-    protected virtual void OnPostFixedUpdate()
-    {
-        _currentState?.PostFixedUpdate();
-        SetSequence(CurrentState);
-    }
+    public void SetState(StateFunc func) => _currentState = func;
+    public void Analyze() => _currentState?.Invoke(this);
 
-    protected void AddState(string name, State state)
+    public void SetParameter(string key, object value)
     {
-        _states.Add(name, state);
-    }
-
-    public void SetState(string state)
-    {
-        if (CurrentState == state)
+        if (value is null)
+        {
+            _parameters.Remove(key);
             return;
-        
-        if (!_states.TryGetValue(state, out var instance))
-            throw new InvalidOperationException();
-
-        _currentState?.Leave();
-        _currentState = instance;
-        
-        CurrentState = state;
-        SetSequence(state);
-        
-        _currentState?.Enter();
+        }
+        _parameters[key] = value;
     }
 
-    protected virtual void SetSequence(string state)
+    public T GetParameter<T>(string key, T defaultValue)
     {
+        _parameters.TryGetValue(key, out var obj);
+
+        if (obj is T t)
+        {
+            return t;
+        }
+        
+        return defaultValue;
     }
 }

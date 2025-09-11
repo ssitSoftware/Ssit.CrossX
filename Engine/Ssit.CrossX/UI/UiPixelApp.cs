@@ -99,10 +99,15 @@ public abstract class UiPixelApp : IApp
         
     }
 
+    protected virtual void PostRender(IRenderer2 renderer)
+    {
+    }
+
     private static void Render(object state)
     {
         var app = (UiPixelApp)state;
         app.UiApp.Draw(app._renderer, app.BackgroundColor);
+        app.PostRender(app._renderer);
     }
 
     public virtual void OnUpdate(float elapsedTime) => UiApp.Update(elapsedTime);

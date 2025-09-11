@@ -92,6 +92,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         var root = CreateView();
         _rootHandler = services.HandlerMapper.Create(root, this);
         OnLoad(inputContext);
+        _recalculateLayout = true;
     }
 
     protected virtual void OnLoad(IInputContext inputContext)

@@ -48,6 +48,8 @@ public readonly struct ButtonState : IEquatable<ButtonState>
     /// </summary>
     public static readonly ButtonState JustReleased = new (false, true);
 
+    public static ButtonState FromStates(bool isDown, bool wasDown) => new ButtonState(isDown, isDown != wasDown);
+    
     /// <summary>
     /// Represents the state of a button, indicating whether it is pressed or not
     /// and whether its state has changed.

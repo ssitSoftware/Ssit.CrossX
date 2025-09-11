@@ -30,7 +30,7 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource, actionDispatcher)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) : base(parameters, fontsManager, actionDispatcher, paletteSource)
     {
         _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, AttachedView?.CustomSounds ?? uiSounds);
     }

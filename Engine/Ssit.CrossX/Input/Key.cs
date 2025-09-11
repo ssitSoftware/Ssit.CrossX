@@ -252,5 +252,9 @@ public enum Key
     SoftLeft = 287,
     SoftRight = 288,
     Call = 289,
-    EndCall = 290
+    EndCall = 290,
+    
+    MouseButtonLeft = 1024,
+    MouseButtonRight = 1025,
+    MouseButtonMiddle = 1026
 }

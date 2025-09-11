@@ -23,7 +23,9 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         ShouldContinue = false;
     }
 
-    public void SetFullscreen()
+    public bool IsFullscreen => (SDL_GetWindowFlags(window) & SDL_WindowFlags.SDL_WINDOW_FULLSCREEN) != 0;
+
+    public bool SetFullscreen()
     {
         _actionScheduler.Schedule(() =>
             {
@@ -34,9 +36,10 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
                 }
             }
         );
+        return true;
     }
 
-    public void SetWindowed(Size size)
+    public bool SetWindowed(Size size)
     {
         _actionScheduler.Schedule(() =>
         {
@@ -50,6 +53,8 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
             SDL_SetWindowSize(window, size.Width, size.Height);
             SDL_SetWindowPosition(window, (int)SDL_WINDOWPOS_CENTERED, (int)SDL_WINDOWPOS_CENTERED);
         });
+
+        return true;
     }
 
     public void EnsureWindowSize()

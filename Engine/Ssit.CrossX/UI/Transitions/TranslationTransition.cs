@@ -18,6 +18,9 @@ public class HideTransition: Transition
 {
     protected override void OnApply( IRenderer2 renderer, float progress)
     {
-        renderer.StateManager.Scale(0);
+        if (progress > 0)
+        {
+            renderer.StateManager.Scale(0);
+        }
     }
 }

@@ -19,7 +19,9 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         ? RgbaColor.Black * (AttachedView.TextOutlineColor.GetColor(PaletteSource)?.Af ?? 0f)
         : AttachedView.TextOutlineColor.GetColor(PaletteSource);
     
-    protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : 1;
+    protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : _scale;
+
+    private float _scale = 1;
     
     protected RectangleF TextRectangle
     {
@@ -87,7 +89,10 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
             size = (int)MathF.Ceiling(size * CurrentScale);
         }
         
-        return _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", size);
+        var font = _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", size);
+
+        _scale = (float)size / font.Size;
+        return font;
     }
     
     protected virtual void OnTextChanged()

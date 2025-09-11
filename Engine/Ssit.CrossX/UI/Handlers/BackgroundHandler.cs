@@ -23,7 +23,7 @@ public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters 
     }
 }
 
-public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource) 
+public class BackgroundHandler(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource = null) 
     : BackgroundHandler<Background>(parameters, paletteSource)
 {
 }

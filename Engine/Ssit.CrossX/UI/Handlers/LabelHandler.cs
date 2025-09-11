@@ -13,7 +13,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
     private readonly IActionDispatcher _actionDispatcher;
 
-    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IPaletteSource paletteSource, IActionDispatcher actionDispatcher) : base(parameters, fontsManager, paletteSource)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource)
     {
         _actionDispatcher = actionDispatcher;
         OnTextChanged();

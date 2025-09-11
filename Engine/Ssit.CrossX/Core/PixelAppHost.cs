@@ -75,6 +75,7 @@ public class PixelAppHost: IAppHost
     public Size DesignTargetSize => _renderTarget?.Size / Scale ?? new Size(800, 600);
 
     public Matrix3x2 Transform { get; private set; } = Matrix3x2.Identity;
+    public Matrix3x2 TransformInv { get; private set; } = Matrix3x2.Identity;
 
     private readonly List<Vertex> _barrelVertices = new();
     private float _previousCrtDistortion = 0;
@@ -322,7 +323,15 @@ public class PixelAppHost: IAppHost
         
         DrawToTarget(sourceTexture, targetRect);
         Transform = Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(targetRect.TopLeft);
-        
+        if (Matrix3x2.Invert(Transform, out var result))
+        {
+            TransformInv = result;
+        }
+        else
+        {
+            TransformInv = Matrix3x2.Identity;
+        }
+           
         _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
     }
 

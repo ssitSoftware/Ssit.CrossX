@@ -13,6 +13,7 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
     public int RectanglesFilled { get; private set; }
 
     private SDL_Vertex[] _verticesArray = new SDL_Vertex[1]; 
+    private SDL_FPoint[] _pointsArray = new SDL_FPoint[1];
     
     public void DrawLine(Vector2 v1, Vector2 v2, RgbaColor color)
     {
@@ -24,11 +25,42 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         
         SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
         SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
         SDL_RenderLine(renderer, v1.X, v1.Y, v2.X, v2.Y);
-
+        
         LinesRendered++;
     }
 
+    public void DrawPolyline(IReadOnlyList<Vector2> points, RgbaColor color)
+    {
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
+
+        if (_pointsArray.Length < points.Count)
+        {
+            _pointsArray = new SDL_FPoint[points.Count];
+        }
+        
+        for(var idx =0; idx < points.Count; idx++)
+        {
+            _pointsArray[idx] = new SDL_FPoint
+            {
+                x = points[idx].X * scale + offset.X,
+                y = points[idx].Y * scale + offset.Y
+            };
+        }
+        
+        SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+
+        fixed (SDL_FPoint* verticesPtr = _pointsArray)
+        {
+            SDL_RenderLines(renderer, verticesPtr, points.Count);
+        }
+
+        LinesRendered += points.Count-1;
+    }
+    
     public void DrawRectangle(RectangleF rect, RgbaColor color)
     {
         var scale = RenderStateProvider.Scale;
@@ -69,52 +101,58 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         RectanglesFilled++;
     }
 
+    public void DrawTriangles(IReadOnlyList<Vertex> vertices, int count = -1)
+    {
+        if (count == 0) return;
+        count = count >= 0 ? count : vertices.Count;
+        
+        _verticesArray = Extensions.PrepareVertices(vertices, count, RenderStateProvider, _verticesArray);
+        
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        fixed (SDL_Vertex* verticesPtr = _verticesArray)
+        {
+            SDL_RenderGeometry(renderer, null, verticesPtr, count, null, 0);
+        }
+    }
+    
     public void DrawVertices(ITexture texture, IReadOnlyList<Vertex> vertices, int count = -1, RgbaColor? colorAttr = null)
     {
         if (count == 0) return;
         count = count >= 0 ? count : vertices.Count;
         
         var textureHandle = PrepareTextureRender(texture, colorAttr);
-        var verticesArray = PrepareVertices(vertices, count);
+        _verticesArray = Extensions.PrepareVertices(vertices, count, RenderStateProvider, _verticesArray);
         
-        fixed (SDL_Vertex* verticesPtr = verticesArray)
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        fixed (SDL_Vertex* verticesPtr = _verticesArray)
         {
             SDL_RenderGeometry(renderer, textureHandle.Pointer, verticesPtr, count, null, 0);
         }
     }
 
-    private SDL_Vertex[] PrepareVertices(IReadOnlyList<Vertex> vertices, int count)
+    public void DrawVertices(ITexture texture, IVertexBuffer vertexBuffer, int count = -1, RgbaColor? colorAttr = null)
     {
-        if (_verticesArray.Length < count)
+        if (count == 0) return;
+
+        if (vertexBuffer is not SdlVertexBuffer sdlVertexBuffer)
         {
-            _verticesArray = new SDL_Vertex[count];
+            return;
         }
 
-        for (var idx = 0; idx < count; ++idx)
+        count = count >= 0 ? count : int.MaxValue;
+        count = Math.Min(count, sdlVertexBuffer.VertexCount);
+        
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        var textureHandle = PrepareTextureRender(texture, colorAttr);
+        var vertices = sdlVertexBuffer.GetVertices(RenderStateProvider);
+        
+        fixed (SDL_Vertex* verticesPtr = vertices)
         {
-            var vert = vertices[idx];
-            _verticesArray[idx].color = new SDL_FColor
-                {
-                    r = vert.Color.Rf,
-                    g = vert.Color.Gf,
-                    b = vert.Color.Bf,
-                    a = vert.Color.Af,
-                };
-            
-            _verticesArray[idx].position = new SDL_FPoint
-            {
-                x = vert.Position.X,
-                y = vert.Position.Y
-            };
-
-            _verticesArray[idx].tex_coord = new SDL_FPoint
-            {
-                x = vert.TexCoord.X,
-                y = vert.TexCoord.Y
-            };
+            SDL_RenderGeometry(renderer, textureHandle.Pointer, verticesPtr, count, null, 0);
         }
-
-        return _verticesArray;
     }
 
     public void ResetStats()

@@ -54,7 +54,6 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
         {
             case ImageTransform.FlipHorizontal:
                 flip = SDL_FlipMode.SDL_FLIP_HORIZONTAL;
-                
                 break;
             
             case ImageTransform.FlipVertical:

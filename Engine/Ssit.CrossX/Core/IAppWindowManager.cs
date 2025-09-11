@@ -4,9 +4,10 @@ namespace Ssit.CrossX.Core;
 
 public interface IAppWindowManager
 {
+    bool IsFullscreen { get; }
     event Action<WindowClosingEventArgs> Closing; 
     void Close();
-    void SetFullscreen();
-    void SetWindowed(Size size);
+    bool SetFullscreen();
+    bool SetWindowed(Size size);
     void SetTitle(string title);
 }

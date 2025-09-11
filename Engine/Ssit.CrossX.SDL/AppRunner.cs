@@ -29,20 +29,18 @@ public static class AppRunner<TApp> where TApp : IApp, new()
     {
         SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD |  SDL_InitFlags.SDL_INIT_AUDIO);
         
-        
         var builder = IoC.IoC.NewBuilder();
         var keyboard = new SdlKeyboard();
-        var pointingDevices = new SdlPointingDevices();
         var gameControllers = new SdlGameControllers();
         var eventSource = new EventSource();
 
         builder
             .WithInstance<IEventSource>(eventSource)
             .WithInstance<IKeyboard>(keyboard)
-            .WithInstance<IPointingDevices>(pointingDevices)
             .WithInstance<IGameControllers>(gameControllers)
             .WithImplementation<ITexture, SdlTexture>()
             .WithImplementation<IRenderTarget, SdlRenderTarget>()
+            .WithImplementation<IVertexBuffer, SdlVertexBuffer>()
             .WithSingleton<ISoundManager, SdlSoundManagerImpl>()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
             .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
@@ -56,12 +54,15 @@ public static class AppRunner<TApp> where TApp : IApp, new()
         var renderer = SDL_CreateRenderer(window, (byte*)null);
         SDL_SetRenderVSync(renderer, 1);
         
+        var pointingDevices = new SdlPointingDevices(new SdlHandle<SDL_Window>(window));
+        
         var appWindowManager = new AppWindowManager(window, renderer);
         var sdlRenderer = new SdlRenderer(renderer);
 
         builder
             .WithInstance<IRenderer2>(sdlRenderer)
             .WithInstance<IAppWindowManager>(appWindowManager)
+            .WithInstance<IPointingDevices>(pointingDevices)
             .WithInstance(new SdlHandles(window, renderer));
         
         app.InitializeServices(builder);
@@ -117,6 +118,9 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                         SDL_SetRenderViewport(renderer, &vp);
                         app.Resize(new Size(w, h));
                         appWindowManager.EnsureWindowSize();
+
+                        SDL_SetWindowMouseGrab(window, false);
+                        SDL_SetWindowMouseGrab(window, pointingDevices.LockMouseInWindow);
                         break;
                     }
                     
@@ -139,6 +143,7 @@ public static class AppRunner<TApp> where TApp : IApp, new()
             var dt = (ticks - lastTicks) / 1000000000.0;
             lastTicks = ticks;
 
+            pointingDevices.Update();
             keyboard.Update();
             
             eventSource.OnUpdate((float)dt);

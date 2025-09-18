@@ -120,11 +120,17 @@ public static class WorldRenderer
     {
         var center = body.Position + circleShape.Position;
         var radius = circleShape.Radius;
+        
+        var position = body.Position;
+        var matrix = Matrix3x2.CreateRotation(-body.Rotation, position);
 
+        center = Vector2.Transform(center, matrix);
+        
         for (var idx = 0; idx < 36; ++idx)
         {
             var p1 = SCirclePoints[idx] * radius + center;
             var p2 = SCirclePoints[(idx + 1) % SCirclePoints.Length] * radius + center;
+            
             renderer.DrawLine(p1, p2, color);
         }
     }

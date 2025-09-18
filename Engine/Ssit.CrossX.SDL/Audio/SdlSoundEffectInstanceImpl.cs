@@ -78,9 +78,8 @@ public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
         {
             var channel = Mix_PlayChannel(-1, _chunk.Pointer, loop ? 1 : 0);
             Mix_Volume(channel, (int) (Parameters.Volume * 128));
-
-            _sm.OnChannelIntercepted(channel);
             
+            _sm.OnChannelIntercepted(channel);
             _currentChannel = channel;
         }
     }

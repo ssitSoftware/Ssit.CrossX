@@ -26,5 +26,4 @@ public abstract class Behavior
     protected virtual bool OnPostFixedUpdate() => false;
     
     internal bool Event(string name, float parameter) => OnEvent(name, parameter);
-    
 }

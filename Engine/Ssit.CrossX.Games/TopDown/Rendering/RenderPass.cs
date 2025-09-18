@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.Games.Rendering;
+namespace Ssit.CrossX.Games.TopDown.Rendering;
 
 public enum RenderPass
 {

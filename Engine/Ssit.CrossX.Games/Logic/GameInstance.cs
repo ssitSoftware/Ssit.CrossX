@@ -22,17 +22,11 @@ public class GameInstance : IGameInstance
         public Action<World> ProcessWorldFunc { get; set; }
         public Action<IIoCContainerBuilder> RegisterServices { get; set; }
     }
-
-    private float _gameTime;
-    private int _framesCount;
-
-    private static readonly float[] WorldDeltas =
-    [
-        1f / 300f, 1f / 240f, 1f / 200f, 1f / 165f, 1f / 150f, 1f / 144f, 1f / 120f
-    ];
-
+    
     public event Action<float> FixedUpdate;
-    public float WorldDelta { get; private set; } = 1 / 120f;
+    public float WorldDelta => _timer.TimeDelta;
+    private readonly GameTimer _timer = new();
+
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
     private readonly IPaletteSource _paletteSource;
@@ -179,43 +173,7 @@ public class GameInstance : IGameInstance
         if (_isDisposed)
             return;
 
-        _gameTime += deltaTime;
-        _framesCount++;
-
-        if (_gameTime >= 1)
-        {
-            var fps = _framesCount / _gameTime;
-            _gameTime = 0;
-            _framesCount = 0;
-
-            var dt = 1 / fps;
-
-            WorldDelta = WorldDeltas[0];
-            for (var i = 1; i < WorldDeltas.Length; i++)
-            {
-                if ( MathF.Abs(dt - WorldDeltas[i]) <= MathF.Abs(dt - WorldDelta) )
-                {
-                    WorldDelta = WorldDeltas[i];
-                }
-            }
-
-            var div = 1f;
-            while (dt > WorldDeltas[^1] * 1.05f)
-            {
-                div++;
-                dt = 1 / fps / div;
-                WorldDelta = WorldDeltas[0];
-                for (var i = 1; i < WorldDeltas.Length; i++)
-                {
-                    if ( MathF.Abs(dt - WorldDeltas[i]) <= MathF.Abs(dt - WorldDelta) )
-                    {
-                        WorldDelta = WorldDeltas[i];
-                    }
-                }
-            }
-        }
-        
-        _timeToUpdate += deltaTime;
+        _timer.Update(deltaTime);
 
         foreach (var body in World.BodyList)
         {
@@ -225,21 +183,19 @@ public class GameInstance : IGameInstance
             }
         }
 
-        var worldDelta = WorldDelta;
-        while (_timeToUpdate >= worldDelta)
+        float dt;
+        while ( (dt = _timer.FixedTimeToUpdate()) > 0)
         {
             foreach (var body in World.BodyList)
             {
                 if (body.Owner is IUpdatable updatable2)
                 {
-                    updatable2.FixedUpdate(worldDelta);
+                    updatable2.FixedUpdate(dt);
                 }
             }
             
-            FixedUpdate?.Invoke(worldDelta);
-            
-            World.Step(worldDelta);
-            _timeToUpdate -= worldDelta;
+            FixedUpdate?.Invoke(dt);
+            World.Step(dt);
             
             foreach (var body in World.BodyList)
             {
@@ -249,13 +205,7 @@ public class GameInstance : IGameInstance
                 }
             }
             
-            _camera.Update(worldDelta);
-            
-            worldDelta = WorldDelta;
-            if (MathF.Abs(_timeToUpdate - worldDelta) < WorldDelta / 4f)
-            {
-                worldDelta = _timeToUpdate;
-            }
+            _camera.Update(dt);
         }
         
         foreach (var body in World.BodyList)

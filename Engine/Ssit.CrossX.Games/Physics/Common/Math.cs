@@ -308,17 +308,25 @@ namespace Ssit.CrossX.Games.Physics.Common
         /// <summary>
         /// Return the angle between two vectors on a plane
         /// The angle is from vector 1 to vector 2, positive anticlockwise
-        /// The result is between -pi -> pi
+        /// The result is between [-pi...pi]
         /// </summary>
-        public static double VectorAngle(ref Vector2 p1, ref Vector2 p2)
+        public static float VectorAngle(ref Vector2 p1, ref Vector2 p2)
         {
-            double theta1 = Math.Atan2(p1.Y, p1.X);
-            double theta2 = Math.Atan2(p2.Y, p2.X);
-            double dtheta = theta2 - theta1;
-            while (dtheta > Math.PI)
-                dtheta -= 2 * Math.PI;
-            while (dtheta < -Math.PI)
-                dtheta += 2 * Math.PI;
+            float theta1 = MathF.Atan2(p1.Y, p1.X);
+            float theta2 = MathF.Atan2(p2.Y, p2.X);
+            
+            return KineticAngle(theta1, theta2);
+        }
+
+        public static float KineticAngle(float theta1, float theta2)
+        {
+            float dtheta = theta2 - theta1;
+            
+            while (dtheta > MathF.PI)
+                dtheta -= 2 * MathF.PI;
+            
+            while (dtheta < -MathF.PI)
+                dtheta += 2 * MathF.PI;
 
             return dtheta;
         }
@@ -329,7 +337,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
         }
 
-        public static double VectorAngle(Vector2 p1, Vector2 p2)
+        public static float VectorAngle(Vector2 p1, Vector2 p2)
         {
             return VectorAngle(ref p1, ref p2);
         }
@@ -374,7 +382,7 @@ namespace Ssit.CrossX.Games.Physics.Common
 
         public static bool FloatEquals(float value1, float value2)
         {
-            return Math.Abs(value1 - value2) <= Settings.Epsilon;
+            return MathF.Abs(value1 - value2) <= Settings.Epsilon;
         }
 
         /// <summary>

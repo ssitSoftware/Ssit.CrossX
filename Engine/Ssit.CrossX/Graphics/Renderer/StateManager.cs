@@ -52,7 +52,7 @@ public class StateManager : IStateManager, IRenderStateProvider
         _state = new State(_state.Scale, _state.Offset + offset * _state.Scale, _state.UseGlowTextures, _state.BlendMode, _state.TextureFilter);
     }
     
-    public void SetBlendMode( BlendMode blendMode)
+    public void SetBlendMode(BlendMode blendMode)
     {
         if(_state.BlendMode == blendMode) return;
         
@@ -77,4 +77,5 @@ public class StateManager : IStateManager, IRenderStateProvider
     public bool UseGlowTextures => _state.UseGlowTextures;
     public BlendMode BlendMode => _state.BlendMode;
     public TextureFilter TextureFilter => _state.TextureFilter;
+    public bool IsGlowMode => _state.UseGlowTextures;
 }

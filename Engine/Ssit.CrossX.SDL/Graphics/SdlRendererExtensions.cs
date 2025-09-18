@@ -31,13 +31,13 @@ public static class SdlRendererExtensions
         switch (mode)
         {
             case BlendMode.AlphaBlend:
-                return SDL_BlendMode.SDL_BLENDMODE_BLEND;
+                return (SDL_BlendMode)0x00000010u;
             
             case BlendMode.Additive:
-                return SDL_BlendMode.SDL_BLENDMODE_ADD;;
+                return SDL_BlendMode.SDL_BLENDMODE_ADD;
             
             case BlendMode.Multiply:
-                return SDL_BlendMode.SDL_BLENDMODE_MUL;;
+                return SDL_BlendMode.SDL_BLENDMODE_MUL;
         }
         return SDL_BLENDMODE_NONE;
     }

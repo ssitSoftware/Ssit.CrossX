@@ -18,7 +18,7 @@ internal class NavigationMap : INavigationMap
         return result;
     }
     
-    public INavigationMap Map<TViewModel, TPage>() where TViewModel : class where TPage : Page<TViewModel>, new()
+    public INavigationMap Map<TViewModel, TPage>() where TViewModel : class where TPage : Page<TViewModel>
     {
         _vmToPageMappings.Add(typeof(TViewModel), typeof(TPage));
         return this;

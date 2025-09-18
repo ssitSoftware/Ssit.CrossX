@@ -152,8 +152,8 @@ internal class Navigation: INavigation
     private IPage InitializePage(object vm, string focusedId)
     {
         var pageType = _navigationMap.GetPageTypeFromViewModel(vm);
-        
-        var page = (IPage)Activator.CreateInstance(pageType);
+
+        var page = (IPage)_iocContainer.IoCConstruct(pageType);
         if (page is null) throw new InvalidProgramException();
         
         page.Load(_uiServices, _uiApp.InputProcessor, vm);
@@ -196,6 +196,7 @@ internal class Navigation: INavigation
 
                 if (CurrentPage?.TransitionProgress <= 0)
                 {
+                    CurrentPage.OnTransitionToFinished();
                     CurrentPage.TransitionProgress = 0;
                     CurrentPage.TransitionType = 0;
                 }

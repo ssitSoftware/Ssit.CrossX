@@ -202,6 +202,8 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
         return new RgbaColor(color1.Rf * color2.Rf, color1.Gf * color2.Gf, color1.Bf * color2.Bf, color1.Af * color2.Af);
     }
     
+    public RgbaColor WithOpacity(float opacity) => new(R, G, B, opacity);
+    
     public static RgbaColor operator *(RgbaColor color, float multiply) => new(color.Rf * multiply, color.Gf * multiply, color.Bf * multiply, color.Af * multiply);
     public static RgbaColor operator *(RgbaColor color, double multiply) => color * (float)multiply;
 

@@ -22,40 +22,40 @@ public static class WorldRenderer
         }
     }
 
-    public static void Render(IGeometryRenderer renderer, World world, IGameTemplate gameTemplate)
+    public static void Render(IGeometryRenderer renderer, World world, IGameTemplate gameTemplate, float opacity = 1f)
     {
         foreach (var body in world.BodyList)
         {
-            Render(renderer, body, gameTemplate);
+            Render(renderer, body, gameTemplate, opacity);
         }
 
         foreach (var aabb in world.AabbQueries)
         {
-            renderer.DrawRectangle(new RectangleF(aabb.LowerBound, aabb.UpperBound - aabb.LowerBound), RgbaColor.LightPink);
+            renderer.DrawRectangle(new RectangleF(aabb.LowerBound, aabb.UpperBound - aabb.LowerBound), RgbaColor.LightPink * opacity);
         }
     }
     
-    public static void Render(IGeometryRenderer renderer, Body body, IGameTemplate gameTemplate)
+    public static void Render(IGeometryRenderer renderer, Body body, IGameTemplate gameTemplate, float opacity)
     {
         foreach (var fixture in body.FixtureList)
         {
             if (fixture.Shape == null)
                 continue;
             
-            Render(renderer, body, fixture, gameTemplate);
+            Render(renderer, body, fixture, gameTemplate, opacity);
         }
         
-        renderer.DrawLine(body.Position - new Vector2(0.2f, 0.2f), body.Position + new Vector2(0.2f, 0.2f), RgbaColor.Pink);
-        renderer.DrawLine(body.Position - new Vector2(0.2f, -0.2f), body.Position + new Vector2(0.2f, -0.2f), RgbaColor.Pink);
+        renderer.DrawLine(body.Position - new Vector2(0.2f, 0.2f), body.Position + new Vector2(0.2f, 0.2f), RgbaColor.Pink * opacity);
+        renderer.DrawLine(body.Position - new Vector2(0.2f, -0.2f), body.Position + new Vector2(0.2f, -0.2f), RgbaColor.Pink * opacity);
     }
     
-    public static void Render(IGeometryRenderer renderer, Body body, Fixture fixture, IGameTemplate gameTemplate)
+    public static void Render(IGeometryRenderer renderer, Body body, Fixture fixture, IGameTemplate gameTemplate, float opacity)
     {
         var shape = fixture.Shape;
         
         var staticColor = RgbaColor.Yellow;
 
-        if (body.MaterialIndex >= 0 && body.MaterialIndex < gameTemplate.Materials.Length)
+        if (gameTemplate != null && body.MaterialIndex >= 0 && body.MaterialIndex < gameTemplate.Materials.Length)
         {
             var material = gameTemplate.Materials[body.MaterialIndex];
             staticColor = material.DebugColor;
@@ -67,6 +67,7 @@ public static class WorldRenderer
         }
         
         RgbaColor color = body.IsStatic ? staticColor : body.Awake ? RgbaColor.OrangeRed : RgbaColor.Green;
+        color *= opacity;
         
         switch (shape)
         {

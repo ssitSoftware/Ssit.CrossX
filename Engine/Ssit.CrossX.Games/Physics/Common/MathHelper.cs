@@ -83,31 +83,31 @@ namespace Ssit.CrossX.Games.Physics.Common
             double sCubed = s*s*s;
             double sSquared = s*s;
 
-            if (amount == 0f)
+            if (amount <= 0f)
                 result = value1;
-            else if (amount == 1f)
+            else if (amount >= 1f)
                 result = value2;
             else
-                result = (2*v1 - 2*v2 + t2 + t1)*sCubed +
-                         (3*v2 - 3*v1 - 2*t1 - t2)*sSquared +
-                         t1*s +
+                result = (2 * v1 - 2 * v2 + t2 + t1) * sCubed +
+                         (3 * v2 - 3 * v1 - 2 * t1 - t2) * sSquared +
+                         t1 * s +
                          v1;
             return (float) result;
         }
 
         public static float Lerp(float value1, float value2, float amount)
         {
-            return value1 + (value2 - value1)*amount;
+            return value1 + (value2 - value1) * amount;
         }
 
         public static float Max(float value1, float value2)
         {
-            return Math.Max(value1, value2);
+            return MathF.Max(value1, value2);
         }
 
         public static float Min(float value1, float value2)
         {
-            return Math.Min(value1, value2);
+            return MathF.Min(value1, value2);
         }
 
         public static float SmoothStep(float value1, float value2, float amount)
@@ -125,7 +125,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             // This method uses double precission internally,
             // though it returns single float
             // Factor = 180 / pi
-            return (float) (radians*57.295779513082320876798154814105);
+            return (float) (radians * 57.295779513082320876798154814105);
         }
 
         public static float ToRadians(float degrees)
@@ -133,7 +133,7 @@ namespace Ssit.CrossX.Games.Physics.Common
             // This method uses double precission internally,
             // though it returns single float
             // Factor = pi / 180
-            return (float) (degrees*0.017453292519943295769236907684886);
+            return (float) (degrees * 0.017453292519943295769236907684886);
         }
 
         public static float WrapAngle(float angle)

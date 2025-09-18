@@ -16,10 +16,11 @@ internal interface IPage: IViewParent, IDisposable
     ViewHandler RootHandler { get; }
     bool OnUiButton(UiButton button, IInputContext inputProcessor);
     IFocusable FocusedElement { get; set; }
-    float TransitionTime { get; set; }
+    float TransitionTime { get; }
     float TransitionProgress { get; set; }
     float Scale { get; }
     TransitionType TransitionType { get; set; }
     void SignalRecalculationPending();
     void InvalidateRendering();
+    void OnTransitionToFinished();
 }

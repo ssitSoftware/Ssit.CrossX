@@ -24,13 +24,17 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private bool _renderingInvalid;
     
     private RectangleF _bounds;
+    private float _transitionProgress;
     protected IIoCContainer Services => _iocContainer;
     
     protected IFocusable FocusedElement { get; private set; }
 
-    public float TransitionTime { get; set; } = 0;
-    public float TransitionProgress { get; set; }
+    public virtual float TransitionTime => 0f;
+    
+    float IPage.TransitionProgress { get => _transitionProgress; set => _transitionProgress = value; }
 
+    protected bool IsInTransition => _transitionProgress > 0;
+    
     protected SizeF ScreenSize => _screenBounds.Size;
     
     IFocusable IPage.FocusedElement
@@ -45,7 +49,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     }
 
     float IPage.Scale => Scale;
-    public TransitionType TransitionType { get; set; }
+    TransitionType IPage.TransitionType { get; set; }
     
     void IPage.SignalRecalculationPending() => _recalculationNeeded = true;
 
@@ -68,6 +72,12 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     RectangleF IViewParent.CalculateTargetBounds()
     {
         return _bounds;
+    }
+
+    void IPage.OnTransitionToFinished() => OnTransitionToFinished();
+
+    protected virtual void OnTransitionToFinished()
+    {
     }
     
     public void RecalculateLayout(View view = null)
@@ -118,10 +128,10 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     bool IPage.OnUiButton(UiButton button, IInputContext inputContext)
     {
-        if (TransitionProgress > 0)
+        if (_transitionProgress > 0)
             return false;
         
-        return OnUiButton(button, inputContext);   
+        return OnUiButton(button, inputContext);
     }
 
     protected virtual void OnUpdate(float dt)

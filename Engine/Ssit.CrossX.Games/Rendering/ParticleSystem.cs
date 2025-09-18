@@ -95,8 +95,8 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
         particle.Gravity = gravity;
         
         var (handle, size, minScale) = _particleGroups[particleGroupId];
-        particle.MinScale = minScale;
         
+        particle.MinScale = minScale;
         particle.Texture = handle.Resource;
 
         var index = Random.Shared.Next(0, handle.Resource.Size.Width / size.Width);

@@ -1,3 +1,5 @@
+using Ssit.CrossX.Games.TopDown.Rendering;
+
 namespace Ssit.CrossX.Games.Rendering;
 
 public interface IShooterRenderer : IGameObjectRenderer

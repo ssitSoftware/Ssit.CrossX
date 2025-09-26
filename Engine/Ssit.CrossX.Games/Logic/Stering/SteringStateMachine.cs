@@ -7,7 +7,7 @@ public sealed class SteringStateMachine<TObject>(TObject obj)
     public TObject Object { get; } = obj;
     public SteringState<TObject> CurrentState { get; private set; }
     
-    public event Action<SteringState<TObject>> OnStateChanged;
+    public event EventHandler<SteringState<TObject>> OnStateChanged;
     
     public void SetState(SteringState<TObject> state)
     {
@@ -16,6 +16,6 @@ public sealed class SteringStateMachine<TObject>(TObject obj)
         CurrentState = state;
         CurrentState.Enter(this, prevState);
         
-        OnStateChanged?.Invoke(CurrentState);
+        OnStateChanged?.Invoke(this, CurrentState);
     }
 }

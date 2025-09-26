@@ -44,7 +44,7 @@ public class SpriteGameObjectStateMachine<TObject> : SpriteInstance.IHandler, IU
         return this;
     }
     
-    private void SteringStateMachineOnOnStateChanged(SteringState<TObject> state)
+    private void SteringStateMachineOnOnStateChanged(object sender, SteringState<TObject> state)
     {
         if (!_sequenceMapping.TryGetValue(state.Name, out var sequenceName))
         {
@@ -55,13 +55,13 @@ public class SpriteGameObjectStateMachine<TObject> : SpriteInstance.IHandler, IU
 
     void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
-        SteringStateMachine.CurrentState?.Event(@event);
+        SteringStateMachine.CurrentState?.Event(SteringStateMachine, @event);
         SteringStateMachine.Object.CallSpriteEvent(@event);
     }
 
     void SpriteInstance.IHandler.OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
     {
-        SteringStateMachine.CurrentState?.SequenceFinished(sequenceName);
+        SteringStateMachine.CurrentState?.SequenceFinished(SteringStateMachine, sequenceName);
         SteringStateMachine.Object.CallSequenceFinished(sequenceName);
     }
     

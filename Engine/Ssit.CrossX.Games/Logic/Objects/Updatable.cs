@@ -12,38 +12,42 @@ public abstract class Updatable : IUpdatable
     
     void IUpdatable.Update(float dt)
     {
+        OnUpdate(dt);
+        
         foreach (var updatable in _updatables)
         {
             updatable.Update(dt);
         }
-        OnUpdate(dt);
     }
     
     void IUpdatable.FixedUpdate(float dt)
     {
+        OnFixedUpdate(dt);
+        
         foreach (var updatable in _updatables)
         {
             updatable.FixedUpdate(dt);
         }
-        OnFixedUpdate(dt);
     }
 
     void IUpdatable.PostFixedUpdate()
     {
+        OnPostFixedUpdate();
+        
         foreach (var updatable in _updatables)
         {
             updatable.PostFixedUpdate();
         }
-        OnPostFixedUpdate();
     }
 
     void IUpdatable.PostUpdate()
     {
+        OnPostUpdate();
+        
         foreach (var updatable in _updatables)
         {
             updatable.PostUpdate();
         }
-        OnPostUpdate();
     }
 
     protected virtual void OnFixedUpdate(float dt)

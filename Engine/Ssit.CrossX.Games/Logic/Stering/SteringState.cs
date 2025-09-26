@@ -12,8 +12,8 @@ public abstract class SteringState<TObject>
     public void Update(SteringStateMachine<TObject> sm, float dt) => OnUpdate(sm, dt);
     public void FixedUpdate(SteringStateMachine<TObject> sm, float dt) => OnFixedUpdate(sm, dt);
     
-    public void SequenceFinished(string name) => OnSequenceFinished(name);
-    public void Event(IEvent @event) => OnEvent(@event);
+    public void SequenceFinished(SteringStateMachine<TObject> sm, string name) => OnSequenceFinished(sm, name);
+    public void Event(SteringStateMachine<TObject> sm, IEvent @event) => OnEvent(sm, @event);
     
     protected virtual void OnUpdate(SteringStateMachine<TObject> sm, float dt)
     {
@@ -31,11 +31,11 @@ public abstract class SteringState<TObject>
     {
     }
 
-    protected virtual void OnSequenceFinished(string name)
+    protected virtual void OnSequenceFinished(SteringStateMachine<TObject> sm, string name)
     {
     }
 
-    protected virtual void OnEvent(IEvent @event)
+    protected virtual void OnEvent(SteringStateMachine<TObject> sm, IEvent @event)
     {
     }
 }

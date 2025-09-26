@@ -97,6 +97,8 @@ namespace Ssit.CrossX.Games.Physics.Dynamics
 
         private Dictionary<Type, IDisposable> _extensions;
 
+        public World World => _world;
+        
         public void SetExtension<TParam>(TParam param) where TParam: class, IDisposable
         {
             if(_extensions is null)

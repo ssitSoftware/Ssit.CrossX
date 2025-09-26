@@ -44,11 +44,22 @@ public class SteringStateWithBehaviors<TObject>(string name, params SteringBehav
         }
     }
 
-    protected override void OnEvent(IEvent @event)
+    protected override void OnEvent(SteringStateMachine<TObject> sm, IEvent @event)
     {
         foreach (var behavior in behaviors)
         {
-            if (behavior.Event(@event))
+            if (behavior.Event(sm, @event))
+            {
+                break;
+            }
+        }
+    }
+
+    protected override void OnSequenceFinished(SteringStateMachine<TObject> sm, string name)
+    {
+        foreach (var behavior in behaviors)
+        {
+            if (behavior.SequenceFinished(sm, name))
             {
                 break;
             }

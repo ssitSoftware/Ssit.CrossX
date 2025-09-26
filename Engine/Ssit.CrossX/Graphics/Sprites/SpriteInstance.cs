@@ -8,6 +8,12 @@ using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.Graphics.Sprites;
 
+public interface IEvent
+{
+    string EventName { get; }
+    TParameters GetParameters<TParameters>() where TParameters : class, new();
+}
+
 public class SpriteInstance : IDisposable
 {
     public interface IHandler
@@ -16,7 +22,7 @@ public class SpriteInstance : IDisposable
         void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse);
     }
     
-    public class Event(string sequenceName, int frame, string eventName, JObject parameters)
+    public class Event(string sequenceName, int frame, string eventName, JObject parameters): IEvent
     {
         internal readonly int Frame = frame;
         public string EventName { get; } = eventName;

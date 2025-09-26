@@ -122,7 +122,7 @@ public static class WorldRenderer
         var radius = circleShape.Radius;
         
         var position = body.Position;
-        var matrix = Matrix3x2.CreateRotation(-body.Rotation, position);
+        var matrix = Matrix3x2.CreateRotation(body.Rotation, position);
 
         center = Vector2.Transform(center, matrix);
         

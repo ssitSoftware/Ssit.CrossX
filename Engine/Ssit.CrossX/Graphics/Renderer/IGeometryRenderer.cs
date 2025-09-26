@@ -15,4 +15,6 @@ public interface IGeometryRenderer
     void DrawTriangles(IReadOnlyList<Vertex> vertices, int count = -1);
     void DrawVertices(ITexture texture, IReadOnlyList<Vertex> vertices, int count = -1, RgbaColor? color = null);
     void DrawVertices(ITexture texture, IVertexBuffer vertexBuffer, int count = -1, RgbaColor? color = null);
+    void DrawPoint(Vector2 position, RgbaColor color);
+    void DrawPoints(IReadOnlyList<Vector2> points, RgbaColor color);
 }

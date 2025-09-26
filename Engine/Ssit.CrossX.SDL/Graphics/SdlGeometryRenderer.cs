@@ -155,6 +155,48 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
         }
     }
 
+    public void DrawPoint(Vector2 position, RgbaColor color)
+    {
+        SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
+        
+        var x = position.X * scale + offset.X;
+        var y = position.Y * scale + offset.Y;
+        
+        SDL_RenderPoint(renderer, x, y);
+    }
+    
+    public void DrawPoints(IReadOnlyList<Vector2> points, RgbaColor color)
+    {
+        SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
+        
+        if (_pointsArray.Length < points.Count)
+        {
+            _pointsArray = new SDL_FPoint[points.Count];
+        }
+        
+        for(var idx =0; idx < points.Count; idx++)
+        {
+            _pointsArray[idx] = new SDL_FPoint
+            {
+                x = points[idx].X * scale + offset.X,
+                y = points[idx].Y * scale + offset.Y
+            };
+        }
+
+        fixed (SDL_FPoint* verticesPtr = _pointsArray)
+        {
+            SDL_RenderPoints(renderer, verticesPtr, points.Count);    
+        }
+    }
+
     public void ResetStats()
     {
         RectanglesFilled = 0;

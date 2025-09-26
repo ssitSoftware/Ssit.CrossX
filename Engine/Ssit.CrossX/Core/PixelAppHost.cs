@@ -45,6 +45,9 @@ public class PixelAppHost: IAppHost
         public float Distortion = 0f;
         public float Vignette = 0f;
         public float VignettePower = 0f;
+
+        public int NoiseCount = 0;
+        public RgbaColor NoiseColor = RgbaColor.Transparent;
     }
 
     public class GlowParameters

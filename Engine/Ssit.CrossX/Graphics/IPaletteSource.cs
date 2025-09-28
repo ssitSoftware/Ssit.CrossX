@@ -8,7 +8,9 @@ public interface IPaletteSource
     event Action OnPaletteChanged;
     
     IReadOnlyList<RgbaColor> Palette { get; }
+    IReadOnlyList<RgbaColor> GlowPalette { get; }
     IReadOnlyList<RgbaColor> OriginalPalette { get; }
     
-    void UpdatePalette( RgbaColor[] palette );
+    void UpdatePalette(RgbaColor[] palette, RgbaColor[] glowPalette);
+    bool HasGlowPalette { get; }
 }

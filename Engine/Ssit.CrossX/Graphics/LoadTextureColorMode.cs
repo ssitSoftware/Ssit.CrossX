@@ -5,5 +5,6 @@ public enum LoadTextureColorMode
     Default,
     NoPalette,
     Desaturate,
-    WhiteAlpha
+    WhiteAlpha,
+    DiffuseAndGlow
 }

@@ -47,7 +47,7 @@ public class PixelAppHost: IAppHost
         public float VignettePower = 0f;
 
         public int NoiseCount = 0;
-        public RgbaColor NoiseColor = RgbaColor.Transparent;
+        public float NoiseIntensity = 0f;
     }
 
     public class GlowParameters
@@ -148,6 +148,8 @@ public class PixelAppHost: IAppHost
         _renderer.SetRenderTarget(_renderTarget);
     }
     
+    private Vector2[] _noise = new Vector2[1024];
+    
     private void EndRender()
     {
         _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
@@ -166,6 +168,32 @@ public class PixelAppHost: IAppHost
                 _renderer.GeometryRenderer.FillRectangle(
                     new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * (_parameters.CrtParameters?.Interline ?? 0));
             }
+        }
+
+        if (_parameters.CrtParameters?.NoiseCount > 0)
+        {
+            _renderer.SetRenderTarget(_renderTarget);
+            _renderer.StateManager.SetBlendMode(BlendMode.AlphaBlend);
+            
+            var height = _renderTarget.Size.Height;
+            var width = _renderTarget.Size.Width;
+            
+            var count = _parameters.CrtParameters.NoiseCount;
+
+            if (_noise.Length != count)
+            {
+                _noise = new Vector2[count];
+            }
+            
+            for (var idx = 0; idx < count; ++idx)
+            {
+                var x = Random.Shared.Next(width);
+                var y = Random.Shared.Next(height);
+
+                _noise[idx] = new Vector2(x, y);
+            }
+            
+            _renderer.GeometryRenderer.DrawPoints(_noise, RgbaColor.White * _parameters.CrtParameters.NoiseIntensity);
         }
         
         if (_glowRenderTarget != null)

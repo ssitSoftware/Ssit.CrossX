@@ -1,4 +1,5 @@
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Renderer;
 
 namespace Ssit.CrossX.UI.Views;
 
@@ -15,7 +16,7 @@ public readonly struct ColorWrapper
         _opacity = opacity;
     }
     
-    public RgbaColor? GetColor(IPaletteSource paletteSource)
+    public RgbaColor? GetColor(IPaletteSource paletteSource, IRenderer2 renderer)
     {
         if (_color.HasValue)
         {
@@ -24,7 +25,9 @@ public readonly struct ColorWrapper
 
         if (_colorIndex.HasValue && paletteSource is not null)
         {
-            return paletteSource.Palette[_colorIndex.Value] * _opacity;
+            return renderer.StateManager.IsGlowMode ? 
+                    paletteSource.GlowPalette[_colorIndex.Value] * _opacity
+                    : paletteSource.Palette[_colorIndex.Value] * _opacity;
         }
 
         return null;

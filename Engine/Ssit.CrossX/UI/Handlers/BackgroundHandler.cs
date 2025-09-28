@@ -9,9 +9,7 @@ public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters 
 {
     protected IPaletteSource PaletteSource { get; } = paletteSource;
 
-    protected virtual RgbaColor? BackgroundColor(IRenderer2 renderer) => renderer.StateProvider.UseGlowTextures
-        ? RgbaColor.Black * (AttachedView.BackgroundColor.GetColor(PaletteSource)?.Af ?? 1f)
-        : AttachedView.BackgroundColor.GetColor(PaletteSource);
+    protected virtual RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColor.GetColor(PaletteSource, renderer);
     
     protected override void OnDraw(IRenderer2 renderer)
     {

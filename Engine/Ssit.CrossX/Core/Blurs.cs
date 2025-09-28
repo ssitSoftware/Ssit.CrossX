@@ -29,4 +29,5 @@ public static class Blurs
     
     public const float Gaussian3X3Divider = 8;
     public const float Gaussian5X5Divider = 256;
+    public const float Gaussian5X5DividerLight = 192;
 }

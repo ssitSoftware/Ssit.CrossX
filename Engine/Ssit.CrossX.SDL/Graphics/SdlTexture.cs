@@ -16,23 +16,28 @@ public unsafe class SdlTexture: ITexture
     private bool _disposed;
     
     private SdlHandle<SDL_Texture> _textureDiff;
-    private readonly SdlHandle<SDL_Texture> _textureGlow;
+    private SdlHandle<SDL_Texture> _textureGlow;
 
     private readonly SdlHandle<SDL_Surface> _surfaceDiff;
+    private readonly SdlHandle<SDL_Surface> _surfaceGlow;
 
     public Size Size { get; }
+
     public TextureMaps TextureMaps { get; }
+
+    private readonly bool _useDiffuseAsGlow;
 
     public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, ISdlPalette sdlPalette = null)
     {
         _handles = handles;
         _sdlPalette = sdlPalette;
+        bool updatePalette = false;
         
         if (parameters.DiffuseMapStream is not null)
         {
             int width, height;
 
-            if (sdlPalette == null || parameters.ColorMode == LoadTextureColorMode.NoPalette)
+            if (sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
             {
                 (_textureDiff, width, height) =
                     LoadTexture(parameters.DiffuseMapStream, handles.Renderer, parameters.ColorMode);
@@ -43,8 +48,8 @@ public unsafe class SdlTexture: ITexture
                 
                 width = _surfaceDiff.Pointer->w;
                 height = _surfaceDiff.Pointer->h;
-                
-                UpdateSdlPalette();
+
+                updatePalette = true;
             }
 
             Size = new Size(width, height);
@@ -54,14 +59,19 @@ public unsafe class SdlTexture: ITexture
         if (parameters.GlowMapStream is not null)
         {
             int width, height;
-            if (_sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
+            if (sdlPalette == null || parameters.ColorMode is LoadTextureColorMode.NoPalette)
             {
                 (_textureGlow, width, height) =
                     LoadTexture(parameters.GlowMapStream, handles.Renderer, parameters.ColorMode);
             }
             else
             {
-                throw new NotSupportedException();
+                (_textureGlow, _surfaceGlow) = LoadIndexedImage(parameters.GlowMapStream, sdlPalette.OriginalPalette);
+                
+                width = _surfaceGlow.Pointer->w;
+                height = _surfaceGlow.Pointer->h;
+
+                updatePalette = true;
             }
 
             if (Size == Size.Zero)
@@ -75,12 +85,22 @@ public unsafe class SdlTexture: ITexture
             }
 
             TextureMaps |= TextureMaps.GlowMap;
-            
         }
 
-        if (_sdlPalette != null)
+        if (parameters.ColorMode == LoadTextureColorMode.DiffuseAndGlow && _surfaceGlow == null)
+        {
+            _useDiffuseAsGlow = true;
+            TextureMaps |= TextureMaps.GlowMap;
+        }
+        
+        if (_sdlPalette != null && parameters.ColorMode == LoadTextureColorMode.Default)
         {
             _sdlPalette.OnPaletteChanged += UpdateSdlPalette;
+        }
+
+        if (updatePalette)
+        {
+            UpdateSdlPalette();
         }
     }
 
@@ -91,7 +111,6 @@ public unsafe class SdlTexture: ITexture
         using var bmp = SKBitmap.Decode(stream);
 
         var pixels = bmp.Pixels;
-
         
         SDL_Surface* surfacePtr = SDL_CreateSurface(bmp.Width, bmp.Height, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
         
@@ -134,27 +153,42 @@ public unsafe class SdlTexture: ITexture
         return (new SdlHandle<SDL_Texture>(texturePtr), new SdlHandle<SDL_Surface>(surfacePtr));
     }
 
-    private void UpdateSdlPalette()
+    private void UpdateSdlPalette(ref SdlHandle<SDL_Texture> texturePtr, SdlHandle<SDL_Surface> surfacePtr, SdlHandle<SDL_Palette> palettePtr)
     {
-        if (_surfaceDiff is null || _surfaceDiff.Pointer is null)
+        if (surfacePtr is null || surfacePtr.Pointer is null)
         {
             return;
         }
 
-        SDL_SetSurfacePalette(_surfaceDiff.Pointer, _sdlPalette.PaletteHandle.Pointer);
+        SDL_SetSurfacePalette(surfacePtr.Pointer, palettePtr.Pointer);
 
-        var newSurface = SDL_ConvertSurface(_surfaceDiff.Pointer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
+        var newSurface = SDL_ConvertSurface(surfacePtr.Pointer, SDL_PixelFormat.SDL_PIXELFORMAT_ABGR8888);
         SDL_PremultiplySurfaceAlpha(newSurface, true);
 
-        if (_textureDiff != null && _textureDiff.Pointer != null)
+        if (texturePtr != null && texturePtr.Pointer != null)
         {
-            SDL_DestroyTexture(_textureDiff.Pointer);
+            SDL_DestroyTexture(texturePtr.Pointer);
         }
         
         var texture = SDL_CreateTextureFromSurface(_handles.Renderer, newSurface);
-        _textureDiff = new SdlHandle<SDL_Texture>(texture);
+        texturePtr = new SdlHandle<SDL_Texture>(texture);
 
         SDL_DestroySurface(newSurface);
+    }
+    
+    private void UpdateSdlPalette()
+    {
+        UpdateSdlPalette(ref _textureDiff, _surfaceDiff, _sdlPalette.PaletteHandle);
+
+        if (_surfaceGlow != null && _surfaceGlow.Pointer != null)
+        {
+            UpdateSdlPalette(ref _textureGlow, _surfaceGlow, _sdlPalette.GlowPaletteHandle);
+        }
+        else if (_textureGlow != null && _textureGlow.Pointer != null)
+        {
+            SDL_DestroyTexture(_textureGlow.Pointer);
+            _textureGlow = null;
+        }
     }
 
     private (SdlHandle<SDL_Texture> ptr, int w, int h) LoadTexture(Stream stream, SDL_Renderer* renderer, LoadTextureColorMode colorMode)
@@ -233,7 +267,7 @@ public unsafe class SdlTexture: ITexture
         return map switch
         {
             TextureMaps.Diffuse => _textureDiff as TTextureMap,
-            TextureMaps.GlowMap => _textureGlow as TTextureMap,
+            TextureMaps.GlowMap => _useDiffuseAsGlow ? _textureDiff as TTextureMap : _textureGlow as TTextureMap,
             TextureMaps.DepthBuffer or TextureMaps.StencilBuffer or TextureMaps.NormalMap => throw new NotImplementedException(),
             TextureMaps.None => throw new ArgumentOutOfRangeException(nameof(map), map, null), 
             _ => null

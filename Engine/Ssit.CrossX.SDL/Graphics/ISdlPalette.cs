@@ -9,4 +9,7 @@ public interface ISdlPalette
     public RgbaColor[] OriginalPalette { get; }
     
     SdlHandle<SDL_Palette> PaletteHandle { get; }
+    SdlHandle<SDL_Palette> GlowPaletteHandle { get; }
+    
+    bool HasGlowPalette { get; }
 }

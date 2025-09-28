@@ -11,19 +11,18 @@ public class ButtonStateColorsIndexed : IButtonStateColors
     public byte? Focused;
     public byte? Pushed;
     public byte? Disabled;
-
+    
     public RgbaColor? GetColor(IRenderer2 renderer, IPaletteSource paletteSource, bool hover, bool focused, bool pushed, bool enabled)
     {
         if (paletteSource is null)
             throw new InvalidOperationException();
         
+        var index = GetIndex(hover, focused, pushed, enabled) ?? 2;
         if (renderer.StateProvider.UseGlowTextures)
         {
-            return RgbaColor.Black;
+            return paletteSource.GlowPalette[index];
         }
         
-        var index = GetIndex(hover, focused, pushed, enabled) ?? 2;
-
         return paletteSource.Palette[index];
     }
 

@@ -1,10 +1,8 @@
-
 using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
 
 using static SDL.SDL3;
-using static SDL.SDL3_image;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
@@ -16,7 +14,9 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
 
     public RgbaColor[] OriginalPalette { get; }
     public SdlHandle<SDL_Palette> PaletteHandle { get; }
-     
+    public SdlHandle<SDL_Palette> GlowPaletteHandle { get; }
+    public bool HasGlowPalette => _paletteSource.HasGlowPalette;
+
     private bool _disposed;
     
     public SdlPalette(IPaletteSource paletteSource)
@@ -24,23 +24,24 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
         _paletteSource = paletteSource;
         
         var palettePtr = SDL_CreatePalette(_paletteSource.OriginalPalette.Count);
+        var glowPalettePtr = SDL_CreatePalette(_paletteSource.OriginalPalette.Count);
         _palette = new RgbaColor[_paletteSource.OriginalPalette.Count];
         OriginalPalette = _paletteSource.OriginalPalette.ToArray();
         
         PaletteHandle = new SdlHandle<SDL_Palette>(palettePtr);
+        GlowPaletteHandle = new SdlHandle<SDL_Palette>(glowPalettePtr);
         
-        UpdatePalette(_paletteSource.Palette);
-        
+        UpdatePalette(_paletteSource.Palette, _paletteSource.GlowPalette);
         _paletteSource.OnPaletteChanged += PaletteSourceOnOnPaletteChanged; 
     }
 
     private void PaletteSourceOnOnPaletteChanged()
     {
-        UpdatePalette(_paletteSource.Palette);
+        UpdatePalette(_paletteSource.Palette, _paletteSource.GlowPalette);
         OnPaletteChanged?.Invoke();
     }
 
-    public void UpdatePalette(IReadOnlyList<RgbaColor> colors)
+    public void UpdatePalette(IReadOnlyList<RgbaColor> colors, IReadOnlyList<RgbaColor> glowColors)
     {
         if ( colors.Count != _palette.Length)
             throw new ArgumentException("Palette length is not equal to original palette length");
@@ -55,6 +56,18 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
             SDL_Color* ptr = (SDL_Color*)palettePtr;
             SDL_SetPaletteColors(PaletteHandle.Pointer, ptr, 0, _palette.Length);
         }
+        
+        
+        for (var idx = 0; idx < glowColors.Count; idx++)
+        {
+            _palette[idx] = glowColors[idx];
+        }
+        
+        fixed (RgbaColor* palettePtr = _palette)
+        {
+            SDL_Color* ptr = (SDL_Color*)palettePtr;
+            SDL_SetPaletteColors(GlowPaletteHandle.Pointer, ptr, 0, _palette.Length);
+        }
     }
 
     public void Dispose()
@@ -67,6 +80,11 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
         if (PaletteHandle is not null && PaletteHandle.Pointer != null)
         {
             SDL_DestroyPalette(PaletteHandle.Pointer);
+        }
+        
+        if (GlowPaletteHandle is not null && GlowPaletteHandle.Pointer != null)
+        {
+            SDL_DestroyPalette(GlowPaletteHandle.Pointer);
         }
 
         _disposed = true;

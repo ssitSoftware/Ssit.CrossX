@@ -129,16 +129,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         }
 
         CalculateTargetRects(texture.Resource, out var targetRect, out var sourceRect);
-
-        if (renderer.StateProvider.UseGlowTextures)
-        {
-            var color = RgbaColor.Black * (AttachedView?.TintColor?.Af ?? 1f);
-            renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, color, AttachedView?.Transform ?? ImageTransform.None);
-        }
-        else
-        {
-            renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None);
-        }
+        renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None);
     }
 
     private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out RectangleF sourceRect)

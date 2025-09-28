@@ -32,7 +32,7 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
             using var texturePath = filesProvider.Open(sheetPath);
             FontSheet = iocContainer.IoCConstruct<ITexture>(new LoadTextureParameters
             {
-                DiffuseMapStream = texturePath
+                DiffuseMapStream = texturePath,
             });
         }
     }
@@ -75,7 +75,7 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
             outlineSheet = container.IoCConstruct<ITexture>(new LoadTextureParameters
             {
                 DiffuseMapStream = outlineStream,
-                ColorMode = LoadTextureColorMode.NoPalette
+                ColorMode = LoadTextureColorMode.DiffuseAndGlow
             });
         }
         
@@ -85,7 +85,7 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
             fillSheet = container.IoCConstruct<ITexture>(new LoadTextureParameters
             {
                 DiffuseMapStream = fillStream,
-                ColorMode = LoadTextureColorMode.NoPalette
+                ColorMode = LoadTextureColorMode.DiffuseAndGlow
             });
         }
         

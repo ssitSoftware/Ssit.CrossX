@@ -15,6 +15,7 @@ internal class ContentManager: IContentManager
     private readonly IIoCContainer _iocContainer;
     private readonly IFilesProvider _filesProvider;
     private readonly IActionScheduler _scheduler;
+    private readonly IResourcesLoaderSettings _settings;
 
     public IFilesProvider FilesProvider => _filesProvider;
     
@@ -27,11 +28,12 @@ internal class ContentManager: IContentManager
     private readonly Dictionary<string, ResourceInstance> _resources = new();
     private readonly Dictionary<Type, LoadResourceDelegate> _resourceLoaders = new();
     
-    public ContentManager(IIoCContainer iocContainer, IFilesProvider filesProvider, IActionScheduler scheduler)
+    public ContentManager(IIoCContainer iocContainer, IFilesProvider filesProvider, IActionScheduler scheduler, IResourcesLoaderSettings settings = null)
     {
         _iocContainer = iocContainer;
         _filesProvider = filesProvider;
         _scheduler = scheduler;
+        _settings = settings;
 
         RegisterLoader<ITexture>(LoadTextureFunc);
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
@@ -155,18 +157,29 @@ internal class ContentManager: IContentManager
         var name = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path));
         var ext = Path.GetExtension(path);
 
+        var glowPath =  name + ".glow" + ext;
+        
         var hasDiffuseImplicit = _filesProvider.FileExists(name + ext);
         var hasDiffuseExplicit = _filesProvider.FileExists(name + ".diffuse" + ext);
         var hasNormals = _filesProvider.FileExists(name + ".normal" + ext);
         var hasGlow = _filesProvider.FileExists(name + ".glow" + ext);
-
+        
+        if (mode == LoadTextureColorMode.Default && _settings != null && _settings.DefaultColorMode == LoadTextureColorMode.DiffuseAndGlow)
+        {
+            if (!hasGlow)
+            {
+                glowPath = hasDiffuseImplicit ? name + ext : hasDiffuseExplicit ? name + ".diffuse" + ext : null;
+                hasGlow = glowPath != null;
+            }
+        }
+        
         return _iocContainer.IoCConstruct<ITexture>(new LoadTextureParameters
         {
             DiffuseMapStream =  hasDiffuseImplicit ? _filesProvider.Open(name + ext) : hasDiffuseExplicit ? 
                 _filesProvider.Open(name + ".diffuse" + ext) : null,
             
             NormalMapStream = hasNormals ? _filesProvider.Open(name + ".normal" + ext) : null,
-            GlowMapStream = hasGlow ? _filesProvider.Open(name + ".glow" + ext) : null,
+            GlowMapStream = hasGlow ? _filesProvider.Open(glowPath) : null,
             ColorMode = mode
         });
     }

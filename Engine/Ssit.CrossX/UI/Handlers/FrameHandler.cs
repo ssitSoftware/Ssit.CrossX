@@ -6,9 +6,7 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class FrameHandler(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource) : BackgroundHandler<Frame>(parameters, paletteSource)
 {
-    protected virtual RgbaColor? FrameColor(IRenderer2 renderer) => renderer.StateProvider.UseGlowTextures
-        ? RgbaColor.Black * (AttachedView.FrameColor.GetColor(PaletteSource)?.Af ?? 1f)
-        : AttachedView.FrameColor.GetColor(PaletteSource);
+    protected virtual RgbaColor? FrameColor(IRenderer2 renderer) => AttachedView.FrameColor.GetColor(PaletteSource, renderer);
     
     protected override void OnDraw(IRenderer2 renderer)
     {

@@ -22,19 +22,7 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         Load(stream);
 
         var sheetPath = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path)) + ".png";
-
-        if (Outline)
-        {
-            (FontSheet, OutlineSheet) = LoadComplexSheet(filesProvider, iocContainer, sheetPath);
-        }
-        else
-        {
-            using var texturePath = filesProvider.Open(sheetPath);
-            FontSheet = iocContainer.IoCConstruct<ITexture>(new LoadTextureParameters
-            {
-                DiffuseMapStream = texturePath,
-            });
-        }
+        (FontSheet, OutlineSheet) = LoadComplexSheet(filesProvider, iocContainer, sheetPath);
     }
 
     private (ITexture, ITexture) LoadComplexSheet(IFilesProvider filesProvider, IIoCContainer container, string path)

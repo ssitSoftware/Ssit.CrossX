@@ -5,8 +5,11 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null)
-    : ChildrenContainerHandler<Container>(parameters, handlerMapper, paletteSource)
+public class ContainerHandler<TContainer>(
+    ViewHandler.CreateHandlerParameters parameters,
+    IHandlerMapper handlerMapper,
+    IPaletteSource paletteSource = null) :
+    ChildrenContainerHandler<TContainer>(parameters, handlerMapper, paletteSource) where TContainer: ChildrenContainer
 {
     protected override void RecalculateChildrenLayouts()
     {
@@ -111,4 +114,9 @@ public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IH
         
         handlerView.Handler.SetBounds(new RectangleF(xx, yy, ww, hh));
     }
+}
+
+public class ContainerHandler(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null)
+    : ContainerHandler<Container>(parameters, handlerMapper, paletteSource)
+{
 }

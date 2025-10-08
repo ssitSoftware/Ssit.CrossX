@@ -49,6 +49,52 @@ public readonly struct ButtonState : IEquatable<ButtonState>
     public static readonly ButtonState JustReleased = new (false, true);
 
     public static ButtonState FromStates(bool isDown, bool wasDown) => new ButtonState(isDown, isDown != wasDown);
+
+    /// <summary>
+    /// Defines a custom bitwise OR operation for combining two <see cref="ButtonState"/> instances.
+    /// The resulting state will indicate whether either of the input states
+    /// represents a button being pressed and whether a state change has occurred.
+    /// </summary>
+    public static ButtonState operator |(ButtonState left, ButtonState right)
+    {
+        var isDown  = left.IsDown || right.IsDown;
+        var wasDown1 = left is { IsDown: true, IsChanged: false };
+        var wasDown2 = right is { IsDown: true, IsChanged: false };
+        
+        var wasDown = wasDown1 || wasDown2;
+        
+        return new ButtonState(isDown, isDown != wasDown);
+    }
+    
+    /// <summary>
+    /// Defines a custom bitwise OR operation for combining two <see cref="ButtonState"/> instances.
+    /// The resulting state will indicate whether either of the input states
+    /// represents a button being pressed and whether a state change has occurred.
+    /// </summary>
+    public ButtonState WithModifier(ButtonState modifierState)
+    {
+        var state = this & modifierState;
+        
+        if (state == JustPressed && !IsChanged)
+        {
+            state = Down;
+        }
+
+        return state;
+    }
+
+    /// <summary>
+    /// Performs a bitwise AND operation on two <see cref="ButtonState"/> instances.
+    /// The resulting state indicates that the button is pressed only if both input states
+    /// indicate the button is pressed. Additionally, the resulting state will reflect
+    /// if either input state has registered a state change.
+    /// </summary>
+    public static ButtonState operator &(ButtonState left, ButtonState right)
+    {
+        var isDown  = left.IsDown && right.IsDown;
+        var isChanged = left.IsChanged || right.IsChanged;
+        return new ButtonState(isDown, isChanged);
+    }
     
     /// <summary>
     /// Represents the state of a button, indicating whether it is pressed or not

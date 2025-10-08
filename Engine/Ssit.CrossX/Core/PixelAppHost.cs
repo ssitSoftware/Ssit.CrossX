@@ -36,6 +36,7 @@ public class PixelAppHost: IAppHost
         public Vector2 DisplacementFactorB;
         
         public float Interline;
+        public float VerticalInterline;
         public bool HasDisplacement => DisplacementFactorR != Vector2.Zero || DisplacementFactorG != Vector2.Zero || DisplacementFactorB != Vector2.Zero;
 
         public float LampGlow;
@@ -160,13 +161,27 @@ public class PixelAppHost: IAppHost
         {
             _renderer.SetRenderTarget(_renderTarget);
             _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
-            
+
             var height = _renderTarget.Size.Height / Scale;
 
+            float val = 1 - (_parameters.CrtParameters?.Interline ?? 0);
+            var color = new RgbaColor(val, val, val);
+            
             for (var idx = 0; idx < height; ++idx)
             {
                 _renderer.GeometryRenderer.FillRectangle(
-                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * (_parameters.CrtParameters?.Interline ?? 0));
+                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), color);
+            }
+        }
+        
+        if(_parameters.CrtParameters?.VerticalInterline > 0)
+        {
+            var width = _renderTarget.Size.Width / Scale;
+
+            for (var idx = 0; idx < width; ++idx)
+            {
+                _renderer.GeometryRenderer.FillRectangle(
+                    new RectangleF(idx * Scale, 0, Scale / 2f, _renderTarget.Size.Height), RgbaColor.Black * (_parameters.CrtParameters?.VerticalInterline ?? 0));
             }
         }
 
@@ -194,6 +209,23 @@ public class PixelAppHost: IAppHost
             }
             
             _renderer.GeometryRenderer.DrawPoints(_noise, RgbaColor.White * _parameters.CrtParameters.NoiseIntensity);
+        }
+        
+        if (_parameters.CrtParameters?.Interline > 0)
+        {
+            _renderer.SetRenderTarget(_renderTarget);
+            _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
+
+            var height = _renderTarget.Size.Height / Scale;
+
+            float val = 1 - (_parameters.CrtParameters?.Interline ?? 0);
+            var color = new RgbaColor(val, val, val);
+            
+            for (var idx = 0; idx < height; ++idx)
+            {
+                _renderer.GeometryRenderer.FillRectangle(
+                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), color);
+            }
         }
         
         if (_glowRenderTarget != null)
@@ -257,24 +289,11 @@ public class PixelAppHost: IAppHost
             }
         }
         
-        if (_parameters.CrtParameters?.Interline > 0)
-        {
-            _renderer.SetRenderTarget(_renderTarget);
-            _renderer.StateManager.SetBlendMode(BlendMode.Multiply);
-            
-            var height = _renderTarget.Size.Height / Scale;
-
-            for (var idx = 0; idx < height; ++idx)
-            {
-                _renderer.GeometryRenderer.FillRectangle(
-                    new RectangleF(0, idx * Scale, _renderTarget.Size.Width, Scale / 2f), RgbaColor.Black * (_parameters.CrtParameters?.Interline ?? 0));
-            }
-        }
-        
         if (_postRenderTarget != null)
         {
             _renderer.SetRenderTarget(_postRenderTarget);
-
+            _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
+            
             if (true == _parameters.CrtParameters?.HasDisplacement)
             {
                 var sc = (float)_postRenderTarget.Size.Width / DesignTargetSize.Width;
@@ -565,7 +584,9 @@ public class PixelAppHost: IAppHost
             case Mode.WidthAndHeightKeepAspect:
                 return (targetScale, scaleInt, _parameters.DesignSize * targetScale);
 
+            case Mode.WidthAndHeight:
             case Mode.Height:
+            case Mode.Width:
             {
                 var aspect = (float)size.Width / size.Height;
                 var height = _parameters.DesignSize.Height * targetScale;

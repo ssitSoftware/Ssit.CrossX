@@ -1,7 +1,7 @@
 using System;
-using System.Numerics;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Parameters;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Transitions;
 using Ssit.CrossX.UI.Values;
 
@@ -58,5 +58,11 @@ public abstract class View: IHandlerView
 
     internal ViewHandler Handler { private get; set; }
 
+    void IHandlerView.Initialize(IUiServices services) => Initialize(services);
+    
+    protected virtual void Initialize(IUiServices services)
+    {
+    }
+    
     private Type _customHandlerType;
 }

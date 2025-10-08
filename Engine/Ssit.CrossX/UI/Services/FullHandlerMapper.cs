@@ -1,3 +1,4 @@
+using System;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Views;
@@ -16,14 +17,20 @@ internal class FullHandlerMapper(IIoCContainer iocContainer) : HandlerMapper
     
     public override ViewHandler Create(View view, IViewParent parent)
     {
-        var type = view.CustomHandlerType ?? GetMapping(view.GetType());
+        if(!iocContainer.TryGet(typeof(IUiServices), out var uiServices))
+        {
+            throw new InvalidOperationException();
+        }
+        ((IHandlerView)view).Initialize(uiServices as IUiServices);
         
+        var type = view.CustomHandlerType ?? GetMapping(view.GetType());
         var handler = (ViewHandler)iocContainer.IoCConstruct(type, new ViewHandler.CreateHandlerParameters
         {
             View = view,
-            Parent = parent
+            Parent = parent,
+            AdditionalParameters = view.CustomHandlerParameters
         });
-        
+
         handler.Init();
         return handler;
     }

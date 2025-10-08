@@ -11,6 +11,11 @@ public static class Blurs
         [0,4,7,4,0],
     ];
 
+    public static readonly float[][] None1x1 =
+    [
+        [1]
+    ];
+    
     public static readonly float[][] Gaussian3X3 =
     [
         [0,1,0],

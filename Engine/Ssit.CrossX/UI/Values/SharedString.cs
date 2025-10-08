@@ -11,7 +11,29 @@ public abstract class SharedString: CharProvider
     
     public static implicit operator SharedString(string value) => new SharedStringValue(value);
     public static SharedString operator + (SharedString str1, SharedString str2) => new SharedStringJoin(str1, str2);
-    
+
+    public static bool operator == (SharedString obj, string str)
+    {
+        if (obj is null) return false;
+        if (str is null) return false;
+        
+        if (str.Length != obj.Length)
+            return false;
+
+        for (var idx = 0; idx < str.Length; idx++)
+        {
+            if(str[idx] != obj[idx])
+                return false;
+        }
+
+        return true;
+    }
+
+    public static bool operator !=(SharedString obj, string str)
+    {
+        return !(obj == str);
+    }
+
     protected void RaiseTextChanged()
     {
         TextChanged?.Invoke();

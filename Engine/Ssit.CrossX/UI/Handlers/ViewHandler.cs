@@ -12,6 +12,7 @@ public abstract class ViewHandler: IDisposable
     {
         public View View;
         public IViewParent Parent;
+        public object AdditionalParameters;
     }
     
     public View View { get; }
@@ -170,5 +171,4 @@ public abstract class ViewHandler<TView>(ViewHandler.CreateHandlerParameters par
     where TView : View
 {
     protected TView AttachedView => (TView)View;
-    protected IHandlerView HandlerView => View;
 }

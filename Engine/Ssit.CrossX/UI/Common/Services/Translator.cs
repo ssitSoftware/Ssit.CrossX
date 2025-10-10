@@ -23,9 +23,9 @@ internal class Translator : ITranslator
         }
     }
     
-    public Translator(IFilesProvider filesProvider)
+    public Translator(IFilesProvider filesProvider, string path)
     {
-        using var stream = filesProvider.Open("assets:/Languages.tsv");
+        using var stream = filesProvider.Open(path);
         var text = new StreamReader(stream).ReadToEnd();
         
         var lines = text.Split('\n', '\r');

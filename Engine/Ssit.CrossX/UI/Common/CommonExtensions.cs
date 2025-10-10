@@ -1,4 +1,3 @@
-using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Common.Services;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
@@ -9,11 +8,10 @@ namespace Ssit.CrossX.UI.Common;
 
 public static class CommonExtensions
 {
-    public static IIoCContainerBuilder WithCommonUi( this IIoCContainerBuilder builder )
+    public static IIoCContainerBuilder WithTranslator( this IIoCContainerBuilder builder, string languagesPath )
     {
         return builder
-            .WithSingleton<ITranslator, Translator>()
-            .WithSingleton<PageInputContext, PageInputContext>();
+            .WithSingleton<ITranslator, Translator>(languagesPath);
     }
     
     public static IHandlerMapper AddCommonUiMaping( this IHandlerMapper mapper )

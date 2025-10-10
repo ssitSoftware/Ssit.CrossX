@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.Games.Logic;
+namespace Ssit.CrossX.Core;
 
 public interface IUpdatable
 {

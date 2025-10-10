@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Logic;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Template;

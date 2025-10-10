@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Physics.Collision;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;

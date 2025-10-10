@@ -4,6 +4,7 @@ using System.Numerics;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Common;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Services;
 
@@ -61,7 +62,7 @@ public abstract class UiPixelApp : IApp
         builder
             .WithInstance<IInputCoordinateSystem>(new InputCoordinateSystem(AppHost))
             .WithInstance(AppHost)
-            .WithCommonUi();
+            .WithSingleton<PageInputContext, PageInputContext>();
 
         handlers.AddCommonUiMaping();
     }

@@ -11,10 +11,9 @@ public sealed class SteringStateMachine<TObject>(TObject obj)
     
     public void SetState(SteringState<TObject> state)
     {
-        var prevState = CurrentState;
-        CurrentState?.Exit(this, state);
+        CurrentState?.Exit(Object);
         CurrentState = state;
-        CurrentState.Enter(this, prevState);
+        CurrentState.Enter(Object);
         
         OnStateChanged?.Invoke(this, CurrentState);
     }

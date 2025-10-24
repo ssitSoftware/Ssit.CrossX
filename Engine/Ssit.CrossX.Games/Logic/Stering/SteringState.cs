@@ -6,36 +6,36 @@ public abstract class SteringState<TObject>
 {
     public abstract string Name { get; }
     
-    internal void Enter(SteringStateMachine<TObject> sm, SteringState<TObject> previous) => OnEnter(sm, previous);
-    internal void Exit(SteringStateMachine<TObject> sm, SteringState<TObject> next) => OnExit(sm, next);
+    internal void Enter(TObject obj) => OnEnter(obj);
+    internal void Exit(TObject obj) => OnExit(obj);
     
-    public void Update(SteringStateMachine<TObject> sm, float dt) => OnUpdate(sm, dt);
-    public void FixedUpdate(SteringStateMachine<TObject> sm, float dt) => OnFixedUpdate(sm, dt);
+    public void Update(TObject obj, float dt) => OnUpdate(obj, dt);
+    public void FixedUpdate(TObject obj, float dt) => OnFixedUpdate(obj, dt);
     
-    public void SequenceFinished(SteringStateMachine<TObject> sm, string name) => OnSequenceFinished(sm, name);
-    public void Event(SteringStateMachine<TObject> sm, IEvent @event) => OnEvent(sm, @event);
+    public void SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
+    public void Event(TObject obj, IEvent @event) => OnEvent(obj, @event);
     
-    protected virtual void OnUpdate(SteringStateMachine<TObject> sm, float dt)
+    protected virtual void OnUpdate(TObject obj, float dt)
     {
     }
     
-    protected virtual void OnFixedUpdate(SteringStateMachine<TObject> sm, float dt)
+    protected virtual void OnFixedUpdate(TObject obj, float dt)
     {
     }
 
-    protected virtual void OnEnter(SteringStateMachine<TObject> sm, SteringState<TObject> previous)
+    protected virtual void OnEnter(TObject obj)
     {
     }
 
-    protected virtual void OnExit(SteringStateMachine<TObject> sm, SteringState<TObject> next)
+    protected virtual void OnExit(TObject obj)
     {
     }
 
-    protected virtual void OnSequenceFinished(SteringStateMachine<TObject> sm, string name)
+    protected virtual void OnSequenceFinished(TObject obj, string name)
     {
     }
 
-    protected virtual void OnEvent(SteringStateMachine<TObject> sm, IEvent @event)
+    protected virtual void OnEvent(TObject obj, IEvent @event)
     {
     }
 }

@@ -60,23 +60,23 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
 
     void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
-        SteringStateMachine.CurrentState?.Event(SteringStateMachine, @event);
+        SteringStateMachine.CurrentState?.Event(_obj, @event);
         _obj.CallSpriteEvent(@event);
     }
 
     void SpriteInstance.IHandler.OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
     {
-        SteringStateMachine.CurrentState?.SequenceFinished(SteringStateMachine, sequenceName);
+        SteringStateMachine.CurrentState?.SequenceFinished(_obj, sequenceName);
         _obj.CallSequenceFinished(sequenceName);
     }
     
     void IUpdatable.Update(float dt)
     {
-        SteringStateMachine.CurrentState?.Update(SteringStateMachine, dt);
+        SteringStateMachine.CurrentState?.Update(_obj, dt);
     }
     
     void IUpdatable.FixedUpdate(float dt)
     {
-        SteringStateMachine.CurrentState?.FixedUpdate(SteringStateMachine, dt);
+        SteringStateMachine.CurrentState?.FixedUpdate(_obj, dt);
     }
 }

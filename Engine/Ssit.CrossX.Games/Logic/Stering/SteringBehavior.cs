@@ -4,26 +4,26 @@ namespace Ssit.CrossX.Games.Logic.Stering;
 
 public class SteringBehavior<TObject>
 {
-    internal void Enter(SteringStateMachine<TObject> sm, SteringState<TObject> previous) => OnEnter(sm, previous);
-    internal void Exit(SteringStateMachine<TObject> sm, SteringState<TObject> next) => OnExit(sm, next);
-    internal bool Event(SteringStateMachine<TObject> sm, IEvent @event) => OnEvent(sm, @event);
-    internal bool SequenceFinished(SteringStateMachine<TObject> sm, string name) => OnSequenceFinished(sm, name);
+    internal void Enter(TObject obj) => OnEnter(obj);
+    internal void Exit(TObject obj) => OnExit(obj);
+    internal bool Event(TObject obj, IEvent @event) => OnEvent(obj, @event);
+    internal bool SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
     
-    internal bool Update(SteringStateMachine<TObject> sm, float dt) => OnUpdate(sm, dt);
-    internal bool FixedUpdate(SteringStateMachine<TObject> sm, float dt) => OnFixedUpdate(sm, dt);
+    internal bool Update(TObject obj, float dt) => OnUpdate(obj, dt);
+    internal bool FixedUpdate(TObject obj, float dt) => OnFixedUpdate(obj, dt);
     
-    protected virtual bool OnFixedUpdate(SteringStateMachine<TObject> sm, float dt) => false;
-    protected virtual bool OnUpdate(SteringStateMachine<TObject> sm, float dt) => false;
+    protected virtual bool OnFixedUpdate(TObject obj, float dt) => false;
+    protected virtual bool OnUpdate(TObject obj, float dt) => false;
     
-    protected virtual bool OnEvent(SteringStateMachine<TObject> sm, IEvent @event) => false;
+    protected virtual bool OnEvent(TObject obj, IEvent @event) => false;
     
-    protected virtual bool OnSequenceFinished(SteringStateMachine<TObject> sm, string name) => false;
+    protected virtual bool OnSequenceFinished(TObject obj, string name) => false;
     
-    protected virtual void OnEnter(SteringStateMachine<TObject> sm, SteringState<TObject> previous)
+    protected virtual void OnEnter(TObject character)
     {
     }
 
-    protected virtual void OnExit(SteringStateMachine<TObject> sm, SteringState<TObject> next)
+    protected virtual void OnExit(TObject obj)
     {
     }
 }

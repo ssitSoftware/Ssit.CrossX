@@ -49,7 +49,7 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
         var commandsSource = CommandsSource;
         
         int navId = 0;
-        int navCount = ItemsWithCommandType.Count(o=>o.text != null);
+        int navCount = ItemsWithCommandType.Count(o=> o.text?.Length > 0);
         
         for (var i = 0; i < ItemsWithCommandType.Count; i++)
         {
@@ -66,7 +66,7 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
             var nextIndex = navId + 1;
             var prevIndex = navId - 1;
             
-            if (commandsSource is null)
+            if (commandsSource?.BackCommand is null)
             {
                 nextIndex %= navCount;
                 prevIndex = (prevIndex + navCount) % navCount;

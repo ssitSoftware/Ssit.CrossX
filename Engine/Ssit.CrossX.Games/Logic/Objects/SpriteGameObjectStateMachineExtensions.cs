@@ -4,11 +4,6 @@ namespace Ssit.CrossX.Games.Logic.Objects;
 
 public static class SpriteGameObjectStateMachineExtensions
 {
-    public static SpriteGameObjectStateMachine<TObject, TStateObject> CreateStateMachine<TObject, TStateObject>(this TObject obj) where TObject: SpriteGameObject2, TStateObject
-    {
-        return new SpriteGameObjectStateMachine<TObject, TStateObject>(obj);
-    }
-
     public static SpriteGameObjectStateMachine<TObject, TStateObject> WithBehaviorState<TObject, TStateObject>(
         this SpriteGameObjectStateMachine<TObject, TStateObject> sm, string name, string sequence, SteringBehavior<TStateObject>[] behaviors) where TObject: SpriteGameObject2, TStateObject
     {

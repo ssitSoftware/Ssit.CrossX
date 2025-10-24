@@ -6,60 +6,60 @@ public class SteringStateWithBehaviors<TObject>(string name, params SteringBehav
 {
     public override string Name => name;
 
-    protected override void OnEnter(SteringStateMachine<TObject> sm, SteringState<TObject> previous)
+    protected override void OnEnter(TObject obj)
     {
         foreach (var behavior in behaviors)
         {
-            behavior.Enter(sm, previous);
+            behavior.Enter(obj);
         }
     }
     
-    protected override void OnExit(SteringStateMachine<TObject> sm, SteringState<TObject> next)
+    protected override void OnExit(TObject obj)
     {
         foreach (var behavior in behaviors)
         {
-            behavior.Exit(sm, next);
+            behavior.Exit(obj);
         }
     }
 
-    protected override void OnUpdate(SteringStateMachine<TObject> sm, float dt)
+    protected override void OnUpdate(TObject obj, float dt)
     {
         foreach (var behavior in behaviors)
         {
-            if (behavior.Update(sm, dt))
+            if (behavior.Update(obj, dt))
             {
                 break;
             }
         }
     }
     
-    protected override void OnFixedUpdate(SteringStateMachine<TObject> sm, float dt)
+    protected override void OnFixedUpdate(TObject obj, float dt)
     {
         foreach (var behavior in behaviors)
         {
-            if (behavior.FixedUpdate(sm, dt))
+            if (behavior.FixedUpdate(obj, dt))
             {
                 break;
             }
         }
     }
 
-    protected override void OnEvent(SteringStateMachine<TObject> sm, IEvent @event)
+    protected override void OnEvent(TObject obj, IEvent @event)
     {
         foreach (var behavior in behaviors)
         {
-            if (behavior.Event(sm, @event))
+            if (behavior.Event(obj, @event))
             {
                 break;
             }
         }
     }
 
-    protected override void OnSequenceFinished(SteringStateMachine<TObject> sm, string name)
+    protected override void OnSequenceFinished(TObject obj, string sequenceName)
     {
         foreach (var behavior in behaviors)
         {
-            if (behavior.SequenceFinished(sm, name))
+            if (behavior.SequenceFinished(obj, sequenceName))
             {
                 break;
             }

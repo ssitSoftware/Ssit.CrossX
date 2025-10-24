@@ -23,6 +23,13 @@ public static class Blurs
         [0,1,0]
     ];
     
+    public static readonly float[][] Gaussian2X2 =
+    [
+        [0,1,0],
+        [0,3,1],
+        [0,0,0]
+    ];
+    
     public static readonly float[][] OptimizedGaussian5X5 =
     [
         [0,0,9,0,0],
@@ -31,6 +38,8 @@ public static class Blurs
         [0,18,30,18,0],
         [0,0,9,0,0],
     ];
+    
+    public const float Gaussian2X2Divider = 5;
     
     public const float Gaussian3X3Divider = 8;
     public const float Gaussian5X5Divider = 256;

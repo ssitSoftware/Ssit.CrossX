@@ -19,7 +19,7 @@ public static class Blurs
     public static readonly float[][] Gaussian3X3 =
     [
         [0,1,0],
-        [1,4,1],
+        [1,5,1],
         [0,1,0]
     ];
     
@@ -41,7 +41,7 @@ public static class Blurs
     
     public const float Gaussian2X2Divider = 5;
     
-    public const float Gaussian3X3Divider = 8;
+    public const float Gaussian3X3Divider = 9;
     public const float Gaussian5X5Divider = 256;
     public const float Gaussian5X5DividerLight = 192;
 }

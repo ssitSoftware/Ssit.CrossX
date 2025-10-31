@@ -187,4 +187,19 @@ internal unsafe class SdlGameController: IDisposable
             SDL_free(joysticks);
         }
     }
+
+    public void Vibrate(Vibration low, Vibration high, uint ms)
+    {
+        var gamepad = _handle != null ? _handle.Pointer : null;
+
+        if (gamepad is null)
+        {
+            return;
+        }
+
+        var lowVib = (int)low * 0xffff / 10;
+        var highVib = (int)high * 0xffff / 10;
+        
+        SDL_RumbleGamepad(gamepad, (ushort)lowVib, (ushort)highVib, ms);
+    }
 }

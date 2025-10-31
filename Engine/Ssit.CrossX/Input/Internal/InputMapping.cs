@@ -88,6 +88,11 @@ internal class InputMapping : IMapper, IInputMapping
         return new(isDown, isDown != wasDown);
     }
 
+    public void Feedback(Vibration low, Vibration high, uint ms)
+    {
+        _gameControllers.Vibrate(_player, low, high, ms);
+    }
+
     public float GetAxis(string axis)
     {
         float value = 0;

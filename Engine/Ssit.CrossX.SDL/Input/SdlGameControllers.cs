@@ -29,7 +29,12 @@ internal class SdlGameControllers: IGameControllers
     {
         return _controllers[player].IsConnected;
     }
-    
+
+    public void Vibrate(int player, Vibration low, Vibration high, uint ms)
+    {
+        _controllers[player].Vibrate(low, high, ms);
+    }
+
     public void PostUpdate()
     {
         foreach (var controller in _controllers)

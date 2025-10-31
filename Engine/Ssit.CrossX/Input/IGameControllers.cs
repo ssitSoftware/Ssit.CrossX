@@ -35,4 +35,13 @@ public interface IGameControllers
     /// <param name="player">The player index (e.g., 0 for the first player).</param>
     /// <returns>A boolean value indicating whether the player's game controller is connected.</returns>
     bool IsConnected(int player);
+
+    /// <summary>
+    /// Triggers the vibration motors of a game controller for a specified duration.
+    /// </summary>
+    /// <param name="player">The index of the player whose controller should vibrate (e.g., 0 for the first player).</param>
+    /// <param name="low">The intensity level for the low-frequency vibration motor.</param>
+    /// <param name="high">The intensity level for the high-frequency vibration motor.</param>
+    /// <param name="ms">The duration of the vibration in milliseconds.</param>
+    void Vibrate(int player, Vibration low, Vibration high, uint ms);
 }

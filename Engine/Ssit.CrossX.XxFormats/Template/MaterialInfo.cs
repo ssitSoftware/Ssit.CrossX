@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.Games.Template;
+namespace Ssit.CrossX.XxFormats.Template;
 
 public class MaterialInfo
 {

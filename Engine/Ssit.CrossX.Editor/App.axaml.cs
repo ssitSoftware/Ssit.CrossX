@@ -9,7 +9,7 @@ using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 using Ssit.CrossX.Editor.Models;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor
 {

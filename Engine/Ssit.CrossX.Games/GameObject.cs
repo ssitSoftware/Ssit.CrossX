@@ -9,21 +9,12 @@ using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Graphics.Sprites.Json;
 using Ssit.CrossX.IO;
+using Ssit.CrossX.XxFormats;
 
 namespace Ssit.CrossX.Games;
 
 public class GameObject: IDisposable
 {
-    [Flags]
-    public enum OriginAlignment
-    {
-        Default = 0,
-        Center = 1,
-        VCenter = 2,
-        Right = 4,
-        Bottom = 8
-    }
-    
     private readonly IContentManager _contentManager;
 
     public readonly ObjectDescription Description;

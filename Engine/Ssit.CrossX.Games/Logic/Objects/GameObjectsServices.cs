@@ -2,7 +2,7 @@ using Ssit.CrossX.Content;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic.Objects;

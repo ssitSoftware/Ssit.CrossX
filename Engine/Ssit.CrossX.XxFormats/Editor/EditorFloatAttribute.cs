@@ -1,6 +1,4 @@
-using System;
-
-namespace Ssit.CrossX.Games.Editor;
+namespace Ssit.CrossX.XxFormats.Editor;
 
 public class EditorFloatAttribute: EditorAttribute
 {

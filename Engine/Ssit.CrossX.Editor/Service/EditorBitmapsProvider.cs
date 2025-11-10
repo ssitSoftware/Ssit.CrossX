@@ -1,7 +1,7 @@
 using System;
 using Ssit.CrossX.Editor.Helpers;
 using SkiaSharp;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.Service;
 

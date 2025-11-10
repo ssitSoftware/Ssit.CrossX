@@ -1,9 +1,9 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Games.Logic;
 

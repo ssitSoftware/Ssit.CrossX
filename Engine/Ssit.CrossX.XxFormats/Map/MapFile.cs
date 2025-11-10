@@ -1,14 +1,11 @@
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.ComponentModel;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Utils;
+using Ssit.CrossX.XxFormats.Template;
 
-namespace Ssit.CrossX.Games.Map;
+namespace Ssit.CrossX.XxFormats.Map;
 
 public class MapFile: BindableModel
 {

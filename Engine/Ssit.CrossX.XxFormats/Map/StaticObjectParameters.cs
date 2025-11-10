@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using Ssit.CrossX.Games.Editor;
+using Ssit.CrossX.XxFormats.Editor;
 
-namespace Ssit.CrossX.Games.Map;
+namespace Ssit.CrossX.XxFormats.Map;
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class StaticObjectParameters

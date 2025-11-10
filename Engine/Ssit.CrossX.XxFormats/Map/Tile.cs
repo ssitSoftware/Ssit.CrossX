@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.Games.Map;
+namespace Ssit.CrossX.XxFormats.Map;
 
 public readonly struct Tile
 {

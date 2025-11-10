@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.XxFormats.Editor;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 

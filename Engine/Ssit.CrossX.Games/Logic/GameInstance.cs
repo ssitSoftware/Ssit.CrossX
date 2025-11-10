@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Logic.Map;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering.Map;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic;

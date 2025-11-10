@@ -5,12 +5,12 @@ using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.Games.Audio;
 using Ssit.CrossX.Games.Logic.Objects;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Common;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.IO;
+using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic.Map;

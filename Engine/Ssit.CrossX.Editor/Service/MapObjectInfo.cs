@@ -1,4 +1,4 @@
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Service;
 

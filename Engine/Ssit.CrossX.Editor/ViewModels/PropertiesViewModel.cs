@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Ssit.CrossX.Editor.Models.Parameters;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Utils;
-using EditorAttribute = Ssit.CrossX.Games.Editor.EditorAttribute;
+using Ssit.CrossX.XxFormats.Editor;
+using EditorAttribute = Ssit.CrossX.XxFormats.Editor.EditorAttribute;
 
 namespace Ssit.CrossX.Editor.ViewModels;
 

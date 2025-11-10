@@ -1,6 +1,6 @@
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 
-namespace Ssit.CrossX.Games.Template;
+namespace Ssit.CrossX.XxFormats.Template;
 
 public class LayerDescription
 {

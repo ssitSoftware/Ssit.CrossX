@@ -1,6 +1,4 @@
-using System;
-
-namespace Ssit.CrossX.Games.Map;
+namespace Ssit.CrossX.XxFormats.Map;
 
 [Flags]
 public enum LayerAlign

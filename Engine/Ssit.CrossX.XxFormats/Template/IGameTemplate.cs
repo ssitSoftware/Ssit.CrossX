@@ -1,8 +1,7 @@
-using System;
 using System.Numerics;
 using Ssit.CrossX.IO;
 
-namespace Ssit.CrossX.Games.Template;
+namespace Ssit.CrossX.XxFormats.Template;
 
 public interface IGameTemplate
 {
@@ -19,15 +18,13 @@ public interface IGameTemplate
     ImageDescription[] Images { get; }
 
     string[] TileSets { get; }
-    GameObject.OriginAlignment ObjectsOriginAlignment { get; }
+    OriginAlignment ObjectsOriginAlignment { get; }
     
     MaterialInfo[] Materials { get; }
-
     IFilesProvider AssetsProvider { get; }
     decimal TilesetPanelZoom { get; }
     int PreviewZoom { get; }
     RgbaColor EmptyColor { get; }
     RgbaColor TilesBgColor => EmptyColor;
-    
     int TrimToPixels => 0;
 }

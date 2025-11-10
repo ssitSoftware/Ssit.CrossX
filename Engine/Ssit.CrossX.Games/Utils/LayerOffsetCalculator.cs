@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
-using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Games.Rendering.Map;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Games.Utils;
 
@@ -31,7 +31,6 @@ public static class LayerOffsetCalculator
     {
         var horzSpeed = MathF.Max(0.0001f, layer.HorizontalSpeed);
         var vertSpeed = MathF.Max(0.0001f, layer.VerticalSpeed);
-        
         
         var offX = localOffset.X / horzSpeed;
         var offY = mainLayer.Height - (layer.Height - localOffset.Y) / vertSpeed;

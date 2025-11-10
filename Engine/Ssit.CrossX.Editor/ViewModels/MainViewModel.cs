@@ -11,8 +11,8 @@ using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
-using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Map;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {

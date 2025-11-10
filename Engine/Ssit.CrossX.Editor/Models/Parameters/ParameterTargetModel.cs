@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Models.Parameters;
 

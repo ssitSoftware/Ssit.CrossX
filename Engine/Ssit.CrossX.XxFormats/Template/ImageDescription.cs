@@ -1,7 +1,4 @@
-using System.IO;
-using System.Linq;
-
-namespace Ssit.CrossX.Games.Template;
+namespace Ssit.CrossX.XxFormats.Template;
 
 public class ImageDescription
 {
@@ -27,7 +24,7 @@ public class ImageDescription
         Sequence = defaultSequence;
     }
     
-    public ImageDescription(string gameObject) 
+    public ImageDescription(string gameObject)
         : this(Path.GetFileNameWithoutExtension(gameObject), gameObject)
     {
     }

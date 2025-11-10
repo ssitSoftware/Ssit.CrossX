@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Ssit.CrossX.Content;
-using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Map;
+using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Rendering.Map;

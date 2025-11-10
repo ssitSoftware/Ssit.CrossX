@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Utils;
+using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxFormats.Template;
 
-namespace Ssit.CrossX.Games.Map;
+namespace Ssit.CrossX.XxFormats.Map;
 
 public class MapLayer: BindableModel
 {
@@ -69,21 +66,21 @@ public class MapLayer: BindableModel
         set => SetField(ref _verticalSpeed, value);
     }
 
-    [Editor]
+    [System.ComponentModel.Editor]
     public RgbaColor TintColor
     {
         get => _tintColor;
         set => SetField(ref _tintColor, value);
     }
 
-    [Editor]
+    [System.ComponentModel.Editor]
     public RgbaColor FogColor
     {
         get => _fogColor;
         set => SetField(ref _fogColor, value);
     }
 
-    [Editor]
+    [System.ComponentModel.Editor]
     public bool EnableLighting
     {
         get => _enableLighting;

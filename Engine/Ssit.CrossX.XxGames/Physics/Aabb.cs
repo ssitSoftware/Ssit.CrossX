@@ -17,7 +17,7 @@ public struct Aabb
     public float Width => Right - Left;
     public float Height => Bottom - Top;
 
-    public Vector2 Center => new Vector2( (Left+Right) / 2f, (Top+Bottom) / 2f);
+    public Vector2 Center => new( (Left+Right) / 2f, (Top+Bottom) / 2f);
 
     public Aabb(float left, float top, float right, float bottom)
     {

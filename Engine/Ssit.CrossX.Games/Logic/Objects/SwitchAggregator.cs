@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Games.Logic.Map;
+using Ssit.CrossX.XxFormats.Editor;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 

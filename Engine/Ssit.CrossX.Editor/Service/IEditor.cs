@@ -3,7 +3,7 @@ using System.Numerics;
 using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Editor.ViewModels;
 using SkiaSharp;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Service;
 

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 

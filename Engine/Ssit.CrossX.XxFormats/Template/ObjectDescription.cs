@@ -1,6 +1,4 @@
-using System;
-
-namespace Ssit.CrossX.Games.Template;
+namespace Ssit.CrossX.XxFormats.Template;
 
 public class ObjectDescription: ImageDescription
 {

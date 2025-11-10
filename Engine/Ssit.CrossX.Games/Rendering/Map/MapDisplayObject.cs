@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.Content;
-using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 

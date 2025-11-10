@@ -6,7 +6,7 @@ using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using SkiaSharp;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels

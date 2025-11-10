@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Utils;
+using Ssit.CrossX.XxFormats.Editor;
 
 namespace Ssit.CrossX.Editor.Models.Parameters;
 

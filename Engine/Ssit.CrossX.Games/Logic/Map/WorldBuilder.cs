@@ -160,20 +160,17 @@ public class WorldBuilder
         foreach (var obj in mainLayerObjects)
         {
             if (!obj.HasLogic) continue;
-            
-            ObjectCreationParameters parameters;
 
-            if (obj.ParametersObject == null)
-            {
-                parameters = new ObjectCreationParameters();
-            }
-            else
+            ObjectCreationParameters parameters = null;
+
+            if (obj.ParametersObject != null)
             {
                 var paramType = obj.ParametersObject.GetType();
                 var parametersType = typeof(ObjectCreationParameters<>).MakeGenericType(paramType);
                 parameters = (ObjectCreationParameters)Activator.CreateInstance(parametersType);
             }
             
+            parameters ??= new ObjectCreationParameters();
             parameters.Position = obj.Position;
             parameters.Flipped = obj.Flipped;
             parameters.ParametersObject = obj.ParametersObject;

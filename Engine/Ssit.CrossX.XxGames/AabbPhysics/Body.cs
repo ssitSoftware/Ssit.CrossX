@@ -1,0 +1,463 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
+using Ssit.CrossX.XxGames.Physics;
+
+namespace Ssit.CrossX.XxGames.AabbPhysics;
+
+internal class Body : IBody
+{
+    private const double InactivityTimeout = 1;
+
+    public float Mass { get; set; }
+
+    public bool IsActive { get; private set; }
+    public bool IsKinematic { get; set; }
+
+    public Vector2 Position
+    {
+        get => _position;
+        set
+        {
+            _position = value;
+            UpdateCollidersInTree();
+        }
+    }
+
+    public Vector2 Velocity { get => _velocity; set => _velocity = value; }
+
+    public ICollider[] Colliders { get; private set; }
+
+    public IBodyOwner Owner { get; }
+
+    public ISimulation Simulation => _simulation;
+
+    public event Action Updated;
+    public event Action<Vector2> Friction;
+    public event Action<Vector2> Moved;
+
+    private readonly Simulation _simulation;
+    private Vector2 _position;
+
+    private Vector2 _force = Vector2.Zero;
+
+    public Vector2 VelocitySum => Velocity + KinematicVelocity;
+    public Vector2 KinematicVelocity { get; set; } = Vector2.Zero;
+    public float StepUpTolerance { get; set; } = 0.1f;
+    public int UpdateOrder { get; set; }
+
+    private readonly List<ICollider> _staticCollisions = new List<ICollider>();
+
+    private double _timeSinceLastTouch = 0;
+    private Vector2 _velocity;
+
+    internal Body(Simulation simulation)
+    {
+        _simulation = simulation;
+    }
+
+    internal Body(Simulation simulation, IBodyOwner owner)
+    {
+        _simulation = simulation;
+        Owner = owner;
+    }
+
+    public void LimitVelocity(float maxVelocity) => LimitVelocity(maxVelocity, maxVelocity);
+
+    public void LimitVelocity(float maxHorizontalVelocity, float maxVerticalVelocity)
+    {
+        var velocity = Velocity;
+        velocity.X = MathF.Sign(velocity.X) * MathF.Min(maxHorizontalVelocity, MathF.Abs(velocity.X));
+        velocity.Y = MathF.Sign(velocity.Y) * MathF.Min(maxVerticalVelocity, MathF.Abs(velocity.Y));
+
+        Velocity = velocity;
+    }
+
+    public void Touch()
+    {
+        IsActive = true;
+        _timeSinceLastTouch = 0;
+    }
+
+    public void ApplyForce(Vector2 force)
+    {
+        _force += force;
+        Touch();
+    }
+
+
+    public void AddColliders(params ICollider[] colliders)
+    {
+        foreach (var collider in colliders)
+        {
+            if (collider.AttachedBody != this) throw new InvalidProgramException("Given collider is not attached to this body.");
+        }
+
+        Colliders = colliders;
+        
+        foreach (var collider in Colliders)
+        {
+            _simulation.UpdateColliderInTree(collider);
+        }
+    }
+
+    public void KinematicMove(Vector2 move, bool kinematicStandardMoveHybrid, IBody skipBody = null)
+    {
+        IsActive = true;
+        var normal = Vector2.Zero;
+        var friction = Vector2.Zero;
+
+        var attemptedMove = move;
+        var tries = kinematicStandardMoveHybrid ? 1 : 4;
+        var collission = false;
+
+        while (tries-- > 0)
+        {
+            for (var idx = 0; idx < Colliders.Length; ++idx)
+            {
+                if (!Colliders[idx].IsActive) continue;
+                if (MovementCollisionCalculator.GetMovementCollisions(_simulation, ColliderType.Dynamic, this, idx, ref move, ref normal, ref friction, out var horizontalMovementCollider, out var verticalMovementCollider))
+                {
+                    collission = true;
+                    if (horizontalMovementCollider is ICollider hmc)
+                    {
+                        if (hmc.AttachedBody != skipBody)
+                        {
+                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + hmc.AttachedBody.Mass) : 1;
+                            hmc.AttachedBody?.KinematicMove(new Vector2(attemptedMove.X - move.X, 0) * modifier, kinematicStandardMoveHybrid, this);
+                            hmc.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
+                            move = attemptedMove;
+                            break;
+                        }
+                    }
+
+                    if (verticalMovementCollider is ICollider vmc)
+                    {
+                        if (skipBody != vmc.AttachedBody)
+                        {
+                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + vmc.AttachedBody.Mass) : 1;
+                            vmc.AttachedBody?.KinematicMove(new Vector2(0, attemptedMove.Y - move.Y) * modifier, kinematicStandardMoveHybrid, this);
+                            vmc.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
+                            move = attemptedMove;
+                            break;
+                        }
+                    }
+                }
+                move = attemptedMove;
+            }
+
+            if (!collission) break;
+        }
+
+        if (kinematicStandardMoveHybrid)
+        {
+            Move(move);
+        }
+        else
+        {
+            Position += move;
+            Moved?.Invoke(move);
+            UpdateCollidersInTree();
+        }
+    }
+
+    public void Move(Vector2 offset)
+    {
+        IsActive = true;
+
+        for (var idx = 0; idx < Colliders.Length; ++idx)
+        {
+            offset = ComputeOffset(idx, offset);
+        }
+
+        for (var idx = 0; idx < Colliders.Length; ++idx)
+        {
+            CheckTriggers(idx, offset);
+        }
+        Position += offset;
+        Moved?.Invoke(offset);
+    }
+
+    private void CheckTriggers(int index, Vector2 move)
+    {
+        var normal = Vector2.Zero;
+        var friction = Vector2.Zero;
+
+        MovementCollisionCalculator.GetMovementCollisions(_simulation, ColliderType.Trigger, this, index, ref move, ref normal, ref friction, out var horizontalMovementCollider,
+            out var verticalMovementCollider);
+
+        if (verticalMovementCollider != null)
+        {
+            var verticalColliderBody = verticalMovementCollider.AttachedBody;
+            var colliderVelocity = verticalColliderBody?.Velocity ?? Vector2.Zero;
+            Colliders[index].RaiseCollisionWith(true, verticalMovementCollider, new Vector2(0, colliderVelocity.Y - Velocity.Y));
+            verticalMovementCollider.RaiseCollisionWith(false, Colliders[index], new Vector2(0, Velocity.Y - colliderVelocity.Y));
+        }
+
+        if (horizontalMovementCollider != null)
+        {
+            var horizontalColliderBody = horizontalMovementCollider.AttachedBody;
+            var colliderVelocity = horizontalColliderBody?.Velocity ?? Vector2.Zero;
+
+            Colliders[index].RaiseCollisionWith(true, horizontalMovementCollider, new Vector2(colliderVelocity.X - Velocity.X, 0));
+            horizontalMovementCollider.RaiseCollisionWith(false, Colliders[index], new Vector2(Velocity.X - colliderVelocity.X, 0));
+        }
+    }
+
+    private Vector2 ComputeOffset(int index, Vector2 move)
+    {
+        if (!Colliders[index].IsActive) return move;
+
+        var normal = Vector2.Zero;
+        var friction = Vector2.Zero;
+        var attemptedMove = move;
+
+        MovementCollisionCalculator.GetMovementCollisions(_simulation, ColliderType.Static | ColliderType.Dynamic, this, index, ref move, ref normal, ref friction, out var horizontalMovementCollider,
+            out var verticalMovementCollider);
+
+        if (horizontalMovementCollider == null && verticalMovementCollider == null) return move;
+
+        var oldVelocity = Velocity;
+
+        if (verticalMovementCollider != null)
+        {
+            var verticalColliderBody = verticalMovementCollider.AttachedBody;
+            var colliderVelocity = verticalColliderBody?.Velocity ?? Vector2.Zero;
+
+            Colliders[index].RaiseCollisionWith(true, verticalMovementCollider, new Vector2(0, colliderVelocity.Y - Velocity.Y));
+            verticalMovementCollider.RaiseCollisionWith(false, Colliders[index], new Vector2(0, Velocity.Y - colliderVelocity.Y));
+
+            if (verticalColliderBody != null && verticalMovementCollider.Type == ColliderType.Dynamic)
+            {
+                var newVelocity = (VelocitySum.Y * Mass +
+                                   verticalColliderBody.VelocitySum().Y * verticalColliderBody.Mass) /
+                                  (Mass + verticalColliderBody.Mass);
+                Velocity = new Vector2(Velocity.X, newVelocity);
+                verticalColliderBody.Velocity = new Vector2(verticalColliderBody.Velocity.X, newVelocity);
+                verticalColliderBody.Touch();
+                Touch();
+            }
+            else
+            {
+                Velocity = new Vector2(Velocity.X, 0);
+            }
+                
+        }
+
+        if (horizontalMovementCollider != null)
+        {
+            var horizontalColliderBody = horizontalMovementCollider.AttachedBody;
+            var colliderVelocity = horizontalColliderBody?.Velocity ?? Vector2.Zero;
+
+            Colliders[index].RaiseCollisionWith(true, horizontalMovementCollider, new Vector2(colliderVelocity.X - Velocity.X, 0));
+            horizontalMovementCollider.RaiseCollisionWith(false, Colliders[index], new Vector2(Velocity.X - colliderVelocity.X, 0));
+
+            var colliderAabb = horizontalMovementCollider.Aabb;
+            var myAabb = Colliders[0].Aabb;
+
+            if (StepUpTolerance > 0 && colliderAabb.Top + StepUpTolerance > myAabb.Bottom)
+            {
+                var offset = MathF.Abs(myAabb.Bottom - colliderAabb.Top) + MovementCollisionCalculator.MovementEpsilon;
+                _position.Y -= offset;
+                var leftMove = (attemptedMove.X - move.X);
+
+                leftMove = MathF.Sign(leftMove) * (Math.Max(0.01f, (int)(Math.Abs(leftMove) - Math.Sqrt(offset))));
+
+                move += ComputeOffset(index, new Vector2(leftMove, 0));
+                return move;
+            }
+
+            if (horizontalColliderBody != null && horizontalMovementCollider.Type == ColliderType.Dynamic)
+            {
+                var newVelocity = (VelocitySum.X * Mass +
+                                   horizontalColliderBody.VelocitySum().X * horizontalColliderBody.Mass) /
+                                  (Mass + horizontalColliderBody.Mass);
+                Velocity = new Vector2(newVelocity, Velocity.Y);
+
+                horizontalColliderBody.Velocity = new Vector2(newVelocity, horizontalColliderBody.Velocity.Y);
+                horizontalColliderBody.Touch();
+                Touch();
+            }
+            else
+            {
+                Velocity = new Vector2(0, Velocity.Y);
+            }
+        }
+
+        if (Math.Abs(normal.X) > double.Epsilon)
+        {
+            var velocity = (oldVelocity - Velocity);
+            Velocity = new Vector2(Math.Abs(velocity.X) * normal.X * Colliders[index].Material.Bounce, Velocity.Y);
+        }
+
+        if (Math.Abs(normal.Y) > double.Epsilon)
+        {
+            var velocity = (oldVelocity - Velocity);
+            Velocity = new Vector2(Velocity.X, Math.Abs(velocity.Y) * normal.Y * Colliders[index].Material.Bounce);
+        }
+
+        if (attemptedMove.Y * _force.Y > 0)
+        {
+            friction.X *= MathF.Abs(_force.Y / 1000.0f);
+        }
+        else
+        {
+            friction.X = 0;
+        }
+
+        if (attemptedMove.X * _force.X > 0)
+        {
+            friction.Y *= MathF.Abs(_force.X / 1000.0f);
+        }
+        else
+        {
+            friction.Y = 0;
+        }
+
+        var frictionVelocityX = Velocity.X * Math.Min(1, friction.X * Colliders[index].Material.Friction * Simulation.SimulationParameters.TimeDelta);
+        var frictionVelocityY = Velocity.Y * Math.Min(1, friction.Y * Colliders[index].Material.Friction * Simulation.SimulationParameters.TimeDelta);
+
+        Friction?.Invoke(new Vector2(frictionVelocityX, frictionVelocityY));
+
+        Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
+
+        if (Math.Abs(Velocity.X) < MovementCollisionCalculator.MovementEpsilon) Velocity = new Vector2(0, Velocity.Y);
+        if (Math.Abs(Velocity.Y) < MovementCollisionCalculator.MovementEpsilon) Velocity = new Vector2(Velocity.X, 0);
+
+        return move;
+    }
+
+    public void PostFixedUpdate()
+    {
+        Owner?.OnPostFixedUpdate();
+        Updated?.Invoke();
+    }
+
+    public void FixedUpdate()
+    {
+        var beforeUpdatePosition = Position;
+        var time = Simulation.SimulationParameters.TimeDelta;
+
+        var cancelUpdate = false;
+        Owner?.OnFixedUpdate(out cancelUpdate);
+
+        if (cancelUpdate) return;
+
+        if (!IsActive) return;
+        if (IsKinematic) return;
+
+        var lastPosition = Position;
+
+        _force += Simulation.SimulationParameters.GravityAcceleration * Mass;
+        Velocity += _force / Mass * time;
+
+        var move = Velocity * time;
+
+        for (var idx = 0; idx < Colliders.Length; ++idx)
+        {
+            move = ComputeOffset(idx, move);
+        }
+
+        Position += move;
+
+        _staticCollisions.Clear();
+
+        foreach (var collider in Colliders)
+        {
+            if (Simulation.CheckCollision(collider.Aabb, this, MovementCollisionCalculator.MovementEpsilon, _staticCollisions))
+            {
+                for (var idx = 0; idx < _staticCollisions.Count; ++idx)
+                {
+                    FixPosition(collider, _staticCollisions[idx]);
+                }
+            }
+        }
+
+        if (lastPosition == Position)
+        {
+            _timeSinceLastTouch += time;
+
+            if (_timeSinceLastTouch > InactivityTimeout)
+            {
+                IsActive = false;
+            }
+        }
+        else
+        {
+            _timeSinceLastTouch = 0;
+            IsActive = true;
+        }
+
+        // TODO: Limit speed
+        //Velocity.X = Math.Sign(Velocity.X) * Math.Min(Math.Abs(Velocity.X), Simulation.SimulationParameters.MaxHorizontalSpeed);
+        //Velocity.Y = Math.Sign(Velocity.Y) * Math.Min(Math.Abs(Velocity.Y), Simulation.SimulationParameters.MaxVerticalSpeed);
+
+        move = Position - beforeUpdatePosition;
+        Moved?.Invoke(move);
+        _force = Vector2.Zero;
+    }
+
+    private void FixPosition(ICollider collider, ICollider other)
+    {
+        if (Velocity.Y < 0) return;
+
+        var otherAabb = other.Aabb;
+        var aabb = collider.Aabb;
+
+        if (!collider.Material.Sides.HasFlag(ColliderSides.Bottom)) return;
+
+        if (other.Type.HasFlag(ColliderType.Trigger)) return;
+
+        if (otherAabb.Top - aabb.Bottom >= 0) return;
+        if (!other.Material.Sides.HasFlag(ColliderSides.Top | ColliderSides.Left | ColliderSides.Right)) return;
+
+        if (aabb.Bottom - otherAabb.Top > StepUpTolerance) return;
+
+        Position = new Vector2(Position.X, Position.Y + otherAabb.Top - aabb.Bottom);
+    }
+
+    private void UpdateCollidersInTree()
+    {
+        if (Colliders == null) return;
+        foreach (var collider in Colliders)
+        {
+            _simulation.UpdateColliderInTree(collider);
+        }
+    }
+
+    public void Update(double timeInSeconds)
+    {
+        Owner?.OnUpdate(timeInSeconds);
+    }
+
+    private static bool IsTriggerOrParticle(ICollider collider) => collider.Type.HasFlag(ColliderType.Trigger) || collider.Type.HasFlag(ColliderType.Particle);
+
+    public ICollider FindCollider(string name)
+    {
+        for(var idx =0; idx < Colliders.Length; ++idx)
+        {
+            if(name == Colliders[idx].Name)
+            {
+                return Colliders[idx];
+            }
+        }
+        return null;
+    }
+
+    public void DetachFromSimulation()
+    {
+        _simulation.DetachBody(this, true);
+    }
+
+    public void ReattachToSimulation()
+    {
+        _simulation.AttachBody(this);
+        UpdateCollidersInTree();
+    }
+
+    public void Dispose()
+    {
+        _simulation.DetachBody(this, false);
+        Owner?.Dispose();
+    }
+}

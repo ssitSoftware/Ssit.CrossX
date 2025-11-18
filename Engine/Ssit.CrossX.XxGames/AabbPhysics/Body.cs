@@ -345,7 +345,7 @@ internal class Body : IBody
 
         Friction?.Invoke(new Vector2(frictionVelocityX, frictionVelocityY));
 
-        Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
+        //Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
 
         if (Math.Abs(Velocity.X) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { X = 0 };
         if (Math.Abs(Velocity.Y) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { Y = 0 };
@@ -506,7 +506,7 @@ internal class Body : IBody
 
     public void Update(float timeInSeconds) => Owner?.OnUpdate(timeInSeconds);
 
-    private static bool IsTriggerOrParticle(ICollider collider) => collider.Type.HasFlag(ColliderType.Trigger) || collider.Type.HasFlag(ColliderType.Particle);
+    private static bool IsTriggerOrParticle(ICollider collider) => (collider.Type & (ColliderType.Trigger | ColliderType.Particle)) != 0;
 
     public ICollider FindCollider(string name)
     {

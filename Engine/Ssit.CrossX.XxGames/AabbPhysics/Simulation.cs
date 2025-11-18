@@ -14,9 +14,7 @@ internal class Simulation : ISimulation
 
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
 
-    public Vector2 GravityAcceleration { get; set; } = new(0, 10);
-
-    public SimulationParameters SimulationParameters { get; set; } = new()
+    public SimulationParameters SimulationParameters { get; } = new()
     {
         GravityAcceleration = new Vector2(0, 10),
         MaxHorizontalSpeed = 1000,
@@ -83,7 +81,7 @@ internal class Simulation : ISimulation
         _bodies.Sort((o1, o2) => o1.UpdateOrder - o2.UpdateOrder);
     }
 
-    public bool CheckCollision(Aabb aabb, IBody testingBody, double epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
+    public bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
     {
         _collidersToTest.Clear();
         _collidersRootNode.GetElements(aabb, _collidersToTest);
@@ -116,11 +114,11 @@ internal class Simulation : ISimulation
 
     public void InitializeStaticColliders(Aabb bounds, IEnumerable<ICollider> colliders)
     {
-        var maxElementsPerNode = 8;
+        var maxElementsPerNode = 16;
         _collidersRootNode = new QuadTreeNode<ICollider>(bounds, colliders, maxElementsPerNode);
     }
 
-    public void Update(double timeInSeconds)
+    public void Update(float timeInSeconds, Action<float> onFixedUpdate)
     {
         SortBodies();
         OnUpdate(timeInSeconds);
@@ -130,11 +128,13 @@ internal class Simulation : ISimulation
         while (_timeToUpdate >= SimulationParameters.TimeDelta)
         {
             OnFixedUpdate();
+            onFixedUpdate?.Invoke(SimulationParameters.TimeDelta);
+            
             _timeToUpdate -= SimulationParameters.TimeDelta;
         }
     }
 
-    protected virtual void OnUpdate(double time)
+    protected virtual void OnUpdate(float time)
     {
         for (var idx = 0; idx < _bodies.Count; ++idx)
         {

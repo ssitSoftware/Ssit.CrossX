@@ -27,6 +27,14 @@ public struct Aabb
         Right = right;
     }
 
+    public Aabb(Vector2 topLeft, Vector2 bottomRight)
+    {
+        Top = topLeft.Y;
+        Bottom = bottomRight.Y;
+        Left = topLeft.X;
+        Right = bottomRight.X;
+    }
+    
     public Aabb(PointF center, SizeF size)
     {
         Top = center.Y - size.Height / 2;
@@ -46,7 +54,7 @@ public struct Aabb
     }
 
     [Pure]
-    public bool Intersects(Aabb other, double epsilon)
+    public bool Intersects(Aabb other, float epsilon)
     {
         if (other.Left + epsilon > Right) return false;
         if (other.Right - epsilon < Left) return false;

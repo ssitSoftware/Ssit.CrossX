@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ssit.CrossX.Games.Logic.Map;
+namespace Ssit.CrossX.XxGames.Platformer.Builders;
 
 public class ObjectCreationParameters
 {

@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Ssit.CrossX.Games.Physics;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.Games.Rendering.Map;
 
@@ -50,7 +49,7 @@ public static class MapRenderer
         return (offset, visibleBounds);
     }
     
-    public static void RenderDebug(IRenderer2 renderer, MapDisplayElement map, World world, Vector2 cameraLookAt,
+    public static void RenderDebug(IRenderer2 renderer, MapDisplayElement map, ISimulation world, Vector2 cameraLookAt,
         Size targetSize, IGameTemplate gameTemplate)
     {
         var tileSize = gameTemplate.TileSize;
@@ -62,12 +61,18 @@ public static class MapRenderer
         renderer.StateManager.Translate(offset);
         renderer.StateManager.Scale(tileSize);
         
-        WorldRenderer.Render(renderer.GeometryRenderer, world, gameTemplate);
+        SimulationRenderer.Render(renderer.GeometryRenderer, world);
 
         renderer.StateManager.RestoreState();
     }
+
+    private delegate void RenderObjects(IRenderer2 renderer, LayerDisplayElement layer, object world, RectangleF bounds, RgbaColor color, bool front);
     
-    public static void Render(IRenderer2 renderer, MapDisplayElement map, World world, Vector2 cameraLookAt, Size targetSize, int tileSize)
+    public static void Render(IRenderer2 renderer, MapDisplayElement map, ISimulation world, Vector2 cameraLookAt,
+        Size targetSize, int tileSize) =>
+        Render(renderer, map, RenderGameObjectsSim, world, cameraLookAt, targetSize, tileSize);
+
+    private static void Render(IRenderer2 renderer, MapDisplayElement map, RenderObjects renderObjects, object world, Vector2 cameraLookAt, Size targetSize, int tileSize)
     {
         var mainLayer = map.Layers.First(o => o.IsMain);
         
@@ -80,7 +85,7 @@ public static class MapRenderer
             
             if (layer.IsMain)
             {
-                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor, false);
+                renderObjects(renderer, layer, world, visibleBounds, layer.TintColor, false);
             }
             else
             {
@@ -99,7 +104,7 @@ public static class MapRenderer
 
             if (layer.IsMain)
             {
-                RenderGameObjects(renderer, layer, world, visibleBounds, layer.TintColor, true);
+                renderObjects(renderer, layer, world, visibleBounds, layer.TintColor, true);
             }
             else
             {
@@ -150,11 +155,11 @@ public static class MapRenderer
             renderer.SpriteRenderer.Draw(obj.SpriteInstance, obj.Position, color: tintColor, transform: obj.IsFlipped ? ImageTransform.FlipHorizontal : ImageTransform.None);
         }
     }
-
-    private static void RenderGameObjects(IRenderer2 renderer, LayerDisplayElement layer,
-        World world, RectangleF bounds, RgbaColor color, bool front)
+    
+    private static void RenderGameObjectsSim(IRenderer2 renderer, LayerDisplayElement layer,
+        object worldObj, RectangleF bounds, RgbaColor color, bool front)
     {
-        if (world is null)
+        if (worldObj is not ISimulation simulation)
             return;
         
         GameObjects.Clear();
@@ -168,7 +173,7 @@ public static class MapRenderer
             }
         }
         
-        foreach (var body in world.BodyList)
+        foreach (var body in simulation.Bodies)
         {
             if (body.Owner is IGameObjectRenderer2 gor && gor.Bounds.IsIntersecting(bounds))
             {

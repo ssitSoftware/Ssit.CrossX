@@ -1,8 +1,4 @@
-﻿// MIT License - Copyright © ebatianoSoftware
-// This file is subject to the terms and conditions defined in
-// file 'LICENSE.txt', which is part of this source code package.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Physics;
@@ -12,15 +8,22 @@ namespace Ssit.CrossX.XxGames.Platformer.BodyExtensions;
 public class SlideFromEdgeExtension: IBodyExtension
 {
     private readonly IBody _body;
-    private readonly List<ICollider> _collidersBuffer = new List<ICollider>();
+    private readonly List<ICollider> _collidersBuffer = new();
 
     private readonly float _slideSpeed = 0;
     private readonly float _stableWidthNormalized = 0;
 
-    public SlideFromEdgeExtension(IBody body, float stableWidthNormalized, float slideSpeed)
+    public static void Attach(IBody body, float stableWidthNormalized, float slideSpeed)
+    {
+        BodyExtensions.List.Add(new SlideFromEdgeExtension(body, stableWidthNormalized, slideSpeed));
+    }
+    
+    private SlideFromEdgeExtension(IBody body, float stableWidthNormalized, float slideSpeed)
     {
         _body = body;
         _body.Updated += OnBodyUpdated;
+        _body.Disposed += Dispose;
+        
         _slideSpeed = slideSpeed;
         _stableWidthNormalized = stableWidthNormalized;
     }
@@ -81,5 +84,6 @@ public class SlideFromEdgeExtension: IBodyExtension
     public void Dispose()
     {
         _body.Updated -= OnBodyUpdated;
+        BodyExtensions.List.Remove(this);
     }
 }

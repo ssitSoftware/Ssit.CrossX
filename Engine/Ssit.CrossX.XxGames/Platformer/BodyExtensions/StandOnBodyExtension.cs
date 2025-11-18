@@ -13,7 +13,13 @@ public class StandOnBodyExtension: IBodyExtension
     private readonly List<ICollider> _hookedColliders = new();
 
     private readonly IBody _body;
-    public StandOnBodyExtension(IBody body)
+
+    public static void Attach(IBody body)
+    {
+        BodyExtensions.List.Add(new StandOnBodyExtension(body));
+    }
+    
+    private StandOnBodyExtension(IBody body)
     {
         _body = body;
 
@@ -21,10 +27,13 @@ public class StandOnBodyExtension: IBodyExtension
         _body.Moved += OnMove;
         _body.Updated += UpdateHookedColliders;
         _body.UpdateOrder = int.MaxValue;
+        _body.Disposed += Dispose;
     }
 
     private void AabbCollider_CollisionWith(bool byMyMovement, ICollider obj, Vector2 impact)
     {
+        if(obj.Type != ColliderType.Dynamic) return;
+        
         if (obj.AttachedBody == null) return;
         if (obj.Aabb.Top >= _body.Colliders[0].Aabb.Top) return;
 
@@ -71,5 +80,7 @@ public class StandOnBodyExtension: IBodyExtension
         _body.Colliders[0].CollisionWith -= AabbCollider_CollisionWith;
         _body.Moved -= OnMove;
         _body.Updated -= UpdateHookedColliders;
+        
+        BodyExtensions.List.Remove(this);
     }
 }

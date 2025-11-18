@@ -123,7 +123,7 @@ public class QuadTreeNode<T> where T : IAabbObject
 
     public void GetElements(Aabb aabb, IList<T> list)
     {
-        if (!aabb.Intersects(Aabb, 0.001)) return;
+        if (!aabb.Intersects(Aabb, 0.001f)) return;
 
         for (var idx = 0; idx < _elements.Count; ++idx)
         {

@@ -3,27 +3,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games.Logic.Map;
+using Ssit.CrossX.Games.Audio;
+using Ssit.CrossX.Games.Logic.Objects;
 using Ssit.CrossX.XxFormats.Map;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering.Map;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Platformer.Builders;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Games.Logic;
 
-public class GameInstance : IGameInstance
+public class AabbGameInstance : IGameInstance
 {
     public class Parameters
     {
         public string MapPath { get; set; }
-        public Action<World> ProcessWorldFunc { get; set; }
         public Action<IIoCContainerBuilder> RegisterServices { get; set; }
+        public IMaterial[] Materials { get; set; }
     }
     
     public event Action<float> FixedUpdate;
+    public event Action Updated;
+    
     public float WorldDelta => _timer.TimeDelta;
     private readonly GameTimer _timer = new();
 
@@ -33,12 +37,11 @@ public class GameInstance : IGameInstance
     private readonly MapDisplayElement _mapDisplayElement;
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public readonly World World;
+    public readonly ISimulation Simulation;
     public readonly IIoCContainer Container;
     private readonly ICamera _camera;
     
     private bool _isDisposed;
-    private float _timeToUpdate;
 
     private int _bgColorIndex = 0;
     
@@ -54,7 +57,7 @@ public class GameInstance : IGameInstance
 
     void IGameInstance.RenderDebug(IRenderer2 renderer, RectangleF target, float scale) => RenderDebug(renderer, target, scale);
 
-    public GameInstance(IIoCContainer container, IContentManager contentManager,
+    public AabbGameInstance(IIoCContainer container, IContentManager contentManager,
         IActionScheduler scheduler, IGameTemplate gameTemplate,
         Parameters parameters, IPaletteSource paletteSource = null)
     {
@@ -79,25 +82,31 @@ public class GameInstance : IGameInstance
             ts.Dispose();
         }
 
-        var worldBuilder = new WorldBuilder()
+        var worldBuilder = new AabbSimulationBuilder()
             .WithMap(map)
             .WithFilesProvider(contentManager.FilesProvider)
             .WithContainer(container)
+            .WithMaterials(parameters.Materials)
             .WithServicesRegistrar( b =>
             {
                 parameters.RegisterServices(b);
-                b.WithInstance<IGameInstance>(this);
+                b
+                    .WithInstance<IGameInstance>(this)
+                    .WithSingleton<ICamera, Camera>()
+                    .WithSingleton<ICommonSoundContainer, CommonSoundContainer>()
+                    .WithSingleton<GameObjectsServices, GameObjectsServices>();
             })
             .WithGameTemplate(gameTemplate);
         
-        (World, Container) = worldBuilder.Build();
-        parameters.ProcessWorldFunc?.Invoke(World);
+        (Simulation, Container) = worldBuilder.Build();
         _camera = Container.Get<ICamera>();
+
+        FixedUpdate += _camera.Update;
     }
 
     void IGameInstance.Update(float deltaTime) => Update(deltaTime);
-
-    public event Action Updated;
+    
+    public TService GetComponent<TService>() where TService : class => Container.Get<TService>();
 
     protected virtual void Render(IRenderer2 renderer, RectangleF target, float scale)
     {
@@ -114,7 +123,7 @@ public class GameInstance : IGameInstance
 
         var size = target.Size.ToVector() / scale;
         
-        MapRenderer.Render(renderer, _mapDisplayElement, World, _camera.LookAt,
+        MapRenderer.Render(renderer, _mapDisplayElement, Simulation, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate.TileSize);
 
@@ -161,7 +170,7 @@ public class GameInstance : IGameInstance
         renderer.StateManager.Scale(scale);
         
         var size = target.Size.ToVector() / scale;
-        MapRenderer.RenderDebug(renderer, _mapDisplayElement, World, _camera.LookAt,
+        MapRenderer.RenderDebug(renderer, _mapDisplayElement, Simulation, _camera.LookAt,
             new Size((int)MathF.Ceiling(size.X), (int)MathF.Ceiling(size.Y)),
             _gameTemplate);
         
@@ -174,47 +183,9 @@ public class GameInstance : IGameInstance
             return;
 
         _timer.Update(deltaTime);
-
-        foreach (var body in World.BodyList)
-        {
-            if (body.Owner is IUpdatable updatable2)
-            {
-                updatable2.Update(deltaTime);
-            }
-        }
-
-        float dt;
-        while ( (dt = _timer.FixedTimeToUpdate()) > 0)
-        {
-            foreach (var body in World.BodyList)
-            {
-                if (body.Owner is IUpdatable updatable2)
-                {
-                    updatable2.FixedUpdate(dt);
-                }
-            }
-            
-            FixedUpdate?.Invoke(dt);
-            World.Step(dt);
-            
-            foreach (var body in World.BodyList)
-            {
-                if (body.Owner is IUpdatable updatable2)
-                {
-                    updatable2.PostFixedUpdate();
-                }
-            }
-            
-            _camera.Update(dt);
-        }
         
-        foreach (var body in World.BodyList)
-        {
-            if (body.Owner is IUpdatable updatable2)
-            {
-                updatable2.PostUpdate();
-            }
-        }
+        Simulation.SimulationParameters.TimeDelta = _timer.TimeDelta;
+        Simulation.Update(deltaTime, FixedUpdate);
         
         _mapDisplayElement.Update(deltaTime);
         Updated?.Invoke();
@@ -229,7 +200,7 @@ public class GameInstance : IGameInstance
         Task.Delay(1000).ContinueWith(_ =>
         {
             _scheduler.Schedule(_mapDisplayElement.Dispose);
-            World.Dispose();
+            Simulation.Dispose();
             Container?.Dispose();
         });
     }

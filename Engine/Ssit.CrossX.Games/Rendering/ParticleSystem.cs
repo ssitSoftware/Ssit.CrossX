@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
-using Ssit.CrossX.Games.Logic;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.Games.Rendering;
 
-public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTemplate) : IParticleSystem, IUpdatable, IDisposable
+public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTemplate) : IParticleSystem, IUpdatable, IBodyOwner
 {
     private class ParticleInstance
     {
@@ -42,8 +41,11 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
     
     private readonly List<ParticleInstance> _particles = new();
     private readonly List<ParticleInstance> _deadParticles = new();
+
+    public IBody Body => _body;
+    public event Action FixedUpdate;
     
-    private Body _body;
+    private IBody _body;
     private int _nextId = 1;
     
     public int RequestContextId()
@@ -65,8 +67,12 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
         }
     }
     
-    public void FixedUpdate(float dt)
+    public void OnFixedUpdate(out bool cancelUpdate)
     {
+        cancelUpdate = false;
+        
+        var dt = Body.Simulation.SimulationParameters.TimeDelta;
+        
         for (var idx = 0; idx < _particles.Count; )
         {
             var particle = _particles[idx];
@@ -83,6 +89,8 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
 
             idx++;
         }
+        
+        FixedUpdate?.Invoke();
     }
 
     public void AddParticle(int context, int particleGroupId, Vector2 position, Vector2 direction, Vector2 gravity, float speed, float timeToLive)
@@ -138,10 +146,10 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
         return particle;
     }
 
-    public void Attach(World world)
+    public void Attach(ISimulation simulation)
     {
-        _body = new Body(world);
-        _body.Owner = this;
-        _body.IsStatic = true;
+        _body = simulation.CreateBody(this);
     }
+
+    
 }

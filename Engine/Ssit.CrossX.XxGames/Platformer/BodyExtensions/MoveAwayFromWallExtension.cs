@@ -4,15 +4,26 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.BodyExtensions;
 
+internal static class BodyExtensions
+{
+    public static readonly List<IBodyExtension> List = new();
+}
+
 public class MoveAwayFromWallExtension : IBodyExtension
 {
     private readonly IBody _body;
     private readonly List<ICollider> _collidersBuffer = new();
 
-    public MoveAwayFromWallExtension(IBody body)
+    public static void Attach(IBody body)
+    {
+        BodyExtensions.List.Add(new MoveAwayFromWallExtension(body));
+    }
+    
+    private MoveAwayFromWallExtension(IBody body)
     {
         _body = body;
         _body.Moved += OnBodyMoved;
+        _body.Disposed += Dispose;
     }
 
     private void OnBodyMoved(Vector2 vector)
@@ -46,5 +57,11 @@ public class MoveAwayFromWallExtension : IBodyExtension
                 }
             }
         }
+    }
+    
+    public void Dispose()
+    {
+        _body.Moved -= OnBodyMoved;
+        BodyExtensions.List.Remove(this);
     }
 }

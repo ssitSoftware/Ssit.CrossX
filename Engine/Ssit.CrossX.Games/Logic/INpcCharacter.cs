@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Ssit.CrossX.Games.Physics.Dynamics;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.Games.Logic;
 
@@ -9,5 +9,5 @@ public interface INpcCharacter
     void PrepareCameraForTalking();
     Task StartConversation(float posX, string conversationId = null);
     float TalkingDistance { get; }
-    Body Body { get; }
+    IBody Body { get; }
 }

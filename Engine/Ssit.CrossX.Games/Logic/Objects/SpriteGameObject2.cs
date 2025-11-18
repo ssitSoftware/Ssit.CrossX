@@ -1,18 +1,21 @@
 using System;
-using Ssit.CrossX.Games.Logic.Map;
-using Ssit.CrossX.Games.Physics.Dynamics;
+using System.Collections.Generic;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 
-public abstract class SpriteGameObject2 : Updatable, IGameObjectRenderer2, IDisposable
+public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
 {
     public GameObjectsServices Services { get; }
-    public Body Body { get; }
+    public IBody Body { get; }
+    public event Action FixedUpdate;
     public int ZOrder { get; }
     
     public SpriteInstance Sprite { get; private set; }
@@ -20,6 +23,8 @@ public abstract class SpriteGameObject2 : Updatable, IGameObjectRenderer2, IDisp
     protected ImageTransform Transform { get; set; }
     
     protected RectangleF BoundsRect { get; set; }
+
+    private readonly List<IUpdatable> _updatables = new();
     
     public RectangleF Bounds => BoundsRect.Offset(Body.Position);
     
@@ -30,20 +35,55 @@ public abstract class SpriteGameObject2 : Updatable, IGameObjectRenderer2, IDisp
     }
     
     void IGameObjectRenderer2.Render(IRenderer2 renderer, RgbaColor color) => OnRender(renderer, color);
+
+    void IBodyOwner.OnFixedUpdate(out bool cancelUpdate)
+    {
+        cancelUpdate = false;
+        OnFixedUpdate(ref cancelUpdate);
+
+        var dt = Services.Simulation.SimulationParameters.TimeDelta;
+        
+        foreach (var updatable in _updatables)
+        {
+            updatable.FixedUpdate(dt);
+        }
+    }
+
+    void IBodyOwner.OnPostFixedUpdate()
+    {
+        OnPostFixedUpdate();
+        
+        foreach (var updatable in _updatables)
+        {
+            updatable.PostFixedUpdate();
+        }
+    }
+
+    void IBodyOwner.OnUpdate(float time)
+    {
+        OnUpdate(time);
+        
+        foreach (var updatable in _updatables)
+        {
+            updatable.Update(time);
+        }
+    }
     
     internal void CallSpriteEvent(SpriteInstance.Event @event) => OnSpriteEvent(@event);
     internal void CallSequenceFinished(string sequenceName) => OnSequenceFinished(sequenceName);
-    
+
+    internal void AddUpdatableInternal(IUpdatable updatable) => _updatables.Add(updatable);
+
     protected SpriteGameObject2(GameObjectsServices services, ObjectCreationParameters parameters)
     {
         ZOrder = parameters.ZOrder;
         
         Services = services;
-        Body = new Body(services.World);
-        Body.BodyType = BodyType.Dynamic;
-        Body.Awake = true;
-        Body.SetTransform(parameters.Position, 0);
-        Body.Owner = this;
+
+        Body = services.Simulation.CreateBody(this);
+
+        Body.Touch();
+        Body.Position = parameters.Position;
         
         Transform = parameters.Flipped ? ImageTransform.FlipHorizontal : ImageTransform.None;
     }
@@ -69,10 +109,18 @@ public abstract class SpriteGameObject2 : Updatable, IGameObjectRenderer2, IDisp
         renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
     }
 
-    protected override void OnFixedUpdate(float dt)
+    protected virtual void OnFixedUpdate(ref bool cancelUpdate)
     {
-        base.OnFixedUpdate(dt);
+        var dt = Services.Simulation.SimulationParameters.TimeDelta;
         Sprite.Advance(dt);
+    }
+
+    protected virtual void OnPostFixedUpdate()
+    {
+    }
+    
+    protected virtual void OnUpdate(float dt)
+    {
     }
     
     void IDisposable.Dispose()

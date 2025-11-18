@@ -64,7 +64,7 @@ public class ElevatorBehavior(Elevator elevator): Behavior
             }
             
             speed = MathF.Min(diff.Length() / dt, speed);
-            elevator.Body.LinearVelocity = speed * moveDir;
+            //elevator.Body.LinearVelocity = speed * moveDir;
             
             _lastMoveDirection = moveDir;
             break;

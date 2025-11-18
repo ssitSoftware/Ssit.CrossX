@@ -6,7 +6,7 @@ namespace Ssit.CrossX.XxGames.Physics;
 
 public interface ISimulation: IDisposable
 {
-    SimulationParameters SimulationParameters { get; set; }
+    SimulationParameters SimulationParameters { get; }
     float MovementEpsilon { get; }
 
     event Action<IBody> BodyRemoved;
@@ -16,12 +16,12 @@ public interface ISimulation: IDisposable
     Aabb Bounds { get; }
 
     IReadOnlyList<IBody> Bodies { get; }
-    void Update(double timeInSeconds);
+    void Update(float timeInSeconds, Action<float> onFixedUpdate);
     IBody CreateBody();
     IBody CreateBody(IBodyOwner owner);
     void InitializeStaticColliders(Aabb bounds, IEnumerable<ICollider> colliders);
         
-    bool CheckCollision(Aabb aabb, IBody testingBody, double epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
+    bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
 
     void GetColliders(Aabb bounds, IList<ICollider> colliders);
 

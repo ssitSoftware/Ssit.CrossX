@@ -6,6 +6,7 @@ namespace Ssit.CrossX.XxGames.Physics;
 public interface IBody: IDisposable
 {
     event Action Updated;
+    event Action Disposed;
     event Action<Vector2> Friction;
     event Action<Vector2> Moved;
 

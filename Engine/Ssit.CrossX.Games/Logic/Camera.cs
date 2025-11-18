@@ -1,9 +1,9 @@
 using System;
 using System.Numerics;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.Games.Logic;
 
@@ -11,16 +11,16 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
 {
     private Vector2 _lookAt;
 
-    private Body _primaryTarget;
+    private IBody _primaryTarget;
     private Vector2 _primaryOffset;
     private float _primaryFollowFactor;
     
-    private Body _temporaryTarget;
+    private IBody _temporaryTarget;
     private Vector2 _temporaryOffset;
     private float _temporaryReturnTime;
     private float _temporaryFollowFactor;
     
-    private Body Body => _temporaryTarget ?? _primaryTarget;
+    private IBody Body => _temporaryTarget ?? _primaryTarget;
     private Vector2 Offset => _temporaryTarget != null ? _temporaryOffset : _primaryOffset + _cameraMove * 6;
     private float FollowFactor => _temporaryTarget != null ? _temporaryFollowFactor : _primaryFollowFactor;
     
@@ -30,7 +30,7 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
 
     private Vector2 _cameraMove;
     
-    public void SetPrimaryTarget(Body body, Vector2 offset, float followFactor)
+    public void SetPrimaryTarget(IBody body, Vector2 offset, float followFactor)
     {
         _primaryTarget = body;
         _primaryOffset = offset;
@@ -39,7 +39,7 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
         _lookAt = _primaryTarget.Position + _primaryOffset;
     }
 
-    public void SetTemporaryTarget(Body body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter)
+    public void SetTemporaryTarget(IBody body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter)
     {
         _temporaryTarget = body;
         _temporaryOffset = offset;

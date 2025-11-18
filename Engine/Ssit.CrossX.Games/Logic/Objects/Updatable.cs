@@ -9,7 +9,7 @@ public abstract class Updatable : IUpdatable
 
     internal void AddUpdatableInternal( IUpdatable updatable) => _updatables.Add(updatable);
     
-    protected void AddUpdatable( IUpdatable updatable ) => _updatables.Add(updatable);
+    protected void AddUpdatable(IUpdatable updatable ) => _updatables.Add(updatable);
     
     void IUpdatable.Update(float dt)
     {

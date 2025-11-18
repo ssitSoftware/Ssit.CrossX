@@ -14,7 +14,32 @@ internal class Body : IBody
     public bool IsActive { get; private set; }
     public bool IsKinematic { get; set; }
 
-    public Vector2 Position
+    Vector2 IBody.Velocity
+    {
+        get => Velocity;
+        set
+        {
+            var diff = value - Velocity;
+            Velocity = value;
+
+            if (diff.LengthSquared() > float.Epsilon)
+            {
+                Touch();
+            }
+        }
+    }
+
+    Vector2 IBody.Position
+    {
+        get => Position;
+        set
+        {
+            Position = value;
+            Touch();
+        }
+    }
+
+    internal Vector2 Position
     {
         get => _position;
         set
@@ -24,7 +49,7 @@ internal class Body : IBody
         }
     }
 
-    public Vector2 Velocity { get => _velocity; set => _velocity = value; }
+    private Vector2 Velocity { get; set; }
 
     public ICollider[] Colliders { get; private set; }
 
@@ -35,6 +60,7 @@ internal class Body : IBody
     public event Action Updated;
     public event Action<Vector2> Friction;
     public event Action<Vector2> Moved;
+    public event Action Disposed;
 
     private readonly Simulation _simulation;
     private Vector2 _position;
@@ -49,7 +75,6 @@ internal class Body : IBody
     private readonly List<ICollider> _staticCollisions = new List<ICollider>();
 
     private double _timeSinceLastTouch = 0;
-    private Vector2 _velocity;
 
     internal Body(Simulation simulation)
     {
@@ -272,28 +297,29 @@ internal class Body : IBody
                 var newVelocity = (VelocitySum.X * Mass +
                                    horizontalColliderBody.VelocitySum().X * horizontalColliderBody.Mass) /
                                   (Mass + horizontalColliderBody.Mass);
-                Velocity = new Vector2(newVelocity, Velocity.Y);
+                
+                Velocity = Velocity with { X = newVelocity };
 
-                horizontalColliderBody.Velocity = new Vector2(newVelocity, horizontalColliderBody.Velocity.Y);
+                horizontalColliderBody.Velocity = horizontalColliderBody.Velocity with { X = newVelocity };
                 horizontalColliderBody.Touch();
                 Touch();
             }
             else
             {
-                Velocity = new Vector2(0, Velocity.Y);
+                Velocity = Velocity with { X = 0 };
             }
         }
 
         if (Math.Abs(normal.X) > double.Epsilon)
         {
             var velocity = (oldVelocity - Velocity);
-            Velocity = new Vector2(Math.Abs(velocity.X) * normal.X * Colliders[index].Material.Bounce, Velocity.Y);
+            Velocity = Velocity with { X = Math.Abs(velocity.X) * normal.X * Colliders[index].Material.Bounce };
         }
 
         if (Math.Abs(normal.Y) > double.Epsilon)
         {
             var velocity = (oldVelocity - Velocity);
-            Velocity = new Vector2(Velocity.X, Math.Abs(velocity.Y) * normal.Y * Colliders[index].Material.Bounce);
+            Velocity = Velocity with { Y = Math.Abs(velocity.Y) * normal.Y * Colliders[index].Material.Bounce };
         }
 
         if (attemptedMove.Y * _force.Y > 0)
@@ -321,8 +347,8 @@ internal class Body : IBody
 
         Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
 
-        if (Math.Abs(Velocity.X) < MovementCollisionCalculator.MovementEpsilon) Velocity = new Vector2(0, Velocity.Y);
-        if (Math.Abs(Velocity.Y) < MovementCollisionCalculator.MovementEpsilon) Velocity = new Vector2(Velocity.X, 0);
+        if (Math.Abs(Velocity.X) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { X = 0 };
+        if (Math.Abs(Velocity.Y) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { Y = 0 };
 
         return move;
     }
@@ -336,7 +362,7 @@ internal class Body : IBody
     public void FixedUpdate()
     {
         var beforeUpdatePosition = Position;
-        var time = Simulation.SimulationParameters.TimeDelta;
+        var dt = Simulation.SimulationParameters.TimeDelta;
 
         var cancelUpdate = false;
         Owner?.OnFixedUpdate(out cancelUpdate);
@@ -349,15 +375,15 @@ internal class Body : IBody
         var lastPosition = Position;
 
         _force += Simulation.SimulationParameters.GravityAcceleration * Mass;
-        Velocity += _force / Mass * time;
+        Velocity += _force / Mass * dt;
 
-        var move = Velocity * time;
+        var move = Velocity * dt;
 
         for (var idx = 0; idx < Colliders.Length; ++idx)
         {
             move = ComputeOffset(idx, move);
         }
-
+        
         Position += move;
 
         _staticCollisions.Clear();
@@ -373,9 +399,25 @@ internal class Body : IBody
             }
         }
 
+        _staticCollisions.Clear();
+
+        foreach (var collider in Colliders)
+        {
+            if (Simulation.CheckCollision(collider.Aabb, this, MovementCollisionCalculator.MovementEpsilon, _staticCollisions))
+            {
+                for (var idx = 0; idx < _staticCollisions.Count; ++idx)
+                {
+                    if (_staticCollisions[idx].Material.Sides == ColliderSides.All)
+                    {
+                        FixInside(collider, _staticCollisions[idx]);
+                    }
+                }
+            }
+        }
+        
         if (lastPosition == Position)
         {
-            _timeSinceLastTouch += time;
+            _timeSinceLastTouch += dt;
 
             if (_timeSinceLastTouch > InactivityTimeout)
             {
@@ -388,13 +430,50 @@ internal class Body : IBody
             IsActive = true;
         }
 
-        // TODO: Limit speed
-        //Velocity.X = Math.Sign(Velocity.X) * Math.Min(Math.Abs(Velocity.X), Simulation.SimulationParameters.MaxHorizontalSpeed);
-        //Velocity.Y = Math.Sign(Velocity.Y) * Math.Min(Math.Abs(Velocity.Y), Simulation.SimulationParameters.MaxVerticalSpeed);
-
         move = Position - beforeUpdatePosition;
         Moved?.Invoke(move);
         _force = Vector2.Zero;
+    }
+
+    private void FixInside(ICollider collider, ICollider other)
+    {
+        var tries = 10;
+        while (tries-- > 0 && collider.Aabb.Intersects(other.Aabb, -float.Epsilon))
+        {
+            var myAabb = collider.Aabb;
+            var otherAabb = other.Aabb;
+
+            Vector2 offset = Vector2.Zero;
+            
+            if (myAabb.Center.X < otherAabb.Center.X)
+            {
+                offset.X = otherAabb.Left - myAabb.Right;
+            }
+            
+            if (myAabb.Center.X > otherAabb.Center.X)
+            {
+                offset.X = otherAabb.Right - myAabb.Left;
+            }
+            
+            if (myAabb.Center.Y < otherAabb.Center.Y)
+            {
+                offset.Y = otherAabb.Top - myAabb.Bottom;
+            }
+            
+            if (myAabb.Center.Y > otherAabb.Center.Y)
+            {
+                offset.Y = otherAabb.Bottom - myAabb.Top;
+            }
+
+            if (MathF.Abs(offset.X) < MathF.Abs(offset.Y))
+            {
+                Position += offset with { Y = 0 };
+            }
+            else
+            {
+                Position += offset with { X = 0 };
+            }
+        }
     }
 
     private void FixPosition(ICollider collider, ICollider other)
@@ -425,10 +504,7 @@ internal class Body : IBody
         }
     }
 
-    public void Update(double timeInSeconds)
-    {
-        Owner?.OnUpdate(timeInSeconds);
-    }
+    public void Update(float timeInSeconds) => Owner?.OnUpdate(timeInSeconds);
 
     private static bool IsTriggerOrParticle(ICollider collider) => collider.Type.HasFlag(ColliderType.Trigger) || collider.Type.HasFlag(ColliderType.Particle);
 
@@ -459,5 +535,7 @@ internal class Body : IBody
     {
         _simulation.DetachBody(this, false);
         Owner?.Dispose();
+
+        Disposed?.Invoke();
     }
 }

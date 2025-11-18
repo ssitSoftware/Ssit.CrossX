@@ -1,18 +1,20 @@
 using System;
 using Ssit.CrossX.Games.Logic.Map;
-using Ssit.CrossX.Games.Physics.Dynamics;
 using Ssit.CrossX.Games.Rendering;
 using Ssit.CrossX.Games.Utils;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.Games.Logic.Objects;
 
-public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, SpriteInstance.IHandler, IDisposable
+public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, SpriteInstance.IHandler, IBodyOwner
 {
     public GameObjectsServices Services { get; }
-    public Body Body { get; }
+    public IBody Body { get; }
+    public event Action FixedUpdate;
     public SpriteInstance Sprite { get; private set; }
     
     public int ZOrder { get; }
@@ -36,11 +38,10 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
         ZOrder = parameters.ZOrder;
         
         Services = services;
-        Body = new Body(services.World);
-        Body.BodyType = BodyType.Dynamic;
-        Body.Awake = true;
-        Body.SetTransform(parameters.Position, 0);
-        Body.Owner = this;
+        
+        Body =  services.Simulation.CreateBody(this);
+        Body.Touch();
+        Body.Position = parameters.Position;
         
         Transform = parameters.Flipped ? ImageTransform.FlipHorizontal : ImageTransform.None;
     }

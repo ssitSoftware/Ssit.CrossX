@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ssit.CrossX.Games.Logic.Map;
+namespace Ssit.CrossX.XxGames.Platformer.Builders;
 
 internal class LinkMap: ILinkMap
 {

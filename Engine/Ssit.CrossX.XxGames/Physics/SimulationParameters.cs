@@ -8,5 +8,4 @@ public class SimulationParameters
     public float MaxHorizontalSpeed { get; set; }
     public float MaxVerticalSpeed { get; set; }
     public Vector2 GravityAcceleration { get; set; }
-    public DebugMode DebugMode { get; } = new DebugMode();
 }

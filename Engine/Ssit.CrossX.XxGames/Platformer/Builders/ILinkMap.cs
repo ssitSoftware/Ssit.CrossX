@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.CrossX.Games.Logic.Map;
+namespace Ssit.CrossX.XxGames.Platformer.Builders;
 
 public interface ILinkMap
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.Games.Audio;
 
@@ -33,9 +34,10 @@ public class ContextSoundContainer(IContentManager contentManager, ContextSoundC
         return this;
     }
 
-    public void Play(string name, int material = -1, float volume = 1)
+    public void Play(string name, IMaterial material = null, float volume = 1)
     {
-        if (!_instances.TryGetValue((name, material), out var instance))
+        var materialIndex = material?.Index ?? -1;
+        if (!_instances.TryGetValue((name, materialIndex), out var instance))
         {
             if (!_instances.TryGetValue((name, -1), out instance))
             {

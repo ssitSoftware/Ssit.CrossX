@@ -7,7 +7,7 @@ namespace Ssit.CrossX.XxGames.AabbPhysics;
 
 internal static class MovementCollisionCalculator
 {
-    public const float MovementEpsilon = 0.000001f;
+    public const float MovementEpsilon = 0.001f;
 
     private static readonly List<ICollider> CollidersToTest = new();
 
@@ -24,27 +24,29 @@ internal static class MovementCollisionCalculator
         verticalMovementCollider = null;
 
         CollidersToTest.Clear();
+        
         simulation.GetColliders(movementAabb, CollidersToTest);
-
+        
         for (var idx = 0; idx < CollidersToTest.Count; ++idx)
         {
             var collider = CollidersToTest[idx];
 
             if (!collider.IsActive) continue;
-            if (!colliderType.HasFlag(collider.Type)) continue;
-            if ((colliderGroup & collider.Material.ColliderGroup) == 0) continue;
-
             if (body == collider.AttachedBody) continue;
+            
+            if ((collider.Type & colliderType) == 0) continue;
+            if ((colliderGroup & collider.Material.ColliderGroup) == 0) continue;
+            
             if (!objCollider.GetMovementCollision(collider, ref move, out var collisionNormal)) continue;
 
-            if (Math.Abs(collisionNormal.X) > double.Epsilon)
+            if (Math.Abs(collisionNormal.X) > float.Epsilon)
             {
                 horizontalMovementCollider = collider;
                 friction.Y = Math.Abs(collisionNormal.X) * collider.Material.Friction;
                 normal.X = collisionNormal.X * collider.Material.Bounce;
             }
 
-            if (Math.Abs(collisionNormal.Y) > double.Epsilon)
+            if (Math.Abs(collisionNormal.Y) > float.Epsilon)
             {
                 verticalMovementCollider = collider;
                 friction.X = Math.Abs(collisionNormal.Y) * collider.Material.Friction;

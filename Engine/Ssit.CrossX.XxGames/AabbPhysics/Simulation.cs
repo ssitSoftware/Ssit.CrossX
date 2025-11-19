@@ -36,6 +36,15 @@ internal class Simulation : ISimulation
 
     public IReadOnlyList<IBody> Bodies => _bodies;
 
+    private readonly List<ICollider> _tempCollidersList = new();
+    
+    public IReadOnlyList<ICollider> GetColliders(Aabb bounds)
+    {
+        _tempCollidersList.Clear();
+        GetColliders(bounds, _tempCollidersList);
+        return _tempCollidersList;
+    }
+
     public ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters: ColliderCreationParameters
         => CollidersFactory.Create(creationParameters);
 

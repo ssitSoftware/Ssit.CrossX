@@ -411,6 +411,11 @@ internal class Body : IBody
                     {
                         FixInside(collider, _staticCollisions[idx]);
                     }
+                    
+                    if (_staticCollisions[idx].Material.Sides == ColliderSides.Top && Velocity.Y >= 0)
+                    {
+                        FixInsideByStepUp(collider, _staticCollisions[idx]);
+                    }
                 }
             }
         }
@@ -433,6 +438,22 @@ internal class Body : IBody
         move = Position - beforeUpdatePosition;
         Moved?.Invoke(move);
         _force = Vector2.Zero;
+    }
+    
+    private void FixInsideByStepUp(ICollider collider, ICollider other)
+    {
+        var tries = 2;
+        while (tries-- > 0 && collider.Aabb.Intersects(other.Aabb, -float.Epsilon))
+        {
+            var myAabb = collider.Aabb;
+            var otherAabb = other.Aabb;
+
+            var diff = myAabb.Bottom - otherAabb.Top;
+            
+            if ( diff > StepUpTolerance) return;
+            
+            Position -= new Vector2(0, diff);
+        }
     }
 
     private void FixInside(ICollider collider, ICollider other)

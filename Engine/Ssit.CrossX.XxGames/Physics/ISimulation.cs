@@ -24,6 +24,6 @@ public interface ISimulation: IDisposable
     bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
 
     void GetColliders(Aabb bounds, IList<ICollider> colliders);
-
+    IReadOnlyList<ICollider> GetColliders(Aabb bounds);
     ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters : ColliderCreationParameters;
 }

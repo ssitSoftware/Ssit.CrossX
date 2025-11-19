@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Ssit.CrossX.Editor.Helpers;
 using SkiaSharp;
-using Ssit.CrossX.Games;
 using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames;
 
 namespace Ssit.CrossX.Editor.Service
 {

@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using SkiaSharp;
 using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.XxFormats.Map;
-using Ssit.CrossX.Games.Utils;
+using Ssit.CrossX.XxGames.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {

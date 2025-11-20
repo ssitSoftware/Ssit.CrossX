@@ -35,7 +35,7 @@ public class QuadTreeNode<T> where T : IAabbObject
 
         List<T>[] elementsForNodes =
         {
-            new List<T>(), new List<T>(), new List<T>(), new List<T>()
+            new(), new(), new(), new()
         };
 
         for (var idx = 0; idx < _elements.Count; idx++)

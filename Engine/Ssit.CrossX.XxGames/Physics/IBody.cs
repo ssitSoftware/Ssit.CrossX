@@ -23,6 +23,7 @@ public interface IBody: IDisposable
     int UpdateOrder { get; set; }
 
     void AddColliders(params ICollider[] colliders);
+    void RemoveCollider(ICollider collider);
     void Move(Vector2 offset);
     void KinematicMove(Vector2 offset, bool kinematicStandardMoveHybrid, IBody skipBody = null);
     void ApplyForce(Vector2 force);

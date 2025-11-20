@@ -34,6 +34,8 @@ internal class Simulation : ISimulation
     private QuadTreeNode<ICollider> _collidersRootNode;
     private readonly List<ICollider> _collidersToTest = new();
 
+    private readonly List<Body> _bodiesToRemove = new();
+    
     public IReadOnlyList<IBody> Bodies => _bodies;
 
     private readonly List<ICollider> _tempCollidersList = new();
@@ -44,6 +46,8 @@ internal class Simulation : ISimulation
         GetColliders(bounds, _tempCollidersList);
         return _tempCollidersList;
     }
+
+    public void Debug_GetQuadTreeAreas(IList<Aabb> aabbs) => _collidersRootNode.Debug_GetNodesAabbs(aabbs);
 
     public ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters: ColliderCreationParameters
         => CollidersFactory.Create(creationParameters);
@@ -69,6 +73,11 @@ internal class Simulation : ISimulation
         _detachedBodies.Remove(body);
         if (_bodies.Contains(body)) return;
         _bodies.Add(body);
+    }
+
+    public void RemoveBody(IBody body)
+    {
+        _bodiesToRemove.Add((Body)body);
     }
 
     public void DetachBody(Body body, bool keepForLater)
@@ -114,16 +123,18 @@ internal class Simulation : ISimulation
         return colliders?.Count > 0;
     }
 
-    public void UpdateColliderInTree(ICollider collider)
+    public void UpdateColliderInTree(ICollider collider, bool remove = false)
     {
         _collidersRootNode.RemoveElement(collider);
         if (collider.Type.HasFlag(ColliderType.Particle)) return;
+        if (remove) return;
+        
         _collidersRootNode.AddElement(collider);
     }
 
     public void InitializeStaticColliders(Aabb bounds, IEnumerable<ICollider> colliders)
     {
-        var maxElementsPerNode = 16;
+        var maxElementsPerNode = 8;
         _collidersRootNode = new QuadTreeNode<ICollider>(bounds, colliders, maxElementsPerNode);
     }
 
@@ -134,13 +145,23 @@ internal class Simulation : ISimulation
 
         _timeToUpdate += timeInSeconds;
 
+        RemoveBodies();
         while (_timeToUpdate >= SimulationParameters.TimeDelta)
         {
             OnFixedUpdate();
             onFixedUpdate?.Invoke(SimulationParameters.TimeDelta);
-            
             _timeToUpdate -= SimulationParameters.TimeDelta;
+            RemoveBodies();
         }
+    }
+
+    private void RemoveBodies()
+    {
+        foreach (var body in _bodiesToRemove)
+        {
+            body.Dispose();
+        }
+        _bodiesToRemove.Clear();
     }
 
     protected virtual void OnUpdate(float time)

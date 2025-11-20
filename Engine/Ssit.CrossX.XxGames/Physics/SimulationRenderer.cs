@@ -7,9 +7,18 @@ namespace Ssit.CrossX.XxGames.Physics;
 public static class SimulationRenderer
 {
     private static readonly List<ICollider> Colliders = new();
+    private static readonly List<Aabb> Aabbs = new();
     public static void Render(IGeometryRenderer renderer, ISimulation simulation)
     {
         var bounds = simulation.Bounds;
+        
+        Aabbs.Clear();
+        simulation.Debug_GetQuadTreeAreas(Aabbs);
+
+        foreach (var aabb in Aabbs)
+        {
+            renderer.DrawRectangle((RectangleF)aabb, RgbaColor.Gray * 0.2f);
+        }
         
         Colliders.Clear();
         simulation.GetColliders(bounds, Colliders);

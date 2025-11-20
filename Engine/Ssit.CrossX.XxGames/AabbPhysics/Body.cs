@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Physics;
 
@@ -523,6 +524,16 @@ internal class Body : IBody
         {
             _simulation.UpdateColliderInTree(collider);
         }
+    }
+
+    public void RemoveCollider(ICollider collider)
+    {
+        if(Colliders == null) return;
+        
+        var colliders = Colliders.Where( o => !ReferenceEquals(collider, o)).ToArray();
+        Colliders = colliders;
+        
+        _simulation.UpdateColliderInTree(collider, true);
     }
 
     public void Update(float timeInSeconds) => Owner?.OnUpdate(timeInSeconds);

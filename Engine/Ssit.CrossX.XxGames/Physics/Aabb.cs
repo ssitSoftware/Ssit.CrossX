@@ -21,26 +21,22 @@ public struct Aabb
 
     public Aabb(float left, float top, float right, float bottom)
     {
-        Top = top;
-        Bottom = bottom;
-        Left = left;
-        Right = right;
+        Top = MathF.Min(top, bottom);
+        Bottom = MathF.Max(top, bottom);
+        Left = MathF.Min(left, right);
+        Right = MathF.Max(left, right);
     }
 
     public Aabb(Vector2 topLeft, Vector2 bottomRight)
     {
-        Top = topLeft.Y;
-        Bottom = bottomRight.Y;
-        Left = topLeft.X;
-        Right = bottomRight.X;
+        Top = MathF.Min(topLeft.Y, bottomRight.Y);
+        Bottom = MathF.Max(topLeft.Y, bottomRight.Y);
+        Left = MathF.Min(topLeft.X, bottomRight.X);
+        Right = MathF.Max(topLeft.X, bottomRight.X);
     }
     
-    public Aabb(PointF center, SizeF size)
+    public Aabb(Vector2 center, SizeF size) : this(center.X - size.Width / 2, center.Y - size.Height / 2, center.X + size.Width / 2, center.Y + size.Height / 2)
     {
-        Top = center.Y - size.Height / 2;
-        Bottom = center.Y + size.Height / 2;
-        Left = center.X - size.Width / 2;
-        Right = center.X + size.Width / 2;
     }
 
     [Pure]

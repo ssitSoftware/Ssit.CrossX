@@ -1,11 +1,13 @@
-﻿
-
-using System;
+﻿using System;
+using System.Numerics;
 
 namespace Ssit.CrossX.XxGames.Physics;
 
 public interface IBodyOwner: IDisposable
 {
+    event Action FixedUpdate;
+    IBody Body { get; }
+    
     void OnFixedUpdate(out bool cancelUpdate)
     {
         cancelUpdate = false;
@@ -22,8 +24,8 @@ public interface IBodyOwner: IDisposable
     void Start()
     {
     }
-
-    IBody Body { get; }
     
-    event Action FixedUpdate;
+    void OnCollision(ICollider collider, ICollider other, Vector2 impact)
+    {
+    }
 }

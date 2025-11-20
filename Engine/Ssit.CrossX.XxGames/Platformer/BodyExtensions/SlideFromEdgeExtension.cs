@@ -11,20 +11,23 @@ public class SlideFromEdgeExtension: IBodyExtension
     private readonly List<ICollider> _collidersBuffer = new();
 
     private readonly float _slideSpeed = 0;
+    private readonly HashSet<int> _noSlideMaterialIndices;
     private readonly float _stableWidthNormalized = 0;
 
-    public static void Attach(IBody body, float stableWidthNormalized, float slideSpeed)
+    public static void Attach(IBody body, float stableWidthNormalized, float slideSpeed, params int[] noSlideMaterialIndices)
     {
-        BodyExtensions.List.Add(new SlideFromEdgeExtension(body, stableWidthNormalized, slideSpeed));
+        BodyExtensions.List.Add(new SlideFromEdgeExtension(body, stableWidthNormalized, slideSpeed, noSlideMaterialIndices));
     }
     
-    private SlideFromEdgeExtension(IBody body, float stableWidthNormalized, float slideSpeed)
+    private SlideFromEdgeExtension(IBody body, float stableWidthNormalized, float slideSpeed,
+        int[] noSlideMaterialIndices)
     {
         _body = body;
         _body.Updated += OnBodyUpdated;
         _body.Disposed += Dispose;
         
         _slideSpeed = slideSpeed;
+        _noSlideMaterialIndices = new (noSlideMaterialIndices);
         _stableWidthNormalized = stableWidthNormalized;
     }
 
@@ -61,6 +64,13 @@ public class SlideFromEdgeExtension: IBodyExtension
 
             for (var idx = 0; idx < _collidersBuffer.Count; ++idx)
             {
+                if (_noSlideMaterialIndices.Contains(_collidersBuffer[idx].Material.Index))
+                {
+                    slideLeft = 0;
+                    slideRight = 0;
+                    break;
+                }
+                
                 var colliderAabb = _collidersBuffer[idx].Aabb;
                 slideLeft = MathF.Min(slideLeft, MathF.Max(0, colliderAabb.Left - aabb.Left - aabb.Width * _stableWidthNormalized));
                 slideRight = MathF.Min(slideRight, MathF.Max(0, aabb.Right - aabb.Width * _stableWidthNormalized - colliderAabb.Right));

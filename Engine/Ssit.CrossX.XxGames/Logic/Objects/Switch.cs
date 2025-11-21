@@ -1,6 +1,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Physics.Coliders;
+using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
@@ -14,25 +18,30 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
         [EditorLink(typeof(ISwitch))] public int ToggleAnother { get; set; }
     }
     
-    void ILogicOperable.Operate(ILogicOperator by) => Toggle();
+    void ILogicOperable.Operate(IBodyOwner @operator) => Toggle();
 
     public event Action OnChanged;
     
     public bool IsOn { get; private set; }
     
     private ISwitch _anotherToggle;
-
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float detectorRadius)
+    private bool _firstUpdate = true;
+    
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float detectorRadius, Vector2 detectorOffset)
     {
         BoundsRect = new RectangleF(-detectorRadius * 2, -detectorRadius * 2, detectorRadius * 4, detectorRadius * 4);
         BoundsRect = BoundsRect.Inflate(1, 1);
         
-        Body.CreateFixture(new CircleShape(detectorRadius, 0.1f));
-        Body.BodyType = BodyType.Static;
-        Body.IsSensor = true;
-        
-        Body.OnCollision += BodyOnOnCollision;
-        Body.OnSeparation += BodyOnOnSeparation;
+        Body.AddColliders(Body.Simulation.CreateCollider(new RectColliderCreationParameters
+        {
+            Size = new SizeF(detectorRadius * 2, detectorRadius * 2),
+            Center = detectorOffset,
+            Type = ColliderType.Trigger,
+            Active = true,
+            AttachToBody = Body,
+            Material = Material.Default
+        }));
+        Body.IsKinematic = true;
 
         AddState("On", new State());
         AddState("Off", new State());
@@ -46,6 +55,18 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
         if (parameters.Parameters.ToggleAnother != 0)
         {
             parameters.LinkMap.RequestLink<ISwitch>(parameters.Parameters.ToggleAnother, UpdateAnotherToggle);
+        }
+    }
+
+    protected override void OnFixedUpdate(ref bool cancelUpdate)
+    {
+        base.OnFixedUpdate(ref cancelUpdate);
+
+        if (_firstUpdate)
+        {
+            _firstUpdate = false;
+            UpdateState();
+            OnChanged?.Invoke();
         }
     }
 
@@ -65,23 +86,6 @@ public abstract class Switch(GameObjectsServices services, ObjectCreationParamet
             SetState(IsOn ?  "TurnOn" : "TurnOff");
             OnChanged?.Invoke();
         }
-    }
-
-    private void BodyOnOnSeparation(Fixture fixtureA, Fixture fixtureB)
-    {
-        if (fixtureB.Body.Owner is ILogicOperator lo)
-        {
-            lo.SetInRange(this,  fixtureB, false);
-        }
-    }
-
-    private bool BodyOnOnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
-    {
-        if (fixtureB.Body.Owner is ILogicOperator lo)
-        {
-            lo.SetInRange(this,  fixtureB, true);
-        }
-        return true;
     }
 
     protected override void OnAnimationFinished(string sequenceName)

@@ -110,10 +110,9 @@ internal class Simulation : ISimulation
 
             if (!collider.IsActive) continue;
             if (collider.AttachedBody == testingBody) continue;
-            if (!colliderType.HasFlag(collider.Type)) continue;
+            if ((colliderType & collider.Type) == 0) continue;
 
             var colliderAabb = collider.Aabb;
-
             if (!colliderAabb.Intersects(aabb, epsilon)) continue;
 
             if (colliders == null) return true;
@@ -174,9 +173,10 @@ internal class Simulation : ISimulation
 
     protected virtual void OnFixedUpdate()
     {
+        var dt = SimulationParameters.TimeDelta;
         for (var idx = 0; idx < _bodies.Count; ++idx)
         {
-            _bodies[idx].FixedUpdate();
+            _bodies[idx].FixedUpdate(dt);
         }
 
         for (var idx = 0; idx < _bodies.Count; ++idx)

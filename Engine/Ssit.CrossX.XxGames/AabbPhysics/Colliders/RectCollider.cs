@@ -38,9 +38,7 @@ internal class RectCollider : ICollider
     public void RaiseCollisionWith(bool byMyMovement, ICollider other, Vector2 impact)
     {
         CollisionWith?.Invoke(byMyMovement, other, impact);
-        
-        AttachedBody?.Owner?.OnCollision(this, other, impact);
-        other?.AttachedBody?.Owner?.OnCollision(other, this, -impact);
+        ((Body)AttachedBody)?.PostOnColision(this, other, impact);
     }
 
     public RectCollider(RectColliderCreationParameters creationParameters)

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Numerics;
+using Ssit.CrossX.XxGames.AabbPhysics.Colliders;
 
 namespace Ssit.CrossX.XxGames.Physics;
 
 public interface IBody: IDisposable
 {
-    event Action Updated;
-    event Action Disposed;
-    event Action<Vector2> Friction;
-    event Action<Vector2> Moved;
-
     float Mass { get; set; }
     bool IsActive { get; }
     bool IsKinematic { get; set; }
@@ -32,5 +28,9 @@ public interface IBody: IDisposable
     void Touch();
     void DetachFromSimulation();
     void ReattachToSimulation();
+    
+    void AddEventsReceiver(IBodyEventsReceiver receiver);
+    void RemoveEventsReceiver(IBodyEventsReceiver receiver);
+    
     ICollider FindCollider(string name);
 }

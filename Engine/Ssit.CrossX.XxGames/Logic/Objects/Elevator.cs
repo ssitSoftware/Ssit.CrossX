@@ -3,6 +3,7 @@ using System.Numerics;
 using Ssit.CrossX.XxFormats.Editor;
 using Ssit.CrossX.XxGames.Logic.Objects.Behaviors;
 using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Physics.Coliders;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
@@ -31,27 +32,24 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
     public float Speed { get; private set; }
     public float BrakingDistance { get; private set;}
 
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width)
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, float width, IMaterial material)
     {
         BoundsRect = new RectangleF(-width, -width/2, width * 2, width);
 
         var speed = parameters.Parameters.Speed;
         Speed = speed;
         BrakingDistance = parameters.Parameters.BrakingDistance;
-        Body.BodyType = BodyType.Kinematic; 
+        Body.IsKinematic = true; 
         
-        Body.CreateFixture(new EdgeShape(new Vector2(-width / 2, 0), new Vector2(width / 2, 0))
+        Body.AddColliders(Body.Simulation.CreateCollider(new RectColliderCreationParameters
         {
-            Vertex0  = new Vector2(-3,0),
-            Vertex3 = new Vector2(3,0),
-            Density = 1000
-        });
-
-        Body.Friction = 1.5f;
-        Body.Mass = 1000;
-        
-        PlatformExtension.Attach(Body, 0.25f);
-        MomentumSourceExtension.Attach(Body, new Aabb(Vector2.Zero, width, 0.2f));
+            AttachToBody = Body,
+            Active = true,
+            Center = new Vector2(0, 0.1f),
+            Size = new Vector2(width, 0.2f),
+            Type = ColliderType.Dynamic,
+            Material = material
+        }));
         
         _initialPosition = parameters.Position;
         

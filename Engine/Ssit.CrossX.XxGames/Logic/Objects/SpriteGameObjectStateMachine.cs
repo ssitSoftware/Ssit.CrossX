@@ -27,6 +27,9 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
 
     public void SetSteringState(string stateName)
     {
+        if (stateName.Equals(SteringStateMachine.CurrentState?.Name ?? ""))
+            return;
+        
         if (!_steringStates.TryGetValue(stateName, out var state))
         {
             throw new Exception($"State {stateName} not found");

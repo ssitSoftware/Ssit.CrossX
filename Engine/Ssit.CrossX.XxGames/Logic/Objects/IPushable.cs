@@ -2,7 +2,8 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
-public interface ILogicOperable
+public interface IPushable
 {
-    void Operate(IBodyOwner @operator);
+    IBody Body { get; }
+    bool CanPull => false;
 }

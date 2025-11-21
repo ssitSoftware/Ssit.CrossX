@@ -50,18 +50,24 @@ internal class Body : IBody
         }
     }
 
-    private Vector2 Velocity { get; set; }
+    private Vector2 Velocity
+    {
+        get => _velocity;
+        set
+        {
+            if (value.Y > 50)
+            {
+                value = new Vector2(value.X, 50);
+            }
+            _velocity = value;
+        }
+    }
 
     public ICollider[] Colliders { get; private set; }
 
     public IBodyOwner Owner { get; }
 
     public ISimulation Simulation => _simulation;
-
-    public event Action Updated;
-    public event Action<Vector2> Friction;
-    public event Action<Vector2> Moved;
-    public event Action Disposed;
 
     private readonly Simulation _simulation;
     private Vector2 _position;
@@ -73,9 +79,10 @@ internal class Body : IBody
     public float StepUpTolerance { get; set; } = 0.1f;
     public int UpdateOrder { get; set; }
 
-    private readonly List<ICollider> _staticCollisions = new List<ICollider>();
+    private readonly List<ICollider> _staticCollisions = new();
 
     private double _timeSinceLastTouch = 0;
+    private Vector2 _velocity;
 
     internal Body(Simulation simulation)
     {
@@ -86,7 +93,14 @@ internal class Body : IBody
     {
         _simulation = simulation;
         Owner = owner;
+        
+        if(owner is IBodyEventsReceiver rec)
+        {
+            _eventsReceivers.Add(rec);
+        }
     }
+
+    private readonly List<IBodyEventsReceiver> _eventsReceivers = new();
 
     public void LimitVelocity(float maxVelocity) => LimitVelocity(maxVelocity, maxVelocity);
 
@@ -135,8 +149,8 @@ internal class Body : IBody
 
         var attemptedMove = move;
         var tries = kinematicStandardMoveHybrid ? 1 : 4;
-        var collission = false;
-
+        var collision = false;
+        
         while (tries-- > 0)
         {
             for (var idx = 0; idx < Colliders.Length; ++idx)
@@ -144,26 +158,26 @@ internal class Body : IBody
                 if (!Colliders[idx].IsActive) continue;
                 if (MovementCollisionCalculator.GetMovementCollisions(_simulation, ColliderType.Dynamic, this, idx, ref move, ref normal, ref friction, out var horizontalMovementCollider, out var verticalMovementCollider))
                 {
-                    collission = true;
-                    if (horizontalMovementCollider is ICollider hmc)
+                    collision = true;
+                    if (horizontalMovementCollider is not null)
                     {
-                        if (hmc.AttachedBody != skipBody)
+                        if (horizontalMovementCollider.AttachedBody != skipBody)
                         {
-                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + hmc.AttachedBody.Mass) : 1;
-                            hmc.AttachedBody?.KinematicMove(new Vector2(attemptedMove.X - move.X, 0) * modifier, kinematicStandardMoveHybrid, this);
-                            hmc.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
+                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + horizontalMovementCollider.AttachedBody.Mass) : 1;
+                            horizontalMovementCollider.AttachedBody?.KinematicMove(new Vector2(attemptedMove.X - move.X, 0) * modifier, kinematicStandardMoveHybrid, this);
+                            horizontalMovementCollider.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
                             move = attemptedMove;
                             break;
                         }
                     }
 
-                    if (verticalMovementCollider is ICollider vmc)
+                    if (verticalMovementCollider is not null)
                     {
-                        if (skipBody != vmc.AttachedBody)
+                        if (skipBody != verticalMovementCollider.AttachedBody)
                         {
-                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + vmc.AttachedBody.Mass) : 1;
-                            vmc.AttachedBody?.KinematicMove(new Vector2(0, attemptedMove.Y - move.Y) * modifier, kinematicStandardMoveHybrid, this);
-                            vmc.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
+                            var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + verticalMovementCollider.AttachedBody.Mass) : 1;
+                            verticalMovementCollider.AttachedBody?.KinematicMove(new Vector2(0, attemptedMove.Y - move.Y) * modifier, kinematicStandardMoveHybrid, this);
+                            verticalMovementCollider.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
                             move = attemptedMove;
                             break;
                         }
@@ -172,7 +186,7 @@ internal class Body : IBody
                 move = attemptedMove;
             }
 
-            if (!collission) break;
+            if (!collision) break;
         }
 
         if (kinematicStandardMoveHybrid)
@@ -182,11 +196,19 @@ internal class Body : IBody
         else
         {
             Position += move;
-            Moved?.Invoke(move);
+            OnMoved(move);
             UpdateCollidersInTree();
         }
     }
 
+    private void OnMoved(Vector2 move)
+    {
+        foreach (var rec in _eventsReceivers)
+        {
+            rec.OnBodyMoved(move);
+        }
+    }
+    
     public void Move(Vector2 offset)
     {
         IsActive = true;
@@ -201,7 +223,7 @@ internal class Body : IBody
             CheckTriggers(idx, offset);
         }
         Position += offset;
-        Moved?.Invoke(offset);
+        OnMoved(offset);
     }
 
     private void CheckTriggers(int index, Vector2 move)
@@ -253,21 +275,20 @@ internal class Body : IBody
             Colliders[index].RaiseCollisionWith(true, verticalMovementCollider, new Vector2(0, colliderVelocity.Y - Velocity.Y));
             verticalMovementCollider.RaiseCollisionWith(false, Colliders[index], new Vector2(0, Velocity.Y - colliderVelocity.Y));
 
-            if (verticalColliderBody != null && verticalMovementCollider.Type == ColliderType.Dynamic)
+            if (verticalColliderBody != null && verticalMovementCollider.Type == ColliderType.Dynamic && !verticalColliderBody.IsKinematic)
             {
                 var newVelocity = (VelocitySum.Y * Mass +
                                    verticalColliderBody.VelocitySum().Y * verticalColliderBody.Mass) /
                                   (Mass + verticalColliderBody.Mass);
-                Velocity = new Vector2(Velocity.X, newVelocity);
-                verticalColliderBody.Velocity = new Vector2(verticalColliderBody.Velocity.X, newVelocity);
+                Velocity = Velocity with { Y = newVelocity };
+                verticalColliderBody.Velocity = verticalColliderBody.Velocity with { Y = newVelocity };
                 verticalColliderBody.Touch();
                 Touch();
             }
             else
             {
-                Velocity = new Vector2(Velocity.X, 0);
+                Velocity = Velocity with { Y = 0 };
             }
-                
         }
 
         if (horizontalMovementCollider != null)
@@ -344,10 +365,16 @@ internal class Body : IBody
         var frictionVelocityX = Velocity.X * Math.Min(1, friction.X * Colliders[index].Material.Friction * Simulation.SimulationParameters.TimeDelta);
         var frictionVelocityY = Velocity.Y * Math.Min(1, friction.Y * Colliders[index].Material.Friction * Simulation.SimulationParameters.TimeDelta);
 
-        Friction?.Invoke(new Vector2(frictionVelocityX, frictionVelocityY));
-
-        //Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
-
+        if (MathF.Abs(frictionVelocityX) > float.Epsilon || MathF.Abs(frictionVelocityY) > float.Epsilon)
+        {
+            foreach (var rec in _eventsReceivers)
+            {
+                rec.OnFriction(ref frictionVelocityX, ref frictionVelocityY);
+            }
+        }
+        
+        Velocity -= new Vector2(frictionVelocityX, frictionVelocityY);
+        
         if (Math.Abs(Velocity.X) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { X = 0 };
         if (Math.Abs(Velocity.Y) < MovementCollisionCalculator.MovementEpsilon) Velocity = Velocity with { Y = 0 };
 
@@ -356,14 +383,18 @@ internal class Body : IBody
 
     public void PostFixedUpdate()
     {
+        _force = Vector2.Zero;
         Owner?.OnPostFixedUpdate();
-        Updated?.Invoke();
+
+        foreach (var rec in _eventsReceivers)
+        {
+            rec.OnBodyUpdated();
+        }
     }
 
-    public void FixedUpdate()
+    public void FixedUpdate(float dt)
     {
         var beforeUpdatePosition = Position;
-        var dt = Simulation.SimulationParameters.TimeDelta;
 
         var cancelUpdate = false;
         Owner?.OnFixedUpdate(out cancelUpdate);
@@ -374,7 +405,7 @@ internal class Body : IBody
         if (IsKinematic) return;
 
         var lastPosition = Position;
-
+        
         _force += Simulation.SimulationParameters.GravityAcceleration * Mass;
         Velocity += _force / Mass * dt;
 
@@ -437,7 +468,7 @@ internal class Body : IBody
         }
 
         move = Position - beforeUpdatePosition;
-        Moved?.Invoke(move);
+        OnMoved(move);
         _force = Vector2.Zero;
     }
     
@@ -563,11 +594,32 @@ internal class Body : IBody
         UpdateCollidersInTree();
     }
 
+    public void AddEventsReceiver(IBodyEventsReceiver receiver)
+    {
+        if (!_eventsReceivers.Contains(receiver))
+        {
+            _eventsReceivers.Add(receiver);
+        }
+    }
+    
+    public void RemoveEventsReceiver(IBodyEventsReceiver receiver) => _eventsReceivers.Remove(receiver);
+
     public void Dispose()
     {
         _simulation.DetachBody(this, false);
         Owner?.Dispose();
 
-        Disposed?.Invoke();
+        foreach (var rec in _eventsReceivers)
+        {
+            rec.OnBodyDisposed();
+        }
+    }
+
+    public void PostOnColision(ICollider source, ICollider other, Vector2 impact)
+    {
+        foreach (var rec in _eventsReceivers)
+        {
+            rec.OnCollision(source, other, impact);
+        }
     }
 }

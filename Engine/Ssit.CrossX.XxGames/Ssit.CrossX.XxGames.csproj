@@ -17,11 +17,6 @@
 
     <ItemGroup>
       <Compile Remove="Rendering\IShooterRenderer.cs" />
-      <Compile Remove="Logic\Objects\MechanicalDoor.cs" />
-      <Compile Remove="Logic\Objects\Pushable.cs" />
-      <Compile Remove="Logic\Objects\Switch.cs" />
-      <Compile Remove="Logic\Objects\Elevator.cs" />
-      <Compile Remove="Logic\Objects\Behaviors\ElevatorBehavior.cs" />
     </ItemGroup>
 
     <ItemGroup>

@@ -3,7 +3,7 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.Objects;
 
-public class ObjectAndEnvirionment<TObject> where TObject: IBodyOwner
+public class ObjectAndEnvirionment<TObject>: IBodyEventsReceiver where TObject: IBodyOwner
 {
     public bool IsOnGround { get; private set; }
     public bool WasOnGround { get; private set; }
@@ -14,10 +14,12 @@ public class ObjectAndEnvirionment<TObject> where TObject: IBodyOwner
 
     public IReadOnlyList<ICollider> LastGroundCollisions => _colliders;
 
+    void IBodyEventsReceiver.OnBodyUpdated() => Recalculate();
+    
     public ObjectAndEnvirionment(TObject @object)
     {
         _object = @object;
-        @object.Body.Updated += Body_Updated;
+        _object.Body.AddEventsReceiver(this);
     }
 
     public void Recalculate()
@@ -54,10 +56,5 @@ public class ObjectAndEnvirionment<TObject> where TObject: IBodyOwner
             }
         }
         IsOnGround = _colliders.Count > 0;
-    }
-
-    private void Body_Updated()
-    {
-        Recalculate();
     }
 }

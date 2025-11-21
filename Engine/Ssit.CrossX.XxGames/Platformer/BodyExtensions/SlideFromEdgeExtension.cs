@@ -5,7 +5,7 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.BodyExtensions;
 
-public class SlideFromEdgeExtension: IBodyExtension
+public class SlideFromEdgeExtension: IBodyExtension, IBodyEventsReceiver
 {
     private readonly IBody _body;
     private readonly List<ICollider> _collidersBuffer = new();
@@ -14,6 +14,9 @@ public class SlideFromEdgeExtension: IBodyExtension
     private readonly HashSet<int> _noSlideMaterialIndices;
     private readonly float _stableWidthNormalized = 0;
 
+    void IBodyEventsReceiver.OnBodyUpdated() => OnBodyUpdated();
+    void IBodyEventsReceiver.OnBodyDisposed() => BodyExtensions.List.Remove(this);
+    
     public static void Attach(IBody body, float stableWidthNormalized, float slideSpeed, params int[] noSlideMaterialIndices)
     {
         BodyExtensions.List.Add(new SlideFromEdgeExtension(body, stableWidthNormalized, slideSpeed, noSlideMaterialIndices));
@@ -23,8 +26,7 @@ public class SlideFromEdgeExtension: IBodyExtension
         int[] noSlideMaterialIndices)
     {
         _body = body;
-        _body.Updated += OnBodyUpdated;
-        _body.Disposed += Dispose;
+        _body.AddEventsReceiver(this);
         
         _slideSpeed = slideSpeed;
         _noSlideMaterialIndices = new (noSlideMaterialIndices);
@@ -89,11 +91,5 @@ public class SlideFromEdgeExtension: IBodyExtension
                 _body.Touch();
             }
         }
-    }
-
-    public void Dispose()
-    {
-        _body.Updated -= OnBodyUpdated;
-        BodyExtensions.List.Remove(this);
     }
 }

@@ -119,6 +119,14 @@ public struct Aabb
         Top -= size;
         Bottom += size;
     }
+    
+    public void Inflate(float width, float height)
+    {
+        Left -= width;
+        Right += width;
+        Top -= height;
+        Bottom += height;
+    }
 
     public static Aabb operator *(Aabb aabb, float multiply)
     {

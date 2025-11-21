@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxGames.Physics;
+using Ssit.CrossX.XxGames.Physics.Coliders;
+using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
@@ -18,27 +21,38 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     private bool _inverse;
     
     protected bool IsOpen { get; private set; }
-    private Fixture _staticFixture;
+    private ICollider _staticCollider;
 
-    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, Vector2 offset, SizeF size, float topHandleHeight = 0)
+    protected void InitializePhysics(ObjectCreationParameters<Parameters> parameters, Vector2 offset, SizeF size, IMaterial material, float topHandleHeight = 0)
     {
         BoundsRect = new RectangleF(-size.Width, -size.Height, size.Width * 2, size.Height * 2);
         BoundsRect = BoundsRect.Inflate(1, 1);
         
-        Body.CreateFixture(new EdgeShape(new Vector2(-size.Width / 2, 0) + offset, new Vector2(-size.Width / 2, -size.Height) + offset));
-        Body.CreateFixture(new EdgeShape(new Vector2(size.Width, 0) + offset, new Vector2(size.Width, -size.Height) + offset));
+        Body.AddColliders(Body.Simulation.CreateCollider(new RectColliderCreationParameters
+        {
+            Active = true,
+            AttachToBody = Body,
+            Center = new Vector2(0, -size.Height / 2),
+            Size = size,
+            Type = ColliderType.Static,
+            Material = material
+        }));
 
         if (topHandleHeight > 0)
         {
-            _staticFixture = Body.CreateFixture(new ChainShape(new Vertices([
-                new Vector2(-size.Width / 2, -size.Height) + offset,
-                new Vector2(size.Width, -size.Height) + offset,
-                new Vector2(size.Width, -size.Height + topHandleHeight) + offset,
-                new Vector2(-size.Width / 2, -size.Height + topHandleHeight) + offset,
-            ]), true));
+            _staticCollider = Body.Simulation.CreateCollider(new RectColliderCreationParameters
+            {
+                Active = true,
+                AttachToBody = Body,
+                Center = new Vector2(0, -size.Height + topHandleHeight / 2),
+                Size = new Vector2(size.Width, topHandleHeight),
+                Type = ColliderType.Static,
+                Material = Material.Default
+            });
+            Body.AddColliders(_staticCollider);
         }
 
-        Body.BodyType = BodyType.Static;
+        Body.IsKinematic = true;
         
         AddState("Opening", null);
         AddState("Open", null);
@@ -61,21 +75,15 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     {
         SetState(IsOpen ? "Open" : "Closed");
 
-        Body.IsSensor = IsOpen;
-
-        if (_staticFixture != null)
-        {
-            _staticFixture.IsSensor = false;
-        }
+        Body.Colliders[0].IsActive = !IsOpen;
     }
     
-    protected override void OnFixedUpdate(float dt)
+    protected override void OnFixedUpdate(ref bool cancelUpdate)
     {
-        base.OnFixedUpdate(dt);
+        base.OnFixedUpdate(ref cancelUpdate);
 
         if (CurrentState is "Opening" or "Closing")
             return;
-            
         
         var open = (_switch?.IsOn ?? false) ^ _inverse;
 

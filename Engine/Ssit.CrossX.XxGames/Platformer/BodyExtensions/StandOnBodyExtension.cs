@@ -8,12 +8,19 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.BodyExtensions;
 
-public class StandOnBodyExtension: IBodyExtension
+public class StandOnBodyExtension: IBodyExtension, IBodyEventsReceiver
 {
     private readonly List<ICollider> _hookedColliders = new();
 
     private readonly IBody _body;
 
+    void IBodyEventsReceiver.OnBodyUpdated() => UpdateHookedColliders();
+    void IBodyEventsReceiver.OnBodyDisposed() => BodyExtensions.List.Remove(this);
+    void IBodyEventsReceiver.OnBodyMoved(Vector2 move) => OnMove(move);
+
+    void IBodyEventsReceiver.OnCollision(ICollider source, ICollider other, Vector2 impact) =>
+        AabbCollider_CollisionWith(source, other, impact);
+    
     public static void Attach(IBody body)
     {
         BodyExtensions.List.Add(new StandOnBodyExtension(body));
@@ -22,24 +29,20 @@ public class StandOnBodyExtension: IBodyExtension
     private StandOnBodyExtension(IBody body)
     {
         _body = body;
-
-        _body.Colliders[0].CollisionWith += AabbCollider_CollisionWith;
-        _body.Moved += OnMove;
-        _body.Updated += UpdateHookedColliders;
+        _body.AddEventsReceiver(this);
         _body.UpdateOrder = int.MaxValue;
-        _body.Disposed += Dispose;
     }
 
-    private void AabbCollider_CollisionWith(bool byMyMovement, ICollider obj, Vector2 impact)
+    private void AabbCollider_CollisionWith(ICollider _, ICollider other, Vector2 impact)
     {
-        if(obj.Type != ColliderType.Dynamic) return;
+        if (other.Type != ColliderType.Dynamic) return;
         
-        if (obj.AttachedBody == null) return;
-        if (obj.Aabb.Top >= _body.Colliders[0].Aabb.Top) return;
+        if (other.AttachedBody == null) return;
+        if (other.Aabb.Top >= _body.Colliders[0].Aabb.Top) return;
 
-        if (obj.Aabb.Bottom - _body.Simulation.MovementEpsilon < _body.Colliders[0].Aabb.Top)
+        if (other.Aabb.Bottom - _body.Simulation.MovementEpsilon < _body.Colliders[0].Aabb.Top)
         {
-            if(!_hookedColliders.Contains(obj)) _hookedColliders.Add(obj);
+            if(!_hookedColliders.Contains(other)) _hookedColliders.Add(other);
         }
     }
 
@@ -73,14 +76,5 @@ public class StandOnBodyExtension: IBodyExtension
 
             idx++;
         }
-    }
-
-    public void Dispose()
-    {
-        _body.Colliders[0].CollisionWith -= AabbCollider_CollisionWith;
-        _body.Moved -= OnMove;
-        _body.Updated -= UpdateHookedColliders;
-        
-        BodyExtensions.List.Remove(this);
     }
 }

@@ -35,6 +35,11 @@ public static class SimulationRenderer
                 _ => RgbaColor.Yellow
             };
 
+            if (!collider.IsActive)
+            {
+                color *= 0.25f;
+            }
+
             renderer.DrawLine(new Vector2(aabb.Left, aabb.Top), new Vector2(aabb.Right, aabb.Top),
                 (collider.Material.Sides & ColliderSides.Top) != 0 ? color : color * 0.25f);
             

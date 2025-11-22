@@ -10,7 +10,7 @@ public class GameTimer
     
     private static readonly float[] TimeDeltas =
     [
-        1f / 300f, 1f / 240f, 1f / 200f, 1f / 165f, 1f / 150f, 1f / 144f, 1f / 120f
+        1f / 300f, 1f / 240f, 1f / 200f, 1f / 180f, 1f / 165f, 1f / 150f, 1f / 144f, 1f / 120f
     ];
     
     public float TimeDelta { get; private set; } = 1 / 120f;

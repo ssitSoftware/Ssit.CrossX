@@ -22,8 +22,10 @@ internal class Simulation : ISimulation
         TimeDelta = 0.01f
     };
 
+    
     public Aabb Bounds => _collidersRootNode.Aabb;
 
+    public event Action Disposed;
     public event Action<IBody> BodyRemoved;
     public event Action<IBody> BodyAdded;
 
@@ -200,5 +202,7 @@ internal class Simulation : ISimulation
         }
         _bodies.Clear();
         _detachedBodies.Clear();
+        
+        Disposed?.Invoke();
     }
 }

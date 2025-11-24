@@ -39,7 +39,8 @@ public abstract class Elevator(GameObjectsServices services, ObjectCreationParam
         var speed = parameters.Parameters.Speed;
         Speed = speed;
         BrakingDistance = parameters.Parameters.BrakingDistance;
-        Body.IsKinematic = true; 
+        Body.IsKinematic = true;
+        Body.Mass = 10000;
         
         Body.AddColliders(Body.Simulation.CreateCollider(new RectColliderCreationParameters
         {

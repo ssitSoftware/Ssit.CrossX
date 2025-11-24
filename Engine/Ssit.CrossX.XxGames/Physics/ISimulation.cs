@@ -13,9 +13,12 @@ public interface ISimulation: IDisposable
     event Action<IBody> BodyAdded;
     event Action<bool> Activate;
 
+    event Action Disposed;
+    
     Aabb Bounds { get; }
 
     IReadOnlyList<IBody> Bodies { get; }
+     
     void Update(float timeInSeconds, Action<float> onFixedUpdate);
     IBody CreateBody();
     IBody CreateBody(IBodyOwner owner);

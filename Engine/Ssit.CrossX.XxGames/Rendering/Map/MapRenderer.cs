@@ -56,10 +56,19 @@ public static class MapRenderer
         
         var mainLayer = map.Layers.First(o => o.IsMain);
         var (offset, _) = GetLayerRenderParameters(mainLayer, mainLayer, cameraLookAt, targetSize, tileSize);
+
+        float scale = 10000f;
+        if (((IRenderStateProvider)renderer.StateManager).Scale > 3)
+        {
+            scale = 1;
+        }
         
         renderer.StateManager.SaveState();
         renderer.StateManager.Translate(offset);
         renderer.StateManager.Scale(tileSize);
+        
+        scale *= ((IRenderStateProvider)renderer.StateManager).Scale;
+        SimulationRenderer.RenderScale = scale;
         
         SimulationRenderer.Render(renderer.GeometryRenderer, world);
 

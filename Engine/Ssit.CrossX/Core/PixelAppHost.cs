@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Utils;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Core;
@@ -192,8 +193,8 @@ public class PixelAppHost: IAppHost
             
             var height = _renderTarget.Size.Height;
             var width = _renderTarget.Size.Width;
-            
-            var count = _parameters.CrtParameters.NoiseCount;
+
+            var count = _parameters.CrtParameters.NoiseCount * Scale * Scale;
 
             if (_noise.Length != count)
             {
@@ -202,8 +203,8 @@ public class PixelAppHost: IAppHost
             
             for (var idx = 0; idx < count; ++idx)
             {
-                var x = Random.Shared.Next(width);
-                var y = Random.Shared.Next(height);
+                var x = (float)MersenneTwister.Instance.Generate(0, (double)width);
+                var y = (float)MersenneTwister.Instance.Generate(0, (double)height);
 
                 _noise[idx] = new Vector2(x, y);
             }

@@ -41,6 +41,8 @@ internal class Simulation : ISimulation
     public IReadOnlyList<IBody> Bodies => _bodies;
 
     private readonly List<ICollider> _tempCollidersList = new();
+
+    private bool _bodiesChanged;
     
     public IReadOnlyList<ICollider> GetColliders(Aabb bounds)
     {
@@ -60,6 +62,7 @@ internal class Simulation : ISimulation
     {
         var body = new Body(this);
         _bodies.Add(body);
+        _bodiesChanged = true;
         return body;
     }
 
@@ -67,6 +70,7 @@ internal class Simulation : ISimulation
     {
         var body = new Body(this, owner);
         _bodies.Add(body);
+        _bodiesChanged = true;
         return body;
     }
 
@@ -74,12 +78,14 @@ internal class Simulation : ISimulation
     {
         _detachedBodies.Remove(body);
         if (_bodies.Contains(body)) return;
+        _bodiesChanged = true;
         _bodies.Add(body);
     }
 
     public void RemoveBody(IBody body)
     {
         _bodiesToRemove.Add((Body)body);
+        _bodiesChanged = true;
     }
 
     public void DetachBody(Body body, bool keepForLater)
@@ -94,11 +100,19 @@ internal class Simulation : ISimulation
         {
             _collidersRootNode.RemoveElement(collider);
         }
+        
+        _bodiesChanged = true;
     }
 
     public void SortBodies()
     {
         _bodies.Sort((o1, o2) => o1.UpdateOrder - o2.UpdateOrder);
+    }
+    
+    public IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
+    {
+        CheckCollision(aabb, testingBody, epsilon, _tempCollidersList, colliderType);
+        return _tempCollidersList;
     }
 
     public bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
@@ -141,7 +155,11 @@ internal class Simulation : ISimulation
 
     public void Update(float timeInSeconds, Action<float> onFixedUpdate)
     {
-        SortBodies();
+        if (_bodiesChanged)
+        {
+            SortBodies();
+            _bodiesChanged = false;
+        }
         OnUpdate(timeInSeconds);
 
         _timeToUpdate += timeInSeconds;
@@ -153,6 +171,12 @@ internal class Simulation : ISimulation
             onFixedUpdate?.Invoke(SimulationParameters.TimeDelta);
             _timeToUpdate -= SimulationParameters.TimeDelta;
             RemoveBodies();
+            
+            if (_bodiesChanged)
+            {
+                SortBodies();
+                _bodiesChanged = false;
+            }
         }
     }
 

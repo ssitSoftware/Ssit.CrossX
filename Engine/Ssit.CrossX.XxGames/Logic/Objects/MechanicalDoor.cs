@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxGames.AabbPhysics;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Physics.Coliders;
 using Ssit.CrossX.XxGames.Platformer.Builders;
@@ -74,8 +75,12 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
     private void UpdateState()
     {
         SetState(IsOpen ? "Open" : "Closed");
-
         Body.Colliders[0].IsActive = !IsOpen;
+
+        foreach (var col in Body.Simulation.GetColliders(Body.Colliders[0].Aabb, Body, 0, ColliderType.Dynamic))
+        {
+            col.AttachedBody?.Touch();
+        }
     }
     
     protected override void OnFixedUpdate(ref bool cancelUpdate)

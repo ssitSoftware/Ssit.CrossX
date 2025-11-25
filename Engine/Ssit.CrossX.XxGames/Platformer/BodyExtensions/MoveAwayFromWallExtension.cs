@@ -44,13 +44,11 @@ public class MoveAwayFromWallExtension : IBodyExtension, IBodyEventsReceiver
                 {
                     _body.Move(new Vector2(colliderAabb.Left-aabb.Right - movementEpsilon, 0));
                     _body.Velocity = _body.Velocity with { X = 0 };
-                    _body.KinematicVelocity = Vector2.Zero;
                 }
                 else if (aabb.Right > colliderAabb.Right && aabb.Left < colliderAabb.Right && otherCollider.Material.Sides.HasFlag(ColliderSides.Right))
                 {
                     _body.Move(new Vector2(colliderAabb.Right - aabb.Left + movementEpsilon, 0));
                     _body.Velocity = _body.Velocity with { X = 0 };
-                    _body.KinematicVelocity = Vector2.Zero;
                 }
             }
         }

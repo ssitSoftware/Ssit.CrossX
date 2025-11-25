@@ -53,8 +53,9 @@ public class StandOnBodyExtension: IBodyExtension, IBodyEventsReceiver
         for (var idx = 0; idx < _hookedColliders.Count; ++idx)
         {
             var body = _hookedColliders[idx].AttachedBody;
+            
             body.Move(hookedMove);
-            body.KinematicVelocity = hookedMove / _body.Simulation.SimulationParameters.TimeDelta;
+            body.KinematicVelocity += hookedMove / body.Simulation.SimulationParameters.TimeDelta;
         }
 
         UpdateHookedColliders();
@@ -69,7 +70,6 @@ public class StandOnBodyExtension: IBodyExtension, IBodyEventsReceiver
         {
             if (!_hookedColliders[idx].Aabb.Intersects(inflatedAabb))
             {
-                _hookedColliders[idx].AttachedBody.KinematicVelocity = Vector2.Zero;
                 _hookedColliders.RemoveAt(idx);
                 continue;
             }

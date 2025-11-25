@@ -73,8 +73,6 @@ internal class Body : IBody
     private Vector2 _position;
 
     private Vector2 _force = Vector2.Zero;
-
-    public Vector2 VelocitySum => Velocity + KinematicVelocity;
     public Vector2 KinematicVelocity { get; set; } = Vector2.Zero;
     public float StepUpTolerance { get; set; } = 0.1f;
     public int UpdateOrder { get; set; }
@@ -196,6 +194,7 @@ internal class Body : IBody
         else
         {
             Position += move;
+            KinematicVelocity += move / Simulation.SimulationParameters.TimeDelta;
             OnMoved(move);
             UpdateCollidersInTree();
         }
@@ -277,8 +276,8 @@ internal class Body : IBody
 
             if (verticalColliderBody != null && verticalMovementCollider.Type == ColliderType.Dynamic && !verticalColliderBody.IsKinematic)
             {
-                var newVelocity = (VelocitySum.Y * Mass +
-                                   verticalColliderBody.VelocitySum().Y * verticalColliderBody.Mass) /
+                var newVelocity = (Velocity.Y * Mass +
+                                   verticalColliderBody.Velocity.Y * verticalColliderBody.Mass) /
                                   (Mass + verticalColliderBody.Mass);
                 Velocity = Velocity with { Y = newVelocity };
                 verticalColliderBody.Velocity = verticalColliderBody.Velocity with { Y = newVelocity };
@@ -316,8 +315,8 @@ internal class Body : IBody
 
             if (horizontalColliderBody != null && horizontalMovementCollider.Type == ColliderType.Dynamic)
             {
-                var newVelocity = (VelocitySum.X * Mass +
-                                   horizontalColliderBody.VelocitySum().X * horizontalColliderBody.Mass) /
+                var newVelocity = (Velocity.X * Mass +
+                                   horizontalColliderBody.Velocity.X * horizontalColliderBody.Mass) /
                                   (Mass + horizontalColliderBody.Mass);
                 
                 Velocity = Velocity with { X = newVelocity };
@@ -470,6 +469,7 @@ internal class Body : IBody
         move = Position - beforeUpdatePosition;
         OnMoved(move);
         _force = Vector2.Zero;
+        KinematicVelocity = Vector2.Zero;
     }
     
     private void FixInsideByStepUp(ICollider collider, ICollider other)

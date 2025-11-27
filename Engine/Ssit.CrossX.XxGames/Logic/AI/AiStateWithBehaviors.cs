@@ -1,7 +1,9 @@
 namespace Ssit.CrossX.XxGames.Logic.AI;
 
-public class AiStateWithBehaviors<TObject>(AiBehavior<TObject>[] behaviors) : AiState<TObject>
+public class AiStateWithBehaviors<TObject>(string name, AiBehavior<TObject>[] behaviors) : AiState<TObject>
 {
+    public override string Name => name;
+    
     protected override void OnEnter(AiStateMachine<TObject> sm)
     {
         foreach (var behavior in behaviors)

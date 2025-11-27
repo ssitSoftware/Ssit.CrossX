@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Ssit.CrossX.Graphics.Renderer;
 
 namespace Ssit.CrossX.XxGames.Physics;
@@ -14,33 +13,14 @@ public static class SimulationRenderer
     
     private static void DrawRectangle(IGeometryRenderer renderer, RectangleF rect, RgbaColor color)
     {
-        var renderScale = 1f / RenderScale;
-        
-        rect = rect.Inflate(-0.5f * renderScale, -0.5f * renderScale);
-        renderer.DrawRectangle(rect, color);
-        rect = rect.Inflate(renderScale, renderScale);
         renderer.DrawRectangle(rect, color);
     }
 
     private static void DrawLine(IGeometryRenderer renderer, Vector2 start, Vector2 end, RgbaColor color)
     {
-        var renderScale = 1f / RenderScale;
-        
-        start.Y -= 0.5f * renderScale;
-        end.Y -= 0.5f * renderScale;
-        
-        start.X -= 0.5f * renderScale;
-        end.X -= 0.5f * renderScale;
-        
+        var px = 1 / RenderScale;
         renderer.DrawLine(start, end, color);
-
-        start.Y += renderScale;
-        end.Y += renderScale;
-        
-        start.X += renderScale;
-        end.X += renderScale;
-        
-        renderer.DrawLine(start, end, color);
+        renderer.DrawLine(start + new Vector2(px, px), end + new Vector2(px, px), color);
     }
     
     public static void Render(IGeometryRenderer renderer, ISimulation simulation)

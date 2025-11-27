@@ -34,5 +34,4 @@ public class CharacterSteringParameters
     public bool DisableFall;
     
     public ICollider LadderCollider;
-    public bool? ClimbDown;
 }

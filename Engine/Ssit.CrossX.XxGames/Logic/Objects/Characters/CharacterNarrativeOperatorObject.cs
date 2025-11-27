@@ -7,7 +7,7 @@ using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCharacter>, IStoryOperator
+public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCharacter>, IStoryOperator
     where TCharacter : CharacterNarrativeOperatorObject<TCharacter>
 {
     private readonly IActionScheduler _actionScheduler;
@@ -34,7 +34,7 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
     
     bool IStoryOperator.ExecuteStoryConversation(INpcCharacter npc, string conversationId)
     {
-        if (!SteringParameters.IsOnGround)
+        if (!SteringParameters.IsOnGround) 
             return false;
         
         if (npc is null)
@@ -51,7 +51,7 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
         Body.Velocity = Vector2.Zero;
         _camera.SetTemporaryTarget(Body, new Vector2(0,-4), 4, null, TimeSpan.FromDays(10));
         
-        StateMachine.SetSteringState("Talking");
+        SteringStateMachine.SetSteringState("Talking");
         
         await _narrationSystem.StartNarration(conversationId);
 
@@ -67,7 +67,7 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
         
         _actionScheduler.Schedule(() =>
         { 
-            StateMachine.SetSteringState("Idle");
+            SteringStateMachine.SetSteringState("Idle");
             OnGameStateUpdated();
         });
     }
@@ -123,14 +123,14 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
                 return;
             }
 
-            StateMachine.SetSteringState("WalkTo");
+            SteringStateMachine.SetSteringState("WalkTo");
             await WalkTo(targetPosX);
         }
         
         _actionScheduler.Schedule(() =>
         {
             Body.Velocity = Vector2.Zero;
-            StateMachine.SetSteringState("Talking");
+            SteringStateMachine.SetSteringState("Talking");
             FaceLeft = faceLeft;
         });
         
@@ -147,13 +147,13 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
         
         _actionScheduler.Schedule(() =>
         {
-            StateMachine.SetSteringState("Idle");
+            SteringStateMachine.SetSteringState("Idle");
         });
     }
     
     public async Task WalkTo(float targetPosX)
     {
-        StateMachine.SetSteringState("WalkTo");
+        SteringStateMachine.SetSteringState("WalkTo");
 
         _walkToPositionX = targetPosX;
         
@@ -189,7 +189,7 @@ public class CharacterNarrativeOperatorObject<TCharacter> : CharacterObject<TCha
             }
         }
     }
-    
+
     protected override void OnDispose(bool disposing)
     {
         _gameState.StateUpdated -= OnGameStateUpdated;

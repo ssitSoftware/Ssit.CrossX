@@ -9,7 +9,7 @@ namespace Ssit.CrossX.XxGames.Logic.Objects;
 public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstance.IHandler, IUpdatable where TObject: SpriteGameObject2, TStateObject
 {
     private readonly TObject _obj;
-    public SteringStateMachine<TStateObject> SteringStateMachine { get; }
+    public SteringStateMachine<TStateObject> InternalStateMachine { get; }
     
     private readonly Dictionary<string, string> _sequenceMapping = new();
     private readonly Dictionary<string, SteringState<TStateObject>> _steringStates = new();
@@ -19,15 +19,15 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
         _obj = obj;
         obj.AddUpdatableInternal(this);
         
-        SteringStateMachine = new SteringStateMachine<TStateObject>(obj);
-        SteringStateMachine.OnStateChanged += SteringStateMachineOnOnStateChanged;
+        InternalStateMachine = new SteringStateMachine<TStateObject>(obj);
+        InternalStateMachine.OnStateChanged += OnStateChanged;
 
         obj.Sprite.Handler = this;
     }
 
     public void SetSteringState(string stateName)
     {
-        if (stateName.Equals(SteringStateMachine.CurrentState?.Name ?? ""))
+        if (stateName.Equals(InternalStateMachine.CurrentState?.Name ?? ""))
             return;
         
         if (!_steringStates.TryGetValue(stateName, out var state))
@@ -35,7 +35,7 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
             throw new Exception($"State {stateName} not found");
         }
         
-        SteringStateMachine.SetState(state);
+        InternalStateMachine.SetState(state);
     }
     
     public SpriteGameObjectStateMachine<TObject, TStateObject> RegisterState(SteringState<TStateObject> state)
@@ -51,7 +51,7 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
         return this;
     }
     
-    private void SteringStateMachineOnOnStateChanged(object sender, SteringState<TStateObject> state)
+    private void OnStateChanged(object sender, SteringState<TStateObject> state)
     {
         if (!_sequenceMapping.TryGetValue(state.Name, out var sequenceName))
         {
@@ -63,23 +63,23 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
 
     void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
     {
-        SteringStateMachine.CurrentState?.Event(_obj, @event);
+        InternalStateMachine.CurrentState?.Event(_obj, @event);
         _obj.CallSpriteEvent(@event);
     }
 
     void SpriteInstance.IHandler.OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
     {
-        SteringStateMachine.CurrentState?.SequenceFinished(_obj, sequenceName);
+        InternalStateMachine.CurrentState?.SequenceFinished(_obj, sequenceName);
         _obj.CallSequenceFinished(sequenceName);
     }
     
     void IUpdatable.Update(float dt)
     {
-        SteringStateMachine.CurrentState?.Update(_obj, dt);
+        InternalStateMachine.CurrentState?.Update(_obj, dt);
     }
     
     void IUpdatable.FixedUpdate(float dt)
     {
-        SteringStateMachine.CurrentState?.FixedUpdate(_obj, dt);
+        InternalStateMachine.CurrentState?.FixedUpdate(_obj, dt);
     }
 }

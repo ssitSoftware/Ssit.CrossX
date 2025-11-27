@@ -25,7 +25,6 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     protected RectangleF BoundsRect { get; set; }
 
     private readonly List<IUpdatable> _updatables = new();
-    
     public RectangleF Bounds => BoundsRect.Offset(Body.Position);
     
     public bool FaceLeft

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Audio;
 using Ssit.CrossX.XxGames.Logic.Stering;
@@ -6,23 +7,42 @@ using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public class CharacterObject<TCharacter> : SpriteGameObject2, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
+public abstract class CharacterObject<TCharacter> : SpriteGameObject2, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
 {
+    TParameters IGameObject.Get<TParameters>(bool create) => GetParameter<TParameters>(create);
+    SteringState<ISteringCharacter> ISteringCharacter.CurrentSteringState => SteringStateMachine.InternalStateMachine.CurrentState;
+    
+    ISteringInput ISteringCharacter.SteringInput => SteringInput;
+    
     public CharacterSteringParameters SteringParameters { get; } = new();
-    public ISteringInput SteringInput { get; protected init; }
+    
+    protected abstract ISteringInput SteringInput { get; }
+    
     public Vector2 MomentumOffset { get; set; }
     
     public ICharacterPhysicsValues PhysicsValues { get; protected init; }
     protected ContextSoundContainer SoundContainer { get; init; }
+
+    protected SpriteGameObjectStateMachine<TCharacter, ISteringCharacter> SteringStateMachine { get; private set; }
+
+    private readonly Dictionary<Type, object> _parameters = new();
     
-    public SpriteGameObjectStateMachine<TCharacter, ISteringCharacter> StateMachine { get; protected set; }
+    protected virtual TParameters GetParameter<TParameters>(bool create)
+    {
+        if (create)
+        {
+            if (!_parameters.TryGetValue(typeof(TParameters), out var obj))
+            {
+                obj = Activator.CreateInstance<TParameters>();
+                _parameters.Add(typeof(TParameters), obj);
+            }
+            return (TParameters)obj;
+        }
+
+        throw new Exception("No parameters of given type.");
+    }
     
-    TParameters IGameObject.Get<TParameters>() => GetParameter<TParameters>();
-    SteringState<ISteringCharacter> ISteringCharacter.CurrentSteringState => StateMachine.SteringStateMachine.CurrentState;
-    
-    protected virtual TParameters GetParameter<TParameters>() => throw new ArgumentOutOfRangeException();
-    
-    public void SetSteringState(string name) => StateMachine.SetSteringState(name);
+    public void SetSteringState(string name) => SteringStateMachine.SetSteringState(name);
     
     ContextSoundContainer IGameObject.SoundContainer => SoundContainer;
     
@@ -30,10 +50,10 @@ public class CharacterObject<TCharacter> : SpriteGameObject2, ISteringCharacter 
     {
     }
     
-    protected void InitializeStateMachine()
+    protected void InitializeSteringStateMachine()
     {
-        StateMachine = new SpriteGameObjectStateMachine<TCharacter, ISteringCharacter>((TCharacter)this);
-        StateMachine.SteringStateMachine.OnStateChanged += SteringStateMachineOnOnStateChanged;
+        SteringStateMachine = new SpriteGameObjectStateMachine<TCharacter, ISteringCharacter>((TCharacter)this);
+        SteringStateMachine.InternalStateMachine.OnStateChanged += SteringStateMachineOnOnStateChanged;
     }
     
     protected void DetectOnGround()
@@ -51,7 +71,7 @@ public class CharacterObject<TCharacter> : SpriteGameObject2, ISteringCharacter 
     {
         base.OnDispose(disposing);
         
-        StateMachine.SteringStateMachine.OnStateChanged -= SteringStateMachineOnOnStateChanged;
+        SteringStateMachine.InternalStateMachine.OnStateChanged -= SteringStateMachineOnOnStateChanged;
         SoundContainer?.Dispose();
     }
 }

@@ -6,8 +6,6 @@ public interface ISteringInput
 {
     float HorizontalMove { get; }
     float Vertical { get; }
-    ButtonState ClimbUp { get; }
-    
     ButtonState Jump { get; }
     ButtonState Attack { get; }
     ButtonState SpecialAttack { get; }

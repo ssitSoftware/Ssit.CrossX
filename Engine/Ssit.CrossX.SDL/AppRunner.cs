@@ -1,4 +1,3 @@
-
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;

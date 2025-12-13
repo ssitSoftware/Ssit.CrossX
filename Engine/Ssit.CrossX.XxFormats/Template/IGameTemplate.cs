@@ -9,7 +9,6 @@ public interface IGameTemplate
     string Name { get; }
     Guid Guid { get; }
     int TileSize { get; }
-    Size TargetSize { get; }
     
     RgbaColor DefaultBackground { get; }
     
@@ -27,4 +26,6 @@ public interface IGameTemplate
     RgbaColor EmptyColor { get; }
     RgbaColor TilesBgColor => EmptyColor;
     int TrimToPixels => 0;
+    
+    Size TargetSize { get; }
 }

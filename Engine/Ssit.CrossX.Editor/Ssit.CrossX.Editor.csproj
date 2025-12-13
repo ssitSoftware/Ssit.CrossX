@@ -30,6 +30,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Ssit.CrossX.XxFormats\Ssit.CrossX.XxFormats.csproj" />
       <ProjectReference Include="..\Ssit.CrossX.XxGames\Ssit.CrossX.XxGames.csproj" />
-      <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
     </ItemGroup>
 </Project>

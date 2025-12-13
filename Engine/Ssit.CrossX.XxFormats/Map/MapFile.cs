@@ -55,10 +55,8 @@ public class MapFile: BindableModel
         {
             if (_mainLayer != null)
                 return _mainLayer;
-            
-            return _mainLayer = Layers.FirstOrDefault(o => o.Name.ToLowerInvariant() == "main") ??
-                         Layers.FirstOrDefault(o => Math.Abs(o.HorizontalSpeed - 1) < float.Epsilon && Math.Abs(o.VerticalSpeed - 1) < float.Epsilon) ??
-                         Layers.First();
+
+            return _mainLayer = Layers.FirstOrDefault(o => o is MainLayer);
         }
     }
 
@@ -174,8 +172,11 @@ public class MapFile: BindableModel
         var layersNo = reader.ReadByte();
         for (var idx = 0; idx < layersNo; ++idx)
         {
-            var layer = new MapLayer();
-            layer.Load(reader, gameTemplate);
+            var id = reader.ReadString();
+            var layer = id.Equals(LayerDescription.MainLayerId, StringComparison.InvariantCultureIgnoreCase) 
+                ? new MainLayer(gameTemplate) : new MapLayer(id, gameTemplate);
+            
+            layer.Load(reader);
             Layers.Add(layer);
         }
 

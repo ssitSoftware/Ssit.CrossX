@@ -13,14 +13,13 @@ public static class SimulationRenderer
     
     private static void DrawRectangle(IGeometryRenderer renderer, RectangleF rect, RgbaColor color)
     {
+        var px = 1 / RenderScale;
         renderer.DrawRectangle(rect, color);
     }
 
     private static void DrawLine(IGeometryRenderer renderer, Vector2 start, Vector2 end, RgbaColor color)
     {
-        var px = 1 / RenderScale;
         renderer.DrawLine(start, end, color);
-        renderer.DrawLine(start + new Vector2(px, px), end + new Vector2(px, px), color);
     }
     
     public static void Render(IGeometryRenderer renderer, ISimulation simulation)

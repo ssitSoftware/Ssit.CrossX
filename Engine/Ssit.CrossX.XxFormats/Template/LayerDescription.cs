@@ -5,6 +5,7 @@ namespace Ssit.CrossX.XxFormats.Template;
 public class LayerDescription
 {
     public const string MainLayerId = "MAIN";
+    public const string MainLayerName = "Main";
     
     public readonly string Id;
     public readonly string Name;

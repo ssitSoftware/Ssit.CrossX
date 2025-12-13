@@ -642,7 +642,7 @@ public class PixelAppHost: IAppHost
             });
         }
 
-        if (targetScale > 1)
+        //if (targetScale > 1)
         {
             _postRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
             {

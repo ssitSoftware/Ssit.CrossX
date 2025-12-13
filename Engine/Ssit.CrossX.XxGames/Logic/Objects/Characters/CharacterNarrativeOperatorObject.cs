@@ -29,7 +29,6 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
 
         _gameState = gameState;
         _gameState.StateUpdated += OnGameStateUpdated;
-
     }
     
     bool IStoryOperator.ExecuteStoryConversation(INpcCharacter npc, string conversationId)

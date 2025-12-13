@@ -14,7 +14,7 @@ public class EmbeddedFilesProvider: IFilesProvider
 
     public EmbeddedFilesProvider(Assembly assembly, string prefix = null)
     {
-        _prefix = (prefix ?? _assembly.GetName().Name) + '.';
+        _prefix = (prefix ?? assembly.GetName().Name) + '.';
         _assembly = assembly;
         _files = new HashSet<string>(_assembly.GetManifestResourceNames()); 
     }

@@ -268,15 +268,25 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             foreach (var layer in template.Layers)
             {
-                mapFile.Layers.Add(new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
+                MapLayer mapLayer;
+                if (layer.Id.Equals(LayerDescription.MainLayerId, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Name = layer.Name,
-                    HorizontalSpeed = layer.HorizontalSpeed,
-                    VerticalSpeed = layer.VerticalSpeed,
-                    Depth = layer.Depth,
-                    TintColor = layer.Tint,
-                    FogColor = layer.Fog
-                });
+                    mapLayer = new MainLayer(layer.Size.Width, layer.Size.Height, template);
+                }
+                else
+                {
+                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height, template);
+                }
+
+                mapLayer.Name = layer.Name;
+                mapLayer.HorizontalSpeed = layer.HorizontalSpeed;
+                mapLayer.VerticalSpeed = layer.VerticalSpeed;
+                mapLayer.Depth = layer.Depth;
+                mapLayer.TintColor = layer.Tint;
+                mapLayer.FogColor = layer.Fog;
+                
+                mapFile.Layers.Add(mapLayer);
+                
             }
 
             _editorData.SelectedLayer = LayerDescription.MainLayerId;
@@ -361,7 +371,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 var mapLayer = mapFile.Layers.FirstOrDefault(o => string.Equals(o.Name, layer.Name, StringComparison.InvariantCultureIgnoreCase));
                 if (mapLayer is null)
                 {
-                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
+                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height, _instances.Template)
                     {
                         Name = layer.Name,
                         HorizontalSpeed = layer.HorizontalSpeed,

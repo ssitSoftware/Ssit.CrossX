@@ -12,4 +12,5 @@ public struct FontDesc
     }
     
     public static implicit operator FontDesc((string fontFamily, int fontSize) info) => new(info.fontFamily, info.fontSize);  
+    public static implicit operator FontDesc(string fontFamily) => new(fontFamily, 0);
 }

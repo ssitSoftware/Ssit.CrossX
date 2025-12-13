@@ -38,6 +38,15 @@ internal class FontsManager: IFontsManager, IDisposable
         _fonts.Clear();
     }
 
+    public void SetDefaultFont(string name)
+    {
+        if (_fonts.TryGetValue(name, out var fonts))
+        {
+            _fonts["Default"] = fonts;
+        }
+        else throw new Exception($"Font {name} not found");
+    }
+
     public void LoadFonts(string fontsJsonPath)
     {
         Dictionary<string, List<IFont>> fonts = new();
@@ -61,9 +70,9 @@ internal class FontsManager: IFontsManager, IDisposable
         }
     }
 
-    public IFont GetFont(string name, int size)
+    public IFont GetFont(string name, float size = 0)
     {
-        var diff = int.MaxValue;
+        var diff = float.MaxValue;
         IFont retFont = null;
         
         if (_fonts.TryGetValue(name, out var fonts))
@@ -72,7 +81,7 @@ internal class FontsManager: IFontsManager, IDisposable
             {
                 if (Math.Abs(font.Size - size) < diff)
                 {
-                    diff = Math.Abs(font.Size - size);
+                    diff = MathF.Abs(font.Size - size);
                     retFont = font;
                 }
             }

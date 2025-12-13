@@ -15,7 +15,7 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL;
 
-public static class AppRunner<TApp> where TApp : IApp, new()
+public static class AppRunner<TApp> where TApp : class, IApp, new()
 {
     public delegate void InitializeServicesDelegate(IIoCContainerBuilder builder);
 
@@ -132,6 +132,14 @@ public static class AppRunner<TApp> where TApp : IApp, new()
                         {
                             SDL_HideCursor();
                         }
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_KEY_DOWN:
+                        (app as IKeyboardEventHandler)?.OnKeyDown((Key)@event.key.scancode);
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_KEY_UP:
+                        (app as IKeyboardEventHandler)?.OnKeyUp((Key)@event.key.scancode);
                         break;
                 }
                 

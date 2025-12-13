@@ -1,3 +1,5 @@
+using System;
+
 namespace Ssit.CrossX.Input;
 
 /// <summary>
@@ -5,6 +7,9 @@ namespace Ssit.CrossX.Input;
 /// </summary>
 public interface IKeyboard
 {
+    event Action<Key> OnKeyPressed;
+    event Action<Key> OnKeyReleased;
+    
     /// <summary>
     /// Retrieves the current state of the specified key.
     /// </summary>

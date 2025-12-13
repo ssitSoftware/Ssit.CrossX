@@ -4,6 +4,13 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <Version>0.0.3</Version>
+        <Title>CrossX - Cross Platform 2D Games Framework</Title>
+        <Authors>Sebastian Sejud IT</Authors>
+        <Description>SDL3 implementation of CrossX</Description>
+        <Copyright>Sebastian Sejud IT</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Input.Internal;
 
-internal class InputMappings: IInputMappings
+internal class InputMappings: IInputMappings, IInputMappingsInt
 {
     private readonly IIoCContainer _container;
     private readonly Dictionary<int, InputMapping> _mappings = new();
@@ -29,4 +30,5 @@ internal class InputMappings: IInputMappings
 
     public IMapper Mapper(int player) => GetMapping(player, true);
     public IInputMapping this[int player] => GetMapping(player, false) ?? throw new InvalidOperationException();
+    public int[] MappedPlayers => _mappings.Keys.ToArray();
 }

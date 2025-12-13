@@ -4,6 +4,11 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>disable</Nullable>
         <LangVersion>default</LangVersion>
+        <Version>0.0.3</Version>
+        <Title>CrossX - Cross Platform 2D Games Framework</Title>
+        <Authors>Sebastian Sejud IT</Authors>
+        <Copyright>Sebastian Sejud IT</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

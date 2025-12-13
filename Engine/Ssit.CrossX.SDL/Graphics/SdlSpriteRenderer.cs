@@ -92,7 +92,6 @@ public unsafe class SdlSpriteRenderer(SDL_Renderer* renderer, IRenderStateProvid
             {
                 offset.X = (sourceRectangle?.Width ?? texture.Size.Width) - origin.Value.X;
             }
-            
         }
         else if (sourceRectangle != null)
         {

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.IoC;
 

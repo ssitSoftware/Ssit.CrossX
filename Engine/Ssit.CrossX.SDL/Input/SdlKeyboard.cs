@@ -27,6 +27,9 @@ public unsafe class SdlKeyboard: KeyboardBase
         _previousKeys = new bool[_keyCount];
     }
     
+    public void KeyPressed( Key key ) => CallKeyPressed(key);
+    public void KeyReleased( Key key ) => CallKeyReleased(key);
+    
     protected override ButtonState GetKeyInternal(Key key)
     {
         if (key >= Key.MouseButtonLeft)

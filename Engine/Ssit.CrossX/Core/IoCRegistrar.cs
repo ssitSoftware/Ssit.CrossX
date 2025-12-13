@@ -25,7 +25,8 @@ public static class IoCRegistrar
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
             .WithSingleton<IInputMappings, InputMappings>()
-            .WithSingleton<IActionScheduler, ActionScheduler>();
+            .WithSingleton<IActionScheduler, ActionScheduler>()
+            .WithSingleton<ISmartTextRenderer, SmartTextRenderer>();
     }
     
     public static IIoCContainerBuilder WithIndexedRenderer(this IIoCContainerBuilder builder, params RgbaColor[] palette)

@@ -18,7 +18,7 @@ public class Label: Background
     
     public ContentAlign? TextAlign { get; set; }
     public TextSpacing? TextSpacing { get; set; }
-    
+    public int? LineSpacing { get; set; }
     public FontDesc? Font { get; set; }
     
     public Thickness? Padding { get; set; }

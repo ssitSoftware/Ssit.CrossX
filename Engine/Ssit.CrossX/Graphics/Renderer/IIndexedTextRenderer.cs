@@ -16,9 +16,10 @@ public interface IIndexedTextRenderer
     /// <param name="color">The color of the text. If null, the default color is used.</param>
     /// <param name="spacing">The spacing of the text, determining how condensed or expanded the text appears. Default is normal spacing.</param>
     /// <param name="outlineColor">The outline color of the text. If null, no outline is drawn.</param>
-    /// /// <param name="context">Rendering context for faster rendering by caching text calculations. Use for rendering multiline texts.</param>
+    /// <param name="lineSpacing">The spacing between text lines. Default is 0.</param>
+    /// <param name="context">Rendering context for faster rendering by caching text calculations. Use for rendering multiline texts.</param>
     void DrawText(IFont font, TextSource text, Vector2 position, byte color, ContentAlign align = ContentAlign.Left, 
-        TextSpacing spacing = TextSpacing.Normal, byte? outlineColor = null, TextRenderingContext context = null);
+        TextSpacing spacing = TextSpacing.Normal, byte? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null);
 
     /// <summary>
     /// Draws the specified text on the screen within a defined rectangle.
@@ -31,7 +32,9 @@ public interface IIndexedTextRenderer
     /// <param name="spacing">The spacing mode to apply between characters. Default is Normal.</param>
     /// <param name="paragraphSpacing">Spacing between paragraphs.</param>
     /// <param name="outlineColor">The color to render the text outline. If null, no outline is rendered. Use for rendering multiline texts.</param>
+    /// <param name="lineSpacing">The spacing between text lines. Default is 0.</param>
     /// <param name="context">Rendering context for rendering cache.</param>
     void DrawText(IFont font, TextSource text, RectangleF position, byte color, ContentAlign align = ContentAlign.Left, 
-        TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, byte? outlineColor = null, TextRenderingContext context = null);
+        TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, byte? outlineColor = null, int lineSpacing = 0,
+        TextRenderingContext context = null);
 }

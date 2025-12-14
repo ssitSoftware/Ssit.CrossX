@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>disable</Nullable>
         <LangVersion>default</LangVersion>
-        <Version>0.0.5</Version>
+        <Version>0.0.6</Version>
         <Title>CrossX - Cross Platform 2D Games Framework</Title>
         <Authors>Sebastian Sejud IT</Authors>
         <Copyright>Sebastian Sejud IT</Copyright>

@@ -57,23 +57,14 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
 
         if (clipRect.HasValue)
         {
-            var scale = StateProvider.Scale;
-            var offset = StateProvider.Offset;
-            
             var r = clipRect.Value;
-            
-            var x =  r.X * scale + offset.X;
-            var y =  r.Y * scale + offset.Y;
-            
-            var w = r.Width * scale;
-            var h = r.Height * scale;
             
             var rect = new SDL_Rect
             {
-                x = (int)x,
-                y = (int)y,
-                w = (int)w,
-                h = (int)h
+                x = (int)r.X,
+                y = (int)r.Y,
+                w = (int)r.Width,
+                h = (int)r.Height
             };
             SDL_SetRenderClipRect(_renderer, &rect);
         }

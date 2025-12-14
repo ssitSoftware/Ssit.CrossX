@@ -16,11 +16,11 @@ public interface ITextRenderer
     /// <param name="scale">Scaling factor for glyphs.</param>
     /// <param name="color">The color of the text. If null, the default color is used.</param>
     /// <param name="spacing">The spacing of the text, determining how condensed or expanded the text appears. Default is normal spacing.</param>
-    /// <param name="depth">The depth value used for layering text in 3D space.</param>
     /// <param name="outlineColor">The outline color of the text. If null, no outline is drawn.</param>
-    /// /// <param name="context">Rendering context for faster rendering by caching text calculations. Use for rendering multiline texts.</param>
+    /// <param name="lineSpacing">Spacing between text lines. Default is 0.</param>
+    /// <param name="context">Rendering context for faster rendering by caching text calculations. Use for rendering multiline texts.</param>
     void DrawText(IFont font, TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left, float scale = 1, RgbaColor? color = null, 
-         TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null, TextRenderingContext context = null);
+         TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null);
 
     /// <summary>
     /// Draws the specified text on the screen within a defined rectangle.
@@ -35,7 +35,8 @@ public interface ITextRenderer
     /// <param name="paragraphSpacing">Spacing between paragraphs.</param>
     /// <param name="depth">The depth value to use for rendering order. Default is 0.</param>
     /// <param name="outlineColor">The color to render the text outline. If null, no outline is rendered. Use for rendering multiline texts.</param>
+    /// <param name="lineSpacing">Spacing between text lines. Default is 0.</param>
     /// <param name="context">Rendering context for rendering cache.</param>
     void DrawText(IFont font, TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left, float scale = 1, RgbaColor? color = null, 
-        TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, RgbaColor? outlineColor = null, TextRenderingContext context = null);
+        TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, RgbaColor? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null);
 }

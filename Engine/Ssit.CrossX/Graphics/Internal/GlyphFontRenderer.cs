@@ -15,16 +15,16 @@ internal static class GlyphFontRenderer
     private static readonly TextRenderingContext TempContext = new();
     
     public static void RenderText(IQuadsRenderer quadsRenderer, IGlyphFont font, TextSource text, Vector2 position, ContentAlign align, float scale,
-        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, TextRenderingContext context)
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, int lineSpacing, TextRenderingContext context)
     {
         if (context is null)
         {
             context = TempContext;
-            CalculateLines(font, text, spacing, context);
+            CalculateText(font, text, spacing, lineSpacing, context);
         }
         else if(!context.IsValid(text, font, spacing))
         {
-            CalculateText(font, text, spacing, context);
+            CalculateText(font, text, spacing, lineSpacing, context);
         }
         
         if (font.OutlineSheet is not null && outlineColor.A > 0)
@@ -41,7 +41,7 @@ internal static class GlyphFontRenderer
     }
 
     public static void RenderText(IQuadsRenderer quadsRenderer, IGlyphFont font, TextSource text, RectangleF target, ContentAlign align, float scale,
-        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, TextRenderingContext context)
+        RgbaColor color, RgbaColor outlineColor, TextSpacing spacing, float paragraphSpacing, int lineSpacing, TextRenderingContext context)
     {
         if (context is null)
         {
@@ -50,7 +50,7 @@ internal static class GlyphFontRenderer
         
         if (!context.IsValid(text, font, spacing, (int)target.Width))
         {
-            CalculateMultilineText(font, text, target.Width, spacing, paragraphSpacing, context);
+            CalculateMultilineText(font, text, target.Width, spacing, paragraphSpacing, lineSpacing, context);
         }
 
         var position = target.TopLeft;
@@ -88,35 +88,37 @@ internal static class GlyphFontRenderer
         }
     }
 
-    public static void CalculateText(IGlyphFont font, TextSource text, TextSpacing spacing, TextRenderingContext context)
+    public static void CalculateText(IGlyphFont font, TextSource text, TextSpacing spacing, int lineSpacing, TextRenderingContext context)
     {
-        if (!context.IsValid(text, font, spacing))
+        if (!context.IsValid(text, font, spacing, lineSpacing: lineSpacing))
         {
-            context.Update(text, font, spacing);
-            CalculateLines(font, text, spacing, context);
+            context.Update(text, font, spacing, targetWidth: lineSpacing);
+            CalculateLines(font, text, spacing, lineSpacing, context);
         }
     }
 
     public static void CalculateMultilineText(IGlyphFont font, TextSource text, float targetWidth,
-        TextSpacing spacing, float paragraphSpacing, TextRenderingContext context)
+        TextSpacing spacing, float paragraphSpacing, int lineSpacing, TextRenderingContext context)
     {
         if (context.IsValid(text, font, spacing, (int)targetWidth))
         {
             return;
         }
         
-        context.Update(text, font, spacing, (int)targetWidth);
-        CalculateWrapLines(font, text, spacing, paragraphSpacing, context, (int)targetWidth);
+        context.Update(text, font, spacing, targetWidth: (int)targetWidth, lineSpacing: lineSpacing);
+        CalculateWrapLines(font, text, spacing, paragraphSpacing, lineSpacing, context, (int)targetWidth);
     }
 
-    private static void CalculateWrapLines(IGlyphFont font, TextSource text, TextSpacing spacing, float paragraphSpacing, TextRenderingContext context, int maxWidth)
+    private static void CalculateWrapLines(IGlyphFont font, TextSource text, TextSpacing spacing, float paragraphSpacing, int lineSpacing, TextRenderingContext context, int maxWidth)
     {
         context.Lines.Clear();
 
         var start = 0;
         var lastSmaller = 0;
 
-        var newLineSpacing = 0f;
+        paragraphSpacing = MathF.Max(paragraphSpacing, lineSpacing);
+
+        var newLineSpacing = (float)lineSpacing;
         
         for (var idx = 0; idx < text.Length + 1; ++idx)
         {
@@ -138,7 +140,7 @@ internal static class GlyphFontRenderer
                 {
                     var line = GetLine(text, start, lastSmaller - start, font, spacing);
                     line.Spacing = newLineSpacing;
-                    newLineSpacing = 0;
+                    newLineSpacing = lineSpacing;
                     start = lastSmaller + 1;
                     lastSmaller = start;
                     idx = start;
@@ -264,7 +266,8 @@ internal static class GlyphFontRenderer
         return positionY - font.Metrics.Ascender * scale;
     }
 
-    private static void CalculateLines(IGlyphFont font, TextSource text, TextSpacing spacing, TextRenderingContext context)
+    private static void CalculateLines(IGlyphFont font, TextSource text, TextSpacing spacing, int lineSpacing,
+        TextRenderingContext context)
     {
         context.Lines.Clear();
         var length = text.Length;
@@ -275,11 +278,13 @@ internal static class GlyphFontRenderer
             if (text[idx] != '\n') continue;
             
             var line = GetLine(text, position, idx - position, font, spacing);
+            line.Spacing += lineSpacing;
             context.Lines.Add(line);
             position = idx + 1;
         }
 
         var lastLine = GetLine(text, position, length - position, font, spacing);
+        lastLine.Spacing += lineSpacing;
         context.Lines.Add(lastLine);
     }
 

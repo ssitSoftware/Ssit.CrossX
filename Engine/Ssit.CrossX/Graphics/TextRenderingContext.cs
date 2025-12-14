@@ -27,6 +27,7 @@ public class TextRenderingContext
     private float _width;
     private float _height;
     private bool _fullStringCheckEnabled;
+    private int _lineSpacing;
 
     internal IGlyphFont Font => _font;
     
@@ -60,7 +61,7 @@ public class TextRenderingContext
         {
             lock (this)
             {
-                if (_height < 0)
+                if (_height <= 0)
                 {
                     float height = Lines.Count * _font?.Metrics?.LineHeight ?? 0;
                     for (int idx = 0; idx < Lines.Count; idx++)
@@ -89,7 +90,7 @@ public class TextRenderingContext
         }
     }
 
-    public void Update(TextSource text, IGlyphFont font, TextSpacing spacing, int targetWidth = 0)
+    public void Update(TextSource text, IGlyphFont font, TextSpacing spacing, int targetWidth = 0, int lineSpacing = 0)
     {
         if (FullStringCheckEnabled)
         {
@@ -103,6 +104,7 @@ public class TextRenderingContext
         }
 
         _targetWidth = targetWidth;
+        _lineSpacing = lineSpacing;
         _font = font;
         Lines.Clear();
         _spacing = spacing;
@@ -157,7 +159,7 @@ public class TextRenderingContext
         Lines.Clear();
     }
 
-    public bool IsValid(TextSource text, IGlyphFont font, TextSpacing spacing, int targetWidth = 0)
+    public bool IsValid(TextSource text, IGlyphFont font, TextSpacing spacing, int targetWidth = 0, int lineSpacing = 0)
     {
         if (_targetWidth != targetWidth)
         {
@@ -167,6 +169,11 @@ public class TextRenderingContext
             {
                 return false;
             }
+        }
+
+        if (_lineSpacing != lineSpacing)
+        {
+            return false;
         }
         
         if (spacing != _spacing)

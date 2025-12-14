@@ -9,9 +9,10 @@ public interface ISmartTextRenderer
     
     void DrawText(TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left, float scale = 1,
         RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null,
+        int lineSpacing = 0,
         TextRenderingContext context = null);
     
     void DrawText(TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left, float scale = 1,
         RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1,
-        RgbaColor? outlineColor = null, TextRenderingContext context = null);
+        RgbaColor? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null);
 }

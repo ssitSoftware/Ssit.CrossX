@@ -64,10 +64,31 @@ public class StateManager(StateManager.IUpdateHwModeHandler handler) : IStateMan
         handler?.UpdateHwMode(_state.BlendMode, _state.ClipRect);
     }
     
-    public void SetClipRect(RectangleF? clipRect)
+    public void SetClipRect(RectangleF? clipRect, bool intersectExisting = true)
     {
         if (!clipRect.HasValue && _state.ClipRect == null) return;
         if (clipRect.HasValue && _state.ClipRect.HasValue && _state.ClipRect.Value.Equals(clipRect.Value)) return;
+
+        if (clipRect.HasValue)
+        {
+            var scale = _state.Scale;
+            var offset = _state.Offset;
+            
+            var r = clipRect.Value;
+            
+            var x =  r.X * scale + offset.X;
+            var y =  r.Y * scale + offset.Y;
+            
+            var w = r.Width * scale;
+            var h = r.Height * scale;
+            
+            clipRect = new RectangleF(x, y, w, h);
+
+            if (intersectExisting && _state.ClipRect.HasValue)
+            {
+                clipRect = clipRect.Value.Intersect(_state.ClipRect.Value);
+            }
+        }
         
         _state = new State(_state.Scale, _state.Offset, _state.UseGlowTextures, _state.BlendMode, _state.TextureFilter, clipRect);
         handler?.UpdateHwMode( _state.BlendMode, _state.ClipRect);

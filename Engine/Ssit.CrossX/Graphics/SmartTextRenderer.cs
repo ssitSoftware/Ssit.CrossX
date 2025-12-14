@@ -20,20 +20,21 @@ internal class SmartTextRenderer(IFontsManager fontsManager, IRenderer2 renderer
     
     public void DrawText(TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left,
         float scale = 1, RgbaColor? color = null,
-        TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null, TextRenderingContext context = null)
+        TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null)
     {
         var font =  fontsManager.GetFont(_fontName, _size * renderer2.StateProvider.Scale);
         scale /= renderer2.StateProvider.Scale;
-        renderer2.TextRenderer.DrawText(font, text, position, align, scale, color, spacing, outlineColor, context);
+        renderer2.TextRenderer.DrawText(font, text, position, align, scale, color, spacing, outlineColor, lineSpacing, context);
     }
 
     public void DrawText(TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left,
         float scale = 1, RgbaColor? color = null,
         TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1, RgbaColor? outlineColor = null,
+        int lineSpacing = 0,
         TextRenderingContext context = null)
     {
         var font =  fontsManager.GetFont(_fontName, _size * renderer2.StateProvider.Scale);
         scale /= renderer2.StateProvider.Scale;
-        renderer2.TextRenderer.DrawText(font, text, position, align, scale, color, spacing, paragraphSpacing, outlineColor, context);
+        renderer2.TextRenderer.DrawText(font, text, position, align, scale, color, spacing, paragraphSpacing, outlineColor, lineSpacing, context);
     }
 }

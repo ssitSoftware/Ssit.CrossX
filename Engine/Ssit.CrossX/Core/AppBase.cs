@@ -126,6 +126,12 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     {
     }
 
+    protected int PreparePixelRendering(IRenderer2 renderer, Size targetSize, bool forceAspect = true)
+    {
+        var (_, scale) = PrepareNormalizedRendering(renderer, targetSize, TextureFilter.Nearest, true, true);
+        return (int)MathF.Round(scale);
+    }
+
     protected (SizeF size, float scale) PrepareNormalizedRendering(IRenderer2 renderer, Size targetSize, TextureFilter filter = TextureFilter.Linear, bool forceAspect = false, bool pixelPerfect = false)
     {
         var scale = MathF.Min((float) renderer.TargetSize.Width  / targetSize.Width, (float) renderer.TargetSize.Height / targetSize.Height);

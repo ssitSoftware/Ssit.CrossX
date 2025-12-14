@@ -32,15 +32,20 @@
           Spacing="2"
           SheetWidthFactor="16.0"/>
 
-    <Font Name="PxPlus_Rainbow100_re_40" Family="PxPlus Rainbow100 re 40"
-          Sizes="42"
+    <Font Name="PxPlus_HP_100LX_16x12" Family="PxPlus HP 100LX 16x12"
+          Sizes="12"
           Antialiasing="false"
           CharSets="Ascii, Dos, Polish, German, French, Spanish, Special"
           Outline="2"
           Spacing="2"
           SheetWidthFactor="16.0"/>
-    
-    
-    
+
+    <Font Name="PxPlus_AST_PremiumExec" Family="PxPlus AST PremiumExec"
+          Sizes="20"
+          Antialiasing="false"
+          CharSets="Ascii, Dos, Polish, German, French, Spanish, Special"
+          Outline="2"
+          Spacing="2"
+          SheetWidthFactor="16.0"/>
 
 </Fonts>

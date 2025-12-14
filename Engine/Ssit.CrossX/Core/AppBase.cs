@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Cryptography;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
@@ -36,6 +37,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     }
 
     private readonly List<(int, string)> _mappedButtons = new();
+    private readonly IFontSource[] _fontSources;
     
     LoadTextureColorMode IResourcesLoaderSettings.DefaultColorMode => DefaultColorMode;
  
@@ -63,9 +65,21 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
             UpdateGraphicsMode();
         }
     }
+
+    private AppBase(GraphicsMode mode, IFontSource[] fontSources)
+    {
+        _mode = mode;
+        _fontSources = fontSources;
+    }
     
-    protected AppBase(int w, int h) => _mode = (w,h);
-    protected AppBase(int w, int h, ___FullscreenMode _) => _mode = new(w,h,true);
+    protected AppBase(int w, int h, params IFontSource[] fontSources): this(new GraphicsMode(w, h), fontSources)
+    {
+    }
+
+    protected AppBase(int w, int h, ___FullscreenMode _, params IFontSource[] fontSources) : this(new(w, h, true),
+        fontSources)
+    {
+    }
 
     void IDisposable.Dispose()
     {
@@ -85,7 +99,12 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         Keyboard = container.Get<IKeyboard>();
         _inputMappings = container.Get<IInputMappings>();
         SmartTextRenderer = container.Get<ISmartTextRenderer>();
-        
+
+        foreach (var src in _fontSources)
+        {
+            FontsManager.LoadFonts(src.FontsDriveName + "/Fonts.json");
+        }
+
         OnInitialize(container);
         UpdateGraphicsMode();
 
@@ -107,13 +126,33 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     {
     }
 
-    protected (SizeF size, float scale) PrepareNormalizedRendering(IRenderer2 renderer, Size targetSize, TextureFilter filter = TextureFilter.Linear)
+    protected (SizeF size, float scale) PrepareNormalizedRendering(IRenderer2 renderer, Size targetSize, TextureFilter filter = TextureFilter.Linear, bool forceAspect = false, bool pixelPerfect = false)
     {
         var scale = MathF.Min((float) renderer.TargetSize.Width  / targetSize.Width, (float) renderer.TargetSize.Height / targetSize.Height);
-        renderer.StateManager.Scale(scale);
+        
+        if (pixelPerfect)
+        {
+            scale = Math.Max(1, (int)MathF.Floor(scale));
+        }
+
+        var size = renderer.TargetSize.ToVector() / scale;
+        
+        if(forceAspect)
+        {
+            var offset = (renderer.TargetSize.ToVector() - targetSize.ToVector() * scale) / 2;
+            renderer.StateManager.Translate(offset);
+            renderer.StateManager.Scale(scale);
+            
+            size = targetSize.ToVector();
+            renderer.StateManager.SetClipRect(new RectangleF(0, 0, targetSize.Width, targetSize.Height));
+        }
+        else
+        {
+            renderer.StateManager.Scale(scale);
+        }
         
         renderer.StateManager.SetTextureFilter(filter);
-        return (renderer.TargetSize.ToVector() / scale, scale);
+        return (size, scale);
     }
     
     protected void Close() => _windowManager.Close();
@@ -228,6 +267,11 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
 
         assetsProvider.AddProvider("assets:", new EmbeddedFilesProvider(assembly, assembly.GetName().Name + ".Assets"));
         PrepareAssetDrives(assetsProvider);
+
+        foreach (var src in _fontSources)
+        {
+            assetsProvider.AddProvider(src.FontsDriveName, src.FontsFilesProvider);
+        }
         
         builder
             .WithInstance<IFilesProvider>(assetsProvider)
@@ -251,7 +295,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         
     }
 
-    protected virtual void OnDraw([NotNull]IRenderer2 renderer)
+    protected virtual void OnDraw(IRenderer2 renderer)
     {
         renderer.Clear(RgbaColor.CornflowerBlue);
     }

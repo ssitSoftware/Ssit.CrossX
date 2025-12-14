@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <LangVersion>default</LangVersion>
-        <Version>0.0.3</Version>
+        <Version>0.0.5</Version>
         <Authors>Sebastian Sejud IT</Authors>
         <Copyright>Sebastian Sejud IT</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

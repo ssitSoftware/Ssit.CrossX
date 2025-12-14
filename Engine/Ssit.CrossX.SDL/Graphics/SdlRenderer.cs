@@ -8,7 +8,7 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
-public unsafe class SdlRenderer: IRenderer2
+public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
 {
     private readonly SDL_Renderer* _renderer;
     private readonly SdlQuadsRenderer _quadsRenderer;
@@ -36,13 +36,11 @@ public unsafe class SdlRenderer: IRenderer2
 
     public ITextRenderer TextRenderer { get; }
 
-    internal bool DisableRendering;
-
     public SdlRenderer(SDL_Renderer* renderer)
     {
         _renderer = renderer;
         
-        var stateManager = new StateManager();
+        var stateManager = new StateManager(this);
         StateManager = stateManager;
         StateProvider = stateManager;
         
@@ -50,14 +48,39 @@ public unsafe class SdlRenderer: IRenderer2
         _geometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
         _spriteRenderer = new SdlSpriteRenderer(_renderer, stateManager);
         TextRenderer = new TextRenderer(QuadsRenderer);
-
-        stateManager.UpdateBlendMode += UpdateBendMode;
-        UpdateBendMode(stateManager.BlendMode);
+        UpdateHwMode(stateManager.BlendMode, stateManager.ClipRect);
     }
-
-    private void UpdateBendMode(BlendMode mode)
+    
+    public void UpdateHwMode(BlendMode mode, RectangleF? clipRect)
     {
         SDL_SetRenderDrawBlendMode(_renderer, mode.ToSdlBlendMode());
+
+        if (clipRect.HasValue)
+        {
+            var scale = StateProvider.Scale;
+            var offset = StateProvider.Offset;
+            
+            var r = clipRect.Value;
+            
+            var x =  r.X * scale + offset.X;
+            var y =  r.Y * scale + offset.Y;
+            
+            var w = r.Width * scale;
+            var h = r.Height * scale;
+            
+            var rect = new SDL_Rect
+            {
+                x = (int)x,
+                y = (int)y,
+                w = (int)w,
+                h = (int)h
+            };
+            SDL_SetRenderClipRect(_renderer, &rect);
+        }
+        else
+        {
+            SDL_SetRenderClipRect(_renderer, null);
+        }
     }
 
     public void Clear(RgbaColor color)

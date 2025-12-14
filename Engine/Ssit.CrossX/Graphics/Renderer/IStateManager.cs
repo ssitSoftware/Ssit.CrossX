@@ -13,5 +13,6 @@ public interface IStateManager
     void SetBlendMode(BlendMode blendMode);
     void SetTextureFilter(TextureFilter filter);
     void SetGlowMode(bool glowMode);
+    void SetClipRect(RectangleF? clipRect);
     bool IsGlowMode { get; }
 }

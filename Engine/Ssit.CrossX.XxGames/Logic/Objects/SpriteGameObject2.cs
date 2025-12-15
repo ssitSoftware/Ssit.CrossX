@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
@@ -19,6 +20,7 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     public int ZOrder { get; }
     
     public SpriteInstance Sprite { get; private set; }
+    private ResourceHandle<SpriteEx> _spriteObject;
     
     protected ImageTransform Transform { get; set; }
     
@@ -68,7 +70,7 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
         }
     }
     
-    internal void CallSpriteEvent(SpriteInstance.Event @event) => OnSpriteEvent(@event);
+    internal void CallSpriteEvent(ISpriteEvent @event) => OnSpriteEvent(@event);
     internal void CallSequenceFinished(string sequenceName) => OnSequenceFinished(sequenceName);
 
     internal void AddUpdatableInternal(IUpdatable updatable) => _updatables.Add(updatable);
@@ -89,11 +91,11 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     
     protected void InitializeSprite(string spritePath)
     {
-        using var go = Services.ContentManager.Get<GameObject>(spritePath);
-        Sprite = go.Resource.CreateSpriteInstance();
+        _spriteObject = Services.ContentManager.Get<SpriteEx>(spritePath);
+        Sprite = _spriteObject.Resource.CreateSpriteInstance();
     }
     
-    protected virtual void OnSpriteEvent(SpriteInstance.Event @event)
+    protected virtual void OnSpriteEvent(ISpriteEvent @event)
     {
     }
     
@@ -135,5 +137,8 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
             Sprite.Dispose();
             Sprite = null;
         }
+        
+        _spriteObject?.Dispose();
+        _spriteObject = null;
     }
 }

@@ -37,6 +37,7 @@ internal class ContentManager: IContentManager
 
         RegisterLoader<ITexture>(LoadTextureFunc);
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
+        RegisterLoader<SpriteEx>(path => SpriteEx.Load(path, filesProvider, this, _iocContainer));
     }
 
     public void RemoveCache<TResource>(string path) where TResource : class, IDisposable

@@ -6,7 +6,7 @@ public class SteringBehavior<TObject>
 {
     internal void Enter(TObject obj) => OnEnter(obj);
     internal void Exit(TObject obj) => OnExit(obj);
-    internal bool Event(TObject obj, IEvent @event) => OnEvent(obj, @event);
+    internal bool Event(TObject obj, ISpriteEvent @event) => OnEvent(obj, @event);
     internal bool SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
     
     internal bool Update(TObject obj, float dt) => OnUpdate(obj, dt);
@@ -15,7 +15,7 @@ public class SteringBehavior<TObject>
     protected virtual bool OnFixedUpdate(TObject obj, float dt) => false;
     protected virtual bool OnUpdate(TObject obj, float dt) => false;
     
-    protected virtual bool OnEvent(TObject obj, IEvent @event) => false;
+    protected virtual bool OnEvent(TObject obj, ISpriteEvent @event) => false;
     
     protected virtual bool OnSequenceFinished(TObject obj, string name) => false;
     

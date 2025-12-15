@@ -61,7 +61,7 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
         _obj.Sprite.SetSequence(sequenceName);
     }
 
-    void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
+    void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)
     {
         InternalStateMachine.CurrentState?.Event(_obj, @event);
         _obj.CallSpriteEvent(@event);

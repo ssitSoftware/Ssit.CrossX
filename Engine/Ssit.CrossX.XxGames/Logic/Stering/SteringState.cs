@@ -13,7 +13,7 @@ public abstract class SteringState<TObject>
     public void FixedUpdate(TObject obj, float dt) => OnFixedUpdate(obj, dt);
     
     public void SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
-    public void Event(TObject obj, IEvent @event) => OnEvent(obj, @event);
+    public void Event(TObject obj, ISpriteEvent @event) => OnEvent(obj, @event);
     
     protected virtual void OnUpdate(TObject obj, float dt)
     {
@@ -35,7 +35,7 @@ public abstract class SteringState<TObject>
     {
     }
 
-    protected virtual void OnEvent(TObject obj, IEvent @event)
+    protected virtual void OnEvent(TObject obj, ISpriteEvent @event)
     {
     }
 }

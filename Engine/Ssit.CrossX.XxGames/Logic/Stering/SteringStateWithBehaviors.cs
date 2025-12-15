@@ -44,7 +44,7 @@ public class SteringStateWithBehaviors<TObject>(string name, params SteringBehav
         }
     }
 
-    protected override void OnEvent(TObject obj, IEvent @event)
+    protected override void OnEvent(TObject obj, ISpriteEvent @event)
     {
         foreach (var behavior in behaviors)
         {

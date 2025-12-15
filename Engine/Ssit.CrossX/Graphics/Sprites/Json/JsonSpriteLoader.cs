@@ -14,7 +14,7 @@ public static class JsonSpriteLoader
         return LoadInternal(path, filesProvider);
     }
 
-    private static Sprite LoadInternal(string path, IFilesProvider filesProvider)
+    internal static Sprite LoadInternal(string path, IFilesProvider filesProvider)
     {
         using var spriteStream = filesProvider.Open(path);
         var data = new StreamReader(spriteStream).ReadToEnd();

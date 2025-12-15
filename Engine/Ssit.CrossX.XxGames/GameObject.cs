@@ -17,14 +17,14 @@ public class GameObject: IDisposable
 {
     private readonly IContentManager _contentManager;
 
-    public readonly ObjectDescription Description;
+    public readonly JsonSpriteObjectDescription Description;
 
     public readonly bool HasSprite;
     public readonly bool HasTexture;
 
     public readonly string ResourcePath;
 
-    public static (ObjectDescription, string, bool, bool) Parse(string path, IFilesProvider filesProvider, OriginAlignment originAlignment = OriginAlignment.Center | OriginAlignment.VCenter)
+    public static (JsonSpriteObjectDescription, string, bool, bool) Parse(string path, IFilesProvider filesProvider, ContentAlign originAlignment = ContentAlign.Center | ContentAlign.VCenter)
     {
         var hasSprite = filesProvider.FileExists(path + ".json");
         var hasTexture = false;
@@ -59,48 +59,48 @@ public class GameObject: IDisposable
             sourceSize = new Size(bmp.Width, bmp.Height);
         }
         
-        ObjectDescription desc;
+        JsonSpriteObjectDescription desc;
         try
         {
             using var stream = filesProvider.Open(path + ".desc.json");
             var reader = new StreamReader(stream);
             var json = reader.ReadToEnd();
 
-            desc = new ObjectDescription(json, sourceSize);
+            desc = new JsonSpriteObjectDescription(json, sourceSize);
         }
         catch
         {
             var origin = Vector2.Zero;
 
-            if (originAlignment.HasFlag(OriginAlignment.Center))
+            if (originAlignment.HasFlag(ContentAlign.Center))
             {
                 origin.X = sourceSize.Width / 2f;
             }
             
-            if (originAlignment.HasFlag(OriginAlignment.Right))
+            if (originAlignment.HasFlag(ContentAlign.Right))
             {
                 origin.X = sourceSize.Width;
             }
             
-            if (originAlignment.HasFlag(OriginAlignment.VCenter))
+            if (originAlignment.HasFlag(ContentAlign.VCenter))
             {
                 origin.Y = sourceSize.Height / 2f;
             }
             
-            if (originAlignment.HasFlag(OriginAlignment.Bottom))
+            if (originAlignment.HasFlag(ContentAlign.Bottom))
             {
                 origin.Y = sourceSize.Height;
             }
             
-            desc = new ObjectDescription(origin, sourceSize);
+            desc = new JsonSpriteObjectDescription(origin, sourceSize);
         }
         
         return (desc, resourcePath, hasSprite, hasTexture);
     }
     
-    public static GameObject FromPath(string path, IFilesProvider filesProvider, OriginAlignment alignment = OriginAlignment.Center | OriginAlignment.VCenter) => new(Parse(path, filesProvider, alignment));
+    public static GameObject FromPath(string path, IFilesProvider filesProvider, ContentAlign alignment = ContentAlign.Center | ContentAlign.VCenter) => new(Parse(path, filesProvider, alignment));
     
-    private GameObject( (ObjectDescription description, string resourcePath, bool hasSprite, bool hasTexture) data)
+    private GameObject( (JsonSpriteObjectDescription description, string resourcePath, bool hasSprite, bool hasTexture) data)
     {
         Description = data.description;
         ResourcePath = data.resourcePath;
@@ -108,7 +108,7 @@ public class GameObject: IDisposable
         HasTexture = data.hasTexture;
     }
     
-    internal GameObject(string path, IContentManager contentManager, OriginAlignment alignment): this(Parse(path, contentManager.FilesProvider, alignment))
+    internal GameObject(string path, IContentManager contentManager, ContentAlign alignment): this(Parse(path, contentManager.FilesProvider, alignment))
     {
         _contentManager = contentManager;
     }

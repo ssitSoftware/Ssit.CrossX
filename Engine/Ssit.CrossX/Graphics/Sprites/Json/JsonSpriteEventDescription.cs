@@ -1,8 +1,8 @@
 using Newtonsoft.Json.Linq;
 
-namespace Ssit.CrossX.XxGames.Logic;
+namespace Ssit.CrossX.Graphics.Sprites.Json;
 
-public class ObjectEventDescription(string name, string sequence, int frame, JObject parameters)
+public class JsonSpriteEventDescription(string name, string sequence, int frame, JObject parameters)
 {
     public string Name { get; } = name;
     public string Sequence { get; } = sequence;

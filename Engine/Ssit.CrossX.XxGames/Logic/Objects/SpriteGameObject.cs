@@ -1,4 +1,5 @@
 using System;
+using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
@@ -15,7 +16,8 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
     public IBody Body { get; }
     public event Action FixedUpdate;
     public SpriteInstance Sprite { get; private set; }
-    
+    private ResourceHandle<SpriteEx> _spriteObject; 
+
     public int ZOrder { get; }
     
     protected ImageTransform Transform { get; set; }
@@ -56,12 +58,12 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
 
     protected void InitializeSprite(string spritePath)
     {
-        using var go = Services.ContentManager.Get<GameObject>(spritePath);
-        Sprite = go.Resource.CreateSpriteInstance();
+        _spriteObject = Services.ContentManager.Get<SpriteEx>(spritePath);
+        Sprite = _spriteObject.Resource.CreateSpriteInstance();
         Sprite.Handler = this;
     }
 
-    protected virtual void OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event)
+    protected virtual void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)
     {
     }
 
@@ -93,9 +95,12 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
     {
         Sprite?.Dispose();
         Sprite = null;
+
+        _spriteObject?.Dispose();
+        _spriteObject = null;
     }
 
-    void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, SpriteInstance.Event @event) => OnSpriteEvent(instance, @event);
+    void SpriteInstance.IHandler.OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event) => OnSpriteEvent(instance, @event);
 
     void SpriteInstance.IHandler.OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse) => OnAnimationFinished(sequenceName);
 }

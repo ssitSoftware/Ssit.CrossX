@@ -1,4 +1,5 @@
 using System.Numerics;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.XxFormats.Template;
@@ -17,7 +18,7 @@ public interface IGameTemplate
     ImageDescription[] Images { get; }
 
     string[] TileSets { get; }
-    OriginAlignment ObjectsOriginAlignment { get; }
+    ContentAlign ObjectsOriginAlignment { get; }
     
     MaterialInfo[] Materials { get; }
     IFilesProvider AssetsProvider { get; }

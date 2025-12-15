@@ -4,10 +4,10 @@ using System.Numerics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Ssit.CrossX.XxGames.Logic;
+namespace Ssit.CrossX.Graphics.Sprites.Json;
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
-public class ObjectDescription
+public class JsonSpriteObjectDescription
 {
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
     private class Event
@@ -28,23 +28,23 @@ public class ObjectDescription
     public Vector2 Origin { get; }
     public SizeF Size { get; }
     public Size SourceSize { get; }
-    public ObjectEventDescription[] Events { get; }
+    public JsonSpriteEventDescription[] Events { get; }
 
-    public ObjectDescription(Vector2 origin, Size sourceSize)
+    public JsonSpriteObjectDescription(Vector2 origin, Size sourceSize)
     {
         Origin = origin;
         SourceSize = sourceSize;
         Size = SizeF.Empty;
     }
     
-    public ObjectDescription(string json, Size sourceSize)
+    public JsonSpriteObjectDescription(string json, Size sourceSize)
     {
         var obj = JsonConvert.DeserializeObject<Desc>(json);
         
         Origin = obj.Origin;
         Size = obj.Size;
         SourceSize = sourceSize;
-        Events = obj.Events?.Select(o => new ObjectEventDescription(o.Name, o.Sequence, o.Frame, o.Parameters)).ToArray();
+        Events = obj.Events?.Select(o => new JsonSpriteEventDescription(o.Name, o.Sequence, o.Frame, o.Parameters)).ToArray();
     }
 }
 

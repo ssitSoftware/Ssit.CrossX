@@ -40,12 +40,12 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
     
     protected void InitializeSprite(string spritePath)
     {
-        using var go = Services.ContentManager.Get<GameObject>(spritePath);
-        using var sprite = Services.ContentManager.Get<Sprite>(go.Resource.ResourcePath);
+        using var go = Services.ContentManager.Get<SpriteEx>(spritePath);
+        var sprite = go.Resource.Sprite;
 
         Origin = go.Resource.Description.Origin;
-        _spriteSheet = Services.ContentManager.Get<ITexture>(sprite.Resource.SheetName);
-        _sequence = sprite.Resource.GetSequence("Default");
+        _spriteSheet = Services.ContentManager.Get<ITexture>(sprite.SheetName);
+        _sequence = sprite.GetSequence("Default");
     }
     
     protected void InitializePhysics(SizeF size, IMaterial material)

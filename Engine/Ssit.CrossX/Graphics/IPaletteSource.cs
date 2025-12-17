@@ -11,6 +11,6 @@ public interface IPaletteSource
     IReadOnlyList<RgbaColor> GlowPalette { get; }
     IReadOnlyList<RgbaColor> OriginalPalette { get; }
     
-    void UpdatePalette(RgbaColor[] palette, RgbaColor[] glowPalette);
+    void UpdatePalette(RgbaColor[] palette, RgbaColor[] glowPalette = null);
     bool HasGlowPalette { get; }
 }

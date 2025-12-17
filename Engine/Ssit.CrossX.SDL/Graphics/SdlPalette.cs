@@ -56,17 +56,19 @@ public unsafe class SdlPalette: ISdlPalette, IDisposable
             SDL_Color* ptr = (SDL_Color*)palettePtr;
             SDL_SetPaletteColors(PaletteHandle.Pointer, ptr, 0, _palette.Length);
         }
-        
-        
-        for (var idx = 0; idx < glowColors.Count; idx++)
+
+        if (glowColors != null)
         {
-            _palette[idx] = glowColors[idx];
-        }
-        
-        fixed (RgbaColor* palettePtr = _palette)
-        {
-            SDL_Color* ptr = (SDL_Color*)palettePtr;
-            SDL_SetPaletteColors(GlowPaletteHandle.Pointer, ptr, 0, _palette.Length);
+            for (var idx = 0; idx < glowColors.Count; idx++)
+            {
+                _palette[idx] = glowColors[idx];
+            }
+
+            fixed (RgbaColor* palettePtr = _palette)
+            {
+                SDL_Color* ptr = (SDL_Color*)palettePtr;
+                SDL_SetPaletteColors(GlowPaletteHandle.Pointer, ptr, 0, _palette.Length);
+            }
         }
     }
 

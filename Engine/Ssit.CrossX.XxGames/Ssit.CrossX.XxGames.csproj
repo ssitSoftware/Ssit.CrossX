@@ -5,11 +5,7 @@
         <Nullable>disable</Nullable>
         <LangVersion>default</LangVersion>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Content Include="Physics\.DS_Store" />
-    </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\Ssit.CrossX.XxFormats\Ssit.CrossX.XxFormats.csproj" />
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />

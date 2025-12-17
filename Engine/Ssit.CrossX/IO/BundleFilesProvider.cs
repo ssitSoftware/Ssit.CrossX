@@ -41,7 +41,7 @@ public class BundleFilesProvider: IFilesProvider
     public bool FileExists(string path)
     {
         path = GetFullPath(path);
-        return FileExists(path);
+        return File.Exists(path);
     }
 
     public string[] GetFiles(string path, string extension = null)

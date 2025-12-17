@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Security.Cryptography;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
@@ -35,8 +33,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         public static implicit operator GraphicsMode(Size size) => new(size.Width, size.Height);
         public static implicit operator GraphicsMode((int w, int h) mode) => new(mode.w, mode.h);
     }
-
-    private readonly List<(int, string)> _mappedButtons = new();
+    
     private readonly IFontSource[] _fontSources;
     
     LoadTextureColorMode IResourcesLoaderSettings.DefaultColorMode => DefaultColorMode;
@@ -52,7 +49,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     
     protected IKeyboard Keyboard { get; private set; }
 
-    private IInputMappings _inputMappings;
+    protected IInputMappings InputMappings { get; private set; }
     
     public bool IsActive { get; private set; }
 
@@ -76,8 +73,8 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     {
     }
 
-    protected AppBase(int w, int h, ___FullscreenMode _, params IFontSource[] fontSources) : this(new(w, h, true),
-        fontSources)
+    protected AppBase(int w, int h, ___FullscreenMode _, params IFontSource[] fontSources) 
+        : this(new(w, h, true), fontSources)
     {
     }
 
@@ -97,7 +94,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         FontsManager = container.Get<IFontsManager>();
         Scheduler = container.Get<IActionScheduler>();
         Keyboard = container.Get<IKeyboard>();
-        _inputMappings = container.Get<IInputMappings>();
+        InputMappings = container.Get<IInputMappings>();
         SmartTextRenderer = container.Get<ISmartTextRenderer>();
 
         foreach (var src in _fontSources)
@@ -107,8 +104,6 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
 
         OnInitialize(container);
         UpdateGraphicsMode();
-
-        MapInput(_ => { });
     }
 
     void IKeyboardEventHandler.OnKeyDown( Key key ) => OnKeyDown(key);
@@ -163,53 +158,6 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     
     protected void Close() => _windowManager.Close();
 
-    protected void MapInput(Action<IInputMappings> func)
-    {
-        func?.Invoke(_inputMappings);
-
-        if (_inputMappings is IInputMappingsInt imi)
-        {
-            _mappedButtons.Clear();
-            foreach (var player in imi.MappedPlayers)
-            {
-                if (_inputMappings.Mapper(player) is IMapperInt mapperInt)
-                {
-                    _mappedButtons.AddRange(mapperInt.GetMappedButtons().Select(o => (player, o)));
-                }
-            }
-        }
-    }
-
-    protected void MapInput(int player, Action<IMapper> func)
-    {
-        func?.Invoke(_inputMappings.Mapper(player));
-        
-        if (_inputMappings.Mapper(player) is IMapperInt mapperInt)
-        {
-            _mappedButtons.Clear();
-            _mappedButtons.AddRange(mapperInt.GetMappedButtons().Select( o=> (player, o)));
-        }
-    }
-
-    protected void MapButton(int player, string name, GameControllerButton btn, GameControllerButton btnAlt = GameControllerButton.None)
-    {
-        _inputMappings.Mapper(player).MapButton(name, btn, btnAlt);
-        if (!_mappedButtons.Contains((player, name)))
-        {
-            _mappedButtons.Add((player, name));
-        }
-    }
-    
-    protected void MapButton(int player, string name, Key key, Key keyAlt = Key.None)
-    {
-        _inputMappings.Mapper(player).MapButton(name, key, keyAlt);
-
-        if (!_mappedButtons.Contains((player, name)))
-        {
-            _mappedButtons.Add((player, name));
-        }
-    }
-
     void IApp.InitializeServices(IIoCContainerBuilder builder)
     {
         OnInitializeServices(builder);
@@ -223,37 +171,8 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
 
     void IApp.Update(float dt)
     {
-        AnalyzeInput();
         OnUpdate(dt);   
     }
-
-    private void AnalyzeInput()
-    {
-        foreach (var btn in _mappedButtons)
-        {
-            var state = _inputMappings[btn.Item1].GetButton(btn.Item2);
-            if (state.IsChanged)
-            {
-                if (state.IsDown)
-                {
-                    OnButtonDown(btn.Item1, btn.Item2);
-                }
-                else
-                {
-                    OnButtonUp(btn.Item1, btn.Item2);
-                }
-            }
-        }
-    }
-
-    protected virtual void OnButtonUp(int player, string button)
-    {
-    }
-
-    protected virtual void OnButtonDown(int player, string button)
-    {
-    }
-
 
     void IApp.Draw(IRenderer2 renderer)
     {
@@ -272,6 +191,8 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         var assetsProvider = new AggregatedFilesProvider();
 
         assetsProvider.AddProvider("assets:", new EmbeddedFilesProvider(assembly, assembly.GetName().Name + ".Assets"));
+        assetsProvider.AddProvider("bundle:", new BundleFilesProvider());
+        
         PrepareAssetDrives(assetsProvider);
 
         foreach (var src in _fontSources)
@@ -308,7 +229,6 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
     
     protected virtual void OnResize(Size size)
     {
-        
     }
 
     protected virtual void OnStart(object args)

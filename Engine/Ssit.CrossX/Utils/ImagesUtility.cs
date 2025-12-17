@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using SkiaSharp;
 
@@ -9,6 +10,21 @@ namespace Ssit.CrossX.Utils;
 /// </summary>
 public static class ImagesUtility
 {
+    public static float DistanceTo(this SKColor color, RgbaColor other)
+    {
+        var dr = Math.Abs(color.Red - other.R);
+        var dg = Math.Abs(color.Green - other.G);
+        var db = Math.Abs(color.Blue - other.B);
+
+        return MathF.Sqrt(dr * dr + dg * dg + db * db);
+    }
+
+    public static Size GetImageSize(Stream stream)
+    {
+        using var img = SKBitmap.Decode(stream);
+        return new Size(img.Width, img.Height);
+    }
+    
     /// <summary>
     /// Loads an image from a stream and extracts its pixel data into an array.
     /// </summary>
@@ -36,6 +52,45 @@ public static class ImagesUtility
         }
 
         return data;
+    }
+
+    public static byte[,] LoadIndexedImage(Stream stream, IReadOnlyList<RgbaColor> palette)
+    {
+        var dict = new Dictionary<SKColor, byte>();
+
+        using var bmp = SKBitmap.Decode(stream);
+
+        var pixels = bmp.Pixels;
+        var indices = new byte[bmp.Width, bmp.Height];
+
+        for (var y = 0; y < bmp.Height; y++)
+        {
+            for (var x = 0; x < bmp.Width; x++)
+            {
+                var color = pixels[y * bmp.Width + x];
+
+                if (!dict.TryGetValue(color, out var index))
+                {
+                    var dist = color.Alpha < 224 ? 0 : float.MaxValue;
+
+                    for (var idx = 1; idx < palette.Count && dist > 0; ++idx)
+                    {
+                        var d = color.DistanceTo(palette[idx]);
+                        if (d < dist)
+                        {
+                            dist = d;
+                            index = (byte)idx;
+                        }
+                    }
+
+                    dict[color] = index;
+                }
+
+                indices[x, y] = index;
+            }
+        }
+
+        return indices;
     }
 
     public static Stream GetStream(RgbaColor[,] colors)

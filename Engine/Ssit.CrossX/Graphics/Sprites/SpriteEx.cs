@@ -133,7 +133,7 @@ public class SpriteEx: IDisposable
 
         if (_spriteSheet != null)
         {
-            return new SpriteInstance(_spriteSheet, Sprite, Description.Origin, events);
+            return new SpriteInstance(_spriteSheet, Sprite, Description.Origin, events, _contentManager);
         }
         
         return new SpriteInstance(Sprite, Description.Origin, events, _contentManager);

@@ -24,15 +24,15 @@ public class SharedBoolMutable(bool value) : SharedBool
 {
     private bool _value = value;
 
-    public override bool Value
-    {
-        get => _value;
-    }
+    public override bool Value => _value;
 
     public void SetValue(bool value)
     {
-        _value = value;
-        RaiseValueChanged();
+        if (_value != value)
+        {
+            _value = value;
+            RaiseValueChanged();
+        }
     }
 }
 

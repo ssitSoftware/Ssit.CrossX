@@ -587,11 +587,17 @@ public class PixelAppHost: IAppHost
 
             case Mode.WidthAndHeight:
             case Mode.Height:
-            case Mode.Width:
             {
                 var aspect = (float)size.Width / size.Height;
                 var height = _parameters.DesignSize.Height * targetScale;
                 var width = (int) MathF.Ceiling(height * aspect);
+                return (targetScale, scaleInt, new Size(width, height));
+            }
+            case Mode.Width:
+            {
+                var aspect = (float)size.Width / size.Height;
+                var width = _parameters.DesignSize.Width * targetScale;
+                var height = (int) MathF.Ceiling(width / aspect);
                 return (targetScale, scaleInt, new Size(width, height));
             }
         }

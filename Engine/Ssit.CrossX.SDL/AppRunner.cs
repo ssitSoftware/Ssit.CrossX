@@ -1,6 +1,7 @@
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Core.Internal;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
@@ -73,11 +74,14 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         
         var services = builder.Build();
         
-        appWindowManager.Initialize(services.Get<IActionScheduler>());
+        var actionScheduler = services.Get<IActionScheduler>();
+        appWindowManager.Initialize(actionScheduler);
         
         app.Initialize(services);
         app.Start(args);
 
+        (actionScheduler as IInternalActionScheduler)?.Process();
+        
         app.SetActive(true);
         
         if (!pointingDevices.Enable)
@@ -120,6 +124,11 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
 
                         SDL_SetWindowMouseGrab(window, false);
                         SDL_SetWindowMouseGrab(window, pointingDevices.LockMouseInWindow);
+                        
+                        if (!pointingDevices.Enable)
+                        {
+                            SDL_HideCursor();
+                        }
                         break;
                     }
                     

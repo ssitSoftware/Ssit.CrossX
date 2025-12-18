@@ -87,7 +87,7 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
         
         var font = _fontsManager.GetFont(AttachedView.Font?.FontFamily ?? "Default", size);
 
-        _scale = (float)size / font.Size;
+        _scale = (float)size / Math.Max(1, font.Size);
         return font;
     }
     

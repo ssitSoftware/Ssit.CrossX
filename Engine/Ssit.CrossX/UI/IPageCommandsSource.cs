@@ -4,6 +4,6 @@ namespace Ssit.CrossX.UI;
 
 public interface IPageCommandsSource
 {
-    ICommand BackCommand { get; }
-    ICommand MenuCommand { get; }
+    ICommand BackCommand => null;
+    ICommand MenuCommand => null;
 }

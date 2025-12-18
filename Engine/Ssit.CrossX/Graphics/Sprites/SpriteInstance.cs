@@ -109,7 +109,7 @@ public class SpriteInstance : IDisposable
     private SpriteCollider TryLoadMask(string sheetPath, IContentManager contentManager)
     {
         var maskPath = sheetPath.Replace(".png", ".mask.png");
-        if (!contentManager.FilesProvider.FileExists(maskPath))
+        if (!contentManager.FilesProvider.FileExists(maskPath.TrimEnd('!')))
             return null;
         
         return contentManager.Get<SpriteCollider>(maskPath);

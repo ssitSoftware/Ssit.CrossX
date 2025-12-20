@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Ssit.CrossX.UI.Transitions;
 using Ssit.IoC;
@@ -41,6 +42,19 @@ internal class Navigation: INavigation
         _iocContainer = iocContainer;
         _uiServices = uiServices;
         _uiApp = uiApp as UiApp;
+    }
+
+    public void ClearNavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    {
+        foreach (var data in _navigationStack)
+        {
+            if (data.ViewModel is IDisposable disposable)
+            {
+                _objectsToDisposeOnTransitionFinished.Add(disposable);
+            }
+        }
+        _navigationStack.Clear();
+        NavigateTo<TViewModel>(parameter);
     }
 
     public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
@@ -209,7 +223,7 @@ internal class Navigation: INavigation
         {
             foreach (var disposable in _objectsToDisposeOnTransitionFinished)
             {
-                disposable.Dispose();
+                disposable?.Dispose();
             }
             _objectsToDisposeOnTransitionFinished.Clear();
         }

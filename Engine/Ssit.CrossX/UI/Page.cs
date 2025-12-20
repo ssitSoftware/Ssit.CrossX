@@ -89,7 +89,6 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         {
             parent.RecalculateLayout();
         }
-        
         _recalculationNeeded = true;
     }
     

@@ -203,8 +203,8 @@ public class PixelAppHost: IAppHost
             
             for (var idx = 0; idx < count; ++idx)
             {
-                var x = (float)MersenneTwister.Instance.Generate(0, (double)width);
-                var y = (float)MersenneTwister.Instance.Generate(0, (double)height);
+                var x = (float)MersenneTwister.Shared.Next(0, (double)width);
+                var y = (float)MersenneTwister.Shared.Next(0, (double)height);
 
                 _noise[idx] = new Vector2(x, y);
             }

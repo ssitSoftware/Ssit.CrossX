@@ -1,75 +1,43 @@
 using System;
+using System.Threading;
 
 namespace Ssit.CrossX.Utils;
 
 public class MersenneTwister
 {
-    /// <summary>
-    /// N
-    /// </summary>
     private static readonly int N = 624;
-
-    /// <summary>
-    /// M
-    /// </summary>
     private static readonly int M = 397;
-
-    /// <summary>
-    /// Constant vector a
-    /// </summary>
     private readonly UInt32 _matrixA = 0x9908b0df;
-
-    /// <summary>
-    /// most significant w-r bits
-    /// </summary>
     private readonly UInt32 _upperMask = 0x80000000;
-
-    /// <summary>
-    /// least significant r bits
-    /// </summary>
     private readonly UInt32 _lowerMask = 0x7fffffff;
-
-    /// <summary>
-    /// Tempering mask B
-    /// </summary>
     private readonly UInt32 _temperingMaskB = 0x9d2c5680;
-
-    /// <summary>
-    /// Tempering mask C
-    /// </summary>
     private readonly UInt32 _temperingMaskC = 0xefc60000;
-
-    /// <summary>
-    /// Last constant used for generation
-    /// </summary>
     private readonly double _finalConstant = 2.3283064365386963e-10;
+
+    private static MersenneTwister _shared;
+    private static readonly Lock Locker = new();
     
-    private static volatile MersenneTwister _instance;
-
-    private static object _syncRoot = new Object();
-
-    public static MersenneTwister Instance
+    public static MersenneTwister Shared
     {
         get
         {
-            if (_instance == null)
+            if (_shared == null)
             {
-                lock (_syncRoot)
+                lock (Locker)
                 {
-                    if (_instance == null)
+                    if (_shared == null)
                     {
-                        _instance = new MersenneTwister();
+                        _shared = new ((ulong)DateTime.Now.Ticks);
                     }
                 }
             }
-            return _instance;
+            return _shared;
         }
     }
-
-    private MersenneTwister()
+    
+    public MersenneTwister(ulong seed = 0)
     {
-        //init
-        Sgenrand(4327);
+        Sgenrand(seed + 4327);
     }
     
     private ulong TEMPERING_SHIFT_U(ulong y)
@@ -170,27 +138,40 @@ public class MersenneTwister
     /// <param name="lowerBound">The lower bound (inclusive)</param>
     /// <param name="higherBound">The higher bound (inclusive)</param>
     /// <returns></returns>
-    public double Generate(int lowerBound, int higherBound)
+    public int Next(int lowerBound, int higherBound)
     {
         if (higherBound < lowerBound)
         {
-            return double.NaN;
+            throw new ArgumentException("Higher bound must be greater than lower bound");
         }
-        return Convert.ToInt32(Math.Floor(Generate(lowerBound * 1.0d, higherBound * 1.0d)));
+
+        return Convert.ToInt32(Math.Floor(Next(lowerBound * 1.0d, higherBound * 1.0d)));
     }
 
+    /// <summary>
+    /// Generates a random integer within the range [0, bound).
+    /// </summary>
+    /// <param name="bound">The exclusive upper bound for the random number. Must be greater than 0.</param>
+    /// <returns>A random integer greater than or equal to 0 and less than <paramref name="bound"/>.</returns>
+    public int Next(int bound)
+    {
+        return Next(0, bound);
+    }
+
+    public float NextSingle() => (float)Generate();
+    
     /// <summary>
     /// Generate a double between two bounds
     /// </summary>
     /// <param name="lowerBound">The lower bound (inclusive)</param>
-    /// <param name="higherBound">The higher bound (inclusive)</param>
-    /// <returns>The random num or NaN if higherbound is lower than lowerbound</returns>
-    public double Generate(double lowerBound, double higherBound)
+    /// <param name="higherBound">The higher bound (exclusive)</param>
+    /// <returns>The random num.</returns>
+    public double Next(double lowerBound, double higherBound)
     {
         if (higherBound < lowerBound)
         {
-            return double.NaN;
+            throw new ArgumentException("Higher bound must be greater than lower bound");
         }
-        return (Generate() * (higherBound - lowerBound + 1)) + lowerBound;
+        return Generate() * (higherBound - lowerBound) + lowerBound;
     }
 }

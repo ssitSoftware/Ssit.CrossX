@@ -6,6 +6,14 @@ namespace Ssit.CrossX.Input;
 public interface IGameControllers
 {
     /// <summary>
+    /// Toggles the button configuration for a specified game controller player.
+    /// </summary>
+    /// <param name="player">The player index (e.g., 0 for the first player) whose button configuration is to be switched.</param>
+    /// <param name="switch">Indicates whether to enable or disable the button switch mode.</param>
+    /// <returns>True if the operation was successful, otherwise false.</returns>
+    void SwitchButtons(int player, bool @switch);
+    
+    /// <summary>
     /// Gets or sets the vibration force for the game controllers.
     /// </summary>
     /// <remarks>

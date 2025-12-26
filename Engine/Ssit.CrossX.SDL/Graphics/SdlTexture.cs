@@ -1,5 +1,6 @@
 using SDL;
 using SkiaSharp;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.SDL.Common;
 using Ssit.CrossX.Utils;
@@ -27,7 +28,7 @@ public unsafe class SdlTexture: ITexture
 
     private readonly bool _useDiffuseAsGlow;
 
-    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, ISdlPalette sdlPalette = null)
+    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, IActionScheduler actionScheduler, ISdlPalette sdlPalette = null)
     {
         _handles = handles;
         _sdlPalette = sdlPalette;
@@ -101,6 +102,7 @@ public unsafe class SdlTexture: ITexture
         if (updatePalette)
         {
             UpdateSdlPalette();
+            actionScheduler.Schedule(UpdateSdlPalette);
         }
     }
 

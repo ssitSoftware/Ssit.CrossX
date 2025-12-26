@@ -25,8 +25,8 @@ public readonly struct ColorWrapper
 
         if (_colorIndex.HasValue && paletteSource is not null)
         {
-            return renderer.StateManager.IsGlowMode ? 
-                    paletteSource.GlowPalette[_colorIndex.Value] * _opacity
+            return renderer.StateManager.IsGlowMode 
+                    ? paletteSource.GlowPalette[_colorIndex.Value] * _opacity
                     : paletteSource.Palette[_colorIndex.Value] * _opacity;
         }
 

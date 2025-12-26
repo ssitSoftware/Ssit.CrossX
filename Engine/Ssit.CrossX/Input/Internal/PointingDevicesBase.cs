@@ -1,15 +1,14 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Numerics;
 
 namespace Ssit.CrossX.Input.Internal;
 
-public class PointingDevicesBase: IPointingDevices, ITouchClient
+public class PointingDevicesBase: IPointingDevices, IInputHandler
 {
-    public bool Enable { get; set; } = true;
-    private readonly List<Pointer> _pointers = new();
+    public virtual PointingDevicesMode Mode { get; set; }
 
-    public readonly TouchProcessor TouchProcessor;
-    
+    private readonly List<Pointer> _pointers = new();
     public IReadOnlyList<Pointer> Pointers => _pointers;
     public Pointer GetPointer(int id) => _pointers.Find(o => o.Id == id);
     public Vector2? HoverPosition { get; private set; }
@@ -19,21 +18,35 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     public bool ShowHoverPointer { get; set; } = true;
 
     private readonly Stack<Vector2?> _hoverPositions = new();
+
+    private readonly Dictionary<ulong, int> _touchIds = new();
+    private int _nextTouchId = MouseButtons.Middle + 1;
     
     protected PointingDevicesBase()
     {
-        TouchProcessor = new TouchProcessor(this);
     }
     
-    private void SetPointer(int id, ButtonState state, Vector2? position)
+    protected void SetPointer(int id, ButtonState state, Vector2? position)
     {
-        if (!Enable)
+        if (Mode == PointingDevicesMode.Disabled)
             return;
+
+        if ((Mode & PointingDevicesMode.Touch) == 0)
+        {
+            if (id is < MouseButtons.Left or > MouseButtons.Middle)
+            {
+                return;
+            }
+        }
+
+        if ((Mode & PointingDevicesMode.Mouse) == 0 && id is >= MouseButtons.Left and <= MouseButtons.Middle)
+        {
+            return;
+        }
         
         var pointer = GetPointer(id);
         if (pointer == null)
         {
-            
             pointer = new Pointer(id);
             pointer.Update(state, position.GetValueOrDefault(), position.GetValueOrDefault());
             _pointers.Add(pointer);
@@ -77,34 +90,27 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
                 _pointers[idx].Update(ButtonState.Down);
             }
         }
-    }
 
-    public bool OnDown(ITouchEntity entity)
+        while (_touchEvents.TryDequeue(out var te))
+        {
+            SetPointer(GetTouchId(te.Id), te.State, te.Position);
+        }
+    }
+    
+    protected int GetTouchId(ulong fingerId)
     {
-        if (!Enable)
-            return false;
+        if (!_touchIds.TryGetValue(fingerId, out var id))
+        {
+            id = _nextTouchId++;
+            _touchIds.Add(fingerId, id);
+        }
+
+        if (_nextTouchId > int.MaxValue - 10)
+        {
+            _nextTouchId = MouseButtons.Middle + 1;
+        }
         
-        SetPointer(entity.Id, ButtonState.JustPressed, entity.Position);
-        return true;
-    }
-
-    public bool OnMove(ITouchEntity entity)
-    {
-        if (!Enable)
-            return false;
-        
-        SetPointer(entity.Id, ButtonState.Down, entity.Position);
-        return true;
-    }
-
-    public void OnUp(ITouchEntity entity)
-    {
-        SetPointer(entity.Id, ButtonState.JustReleased, entity.Position);
-    }
-
-    public void OnCancel(int id, object capturedBy = null)
-    {
-        SetPointer(id, ButtonState.JustReleased, null);
+        return id;
     }
 
     public void Reset()
@@ -117,7 +123,7 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
     
     public void UpdateHoverPosition(Vector2? position)
     {
-        if (!Enable)
+        if ((Mode & PointingDevicesMode.Mouse) == 0)
         {
             ShowPointer(!position.HasValue);
             return;
@@ -137,7 +143,6 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
 
     protected virtual void ShowPointer(bool show)
     {
-        
     }
 
     public virtual void SetHoverPosition(Vector2 position)
@@ -168,7 +173,12 @@ public class PointingDevicesBase: IPointingDevices, ITouchClient
         HoverPosition = _hoverPositions.Pop();
     }
 
-    public float CalculateHorizontalVelocity(int id) => TouchProcessor.CalculateHorizontalVelocity(id);
+    private record TouchEvent(ulong Id, ButtonState State, Vector2? Position);
 
-    public float CalculateVerticalVelocity(int id) => TouchProcessor.CalculateVerticalVelocity(id);
+    private readonly ConcurrentQueue<TouchEvent> _touchEvents = new();
+    
+    public void OnTouch(ulong id, ButtonState state, Vector2? position)
+    {
+        _touchEvents.Enqueue(new TouchEvent(id, state, position));
+    }
 }

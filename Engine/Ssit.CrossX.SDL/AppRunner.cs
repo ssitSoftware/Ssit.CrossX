@@ -5,6 +5,7 @@ using Ssit.CrossX.Core.Internal;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.Input.Internal;
 using Ssit.IoC;
 using Ssit.CrossX.SDL.Audio;
 using Ssit.CrossX.SDL.Common;
@@ -20,12 +21,14 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
 {
     public delegate void InitializeServicesDelegate(IIoCContainerBuilder builder);
 
-    public static void Run(object args = null, InitializeServicesDelegate initializeServicesDelegate = null)
+    public delegate void InitializeAppDelegate(IIoCContainer container);
+
+    public static void Run(object args = null, InitializeServicesDelegate initializeServicesDelegate = null, InitializeAppDelegate initializeAppDelegate = null)
     {
-        RunInternal(args, initializeServicesDelegate);
+        RunInternal(args, initializeServicesDelegate, initializeAppDelegate);
     }
 
-    private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate)
+    private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate, InitializeAppDelegate initializeAppDelegate)
     {
         SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD |  SDL_InitFlags.SDL_INIT_AUDIO);
         
@@ -62,7 +65,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         builder
             .WithInstance<IRenderer2>(sdlRenderer)
             .WithInstance<IAppWindowManager>(appWindowManager)
-            .WithInstance<IPointingDevices>(pointingDevices)
+            .WithInstance<IPointingDevices>(pointingDevices).As<IInputHandler>()
             .WithInstance(new SdlHandles(window, renderer));
         
         app.InitializeServices(builder);
@@ -77,6 +80,8 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         var actionScheduler = services.Get<IActionScheduler>();
         appWindowManager.Initialize(actionScheduler);
         
+        initializeAppDelegate?.Invoke(services);
+        
         app.Initialize(services);
         app.Start(args);
 
@@ -84,7 +89,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         
         app.SetActive(true);
         
-        if (!pointingDevices.Enable)
+        if ((pointingDevices.Mode & PointingDevicesMode.Mouse) == 0)
         {
             SDL_HideCursor();
         }
@@ -125,7 +130,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
                         SDL_SetWindowMouseGrab(window, false);
                         SDL_SetWindowMouseGrab(window, pointingDevices.LockMouseInWindow);
                         
-                        if (!pointingDevices.Enable)
+                        if ((pointingDevices.Mode & PointingDevicesMode.Mouse) == 0)
                         {
                             SDL_HideCursor();
                         }
@@ -137,7 +142,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
                         break;
                     
                     case SDL_EventType.SDL_EVENT_WINDOW_MOUSE_ENTER:
-                        if (!pointingDevices.Enable)
+                        if ((pointingDevices.Mode & PointingDevicesMode.Mouse) == 0)
                         {
                             SDL_HideCursor();
                         }

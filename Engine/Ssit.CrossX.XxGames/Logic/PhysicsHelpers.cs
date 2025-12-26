@@ -61,7 +61,7 @@ public static class PhysicsHelpers
         var leftX = aabb.Width / 2 - 0.001f;
         var rightX = aabb.Width / 2 - 0.001f;
         
-        aabb = new Aabb(spriteGameObject.Body.Position - new Vector2(leftX, 0.001f), spriteGameObject.Body.Position + new Vector2(rightX, 0.05f));
+        aabb = new Aabb(spriteGameObject.Body.Position - new Vector2(leftX, 0.001f), spriteGameObject.Body.Position + new Vector2(rightX, 0.1f));
         spriteGameObject.Services.Simulation.CheckCollision(aabb, spriteGameObject.Body, 0, QueryList);
         
         aabb = spriteGameObject.Body.Colliders[0].Aabb;

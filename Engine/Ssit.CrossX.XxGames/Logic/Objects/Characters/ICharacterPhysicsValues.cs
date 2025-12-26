@@ -9,4 +9,5 @@ public interface ICharacterPhysicsValues
     float JumpVelocity { get; }
     float PushPullVelocity { get; }
     float JumpOfSpeed { get; }
+    float FrictionOnLandingFactor { get; }
 }

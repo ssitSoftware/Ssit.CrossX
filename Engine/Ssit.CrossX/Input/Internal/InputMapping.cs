@@ -14,12 +14,14 @@ internal class InputMapping : IMapper,  IMapperInt, IInputMapping
     private readonly Dictionary<string, (Key, Key)> _keysToAxisMapping = new ();
     private readonly IGameControllers _gameControllers;
     private readonly IKeyboard _keyboard;
+    private readonly IVirtualGameInput _virtualGameInput;
     private readonly int _player;
 
-    public InputMapping(IGameControllers gameControllers, IKeyboard keyboard, int player)
+    public InputMapping(IGameControllers gameControllers, IKeyboard keyboard, IVirtualGameInput virtualGameInput, int player)
     {
         _gameControllers = gameControllers;
         _keyboard = keyboard;
+        _virtualGameInput = virtualGameInput;
         _player = player;
     }
 
@@ -75,6 +77,15 @@ internal class InputMapping : IMapper,  IMapperInt, IInputMapping
             
             isDown = state.IsDown || state2.IsDown;
             wasDown = state.WasDown || state2.WasDown;
+
+            if (_player == 0)
+            {
+                var state3 = _virtualGameInput.GetButton(btn.Item1);
+                var state4 = _virtualGameInput.GetButton(btn.Item2);
+                
+                isDown |= state3.IsDown || state4.IsDown;
+                wasDown |= state3.WasDown || state4.WasDown;
+            }
         }
 
         if (_keyToButtonMapping.TryGetValue(button, out var key))
@@ -101,12 +112,23 @@ internal class InputMapping : IMapper,  IMapperInt, IInputMapping
         if (_axisToAxisMappings.TryGetValue(axis, out var axisId))
         {
             value = _gameControllers.GetAxis(_player, axisId);
+
+            if (_player == 0)
+            {
+                value  += _virtualGameInput.GetAxis(axisId);
+            }
         }
 
         if (_buttonsToAxisMapping.TryGetValue(axis, out var buttons))
         {
             value += _gameControllers.GetButton(_player, buttons.Item1).IsDown ? -1 : 0;
             value += _gameControllers.GetButton(_player, buttons.Item2).IsDown ? 1 : 0;
+
+            if (_player == 0)
+            {
+                value += _virtualGameInput.GetButton(buttons.Item1).IsDown ? -1 : 0;
+                value += _virtualGameInput.GetButton(buttons.Item2).IsDown ? 1 : 0;
+            }
         }
         
         if (_keysToAxisMapping.TryGetValue(axis, out var keys))

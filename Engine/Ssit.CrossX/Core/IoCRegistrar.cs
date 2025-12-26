@@ -26,6 +26,7 @@ public static class IoCRegistrar
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
             .WithSingleton<IInputMappings, InputMappings>()
+            .WithSingleton<IVirtualGameInput, VirtualGameInput>()
             .WithSingleton<IActionScheduler, ActionScheduler>()
             .WithSingleton<ISmartTextRenderer, SmartTextRenderer>();
     }

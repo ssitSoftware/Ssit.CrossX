@@ -53,6 +53,7 @@ public static class UiBootstrapper
             .AddMapping<Button, ButtonHandler>()
             .AddMapping<VerticalStack, VerticalStackHandler<VerticalStack>>()
             .AddMapping<ImageView, ImageViewHandler>()
-            .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>();
+            .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>()
+            .AddMapping<VirtualButton, VirtualButtonHandler>();
     }
 }

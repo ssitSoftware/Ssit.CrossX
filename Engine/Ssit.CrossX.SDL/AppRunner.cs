@@ -95,11 +95,19 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         }
         
         var lastTicks = SDL_GetTicksNS();
+        bool shouldDisplayAndUpdate = true;
+
+        eventSource.Paused += () => shouldDisplayAndUpdate = false;
+        eventSource.Resumed += () =>
+        {
+            shouldDisplayAndUpdate = true;
+            lastTicks = SDL_GetTicksNS()-1;
+        };
         
         while (appWindowManager.ShouldContinue)
         {
             SDL_Event @event;
-            while(SDL_PollEvent(&@event))
+            while (SDL_PollEvent(&@event))
             {
                 switch ((SDL_EventType)@event.type)
                 {
@@ -111,9 +119,30 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
                         if (!exitArgs.Cancel)
                         {
                             appWindowManager.Close();
+                            shouldDisplayAndUpdate = false;
                         }
                     }
                     break;
+                    
+                    case SDL_EventType.SDL_EVENT_WILL_ENTER_BACKGROUND:
+                        shouldDisplayAndUpdate = false;
+                        eventSource.OnPause();
+                        app.SetActive(false);
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_TERMINATING:
+                        shouldDisplayAndUpdate = false;
+                        appWindowManager.Close();
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_WILL_ENTER_FOREGROUND:
+                        eventSource.OnResume();
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_DID_ENTER_FOREGROUND:
+                        shouldDisplayAndUpdate = true;
+                        app.SetActive(true);
+                        break;
 
                     case SDL_EventType.SDL_EVENT_WINDOW_RESIZED:
                     case SDL_EventType.SDL_EVENT_WINDOW_RESTORED:
@@ -164,16 +193,18 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
             var dt = (ticks - lastTicks) / 1000000000.0;
             lastTicks = ticks;
 
+            if (!shouldDisplayAndUpdate) continue;
+            
             pointingDevices.Update();
             keyboard.Update();
-            
+
             eventSource.OnUpdate((float)dt);
             app.Update((float)dt);
             eventSource.OnUpdated();
             gameControllers.PostUpdate();
-            
+
             sdlRenderer.ResetStats();
-            
+
             app.Draw(sdlRenderer);
             SDL_RenderPresent(renderer);
             eventSource.OnRenderFinished();

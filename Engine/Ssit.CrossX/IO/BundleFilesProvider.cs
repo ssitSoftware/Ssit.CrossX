@@ -10,7 +10,7 @@ public class BundleFilesProvider: IFilesProvider
     {
         var location = AppDomain.CurrentDomain.BaseDirectory;
         var dir = Path.GetDirectoryName(location) ?? string.Empty;
-
+        
         Console.WriteLine($"Location: {dir}");
         
         string[] dirs = [

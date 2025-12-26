@@ -97,7 +97,6 @@ public abstract class UiPixelApp : IApp
     
     protected virtual void OnStart(object args)
     {
-        
     }
 
     protected virtual void PostRender(IRenderer2 renderer)
@@ -107,6 +106,10 @@ public abstract class UiPixelApp : IApp
     private static void Render(object state)
     {
         var app = (UiPixelApp)state;
+
+        if (!app.IsActive)
+            return;
+        
         app.UiApp.Draw(app._renderer, app.BackgroundColor);
         app.PostRender(app._renderer);
     }

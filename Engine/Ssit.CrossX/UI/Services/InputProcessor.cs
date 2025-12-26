@@ -18,6 +18,8 @@ internal sealed class InputProcessor: IInputContext
 
     private readonly List<IInputConsumer> _inputConsumers = new();
     private readonly List<(int, IInputConsumer)> _capturedPointers = new();
+
+    private readonly List<Pointer> _processingPointers = new();
     
     public InputProcessor(IKeyboard keyboard, IGameControllers gameControllers, IPointingDevices pointingDevices, Navigation navigation, IInputCoordinateSystem coordinateSystem = null)
     {
@@ -153,13 +155,15 @@ internal sealed class InputProcessor: IInputContext
                     _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
                 }
 
+                _processingPointers.Clear();
+                _processingPointers.AddRange(_pointingDevices.Pointers);
+                
                 for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
                 {
-                    if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+                    if (_inputConsumers[idx].ProcessInput(_processingPointers, this))
                     {
                         ProcessCapturedPointers();
                         _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
-                        break;
                     }
                 }
             }
@@ -183,6 +187,8 @@ internal sealed class InputProcessor: IInputContext
                         cons.CancelPointer(pointerId, this);
                     }
                 }
+                
+                _processingPointers.RemoveAll(o => o.Id == pointerId);
             }
             _capturedPointers.Clear();
         }

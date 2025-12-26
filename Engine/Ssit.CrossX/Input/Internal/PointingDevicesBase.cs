@@ -21,6 +21,8 @@ public class PointingDevicesBase: IPointingDevices, IInputHandler
 
     private readonly Dictionary<ulong, int> _touchIds = new();
     private int _nextTouchId = MouseButtons.Middle + 1;
+
+    private readonly List<TouchEvent> _aggregatedEvents = new();
     
     protected PointingDevicesBase()
     {
@@ -48,7 +50,7 @@ public class PointingDevicesBase: IPointingDevices, IInputHandler
         if (pointer == null)
         {
             pointer = new Pointer(id);
-            pointer.Update(state, position.GetValueOrDefault(), position.GetValueOrDefault());
+            pointer.Update(ButtonState.JustPressed, position.GetValueOrDefault(), position.GetValueOrDefault());
             _pointers.Add(pointer);
         }
         else
@@ -91,10 +93,28 @@ public class PointingDevicesBase: IPointingDevices, IInputHandler
             }
         }
 
+        _aggregatedEvents.Clear();
+        
         while (_touchEvents.TryDequeue(out var te))
         {
-            SetPointer(GetTouchId(te.Id), te.State, te.Position);
+            var index = _aggregatedEvents.FindIndex(e => e.Id == te.Id && e.State.IsDown == te.State.IsDown);
+            if (index >= 0)
+            {
+                var evnt = _aggregatedEvents[index];   
+                _aggregatedEvents[index] = te with { State = evnt.State & te.State };
+            }
+            else
+            {
+                _aggregatedEvents.Add(te);
+            }
         }
+        
+        foreach(var evnt in _aggregatedEvents)
+        {
+            SetPointer(GetTouchId(evnt.Id), evnt.State, evnt.Position);
+        }
+
+        _aggregatedEvents.Clear();
     }
     
     protected int GetTouchId(ulong fingerId)

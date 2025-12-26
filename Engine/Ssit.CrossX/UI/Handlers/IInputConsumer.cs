@@ -8,6 +8,6 @@ namespace Ssit.CrossX.UI.Handlers;
 public interface IInputConsumer
 {
     void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context);
-    bool ProcessInput(IReadOnlyList<Pointer> pointer, IInputContext context);
+    bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context);
     void CancelPointer(int pointerId, IInputContext context);
 }

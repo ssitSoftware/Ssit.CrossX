@@ -6,18 +6,22 @@ using Org.Libsdl.App;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
+using Ssit.CrossX.SDL.Services;
 
 namespace Ssit.CrossX.SDL.Droid;
 
 public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
 {
     private IInputHandler _inputHandler;
+    private EventSource _eventSource;
+    
     private readonly int[] _viewLocation = new int[2];
     
     protected override string[] GetLibraries() => ["SDL3", "SDL3_image", "SDL3_mixer"];
     protected override void Main() => AppRunner<TApp>.Run( initializeAppDelegate: container =>
     {
         _inputHandler = container.Get<IInputHandler>();
+        _eventSource = (EventSource)container.Get<IEventSource>();
     });
     
     private Vector2 GetPointerPosition(int index, MotionEvent evnt, out int id)
@@ -29,6 +33,18 @@ public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
 
         id = evnt.GetPointerId(index) + 1;
         return position;
+    }
+
+    protected override void OnPause()
+    {
+        base.OnPause();
+        _eventSource?.OnPause();
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
+        _eventSource?.OnResume();
     }
 
     public override bool DispatchTouchEvent(MotionEvent @event)

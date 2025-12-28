@@ -101,7 +101,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         eventSource.Resumed += () =>
         {
             shouldDisplayAndUpdate = true;
-            lastTicks = SDL_GetTicksNS()-1;
+            lastTicks = SDL_GetTicksNS();
         };
         
         while (appWindowManager.ShouldContinue)
@@ -189,20 +189,21 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
                 gameControllers.ProcessEvent(@event);
             }
             
+            if (!shouldDisplayAndUpdate) continue;
+            
             var ticks = SDL_GetTicksNS();
             var dt = (ticks - lastTicks) / 1000000000.0;
             lastTicks = ticks;
-
-            if (!shouldDisplayAndUpdate) continue;
             
             pointingDevices.Update();
             keyboard.Update();
-
+            
             eventSource.OnUpdate((float)dt);
+            
             app.Update((float)dt);
             eventSource.OnUpdated();
             gameControllers.PostUpdate();
-
+            
             sdlRenderer.ResetStats();
 
             app.Draw(sdlRenderer);

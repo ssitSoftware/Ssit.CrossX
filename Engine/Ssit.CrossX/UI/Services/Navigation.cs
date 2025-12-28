@@ -34,7 +34,17 @@ internal class Navigation: INavigation
     
     public int NavigationStackCount => _navigationStack.Count;
     public bool ParallelTransitions { get; set; }
-    
+    public bool IsOnTop(object vmOrPage)
+    {
+        var top = _navigationStack.Peek();
+        if (top != null)
+        {
+            return ReferenceEquals(top.ViewModel, vmOrPage) || ReferenceEquals(CurrentPage, vmOrPage);
+        }
+
+        return false;
+    }
+
     public Navigation(NavigationMap navigationMap, IIoCContainer iocContainer, IUiServices uiServices, IUiApp uiApp)
     {
         _navigationMap = navigationMap;

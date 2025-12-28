@@ -5,5 +5,6 @@ namespace Ssit.CrossX.Core;
 public interface IActionScheduler
 {
     void Schedule(Action action);
+    void ExecuteOnMainThread(Action action);
 }
 

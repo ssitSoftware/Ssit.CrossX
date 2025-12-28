@@ -101,13 +101,10 @@ public unsafe class SdlTexture: ITexture
         _eventSource.Paused += ReleaseTextures;
         _eventSource.Resumed += OnResume;
         
-        actionScheduler.Schedule(UpdateSdlPalette);
+        actionScheduler.ExecuteOnMainThread(UpdateSdlPalette);
     }
 
-    private void OnResume()
-    {
-        _actionScheduler.Schedule(UpdateSdlPalette);
-    }
+    private void OnResume() => _actionScheduler.ExecuteOnMainThread(UpdateSdlPalette);
 
     private void ReleaseTextures()
     {
@@ -282,13 +279,14 @@ public unsafe class SdlTexture: ITexture
         {
             throw new ObjectDisposedException(nameof(SdlTexture));
         }
-        
+
         return map switch
         {
             TextureMaps.Diffuse => _textureDiff as TTextureMap,
             TextureMaps.GlowMap => _useDiffuseAsGlow ? _textureDiff as TTextureMap : _textureGlow as TTextureMap,
-            TextureMaps.DepthBuffer or TextureMaps.StencilBuffer or TextureMaps.NormalMap => throw new NotImplementedException(),
-            TextureMaps.None => throw new ArgumentOutOfRangeException(nameof(map), map, null), 
+            TextureMaps.DepthBuffer or TextureMaps.StencilBuffer or TextureMaps.NormalMap =>
+                throw new NotImplementedException(),
+            TextureMaps.None => throw new ArgumentOutOfRangeException(nameof(map), map, null),
             _ => null
         };
     }

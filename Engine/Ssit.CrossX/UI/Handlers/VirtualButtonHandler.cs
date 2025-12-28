@@ -65,4 +65,10 @@ public class VirtualButtonHandler(ViewHandler.CreateHandlerParameters parameters
             virtualGameInput.SetButton(AttachedView.Button, ButtonState.Empty);
         }
     }
+
+    protected override void OnDispose(bool disposing)
+    {
+        virtualGameInput.SetButton(AttachedView.Button, ButtonState.Empty);
+        base.OnDispose(disposing);
+    }
 }

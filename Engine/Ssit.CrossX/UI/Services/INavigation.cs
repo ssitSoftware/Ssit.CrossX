@@ -8,4 +8,5 @@ public interface INavigation
     void NavigateBackTo<TViewModel>() where TViewModel : class;
     int NavigationStackCount { get; }
     bool ParallelTransitions { get; set; }
+    bool IsOnTop(object vmOrPage);
 }

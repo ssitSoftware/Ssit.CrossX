@@ -77,6 +77,15 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
 
     public void SetTitle(string title) => SDL_SetWindowTitle(window, title);
 
+    public bool IsTouchScreen
+    {
+        get
+        {
+            var platform = SDL_GetPlatform()?.ToLowerInvariant();
+            return platform is "android" or "ios";
+        }
+    }
+
     public void RaiseAppExiting(WindowClosingEventArgs args)
     {
         Closing?.Invoke(args);

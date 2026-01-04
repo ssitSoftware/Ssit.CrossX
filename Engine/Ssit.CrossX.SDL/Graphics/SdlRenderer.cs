@@ -15,16 +15,32 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
     private readonly SdlSpriteRenderer _spriteRenderer;
     private readonly SdlGeometryRenderer _geometryRenderer;
 
-    public Size TargetSize
+    public Size TargetSize => SafeBounds.Size;
+
+    public Rectangle SafeBounds
     {
         get
         {
+            int x = 0, y = 0;
             int w, h;
             SDL_GetRenderOutputSize(_renderer, &w, &h);
-            return new Size(w, h);
+            
+            if (SDL_GetRenderTarget(_renderer) is null)
+            {
+                var rect = new SDL_Rect();
+                SDL_GetRenderSafeArea(_renderer, &rect);
+                
+                var left = rect.x;
+                var right = w - (rect.w + rect.x);
+
+                x = left;
+                w -= left + right;
+            }
+
+            return new Rectangle(x, y, w, h);
         }
     }
-    
+
     public IStateManager StateManager { get; }
     public IRenderStateProvider StateProvider { get; }
 
@@ -36,7 +52,7 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
 
     public ITextRenderer TextRenderer { get; }
 
-    public SdlRenderer(SDL_Renderer* renderer)
+    public SdlRenderer(SDL_Window* window, SDL_Renderer* renderer)
     {
         _renderer = renderer;
         
@@ -71,6 +87,7 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
         else
         {
             SDL_SetRenderClipRect(_renderer, null);
+            SDL_SetRenderViewport(_renderer, null);
         }
     }
 

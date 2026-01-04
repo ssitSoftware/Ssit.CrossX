@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
@@ -92,7 +91,7 @@ public class PixelAppHost: IAppHost
         _renderer = renderer;
     }
 
-    public void Resize(Size size, bool forceRecreation = false)
+    public void Resize(SizeF size, bool forceRecreation = false)
     {
         (Scale, _finalScale, var targetSize) = CalculateScaleAndSize(size);
         ResizeInternal(targetSize, forceRecreation);
@@ -364,8 +363,8 @@ public class PixelAppHost: IAppHost
         }
 
         var targetSize = sourceTexture.Size.ToVector() * scale;
-        
-        var targetRect = new RectangleF((_renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
+        var targetRect = new RectangleF((_renderer.SafeBounds.Size.ToVector() - targetSize) / 2f, targetSize) +
+                         new Vector2(_renderer.SafeBounds.X, _renderer.SafeBounds.Y);
         
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
@@ -552,7 +551,7 @@ public class PixelAppHost: IAppHost
         return pos;
     }
 
-    private (int, int, Size) CalculateScaleAndSize(Size size)
+    private (int, int, Size) CalculateScaleAndSize(SizeF size)
     {
         float scale = 1;
 

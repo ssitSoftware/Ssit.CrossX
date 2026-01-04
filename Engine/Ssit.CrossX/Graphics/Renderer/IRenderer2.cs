@@ -3,7 +3,7 @@ namespace Ssit.CrossX.Graphics.Renderer;
 public interface IRenderer2
 {
     Size TargetSize { get; }
-    
+    Rectangle SafeBounds { get; }
     IStateManager StateManager { get; }
     IRenderStateProvider StateProvider { get; }
     

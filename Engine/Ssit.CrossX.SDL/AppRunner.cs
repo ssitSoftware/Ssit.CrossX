@@ -28,10 +28,11 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         RunInternal(args, initializeServicesDelegate, initializeAppDelegate);
     }
 
-    private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate, InitializeAppDelegate initializeAppDelegate)
+    private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate,
+        InitializeAppDelegate initializeAppDelegate)
     {
-        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD |  SDL_InitFlags.SDL_INIT_AUDIO);
-        
+        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD | SDL_InitFlags.SDL_INIT_AUDIO);
+
         var builder = IoC.IoC.NewBuilder();
         var keyboard = new SdlKeyboard();
         var gameControllers = new SdlGameControllers();
@@ -48,20 +49,28 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
             .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
             .WithPixelCore();
-        
+
         initializeServicesDelegate?.Invoke(builder);
 
         using var app = new TApp();
+
+        SDL_WindowFlags flags = 0;
+
+#if IOS
+        SDL_SetHint( SDL_HINT_IOS_HIDE_HOME_INDICATOR, "2" );
+        flags = SDL_WindowFlags.SDL_WINDOW_BORDERLESS | SDL_WindowFlags.SDL_WINDOW_FULLSCREEN |
+                SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WindowFlags.SDL_WINDOW_METAL;
+#endif
         
-        var window = SDL_CreateWindow("", 800, 600, 0);
+        var window = SDL_CreateWindow("", 800, 600, flags);
         var renderer = SDL_CreateRenderer(window, (byte*)null);
         SDL_SetRenderVSync(renderer, 1);
         
         var pointingDevices = new SdlPointingDevices(new SdlHandle<SDL_Window>(window));
         
         var appWindowManager = new AppWindowManager(window, renderer);
-        var sdlRenderer = new SdlRenderer(renderer);
-
+        var sdlRenderer = new SdlRenderer(window, renderer);
+        
         builder
             .WithInstance<IRenderer2>(sdlRenderer)
             .WithInstance<IAppWindowManager>(appWindowManager)
@@ -149,11 +158,8 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
                     case SDL_EventType.SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
                     case SDL_EventType.SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
                     {
-                        int w, h;
-                        SDL_GetRenderOutputSize(renderer, &w, &h);
-                        SDL_Rect vp = new() { x = 0, y = 0, w = w, h = h };
-                        SDL_SetRenderViewport(renderer, &vp);
-                        app.Resize(new Size(w, h));
+                        SDL_SetRenderViewport(renderer, null);
+                        app.Resize(sdlRenderer.TargetSize);
                         appWindowManager.EnsureWindowSize();
 
                         SDL_SetWindowMouseGrab(window, false);

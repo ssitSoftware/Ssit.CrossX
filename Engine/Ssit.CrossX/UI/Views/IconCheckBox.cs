@@ -27,5 +27,5 @@ public class IconCheckBox : Background, IButtonView
     public int FrameOn { get; set; } = 1;
     public int FrameOff { get; set; } = 0;
 
-    public SharedBool IsChecked { get; set; } = false;
+    public SharedBool IsChecked { get; set; } = new SharedBoolValue(false);
 }

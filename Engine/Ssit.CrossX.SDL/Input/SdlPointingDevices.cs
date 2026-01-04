@@ -99,12 +99,15 @@ public unsafe class SdlPointingDevices : PointingDevicesBase
 
         if ((Mode & PointingDevicesMode.Touch) != 0)
         {
-            //ProcessTouch();
+            ProcessTouch();
         }
     }
 
     private void ProcessTouch()
     {
+        int width, height;
+        SDL_GetWindowSizeInPixels( _windowHandle.Pointer, &width, &height);
+        
         if (_touchDevices.Count == 0)
             return;
         
@@ -140,12 +143,12 @@ public unsafe class SdlPointingDevices : PointingDevicesBase
                     var pointer = GetPointer(id);
                     if (pointer == null)
                     {
-                        SetPointer(id, ButtonState.JustPressed, new Vector2(finger.x, finger.y));
+                        SetPointer(id, ButtonState.JustPressed, new Vector2(finger.x * width, finger.y * height));
                         _fingers.Add(finger.id);
                     }
                     else
                     {
-                        SetPointer(id, ButtonState.Down, new Vector2(finger.x, finger.y));
+                        SetPointer(id, ButtonState.Down, new Vector2(finger.x * width, finger.y * height));
                     }
                 }
             }

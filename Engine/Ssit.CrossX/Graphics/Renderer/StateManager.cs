@@ -31,9 +31,13 @@ public class StateManager(StateManager.IUpdateHwModeHandler handler) : IStateMan
     public void RestoreState()
     {
         var blendMode = _state.BlendMode;
+        var clipRect = _state.ClipRect;
+        
         _state = _savedStates.Pop();
-
-        if (blendMode != _state.BlendMode)
+        
+        var clipRectChanged = clipRect != _state.ClipRect;
+        
+        if (blendMode != _state.BlendMode || clipRectChanged)
         {
             handler?.UpdateHwMode(_state.BlendMode, _state.ClipRect);
         }

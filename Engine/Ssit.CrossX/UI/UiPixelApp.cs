@@ -32,7 +32,7 @@ public abstract class UiPixelApp : IApp
     protected IAppHost AppHost { get; private set; }
     private IRenderer2 _renderer;
 
-    private Size _size;
+    private SizeF _size;
         
     protected abstract RgbaColor BackgroundColor { get; }
     
@@ -54,7 +54,7 @@ public abstract class UiPixelApp : IApp
         AppHost = CreateAppHost(container);
             
         UiApp = container.InitializeUi(OnInitializeUi);
-        OnResize(_renderer.TargetSize);
+        OnResize(_renderer.SafeBounds.Size);
     }
 
     protected virtual void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
@@ -71,7 +71,7 @@ public abstract class UiPixelApp : IApp
     {
     }
         
-    protected void OnResize(Size size)
+    protected void OnResize(SizeF size)
     {
         _size = size;
         AppHost.Resize(_size);

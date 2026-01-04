@@ -15,7 +15,7 @@ public class MersenneTwister
     private readonly double _finalConstant = 2.3283064365386963e-10;
 
     private static MersenneTwister _shared;
-    private static readonly Lock Locker = new();
+    private static readonly object Locker = new();
     
     public static MersenneTwister Shared
     {

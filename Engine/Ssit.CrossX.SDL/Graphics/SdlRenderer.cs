@@ -29,12 +29,23 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
             {
                 var rect = new SDL_Rect();
                 SDL_GetRenderSafeArea(_renderer, &rect);
-                
-                var left = rect.x;
-                var right = w - (rect.w + rect.x);
 
-                x = left;
-                w -= left + right;
+                if (rect.w > rect.h)
+                {
+                    var left = rect.x;
+                    var right = w - (rect.w + rect.x);
+
+                    x = left;
+                    w -= left + right;
+                }
+                else
+                {
+                    var top = rect.y;
+                    var bottom = h - (rect.h + rect.y);
+                    
+                    y = top;
+                    h -= top + bottom;
+                }
             }
 
             return new Rectangle(x, y, w, h);

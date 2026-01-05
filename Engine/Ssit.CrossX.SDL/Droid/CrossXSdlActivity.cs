@@ -60,16 +60,16 @@ public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
                 _inputHandler.OnTouch((ulong)id, ButtonState.JustPressed, position);
             }
                 break;
-
+    
             case MotionEventActions.Move:
                 for (int index = 0; index < @event.PointerCount; index++)
                 {
                     var position = GetPointerPosition(index, @event, out var id);
                     _inputHandler.OnTouch((ulong)id, ButtonState.Down, position);
                 }
-
+    
                 break;
-
+    
             case MotionEventActions.Up:
             case MotionEventActions.PointerUp:
             {
@@ -77,7 +77,7 @@ public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
                 _inputHandler.OnTouch((ulong)id, ButtonState.JustReleased, position);
             }
                 break;
-
+    
             case MotionEventActions.Cancel:
             case MotionEventActions.Outside:
             {
@@ -89,7 +89,7 @@ public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
             }
                 break;
         }
-
+    
         return true;
     }
 }

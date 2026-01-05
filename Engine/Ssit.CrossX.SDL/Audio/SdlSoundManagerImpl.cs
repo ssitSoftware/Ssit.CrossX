@@ -6,6 +6,12 @@ namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlSoundManagerImpl: ISoundManager
 {
+    #if IOS || ANDROID
+    private const float MaxVolume = MIX_MAX_VOLUME / 2f;
+    #else
+    private const float MaxVolume = MIX_MAX_VOLUME;
+    #endif
+    
     public event Action MasterVolumeUpdated;
     public event Action Disposing;
     public ISoundListener SoundListener { get; set; }
@@ -15,11 +21,11 @@ public unsafe class SdlSoundManagerImpl: ISoundManager
         get
         {
             var  vol =  Mix_MasterVolume(-1);
-            return vol / (float)MIX_MAX_VOLUME;
+            return vol / MaxVolume;
         }
         set
         {
-            var vol = (int) (value * MIX_MAX_VOLUME);
+            var vol = (int) (value * MaxVolume);
             Mix_MasterVolume(vol);
             MasterVolumeUpdated?.Invoke();
         }

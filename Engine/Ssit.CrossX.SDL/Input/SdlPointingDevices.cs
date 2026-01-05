@@ -7,7 +7,7 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Input;
 
-public unsafe class SdlPointingDevices : PointingDevicesBase
+public unsafe partial class SdlPointingDevices : PointingDevicesBase
 {
     public override PointingDevicesMode Mode
     {
@@ -15,47 +15,27 @@ public unsafe class SdlPointingDevices : PointingDevicesBase
         set
         {
             var val = value;
-            if (_touchDevices.Count == 0)
+            
+            var platform = SDL_GetPlatform()?.ToLowerInvariant();
+            if (platform is not ("android" or "ios"))
             {
                 val &= ~PointingDevicesMode.Touch;
             }
+            
             base.Mode = val;
         }
     }
 
     private SDL_MouseButtonFlags _previousFlags = 0;
     private Vector2 _previousMousePosition;
-    private bool _mouseInWindowLocked = false;
+    private bool _mouseInWindowLocked;
 
-    private int _nextId = MouseButtons.Middle + 1;
-    private readonly Dictionary<SDL_FingerID, int> _touchIds = new();
     private readonly List<SDL_FingerID> _fingers = [];
-    
     private readonly SdlHandle<SDL_Window> _windowHandle;
-    private readonly List<SDL_TouchID> _touchDevices = [];
 
-    public SdlPointingDevices(SdlHandle<SDL_Window> windowHandle)
+    public SdlPointingDevices(SdlHandle<SDL_Window> windowHandle): this()
     {
         _windowHandle = windowHandle;
-
-        var platform = SDL_GetPlatform()?.ToLowerInvariant();
-        if (platform is "android" or "ios")
-        {
-            using var array = SDL_GetTouchDevices();
-            if (array is not null)
-            {
-                for (var idx = 0; idx < array.Count; idx++)
-                {
-                    var type = SDL_GetTouchDeviceType(array[idx]);
-                    var name = SDL_GetTouchDeviceName(array[idx]);
-                    
-                    if (type == SDL_TouchDeviceType.SDL_TOUCH_DEVICE_DIRECT)
-                    {
-                        _touchDevices.Add(array[idx]);
-                    }
-                }
-            }
-        }
     }
 
     public void Update()
@@ -100,58 +80,6 @@ public unsafe class SdlPointingDevices : PointingDevicesBase
         if ((Mode & PointingDevicesMode.Touch) != 0)
         {
             ProcessTouch();
-        }
-    }
-
-    private void ProcessTouch()
-    {
-        int width, height;
-        SDL_GetWindowSizeInPixels( _windowHandle.Pointer, &width, &height);
-        
-        if (_touchDevices.Count == 0)
-            return;
-        
-        for(var idx =0; idx < _fingers.Count;)
-        {
-            var pointerId = GetTouchId((ulong)_fingers[idx]);
-            var pointer = GetPointer(pointerId);
-            
-            if (pointer != null)
-            {
-                if (pointer.State.IsDown)
-                { 
-                    SetPointer(pointerId, ButtonState.JustReleased, null);
-                }
-                ++idx;
-            }
-            else
-            {
-                _fingers.RemoveAt(idx);
-            }
-        }
-
-        foreach (var touchDeviceId in _touchDevices)
-        {
-            using var array = SDL_GetTouchFingers(touchDeviceId);
-            if (array != null)
-            {
-                for (var idx = 0; idx < array.Count; idx++)
-                {
-                    var finger = array[idx];
-                    var id = GetTouchId((ulong)finger.id);
-
-                    var pointer = GetPointer(id);
-                    if (pointer == null)
-                    {
-                        SetPointer(id, ButtonState.JustPressed, new Vector2(finger.x * width, finger.y * height));
-                        _fingers.Add(finger.id);
-                    }
-                    else
-                    {
-                        SetPointer(id, ButtonState.Down, new Vector2(finger.x * width, finger.y * height));
-                    }
-                }
-            }
         }
     }
 

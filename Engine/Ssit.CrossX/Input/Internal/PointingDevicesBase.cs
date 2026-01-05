@@ -109,7 +109,7 @@ public class PointingDevicesBase: IPointingDevices, IInputHandler
             }
         }
         
-        foreach(var evnt in _aggregatedEvents)
+        foreach (var evnt in _aggregatedEvents)
         {
             SetPointer(GetTouchId(evnt.Id), evnt.State, evnt.Position);
         }

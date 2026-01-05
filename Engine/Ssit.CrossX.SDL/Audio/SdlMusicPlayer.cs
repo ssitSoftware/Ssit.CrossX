@@ -12,6 +12,12 @@ namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlMusicPlayer(IActionScheduler actionScheduler, IFilesProvider filesProvider): MusicPlayerBase
 {
+#if IOS || ANDROID
+    private const float MaxVolume = MIX_MAX_VOLUME / 2f;
+#else
+    private const float MaxVolume = MIX_MAX_VOLUME;
+#endif
+    
     private SdlHandle<Mix_Music> _currentMusic;
     private SdlHandle<Mix_Music> _oldMusic;
     
@@ -20,12 +26,12 @@ public unsafe class SdlMusicPlayer(IActionScheduler actionScheduler, IFilesProvi
         get
         {
             var vol = Mix_VolumeMusic(-1);
-            return vol  / (float)MIX_MAX_VOLUME;
+            return vol  / MaxVolume;
         }
         
         set
         {
-            var vol = (int) (value * MIX_MAX_VOLUME);
+            var vol = (int) (value * MaxVolume);
             Mix_VolumeMusic(vol);
         }
     }

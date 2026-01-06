@@ -122,7 +122,7 @@ internal sealed class InputProcessor: IInputContext
         PrepareInputConsumers(page.RootHandler);
 
         var transform = _coordinateSystem?.Transform ?? Matrix3x2.Identity;
-
+        
         _pointingDevices.PushTransform(transform);
 
         try

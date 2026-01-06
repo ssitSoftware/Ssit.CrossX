@@ -30,9 +30,12 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
 
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
-    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) : base(parameters, fontsManager, actionDispatcher, paletteSource)
+    public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, 
+        IActionDispatcher actionDispatcher, IUiSounds uiSounds, IHapticDevice hapticDevice, 
+        IPaletteSource paletteSource = null) 
+        : base(parameters, fontsManager, actionDispatcher, paletteSource)
     {
-        _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, AttachedView?.CustomSounds ?? uiSounds);
+        _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, AttachedView?.CustomSounds ?? uiSounds, hapticDevice);
     }
 
     public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context) => _buttonHelper.ProcessHover(hoverPosition, matchingPointerId, context);

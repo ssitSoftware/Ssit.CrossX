@@ -3,6 +3,7 @@ using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
 
@@ -14,8 +15,9 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     private float _bevel;
     private float _time;
     
-    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IUiSounds uiSounds, IPaletteSource paletteSource = null) 
-        : base(parameters, fontsManager, actionDispatcher, uiSounds, paletteSource)
+    public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, 
+        IUiSounds uiSounds, IHapticDevice hapticDevice, IPaletteSource paletteSource = null) 
+        : base(parameters, fontsManager, actionDispatcher, uiSounds, hapticDevice, paletteSource)
     {
     }
 

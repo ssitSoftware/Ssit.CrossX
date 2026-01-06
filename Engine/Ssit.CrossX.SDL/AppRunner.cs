@@ -31,7 +31,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
     private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate,
         InitializeAppDelegate initializeAppDelegate)
     {
-        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD | SDL_InitFlags.SDL_INIT_AUDIO);
+        SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD | SDL_InitFlags.SDL_INIT_AUDIO | SDL_InitFlags.SDL_INIT_HAPTIC);
 
         var builder = IoC.IoC.NewBuilder();
         var keyboard = new SdlKeyboard();
@@ -48,6 +48,7 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
             .WithSingleton<ISoundManager, SdlSoundManagerImpl>()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
             .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
+            .WithSingleton<IHapticDevice, SdlHapticDevice>()
             .WithPixelCore();
 
         initializeServicesDelegate?.Invoke(builder);

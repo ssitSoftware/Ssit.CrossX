@@ -4,12 +4,17 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class BackgroundHandler<TBackground>(ViewHandler.CreateHandlerParameters parameters, IPaletteSource paletteSource) 
-    : ViewHandler<TBackground>(parameters) where TBackground: Background
+public class BackgroundHandler<TBackground>(
+    ViewHandler.CreateHandlerParameters parameters,
+    IPaletteSource paletteSource)
+    : ViewHandler<TBackground>(parameters)
+    where TBackground : Background
 {
+    private readonly IColorSource _colorSource = parameters.Parent?.GetParent<IColorSource>(true);
+
     protected IPaletteSource PaletteSource { get; } = paletteSource;
 
-    protected virtual RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColor.GetColor(PaletteSource, renderer);
+    protected virtual RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColor.GetColor(PaletteSource, renderer, _colorSource);
     
     protected override void OnDraw(IRenderer2 renderer)
     {

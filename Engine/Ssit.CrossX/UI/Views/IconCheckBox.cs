@@ -28,4 +28,5 @@ public class IconCheckBox : Background, IButtonView
     public int FrameOff { get; set; } = 0;
 
     public SharedBool IsChecked { get; set; } = new SharedBoolValue(false);
+    public SharedValue<bool> HapticFeedback { get; set; } = false;
 }

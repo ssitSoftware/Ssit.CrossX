@@ -23,4 +23,5 @@ public class LabelButton: Label, IButtonView
     public string CommandSoundId { get; set; }
     public bool EnableCommandType { get; set; }
     public IUiSounds CustomSounds { get; set; }
+    public SharedValue<bool> HapticFeedback { get; set; } = false;
 }

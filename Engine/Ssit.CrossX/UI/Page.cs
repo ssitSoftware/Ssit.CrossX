@@ -59,13 +59,18 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     ViewHandler IPage.RootHandler => _rootHandler;
 
-    TParent IViewParent.GetParent<TParent>()
+    TParent IViewParent.GetParent<TParent>(bool optional)
     {
         if (this is TParent parent)
         {
             return parent;
         }
 
+        if (optional)
+        {
+            return null;
+        }
+        
         throw new NotSupportedException();
     }
     

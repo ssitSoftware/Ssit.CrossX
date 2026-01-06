@@ -12,12 +12,16 @@ public sealed class Pointer(int id)
     public Vector2 Origin { get; private set; } = Vector2.Zero;
 
     private Stack<(Vector2, Vector2)> _transformHistory;
-
+    
+    public Vector2 OriginalPosition { get; private set; } = Vector2.Zero;
+    
     internal void Update(ButtonState state, Vector2 position, Vector2 origin)
     {
         State = state;
         Position = position;
         Origin = origin;
+        OriginalPosition = position;
+        
         _transformHistory?.Clear();
     }
     
@@ -25,6 +29,8 @@ public sealed class Pointer(int id)
     {
         State = state;
         Position = position;
+        OriginalPosition = position;
+        
         _transformHistory?.Clear();
     }
     
@@ -39,6 +45,7 @@ public sealed class Pointer(int id)
         State = ButtonState.Empty;
         Position = Vector2.Zero;
         Origin = Vector2.Zero;
+        OriginalPosition = Vector2.Zero;
         
         _transformHistory?.Clear();
     }

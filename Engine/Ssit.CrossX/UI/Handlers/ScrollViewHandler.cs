@@ -180,12 +180,12 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         RecalculateLayout();
     }
 
-    TParent IViewParent.GetParent<TParent>()
+    TParent IViewParent.GetParent<TParent>(bool optional)
     {
         if (this is TParent parent)
         {
             return parent;
         }
-        return Parent.GetParent<TParent>();
+        return Parent.GetParent<TParent>(optional);
     }
 }

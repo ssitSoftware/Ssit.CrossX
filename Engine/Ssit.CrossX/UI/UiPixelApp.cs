@@ -86,7 +86,7 @@ public abstract class UiPixelApp : IApp
         AppHost.Resize(_size, true);
         UiApp.SetBounds(new RectangleF(Vector2.Zero, AppHost.TargetSize / AppHost.Scale), AppHost.Scale);
     }
-        
+
     protected virtual void OnDraw(IRenderer2 renderer)
     {
         Debug.Assert(renderer == _renderer, "renderer is not the same as the one used in the app");

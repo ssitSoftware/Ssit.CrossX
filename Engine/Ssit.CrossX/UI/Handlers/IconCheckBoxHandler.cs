@@ -25,10 +25,10 @@ public class IconCheckBoxHandler<TCheckBox> : BackgroundHandler<TCheckBox>, IInp
     
     private readonly ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>> _buttonHelper;
 
-    public IconCheckBoxHandler(CreateHandlerParameters parameters, IPaletteSource paletteSource, IUiSounds uiSounds, IIoCContainer container) : base(parameters, paletteSource)
+    public IconCheckBoxHandler(CreateHandlerParameters parameters, IPaletteSource paletteSource, IUiSounds uiSounds, IIoCContainer container, IHapticDevice hapticDevice) : base(parameters, paletteSource)
     {
         _container = container;
-        _buttonHelper = new ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>>(this, AttachedView?.CustomSounds ?? uiSounds);
+        _buttonHelper = new ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>>(this, AttachedView?.CustomSounds ?? uiSounds, hapticDevice);
     }
 
     public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context) => _buttonHelper.ProcessHover(hoverPosition, matchingPointerId, context);

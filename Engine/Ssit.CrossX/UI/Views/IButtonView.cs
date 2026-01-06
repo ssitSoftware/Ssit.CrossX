@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
@@ -13,4 +14,5 @@ public interface IButtonView: IFocusableView
     string CommandSoundId { get; }
     bool EnableCommandType { get; }
     IUiSounds CustomSounds { get; }
+    SharedValue<bool> HapticFeedback { get; }
 }

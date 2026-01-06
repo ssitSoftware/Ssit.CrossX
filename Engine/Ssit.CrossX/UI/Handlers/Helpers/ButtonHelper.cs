@@ -25,6 +25,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     private readonly TViewHandler _viewHandler;
     private readonly IUiSounds _uiSounds;
+    private readonly IHapticDevice _hapticDevice;
     private TView AttachedView => (TView)_viewHandler.View;
     
     private int? _currentPointerId;
@@ -32,10 +33,13 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     private bool _isExecutingDelayedCommand;
     private bool _isEnabled;
 
-    public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds)
+    private bool HapticEnabled => (_viewHandler?.View as IButtonView)?.HapticFeedback?.Value ?? false;
+    
+    public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds, IHapticDevice hapticDevice)
     {
         _viewHandler = viewHandler;
         _uiSounds = uiSounds;
+        _hapticDevice = hapticDevice;
 
         if (AttachedView.Command is not null)
         {
@@ -79,6 +83,11 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                     {
                         if (_viewHandler.ScreenBounds.Contains(pointer.Position))
                         {
+                            if (HapticEnabled)
+                            {
+                                _hapticDevice.Feedback(FeedbackStyle.Release, pointer.OriginalPosition);
+                            }
+
                             _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
                             Execute(TimeSpan.Zero, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
                             _currentPointerId = null;
@@ -90,7 +99,20 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                 }
                 else
                 {
+                    var wasPressed = IsPressed;
                     IsPressed = _viewHandler.ScreenBounds.Contains(pointer.Position);
+
+                    if (wasPressed != IsPressed && HapticEnabled)
+                    {
+                        if (IsPressed)
+                        {
+                            _hapticDevice.Feedback(FeedbackStyle.Push, pointer.OriginalPosition);
+                        }
+                        else
+                        {
+                            _hapticDevice.Feedback(FeedbackStyle.Release, pointer.OriginalPosition);
+                        }
+                    }
                 }
                 return true;
             }
@@ -106,7 +128,12 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                 {
                     _currentPointerId = pointer.Id;
                     IsPressed = true;
-                    
+
+                    if (HapticEnabled)
+                    {
+                        _hapticDevice.Feedback(FeedbackStyle.Push, pointer.OriginalPosition);
+                    }
+
                     context.CapturePointer(pointer.Id, _viewHandler);
                     var focusable = context.FindFocusable(null, _viewHandler);
                     if (focusable != null)

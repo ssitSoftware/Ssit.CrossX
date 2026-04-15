@@ -9,15 +9,14 @@ namespace Ssit.CrossX.Editor.Models.Parameters;
 public class ParameterLayerSizeModel : ParameterModel
 {
     private readonly Func<Task> _resizeLayerAction;
-    private string _info;
 
     public MapLayer Layer { get; }
     public ICommand ResizeLayerCommand { get; }
-    
+
     public string Info
     {
-        get => _info;
-        private set => SetField(ref _info, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     public ParameterLayerSizeModel(string name, object layer, Func<Task> resizeLayerAction)

@@ -37,7 +37,7 @@ public class VirtualButtonHandler(ViewHandler.CreateHandlerParameters parameters
                 
                 if (pointer.State == ButtonState.JustReleased && true == AttachedView.HapticFeedback?.Value)
                 {
-                    hapticDevice.Feedback(FeedbackStyle.Release, pointer.OriginalPosition);
+                    hapticDevice.Feedback(FeedbackStyle.ButtonRelease, pointer.OriginalPosition);
                 }
                 return false;
             }
@@ -60,7 +60,7 @@ public class VirtualButtonHandler(ViewHandler.CreateHandlerParameters parameters
 
                     if (true == AttachedView.HapticFeedback?.Value)
                     {
-                        hapticDevice.Feedback(FeedbackStyle.Push, pointer.OriginalPosition);
+                        hapticDevice.Feedback(FeedbackStyle.ButtonPush, pointer.OriginalPosition);
                     }
 
                     return true;

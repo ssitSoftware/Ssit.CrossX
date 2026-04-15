@@ -21,13 +21,11 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public string Info
         {
-            get => _info;
-            set => SetField(ref _info, value);
+            get;
+            set => SetField(ref field, value);
         }
 
         public float Value => (float)_zoomData.Zoom;
-        
-        private string _info;
 
         public ZoomViewModel(Action onZoom, IZoomData zoomData = null)
         {

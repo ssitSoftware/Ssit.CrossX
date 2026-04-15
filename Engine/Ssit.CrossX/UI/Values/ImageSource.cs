@@ -10,7 +10,7 @@ using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI.Values;
 
-public sealed class ImageSource: IDisposable
+public sealed class ImageSource: IImageSource
 {
     public static implicit operator ImageSource(string path) => new(path);
     public static implicit operator ImageSource(Uri uri) => new(uri);
@@ -114,12 +114,12 @@ public sealed class ImageSource: IDisposable
         }
     }
     
-    private ImageSource(string resourcePath)
+    public ImageSource(string resourcePath)
     {
         _resourcePath = resourcePath;
     }
 
-    private ImageSource(Uri uri)
+    public ImageSource(Uri uri)
     {
         _resourceUri = uri;
     }

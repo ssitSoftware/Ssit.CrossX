@@ -8,6 +8,8 @@ using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.SDL.Services;
 
+using static SDL.SDL3;
+
 namespace Ssit.CrossX.SDL.Droid;
 
 public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
@@ -18,7 +20,7 @@ public class CrossXSdlActivity<TApp>: SDLActivity where TApp: class, IApp, new()
     private readonly int[] _viewLocation = new int[2];
     
     protected override string[] GetLibraries() => ["SDL3", "SDL3_image", "SDL3_mixer"];
-    protected override void Main() => AppRunner<TApp>.Run( initializeAppDelegate: container =>
+    protected override void Main() => AppRunner<TApp>.Run(initializeAppDelegate: container =>
     {
         _inputHandler = container.Get<IInputHandler>();
         _eventSource = (EventSource)container.Get<IEventSource>();

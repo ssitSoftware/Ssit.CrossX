@@ -15,36 +15,43 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
     private readonly SdlSpriteRenderer _spriteRenderer;
     private readonly SdlGeometryRenderer _geometryRenderer;
 
-    public Size TargetSize => SafeBounds.Size;
+    public bool EnableSafeBounds { get; set; }
+    
+    public Size TargetSize => Bounds.Size;
 
-    public Rectangle SafeBounds
+    public Rectangle Bounds
     {
         get
         {
             int x = 0, y = 0;
             int w, h;
             SDL_GetRenderOutputSize(_renderer, &w, &h);
-            
-            if (SDL_GetRenderTarget(_renderer) is null)
+
+            if (EnableSafeBounds)
             {
-                var rect = new SDL_Rect();
-                SDL_GetRenderSafeArea(_renderer, &rect);
-
-                if (rect.w > rect.h)
+                if (SDL_GetRenderTarget(_renderer) is null)
                 {
-                    var left = rect.x;
-                    var right = w - (rect.w + rect.x);
+                    var rect = new SDL_Rect();
+                    SDL_GetRenderSafeArea(_renderer, &rect);
 
-                    x = left;
-                    w -= left + right;
-                }
-                else
-                {
-                    var top = rect.y;
-                    var bottom = h - (rect.h + rect.y);
-                    
-                    y = top;
-                    h -= top + bottom;
+                    if (rect.w > rect.h)
+                    {
+                        var left = rect.x;
+                        var right = w - (rect.w + rect.x);
+
+                        x = left;
+                        w -= left + right;
+                    }
+                    else
+                    {
+                        x = rect.x;
+                        y = rect.y;
+                        w = rect.w;
+                        
+                        // TODO: Safe area top on Android doesn't make any sense! Check out better solution
+                        h = rect.h + y / 2;
+                        y /= 2;
+                    }
                 }
             }
 
@@ -63,10 +70,10 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
 
     public ITextRenderer TextRenderer { get; }
 
-    public SdlRenderer(SDL_Window* window, SDL_Renderer* renderer)
+    public SdlRenderer(SDL_Renderer* renderer)
     {
         _renderer = renderer;
-        
+
         var stateManager = new StateManager(this);
         StateManager = stateManager;
         StateProvider = stateManager;

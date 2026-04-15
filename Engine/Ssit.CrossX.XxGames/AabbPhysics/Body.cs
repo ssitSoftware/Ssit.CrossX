@@ -52,14 +52,15 @@ internal class Body : IBody
 
     private Vector2 Velocity
     {
-        get => _velocity;
+        get;
         set
         {
             if (value.Y > 50)
             {
                 value = new Vector2(value.X, 50);
             }
-            _velocity = value;
+
+            field = value;
         }
     }
 
@@ -80,7 +81,6 @@ internal class Body : IBody
     private readonly List<ICollider> _staticCollisions = new();
 
     private double _timeSinceLastTouch = 0;
-    private Vector2 _velocity;
 
     internal Body(Simulation simulation)
     {

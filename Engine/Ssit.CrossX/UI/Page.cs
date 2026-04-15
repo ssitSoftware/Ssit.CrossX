@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
@@ -22,12 +23,14 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private bool _recalculateLayout;
     private bool _recalculationNeeded;
     private bool _renderingInvalid;
+
+    private FocusWalker _focusWalker;
     
     private RectangleF _bounds;
     private float _transitionProgress;
     protected IIoCContainer Services => _iocContainer;
-    
-    protected IFocusable FocusedElement { get; private set; }
+
+    protected IFocusable FocusedElement => _focusWalker.FocusedElement;
 
     public virtual float TransitionTime => 0f;
     
@@ -37,10 +40,12 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     protected SizeF ScreenSize => _screenBounds.Size;
     
+    protected string DefaultFocusId { private get; set; }
+    
     IFocusable IPage.FocusedElement
     {
         get => FocusedElement;
-        set => FocusedElement = value;
+        set => _focusWalker.SetFocus(value);
     }
 
     void IPage.InvalidateRendering()
@@ -80,6 +85,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     }
 
     void IPage.OnTransitionToFinished() => OnTransitionToFinished();
+    bool IPage.MoveFocus(FocusDirection direction) => _focusWalker.MoveFocus(direction);
 
     protected virtual void OnTransitionToFinished()
     {
@@ -99,6 +105,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     void IPage.Load(IUiServices services, IInputContext inputContext, object viewModel)
     {
+        _focusWalker = new FocusWalker(this);
+        
         ViewModel = (TViewModel)viewModel;
         Styles = services.StylesManager;
         _iocContainer = services.IoCContainer;
@@ -107,6 +115,12 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         _rootHandler = services.HandlerMapper.Create(root, this);
         OnLoad(inputContext);
         _recalculateLayout = true;
+
+        if (!string.IsNullOrWhiteSpace(DefaultFocusId))
+        {
+            var focusable = inputContext.FindFocusable(DefaultFocusId, this);
+            inputContext.Focus(focusable, this);
+        }
     }
 
     protected virtual void OnLoad(IInputContext inputContext)
@@ -193,7 +207,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     void IPage.Draw(IRenderer2 renderer) => OnDraw(renderer);
     
     void IPage.SetBounds(RectangleF bounds, float scale) => SetBounds(bounds, scale);
-
+    
     private void SetBounds(RectangleF bounds, float scale)
     {
         Scale = scale;

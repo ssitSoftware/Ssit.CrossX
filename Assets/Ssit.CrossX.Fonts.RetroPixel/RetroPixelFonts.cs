@@ -6,10 +6,10 @@ namespace Ssit.CrossX.Fonts.RetroPixel;
 
 public class RetroPixelFonts 
 {
-    private class SourceClass : IFontSource
+    private class SourceClass : IAssetsSource
     {
-        public IFilesProvider FontsFilesProvider { get; } = new EmbeddedFilesProvider(typeof(RetroPixelFonts).Assembly, "Ssit.CrossX.Fonts.RetroPixel.Fonts");
-        public string FontsDriveName { get; } = "RetroPixel:";
+        public IFilesProvider FilesProvider { get; } = new EmbeddedFilesProvider(typeof(RetroPixelFonts).Assembly, "Ssit.CrossX.Fonts.RetroPixel.Fonts");
+        public string DriveName => "RetroPixel:";
     }
     
     public const string PxPlus_IBM_EGA_8x8 = nameof(PxPlus_IBM_EGA_8x8);
@@ -19,5 +19,5 @@ public class RetroPixelFonts
     public const string PxPlus_HP_100LX_16x12 = nameof(PxPlus_HP_100LX_16x12);
     public const string PxPlus_AST_PremiumExec = nameof(PxPlus_AST_PremiumExec);
 
-    public static readonly IFontSource Source = new SourceClass();
+    public static readonly IAssetsSource Source = new SourceClass();
 }

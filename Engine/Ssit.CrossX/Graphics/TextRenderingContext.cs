@@ -26,7 +26,6 @@ public class TextRenderingContext
 
     private float _width;
     private float _height;
-    private bool _fullStringCheckEnabled;
     private int _lineSpacing;
 
     internal IGlyphFont Font => _font;
@@ -79,11 +78,11 @@ public class TextRenderingContext
 
     public bool FullStringCheckEnabled
     {
-        get => _fullStringCheckEnabled;
+        get;
         set
         {
-            _fullStringCheckEnabled = value;
-            if (!_fullStringCheckEnabled)
+            field = value;
+            if (!field)
             {
                 _text = null;
             }

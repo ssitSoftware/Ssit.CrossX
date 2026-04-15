@@ -15,14 +15,12 @@ public class ParameterTargetModel : ParameterModel<int>
     private readonly Func<Type, Task<MapObject>> _findMatchingObject;
     private readonly MapFile _map;
 
-    private string _info;
-    
     public ICommand SelectObjectCommand { get; }
-    
+
     public string Info
     {
-        get => _info;
-        private set => SetField(ref _info, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     public ParameterTargetModel(string name, object source, PropertyInfo propertyInfo, 

@@ -2,11 +2,12 @@ namespace Ssit.CrossX.Input;
 
 public enum FeedbackStyle
 {
-    Release,
-    Push,
-    Light,
-    Medium,
-    Heavy,
+    ButtonRelease,
+    ButtonPush,
+    ControlChangeValue,
+    RumbleLight,
+    RumbleMedium,
+    RumbleHeavy,
 }
 
 public enum FeedbackLevel

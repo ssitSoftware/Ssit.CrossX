@@ -21,8 +21,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         private readonly IEditorInstances _instances;
         private readonly IFileService _fileService;
         private readonly IWindowService _windowService;
-        private bool _isModified;
-        
+
         public EditorViewModel EditorViewModel { get; }
         public TilesetSelectorViewModel TilesetSelectorViewModel { get; }
 
@@ -36,10 +35,10 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public bool IsModified
         {
-            get => _isModified;
+            get;
             set
             {
-                if (SetField(ref _isModified, value))
+                if (SetField(ref field, value))
                 {
                     SaveCommand.NotifyCanExecuteChanged();
                     UpdateTitle();
@@ -91,15 +90,14 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public string Title
         {
-            get => _title;
-            set => SetField(ref _title, value);
+            get;
+            set => SetField(ref field, value);
         }
 
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
 
         private string _filePath;
-        private string _title;
         private MapFile _mapFile;
 
         private readonly EditorData _editorData;

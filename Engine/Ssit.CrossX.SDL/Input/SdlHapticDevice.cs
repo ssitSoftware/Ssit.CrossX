@@ -9,7 +9,7 @@ namespace Ssit.CrossX.SDL.Input;
 
 public class SdlHapticDevice: IHapticDevice
 {
-    public FeedbackLevel ButtonFeedbackLevel { get; set; } = FeedbackLevel.Level1;
+    public FeedbackLevel UiFeedbackLevel { get; set; } = FeedbackLevel.Level1;
     public FeedbackLevel ForceFeedbackLevel { get; set; } = FeedbackLevel.Level2;
     
     readonly SdlHandle<SDL_Haptic> _haptic;
@@ -46,27 +46,32 @@ public class SdlHapticDevice: IHapticDevice
         
         switch (style)
         {
-            case FeedbackStyle.Push:
+            case FeedbackStyle.ButtonPush:
                 timeInMs = 50;
-                strength = 0.1f * (int)ButtonFeedbackLevel;
+                strength = 0.1f * (int)UiFeedbackLevel;
                 break;
             
-            case FeedbackStyle.Release:
+            case FeedbackStyle.ButtonRelease:
                 timeInMs = 50;
-                strength = 0.05f * (int)ButtonFeedbackLevel;
+                strength = 0.05f * (int)UiFeedbackLevel;
                 break;
             
-            case FeedbackStyle.Light:
+            case FeedbackStyle.ControlChangeValue:
+                timeInMs = 50;
+                strength = 0.05f * (int)UiFeedbackLevel;
+                break;
+            
+            case FeedbackStyle.RumbleLight:
                 timeInMs = 100;
                 strength = 0.1f * (int)ForceFeedbackLevel;
                 break;
             
-            case FeedbackStyle.Medium:
+            case FeedbackStyle.RumbleMedium:
                 timeInMs = 150;
                 strength = 0.15f * (int)ForceFeedbackLevel;
                 break;
             
-            case FeedbackStyle.Heavy:
+            case FeedbackStyle.RumbleHeavy:
                 timeInMs = 200;
                 strength = 0.25f * (int)ForceFeedbackLevel;
                 break;

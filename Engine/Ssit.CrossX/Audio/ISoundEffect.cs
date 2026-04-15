@@ -19,8 +19,5 @@ public interface ISoundEffect: IDisposable
     /// <summary>
     /// Plays the sound effect once with the specified volume, pitch, and optional spatial emitter.
     /// </summary>
-    /// <param name="volume">The volume level of the sound effect, ranging from 0.0 (silent) to 1.0 (full volume).</param>
-    /// <param name="pitch">The pitch level of the sound effect, where 1.0 is the normal pitch.</param>
-    /// <param name="emitter">An optional sound emitter for spatial audio effects. If set to null, the sound plays without spatial positioning.</param>
-    void PlayOnce(float volume = 1.0f, float pitch = 1.0f, ISoundEmitter emitter = null);
+    void PlayOnce();
 }

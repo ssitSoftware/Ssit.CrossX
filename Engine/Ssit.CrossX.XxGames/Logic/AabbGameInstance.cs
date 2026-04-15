@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
@@ -93,7 +94,7 @@ public class AabbGameInstance : IGameInstance
                 b
                     .WithInstance<IGameInstance>(this)
                     .WithSingleton<ICamera, Camera>()
-                    .WithSingleton<ICommonSoundContainer, CommonSoundContainer>()
+                    .WithCommonSoundsContainer()
                     .WithSingleton<GameObjectsServices, GameObjectsServices>();
             })
             .WithGameTemplate(gameTemplate);

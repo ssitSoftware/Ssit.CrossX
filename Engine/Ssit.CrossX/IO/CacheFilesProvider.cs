@@ -7,15 +7,14 @@ namespace Ssit.CrossX.IO;
 public class CacheFilesProvider: IFilesProvider
 {
     private readonly string _dir;
-    
-    public CacheFilesProvider(Assembly assembly, string dir, string name)
+
+    public CacheFilesProvider(string name, IFilesProvider originalProvider, string subdir = "")
     {
-        var filesProvider = new EmbeddedFilesProvider(assembly, dir ?? assembly.GetName().Name);
-        var files =  filesProvider.GetFiles("");
+        var files = originalProvider.GetFiles(subdir);
         
         _dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), name);
         Directory.CreateDirectory(_dir);
-        
+
         foreach (var file in files)
         {
             var fname = Path.GetFileName(file);
@@ -29,13 +28,17 @@ public class CacheFilesProvider: IFilesProvider
                 if (time <= targetTime) continue;
             }
 
-            using var stream = filesProvider.Open(file);
+            using var stream = originalProvider.Open(file);
             using var fileStream = File.OpenWrite(targetFile);
-            
+
             stream.CopyTo(fileStream);
             stream.Flush();
             fileStream.Flush();
         }
+    }
+    
+    public CacheFilesProvider(Assembly assembly, string dir, string name): this(name, new EmbeddedFilesProvider(assembly, dir ?? assembly.GetName().Name))
+    {
     }
     
     public Stream Open(string path)

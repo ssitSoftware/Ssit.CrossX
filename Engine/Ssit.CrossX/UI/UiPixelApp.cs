@@ -12,6 +12,8 @@ namespace Ssit.CrossX.UI;
 
 public abstract class UiPixelApp : IApp
 {
+    public virtual bool IsPortrait => false;
+
     void IDisposable.Dispose()
     {
         OnDispose(true);
@@ -42,7 +44,7 @@ public abstract class UiPixelApp : IApp
         {
             UiApp?.Dispose();
             UiApp = null;
-                
+
             AppHost?.Dispose();
             AppHost = null;
         }
@@ -54,7 +56,7 @@ public abstract class UiPixelApp : IApp
         AppHost = CreateAppHost(container);
             
         UiApp = container.InitializeUi(OnInitializeUi);
-        OnResize(_renderer.SafeBounds.Size);
+        OnResize(_renderer.Bounds.Size);
     }
 
     protected virtual void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)

@@ -1,7 +1,9 @@
 using SDL;
 using Ssit.CrossX.Audio;
+using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.SDL.Common;
 using Ssit.IoC;
+
 using static SDL.SDL3_mixer;
 
 namespace Ssit.CrossX.SDL.Audio;
@@ -9,29 +11,35 @@ namespace Ssit.CrossX.SDL.Audio;
 public unsafe class SdlSoundEffectImpl: ISoundEffect
 {
     private readonly IIoCContainer _iocContainer;
-    private readonly ISoundManager _soundManager;
-    private readonly SdlHandle<Mix_Chunk> _chunk;
+    private readonly SdlSoundManagerImpl _soundManager;
+    private readonly SdlHandle<MIX_Audio> _audioHandle;
     
     private readonly List<ISoundEffectInstance> _instances = new();
     
-    public SdlSoundEffectImpl(IIoCContainer iocContainer,  ISoundManager soundManager, Stream stream)
+    public SdlSoundEffectImpl(IIoCContainer iocContainer, SdlSoundManagerImpl soundManager, Stream stream)
     {
         _iocContainer = iocContainer;
         _soundManager = soundManager;
-
+        
         _soundManager.Disposing += Dispose;
-        
-        var path = Path.ChangeExtension(Path.GetTempPath(), Guid.NewGuid() + ".wav");
-        using (var fileStream = File.Open(path, FileMode.Create))
+
+        var wavFile = WavLoader.LoadMonoWav(stream);
+
+        fixed (short* shrt = wavFile.buffer)
         {
-            stream.CopyTo(fileStream);
-            fileStream.Flush();
+            IntPtr bytesPtr = (IntPtr)shrt;
+            var bufferLen = wavFile.buffer.Length * sizeof(short);
+
+            SDL_AudioSpec spec = new SDL_AudioSpec
+            {
+                channels = 1,
+                format = SDL_AudioFormat.SDL_AUDIO_S16LE,
+                freq = wavFile.sampleRate
+            };
+            
+            var chunk = MIX_LoadRawAudio(soundManager.MixerHandle.Pointer, bytesPtr, (UIntPtr)bufferLen, &spec);
+            _audioHandle = new SdlHandle<MIX_Audio>(chunk);
         }
-        
-        var chunk =  Mix_LoadWAV(path);
-        _chunk = new SdlHandle<Mix_Chunk>(chunk);
-        
-        File.Delete(path);
     }
 
     public void Dispose()
@@ -44,39 +52,28 @@ public unsafe class SdlSoundEffectImpl: ISoundEffect
         }
         _instances.Clear();
         
-        if (_chunk.Pointer != null)
+        if (_audioHandle.Pointer != null)
         {
-            Mix_FreeChunk(_chunk.Pointer);
-            _chunk.OnDisposed();
+            MIX_DestroyAudio(_audioHandle.Pointer);
+            _audioHandle.OnDisposed();
         }
     }
 
     public ISoundEffectInstance CreateInstance()
     {
-        return _iocContainer.IoCConstruct<SdlSoundEffectInstanceImpl>(_chunk);
+        return _iocContainer.IoCConstruct<SdlSoundEffectInstanceImpl>(_audioHandle);
     }
 
-    public void PlayOnce(float volume = 1, float pitch = 1, ISoundEmitter emitter = null)
+    public void PlayOnce()
     {
-        var instance = CreateInstance();
-        instance.Emitter = emitter;
-        
-        _instances.Add(instance);
-        
-        instance.Finished += InstanceOnFinished;
-        
-        instance.Parameters = new SoundParameters
-        {
-            Volume = volume,
-            Pitch = pitch
-        };
-        
-        instance.Play();
+        MIX_PlayAudio(_soundManager.MixerHandle.Pointer, _audioHandle.Pointer);
     }
 
     private void InstanceOnFinished(ISoundEffectInstance instance)
     {
         _instances.Remove(instance);
+        
+        instance.Finished -= InstanceOnFinished;
         instance.Dispose();
     }
 }

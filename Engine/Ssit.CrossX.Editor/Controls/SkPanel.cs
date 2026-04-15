@@ -21,17 +21,16 @@ namespace Ssit.CrossX.Editor.Controls
         public class CustomDraw : ICustomDrawOperation
         {
             private readonly Control _control;
-            private ISkRenderer _renderer;
 
             public ISkRenderer Renderer
             {
-                get => _renderer;
+                get;
                 set
                 {
-                    if (_renderer != value)
+                    if (field != value)
                     {
-                        _renderer?.UnloadResources();
-                        _renderer = value;
+                        field?.UnloadResources();
+                        field = value;
                     }
                 }
             }

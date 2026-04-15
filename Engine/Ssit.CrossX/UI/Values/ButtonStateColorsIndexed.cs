@@ -18,8 +18,12 @@ public class ButtonStateColorsIndexed : IButtonStateColors
             throw new InvalidOperationException();
         
         var index = GetIndex(hover, focused, pushed, enabled) ?? 2;
+        
         if (renderer.StateProvider.UseGlowTextures)
         {
+            if (paletteSource.GlowPalette is null)
+                return RgbaColor.Black;
+            
             return paletteSource.GlowPalette[index];
         }
         
@@ -40,7 +44,7 @@ public class ButtonStateColorsIndexed : IButtonStateColors
 
         if (hover)
         {
-            return Hover ?? Normal;
+            return Hover ?? (focused ? Focused ?? Normal : Normal);
         }
 
         if (focused)

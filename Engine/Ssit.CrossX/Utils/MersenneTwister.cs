@@ -14,24 +14,23 @@ public class MersenneTwister
     private readonly UInt32 _temperingMaskC = 0xefc60000;
     private readonly double _finalConstant = 2.3283064365386963e-10;
 
-    private static MersenneTwister _shared;
     private static readonly object Locker = new();
     
     public static MersenneTwister Shared
     {
         get
         {
-            if (_shared == null)
+            if (field == null)
             {
                 lock (Locker)
                 {
-                    if (_shared == null)
+                    if (field == null)
                     {
-                        _shared = new ((ulong)DateTime.Now.Ticks);
+                        field = new ((ulong)DateTime.Now.Ticks);
                     }
                 }
             }
-            return _shared;
+            return field;
         }
     }
     

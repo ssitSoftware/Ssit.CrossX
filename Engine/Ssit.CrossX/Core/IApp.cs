@@ -6,6 +6,7 @@ namespace Ssit.CrossX.Core;
 
 public interface IApp: IDisposable
 {
+    bool IsPortrait { get; }
     bool IsActive { get; }
     void InitializeServices(IIoCContainerBuilder builder);
     void SetActive(bool active);

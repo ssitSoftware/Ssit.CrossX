@@ -8,7 +8,7 @@ namespace Ssit.CrossX.SDL.Input;
 [SuppressMessage("Interoperability", "CA1422")]
 public class SdlHapticDevice: IHapticDevice
 {
-    public FeedbackLevel ButtonFeedbackLevel { get; set; } = FeedbackLevel.Level1;
+    public FeedbackLevel UiFeedbackLevel { get; set; } = FeedbackLevel.Level1;
     public FeedbackLevel ForceFeedbackLevel { get; set; } = FeedbackLevel.Level2;
     
     private readonly UIImpactFeedbackGenerator[] _feedbackGenerators;
@@ -27,18 +27,20 @@ public class SdlHapticDevice: IHapticDevice
     {
         var index = style switch
         {
-            FeedbackStyle.Release => 0,
-            FeedbackStyle.Push => 1,
-            FeedbackStyle.Light => 2,
-            FeedbackStyle.Medium => 3,
-            FeedbackStyle.Heavy => 4,
+            FeedbackStyle.ButtonRelease => 0,
+            FeedbackStyle.ButtonPush => 1,
+            FeedbackStyle.ControlChangeValue => 1,
+            FeedbackStyle.RumbleLight => 2,
+            FeedbackStyle.RumbleMedium => 3,
+            FeedbackStyle.RumbleHeavy => 4,
             _ => 0
         };
 
         float strength = style switch
         {
-            FeedbackStyle.Push => ((float)ButtonFeedbackLevel + 0.5f) / ((float)FeedbackLevel.Level3 + 0.5f),
-            FeedbackStyle.Release => (float)ButtonFeedbackLevel / (float)FeedbackLevel.Level3 * 0.75f,
+            FeedbackStyle.ButtonPush => ((float)UiFeedbackLevel + 0.5f) / ((float)FeedbackLevel.Level3 + 0.5f),
+            FeedbackStyle.ButtonRelease => (float)UiFeedbackLevel / (float)FeedbackLevel.Level3 * 0.75f,
+            FeedbackStyle.ControlChangeValue => (float)UiFeedbackLevel / (float)FeedbackLevel.Level3 * 0.75f,
             _ => (float)ForceFeedbackLevel / (float)FeedbackLevel.Level3,
         };
 

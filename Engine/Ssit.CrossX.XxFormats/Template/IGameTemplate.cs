@@ -11,7 +11,8 @@ public interface IGameTemplate
     Guid Guid { get; }
     int TileSize { get; }
     
-    RgbaColor DefaultBackground { get; }
+    RgbaColor GameBackground { get; }
+    RgbaColor EditorLayerBackground => GameBackground;
     
     LayerDescription[] Layers { get; }
     ObjectDescription[] Objects { get; }

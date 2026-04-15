@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Ssit.CrossX;
@@ -67,7 +68,7 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
     {
     }
 
-    public RgbaColor(float red, float green, float blue, float alpha = 1.0f) : this((byte)(red * 255), (byte)(green * 255), (byte)(blue * 255), (byte)(alpha * 255))
+    public RgbaColor(float red, float green, float blue, float alpha = 1.0f) : this((byte)Math.Min(255, red * 255), (byte)Math.Min(255, green * 255), (byte)Math.Min(255, blue * 255), (byte)Math.Min(255, alpha * 255))
     {
     }
 
@@ -133,7 +134,7 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
         return (h, s, l);
     }
 
-    public RgbaColor FromHsl(float h, float s, float l)
+    public static RgbaColor FromHsl(float h, float s, float l)
     {
         h %= 360;
         s = MathF.Max(0, MathF.Min(1, s));
@@ -274,6 +275,28 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
 
         var color = new RgbaColor((byte)r, (byte)g, (byte)b, (byte)a);
         return premultiply ? color.AsPremultiplied() : color;
+    }
+
+    public static implicit operator RgbaColor(string name)
+    {
+        if (!name.StartsWith('#') || name.Length is not (7 or 9)) return Transparent;
+
+        var hexColor = name.AsSpan(1);
+            
+        if (!int.TryParse(hexColor, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var color))
+            return Transparent;
+            
+        var a = color >> 24 & 0xff;
+        var r = color >> 16 & 0xff;
+        var g = color >> 8 & 0xff;
+        var b = color & 0xff;
+
+        if(name.Length == 7)
+        {
+            a = 255;
+        }
+
+        return new RgbaColor((byte)r, (byte)g, (byte)b) * (a / 255.0f);
     }
 
     public static implicit operator RgbaColor(uint intColor)

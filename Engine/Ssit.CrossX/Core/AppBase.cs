@@ -13,6 +13,8 @@ namespace Ssit.CrossX.Core;
 
 public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSettings
 {
+    public virtual bool IsPortrait => false;
+    
     private GraphicsMode _mode;
 
     // ReSharper disable once InconsistentNaming
@@ -34,7 +36,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         public static implicit operator GraphicsMode((int w, int h) mode) => new(mode.w, mode.h);
     }
     
-    private readonly IFontSource[] _fontSources;
+    private readonly IAssetsSource[] _fontSources;
     
     LoadTextureColorMode IResourcesLoaderSettings.DefaultColorMode => DefaultColorMode;
  
@@ -63,17 +65,17 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
         }
     }
 
-    private AppBase(GraphicsMode mode, IFontSource[] fontSources)
+    private AppBase(GraphicsMode mode, IAssetsSource[] fontSources)
     {
         _mode = mode;
         _fontSources = fontSources;
     }
     
-    protected AppBase(int w, int h, params IFontSource[] fontSources): this(new GraphicsMode(w, h), fontSources)
+    protected AppBase(int w, int h, params IAssetsSource[] fontSources): this(new GraphicsMode(w, h), fontSources)
     {
     }
 
-    protected AppBase(int w, int h, ___FullscreenMode _, params IFontSource[] fontSources) 
+    protected AppBase(int w, int h, ___FullscreenMode _, params IAssetsSource[] fontSources) 
         : this(new(w, h, true), fontSources)
     {
     }
@@ -99,7 +101,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
 
         foreach (var src in _fontSources)
         {
-            FontsManager.LoadFonts(src.FontsDriveName + "/Fonts.json");
+            FontsManager.LoadFonts(src.DriveName + "/Fonts.json");
         }
 
         OnInitialize(container);
@@ -197,7 +199,7 @@ public abstract class AppBase : IApp, IKeyboardEventHandler, IResourcesLoaderSet
 
         foreach (var src in _fontSources)
         {
-            assetsProvider.AddProvider(src.FontsDriveName, src.FontsFilesProvider);
+            assetsProvider.AddProvider(src.DriveName, src.FilesProvider);
         }
         
         builder

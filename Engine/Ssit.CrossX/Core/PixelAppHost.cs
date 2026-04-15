@@ -363,8 +363,8 @@ public class PixelAppHost: IAppHost
         }
 
         var targetSize = sourceTexture.Size.ToVector() * scale;
-        var targetRect = new RectangleF((_renderer.SafeBounds.Size.ToVector() - targetSize) / 2f, targetSize) +
-                         new Vector2(_renderer.SafeBounds.X, _renderer.SafeBounds.Y);
+        var targetRect = new RectangleF((_renderer.Bounds.Size.ToVector() - targetSize) / 2f, targetSize) +
+                         new Vector2(_renderer.Bounds.X, _renderer.Bounds.Y);
         
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);

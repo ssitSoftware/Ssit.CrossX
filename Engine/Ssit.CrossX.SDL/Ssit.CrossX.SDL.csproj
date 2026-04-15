@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net9.0;net8.0;net9.0-android;net8.0-ios</TargetFrameworks>
+        <TargetFrameworks>net9.0;net8.0;net9.0-android;net9.0-ios</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <Version>0.0.12</Version>
@@ -26,14 +26,19 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ppy.SDL3-CS" Version="2025.703.0" />
-      <PackageReference Include="ppy.SDL3_image-CS" Version="2025.703.0" />
-      <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.703.0" />
+      <PackageReference Include="ppy.SDL3-CS" Version="2025.1205.0" />
+      <PackageReference Include="ppy.SDL3_image-CS" Version="2025.1205.0" />
+      <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.1205.0" />
+      <PackageReference Include="ppy.SDL3_ttf-CS" Version="2025.1205.0" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="SDL2_mixer" />
       <None Remove="ogg" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
+      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.2" />
     </ItemGroup>
 
 </Project>

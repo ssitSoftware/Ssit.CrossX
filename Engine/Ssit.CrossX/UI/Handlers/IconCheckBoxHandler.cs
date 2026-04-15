@@ -5,6 +5,7 @@ using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Handlers.Helpers;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -25,10 +26,11 @@ public class IconCheckBoxHandler<TCheckBox> : BackgroundHandler<TCheckBox>, IInp
     
     private readonly ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>> _buttonHelper;
 
-    public IconCheckBoxHandler(CreateHandlerParameters parameters, IPaletteSource paletteSource, IUiSounds uiSounds, IIoCContainer container, IHapticDevice hapticDevice) : base(parameters, paletteSource)
+    public IconCheckBoxHandler(CreateHandlerParameters parameters, IPaletteSource paletteSource, IUiSounds uiSounds,
+        IIoCContainer container, IHapticDevice hapticDevice, PageInputContext pageInputContext) : base(parameters, paletteSource)
     {
         _container = container;
-        _buttonHelper = new ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>>(this, AttachedView?.CustomSounds ?? uiSounds, hapticDevice);
+        _buttonHelper = new ButtonHelper<TCheckBox, IconCheckBoxHandler<TCheckBox>>(this, AttachedView?.CustomSounds ?? uiSounds, hapticDevice, pageInputContext);
     }
 
     public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context) => _buttonHelper.ProcessHover(hoverPosition, matchingPointerId, context);

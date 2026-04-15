@@ -45,7 +45,8 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
             .WithImplementation<ITexture, SdlTexture>()
             .WithImplementation<IRenderTarget, SdlRenderTarget>()
             .WithImplementation<IVertexBuffer, SdlVertexBuffer>()
-            .WithSingleton<ISoundManager, SdlSoundManagerImpl>()
+            .WithSingleton<ISoundManager, SdlSoundManagerImpl>().As<SdlSoundManagerImpl>()
+            .WithSingleton<SdlTrackPool, SdlTrackPool>()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
             .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
             .WithSingleton<IHapticDevice, SdlHapticDevice>()
@@ -57,20 +58,30 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
 
         SDL_WindowFlags flags = 0;
 
+        var size = new Size(800, 480);
+        if (app.IsPortrait)
+        {
+            SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait");
+            size = new Size(480, 800);
+        }
+        
 #if IOS
         SDL_SetHint( SDL_HINT_IOS_HIDE_HOME_INDICATOR, "2" );
         flags = SDL_WindowFlags.SDL_WINDOW_BORDERLESS | SDL_WindowFlags.SDL_WINDOW_FULLSCREEN |
                 SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WindowFlags.SDL_WINDOW_METAL;
+#elif ANDROID
+        flags = SDL_WindowFlags.SDL_WINDOW_BORDERLESS | SDL_WindowFlags.SDL_WINDOW_FULLSCREEN |
+                SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY;
 #endif
         
-        var window = SDL_CreateWindow("", 800, 600, flags);
+        var window = SDL_CreateWindow("", size.Width, size.Height, flags);
         var renderer = SDL_CreateRenderer(window, (byte*)null);
         SDL_SetRenderVSync(renderer, 1);
         
         var pointingDevices = new SdlPointingDevices(new SdlHandle<SDL_Window>(window));
         
         var appWindowManager = new AppWindowManager(window, renderer);
-        var sdlRenderer = new SdlRenderer(window, renderer);
+        var sdlRenderer = new SdlRenderer(renderer);
         
         builder
             .WithInstance<IRenderer2>(sdlRenderer)
@@ -88,6 +99,9 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
         var services = builder.Build();
         
         var actionScheduler = services.Get<IActionScheduler>();
+
+        var updatables = services.Fetch<IUpdatable>().ToArray();
+        
         appWindowManager.Initialize(actionScheduler);
         
         initializeAppDelegate?.Invoke(services);
@@ -206,6 +220,11 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
             keyboard.Update();
             
             eventSource.OnUpdate((float)dt);
+            
+            foreach(var updatable in updatables)
+            {
+                updatable.Update((float)dt);
+            }
             
             app.Update((float)dt);
             eventSource.OnUpdated();

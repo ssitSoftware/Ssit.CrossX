@@ -93,12 +93,11 @@ public class PropertiesViewModel: BindableModel
     private readonly IEditor _editor;
     private readonly IWindowService _windowService;
     private readonly IEditorInstances _instances;
-    private string _title;
 
     public string Title
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public MapFile MapFile

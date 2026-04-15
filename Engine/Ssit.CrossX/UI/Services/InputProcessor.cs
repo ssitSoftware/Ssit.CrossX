@@ -69,6 +69,8 @@ internal sealed class InputProcessor: IInputContext
     public void Process()
     {
         var page = _navigation.CurrentPage;
+        if (page is null)
+            return;
         
         if (GetUiButtonLeft())
         {
@@ -304,7 +306,13 @@ internal sealed class InputProcessor: IInputContext
         if (uniqueId == null) return page.FocusedElement;
         return FindFocusable(page.RootHandler, uniqueId);
     }
-    
+
+    public bool MoveFocus(FocusDirection direction, object caller)
+    {
+        var page = GetPage(caller);
+        return page.MoveFocus(direction);
+    }
+
     private IFocusable FindFocusable(ViewHandler handler, string name)
     {
         if (handler is IFocusable focusable && focusable.UniqueId == name)

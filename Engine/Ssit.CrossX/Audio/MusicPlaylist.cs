@@ -5,7 +5,7 @@ namespace Ssit.CrossX.Audio;
 
 public interface IPlaylist
 {
-    int CurrentPosition { get; }
+    long CurrentPosition { get; }
 
     /// <summary>
     /// Gets or sets the index of the currently playing song in the playlist.
@@ -69,5 +69,5 @@ public class MusicPlaylist: IEnumerable<Song>, IPlaylist
     
     IReadOnlyList<Song> IPlaylist.List => _playlist;
     int IPlaylist.CurrentSong => CurrentSong;
-    int IPlaylist.CurrentPosition => CurrentPosition;
+    long IPlaylist.CurrentPosition => CurrentPosition;
 }

@@ -47,10 +47,13 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
                         x = rect.x;
                         y = rect.y;
                         w = rect.w;
-                        
+                        h = rect.h;
+
+#if ANDROID
                         // TODO: Safe area top on Android doesn't make any sense! Check out better solution
-                        h = rect.h + y / 2;
+                        h += +y / 2;
                         y /= 2;
+#endif
                     }
                 }
             }

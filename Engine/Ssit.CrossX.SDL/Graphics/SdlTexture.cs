@@ -44,7 +44,7 @@ public unsafe class SdlTexture: ITexture
             if (sdlPalette == null || parameters.ColorMode != LoadTextureColorMode.Default)
             {
                 (_surfaceDiff, width, height) =
-                    LoadTexture(parameters.DiffuseMapStream, handles.Renderer, parameters.ColorMode);
+                    LoadTexture(parameters.DiffuseMapStream, parameters.ColorMode);
             }
             else
             {
@@ -64,7 +64,7 @@ public unsafe class SdlTexture: ITexture
             if (sdlPalette == null || parameters.ColorMode is LoadTextureColorMode.NoPalette)
             {
                 (_surfaceGlow, width, height) =
-                    LoadTexture(parameters.GlowMapStream, handles.Renderer, parameters.ColorMode);
+                    LoadTexture(parameters.GlowMapStream, parameters.ColorMode);
             }
             else
             {
@@ -210,7 +210,7 @@ public unsafe class SdlTexture: ITexture
         }
     }
 
-    private (SdlHandle<SDL_Surface> surf, int w, int h) LoadTexture(Stream stream, SDL_Renderer* renderer, LoadTextureColorMode colorMode)
+    private (SdlHandle<SDL_Surface> surf, int w, int h) LoadTexture(Stream stream, LoadTextureColorMode colorMode)
     {
         var memoryStream = new MemoryStream();
         stream.CopyTo(memoryStream);
@@ -280,15 +280,23 @@ public unsafe class SdlTexture: ITexture
             throw new ObjectDisposedException(nameof(SdlTexture));
         }
 
-        return map switch
+        switch (map)
         {
-            TextureMaps.Diffuse => _textureDiff as TTextureMap,
-            TextureMaps.GlowMap => _useDiffuseAsGlow ? _textureDiff as TTextureMap : _textureGlow as TTextureMap,
-            TextureMaps.DepthBuffer or TextureMaps.StencilBuffer or TextureMaps.NormalMap =>
-                throw new NotImplementedException(),
-            TextureMaps.None => throw new ArgumentOutOfRangeException(nameof(map), map, null),
-            _ => null
-        };
+            case TextureMaps.Diffuse:
+                if ((_textureDiff is null || _textureDiff.Pointer is null) && _surfaceDiff != null && _surfaceDiff.Pointer != null)
+                {
+                    UpdateSdlPalette();
+                }
+                return _textureDiff as TTextureMap;
+            case TextureMaps.GlowMap:
+                return _useDiffuseAsGlow ? _textureDiff as TTextureMap : _textureGlow as TTextureMap;
+            case TextureMaps.DepthBuffer or TextureMaps.StencilBuffer or TextureMaps.NormalMap:
+                throw new NotImplementedException();
+            case TextureMaps.None:
+                throw new ArgumentOutOfRangeException(nameof(map), map, null);
+            default:
+                return null;
+        }
     }
 
     public void Dispose()

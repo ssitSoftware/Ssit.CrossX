@@ -14,6 +14,9 @@ public abstract unsafe class SdlRendererBase(IRenderStateProvider renderStatePro
     protected SdlHandle<SDL_Texture> PrepareTextureRender(ITexture texture, RgbaColor? colorAttr)
     {
         var (textureHandle, color) = RenderStateProvider.GetProperTextureAndColor(texture, colorAttr ?? RgbaColor.White);
+
+        // if (textureHandle is null || textureHandle.Pointer is null)
+        //     return textureHandle;
         
         SDL_SetTextureColorMod(textureHandle.Pointer, color.R, color.G, color.B);
         if (RenderStateProvider.BlendMode == BlendMode.AlphaBlend)

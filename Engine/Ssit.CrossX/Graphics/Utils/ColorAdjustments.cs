@@ -53,7 +53,7 @@ public static class ColorAdjustments
         }
 
         var (h, s, l) = color.ToHsl();
-        h = (h + hueShift) % 360;
+        h = (h + hueShift + 360) % 360;
         s *= saturationMultiply;
         l *= lightnessMultiply;
 

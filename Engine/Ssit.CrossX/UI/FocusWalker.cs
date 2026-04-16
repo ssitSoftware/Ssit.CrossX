@@ -24,6 +24,9 @@ internal class FocusWalker(IPage page)
 
     public void SetFocus(IFocusable focusable)
     {
+        if (string.IsNullOrWhiteSpace(focusable.UniqueId))
+            return;
+        
         _focusCursorPosition = focusable.ScreenBounds.Center;
         FocusedElement = focusable;
     }
@@ -69,6 +72,9 @@ internal class FocusWalker(IPage page)
                 continue;
             
             if (focusable.SkipNavigation)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(focusable.UniqueId))
                 continue;
             
             var center = focusable.ScreenBounds.Center;

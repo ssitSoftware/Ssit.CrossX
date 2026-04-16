@@ -114,6 +114,10 @@ public sealed class ImageSource: IImageSource
         }
     }
     
+    public ImageSource()
+    {
+    }
+    
     public ImageSource(string resourcePath)
     {
         _resourcePath = resourcePath;

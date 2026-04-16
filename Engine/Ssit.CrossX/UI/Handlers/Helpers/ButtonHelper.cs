@@ -244,7 +244,8 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             {
                 _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
                 _pageInputContext.ShowFocus = true;
-                return false;
+                context.Focus(_viewHandler, _viewHandler);
+                return true;
             }
 
             if (context.MoveFocus(focusDirection, _viewHandler))

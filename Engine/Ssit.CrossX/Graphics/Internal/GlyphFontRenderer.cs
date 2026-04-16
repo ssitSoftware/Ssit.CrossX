@@ -260,7 +260,7 @@ internal static class GlyphFontRenderer
         
         if ((align & ContentAlign.Bottom) == ContentAlign.Bottom)
         {
-            return positionY - (height - font.Metrics.Ascender) * scale;
+            return MathF.Ceiling(positionY - (height - font.Metrics.LineHeight) * scale );
         }
 
         return positionY - font.Metrics.Ascender * scale;

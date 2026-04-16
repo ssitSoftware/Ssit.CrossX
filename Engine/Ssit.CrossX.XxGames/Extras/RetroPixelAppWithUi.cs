@@ -21,8 +21,8 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     : UiPixelApp, IResourcesLoaderSettings, IDefaultSpriteConfiguration where TGameTemplate : IGameTemplate, new()
 {
     protected virtual Assembly ResourceAssembly => GetType().Assembly;
-    
-    protected sealed override RgbaColor BackgroundColor => RgbaColor.Black;
+
+    protected sealed override RgbaColor BackgroundColor => _paletteSource.Palette[1];
     ContentAlign IDefaultSpriteConfiguration.OriginAlignment => GameTemplate.ObjectsOriginAlignment;
 
     protected readonly TGameTemplate GameTemplate = new();
@@ -31,6 +31,8 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
 
     protected virtual (string,string)[] InterfaceSounds => null;
     protected virtual IAssetsSource[] FontSources => [];
+
+    private IPaletteSource _paletteSource;
     
     protected PixelAppHost.Parameters HostParameters { get; private set; }
     
@@ -70,8 +72,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
             }
         };
     }
-
-    protected sealed override void OnDraw(IRenderer2 renderer) => base.OnDraw(renderer);
+    
     protected sealed override void OnStart(object args) => base.OnStart(args);
     public sealed override void OnUpdate(float elapsedTime) => base.OnUpdate(elapsedTime);
     protected sealed override void PostRender(IRenderer2 renderer) => base.PostRender(renderer);
@@ -110,6 +111,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
 
     protected sealed override void OnInitialize(IIoCContainer container)
     {
+        _paletteSource = container.Get<IPaletteSource>();
         var mappings = container.Get<IInputMappings>();
         ShouldMapInput(mappings);
         

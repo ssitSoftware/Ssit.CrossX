@@ -260,7 +260,6 @@ internal sealed class InputProcessor: IInputContext
             return false;
         }
         
-        focusable?.SetFocus();
         if (page != null)
         {
             page.FocusedElement = focusable;

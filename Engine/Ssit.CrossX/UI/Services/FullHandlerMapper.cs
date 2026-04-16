@@ -30,11 +30,11 @@ internal class FullHandlerMapper(IIoCContainer iocContainer) : HandlerMapper
             Parent = parent,
             AdditionalParameters = view.CustomHandlerParameters
         });
-
-        handler.Init();
         
         var page = parent.GetParent<IPage>();
-        page.Styles.ApplyStyles(handler, view.Classes);
+        page.Styles.ApplyStyles(view, view.Classes);
+        
+        handler.Init();
         
         return handler;
     }

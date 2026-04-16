@@ -16,6 +16,11 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
     public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource)
     {
         _actionDispatcher = actionDispatcher;
+    }
+
+    public override void Init()
+    {
+        base.Init();
         OnTextChanged();
     }
 

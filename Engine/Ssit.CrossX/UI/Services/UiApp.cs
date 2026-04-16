@@ -1,3 +1,4 @@
+using System;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
@@ -8,12 +9,9 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
     : IUiApp
 {
     INavigation IUiApp.Navigation => Navigation;
-    
-    void IUiApp.LoadStyles<TClass>()
-    {
-        StylesContainer.ParseStyles(typeof(TClass));
-    }
-    
+
+    public void LoadStyles(Type type) => StylesContainer.ParseStyles(type);
+
     public Navigation Navigation { get; private set; }
     public RectangleF Bounds { get; private set; }
 

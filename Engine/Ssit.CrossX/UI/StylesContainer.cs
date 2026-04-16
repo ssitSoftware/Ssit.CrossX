@@ -24,12 +24,16 @@ internal class StylesContainer
 
     public void ParseStyles(Type type)
     {
-        var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static);
+        var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
 
         foreach (var method in methods)
         {
             var attr = method.GetCustomAttribute<StyleAttribute>();
             if (attr is null) continue;
+
+            var parameters = method.GetParameters();
+            if(parameters.Length != 1)
+                continue;
             
             if(!_styles.TryGetValue(attr.Name, out var list))
             {
@@ -37,7 +41,7 @@ internal class StylesContainer
                 _styles[attr.Name] = list;
             }
             
-            list.Add(new StyleDefinition(attr.TargetType, method));
+            list.Add(new StyleDefinition(parameters[0].ParameterType, method));
         }
     }
 
@@ -60,8 +64,11 @@ internal class StylesContainer
         if (!_styles.TryGetValue(style, out var list)) return;
 
         var type = obj.GetType();
-        foreach (var info in list.Where(info => type.IsAssignableFrom(info.Type)))
+        foreach (var info in list)
         {
+            if (!type.IsSubclassOf(info.Type) && type != info.Type)
+                continue;
+            
             info.MethodInfo.Invoke(null, [obj]);
         }
     }

@@ -12,5 +12,5 @@ public interface IUiApp: IDisposable
     void Update(float dt);
     void Draw(IRenderer2 renderer, RgbaColor? clearColor = null);
     void SetBounds(RectangleF bounds, float scale);
-    void LoadStyles<TClass>();
+    void LoadStyles(Type type);
 }

@@ -10,6 +10,8 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
+
+[Obsolete("Create menu items as views in vertical stack and use NextId do generate id.\nThis is no longer needed as navigation is not id based anymore.")]
 public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TButton : LabelButton, new() where TVerticalStack: VerticalStack, new()
 {
     public MenuItemsComponent()

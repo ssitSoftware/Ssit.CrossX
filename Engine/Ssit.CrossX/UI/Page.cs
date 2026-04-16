@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Numerics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.IoC;
 using Ssit.CrossX.UI.Exceptions;
@@ -15,7 +14,8 @@ namespace Ssit.CrossX.UI;
 public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 {
     protected TViewModel ViewModel { get; private set; }
-    protected IStylesManager Styles { get; private set; }
+
+    private StylesContainer _styles;
 
     private IIoCContainer _iocContainer;
     private ViewHandler _rootHandler;
@@ -28,6 +28,9 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     private RectangleF _bounds;
     private float _transitionProgress;
+
+    private int _nextId = 1;
+    
     protected IIoCContainer Services => _iocContainer;
 
     protected IFocusable FocusedElement => _focusWalker.FocusedElement;
@@ -36,12 +39,24 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     float IPage.TransitionProgress { get => _transitionProgress; set => _transitionProgress = value; }
 
+    StylesContainer IPage.Styles => _styles;
+    
     protected bool IsInTransition => _transitionProgress > 0;
     
     protected SizeF ScreenSize => _screenBounds.Size;
     
     protected string DefaultFocusId { private get; set; }
-    
+
+    protected string NextId()
+    {
+        var value = $"Id{_nextId++}";
+        if (string.IsNullOrWhiteSpace(DefaultFocusId))
+        {
+            DefaultFocusId = value;
+        }
+        return value;
+    }
+
     IFocusable IPage.FocusedElement
     {
         get => FocusedElement;
@@ -105,10 +120,13 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     void IPage.Load(IUiServices services, IInputContext inputContext, object viewModel)
     {
+        var app = (UiApp)services.IoCContainer.Get<IUiApp>();
+        _styles = new StylesContainer(app.StylesContainer);
+        
+        _styles.ParseStyles(GetType());
         _focusWalker = new FocusWalker(this);
         
         ViewModel = (TViewModel)viewModel;
-        Styles = services.StylesManager;
         _iocContainer = services.IoCContainer;
 
         var root = CreateView();

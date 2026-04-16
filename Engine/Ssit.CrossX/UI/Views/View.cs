@@ -24,6 +24,8 @@ public abstract class View: IHandlerView
 
     public ITransition[] Transitions { get; set; }
     
+    public string Classes { get; set; } = "";
+    
     ViewHandler IHandlerView.Handler => Handler;
 
     public Type CustomHandlerType

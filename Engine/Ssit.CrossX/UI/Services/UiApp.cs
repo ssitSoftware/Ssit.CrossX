@@ -9,10 +9,17 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
 {
     INavigation IUiApp.Navigation => Navigation;
     
+    void IUiApp.LoadStyles<TClass>()
+    {
+        StylesContainer.ParseStyles(typeof(TClass));
+    }
+    
     public Navigation Navigation { get; private set; }
     public RectangleF Bounds { get; private set; }
 
     public float Scale { get; private set; }
+
+    internal readonly StylesContainer StylesContainer = new();
 
     public IIoCContainer Services { get; private set; } = services;
     public InputProcessor InputProcessor { get; private set; }

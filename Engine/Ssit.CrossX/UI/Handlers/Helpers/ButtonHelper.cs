@@ -70,7 +70,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     public bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context)
     {
-        if (_isExecutingDelayedCommand)
+        if (_isExecutingDelayedCommand || !AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
         {
             return true;
         }
@@ -91,7 +91,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                                 _hapticDevice.Feedback(FeedbackStyle.ButtonRelease, pointer.OriginalPosition);
                             }
                             
-                            Execute(TimeSpan.Zero, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
+                            Execute(TimeSpan.Zero, AttachedView.EnabledCommandTypes > ButtonCommandType.Select ? ButtonCommandType.Select : null);
                             _currentPointerId = null;
                             return true;
                         }
@@ -185,27 +185,19 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
         switch (button)
         {
             case UiButton.Left:
-                if (true == AttachedView?.EnableCommandType)
+                if (AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Previous))
                 {
-                    if (AttachedView!.KeyCommandDelay.Milliseconds > 10)
-                    {
-                        _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
-                    }
-                    
-                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Previous);
+                    _uiSounds[UiSounds.ChangeValueSound]?.PlayOnce();
+                    Execute(TimeSpan.Zero, ButtonCommandType.Previous);
                 }
                 else focusDirection = FocusDirection.Left;
                 break;
             
             case UiButton.Right:
-                if (true == AttachedView?.EnableCommandType)
+                if (AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Next) )
                 {
-                    if (AttachedView!.KeyCommandDelay.Milliseconds > 10)
-                    {
-                        _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();                
-                    }
-                    
-                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Next);
+                    _uiSounds[UiSounds.ChangeValueSound]?.PlayOnce();
+                    Execute(TimeSpan.Zero, ButtonCommandType.Next);
                 }
                 else focusDirection = FocusDirection.Right;
                 break;
@@ -221,19 +213,23 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             case UiButton.Select:
                 if (IsEnabled)
                 {
-                    if (!_pageInputContext.ShowFocus)
+                    if (true == AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
                     {
-                        _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
-                        _pageInputContext.ShowFocus = true;
-                        return false;
+                        if (!_pageInputContext.ShowFocus)
+                        {
+                            _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+                            _pageInputContext.ShowFocus = true;
+                            return false;
+                        }
+
+                        if (AttachedView!.KeyCommandDelay.Milliseconds > 10)
+                        {
+                            _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
+                        }
+
+                        Execute(AttachedView.KeyCommandDelay,
+                            AttachedView.EnabledCommandTypes > ButtonCommandType.Select ? ButtonCommandType.Select : null);
                     }
-                    
-                    if (AttachedView!.KeyCommandDelay.Milliseconds > 10)
-                    {
-                        _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
-                    }
-                    
-                    Execute(AttachedView.KeyCommandDelay, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
                 }
                 break;
         }
@@ -259,12 +255,23 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     private void Execute(TimeSpan delay, ButtonCommandType? commandType)
     {
+        if (commandType.HasValue)
+        {
+            if (!(AttachedView.Command?.CanExecute((AttachedView.CommandParameter, commandType.Value)) ?? false))
+                return;
+        }
+        else
+        {
+            if (!(AttachedView.Command?.CanExecute(AttachedView.CommandParameter) ?? false))
+                return;
+        }
+        
         if (AttachedView.Command is not IAsyncCommand asyncCommand)
         {
             asyncCommand = new AsyncCommand( o => Task.Run( async () =>
             {
                 await Task.Yield();
-                AttachedView?.Command?.Execute(o);
+                AttachedView.Command?.Execute(o);
             }));
         }
         
@@ -277,9 +284,12 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             {
                 await Task.Delay(delay);
             }
-            
-            (_uiSounds[UiSounds.ExecuteSound] ?? _uiSounds[UiSounds.ButtonReleaseSound])?.PlayOnce();
-            
+
+            if (!commandType.HasValue || commandType == ButtonCommandType.Select)
+            {
+                (_uiSounds[UiSounds.ExecuteSound] ?? _uiSounds[UiSounds.ButtonReleaseSound])?.PlayOnce();
+            }
+
             IsPressed = false;
             if (AttachedView.CommandDelay.TotalSeconds > 0)
             {

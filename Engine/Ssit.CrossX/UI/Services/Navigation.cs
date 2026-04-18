@@ -126,6 +126,11 @@ internal class Navigation: INavigation
         }
         CurrentPage.TransitionProgress = 1;
         CurrentPage.TransitionType = TransitionType.NavigateBackTo;
+
+        if (data.ViewModel is INavigationEventHandler handler)
+        {
+            handler.OnNavigatedBackTo();
+        }
     }
 
     public void NavigateBackTo<TViewModel>() where TViewModel : class

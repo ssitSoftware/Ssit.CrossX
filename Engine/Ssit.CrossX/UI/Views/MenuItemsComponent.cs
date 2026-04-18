@@ -68,8 +68,7 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
             {
                 Text = item.text,
                 UniqueId = $"{IdPrefix}{navId}",
-                Command = item.command,
-                EnableCommandType = item.enableCommandType
+                Command = item.command
             };
             ApplyButtonStyle?.Invoke(button);
             controls.Add(button);

@@ -17,10 +17,14 @@ internal class FullHandlerMapper(IIoCContainer iocContainer) : HandlerMapper
     
     public override ViewHandler Create(View view, IViewParent parent)
     {
-        if(!iocContainer.TryGet(typeof(IUiServices), out var uiServices))
+        if (!iocContainer.TryGet(typeof(IUiServices), out var uiServices))
         {
             throw new InvalidOperationException();
         }
+        
+        var page = parent.GetParent<IPage>();
+        page.Styles.ApplyStyles(view, view.Style);
+        
         ((IHandlerView)view).Initialize(uiServices as IUiServices);
         
         var type = view.CustomHandlerType ?? GetMapping(view.GetType());
@@ -30,9 +34,6 @@ internal class FullHandlerMapper(IIoCContainer iocContainer) : HandlerMapper
             Parent = parent,
             AdditionalParameters = view.CustomHandlerParameters
         });
-        
-        var page = parent.GetParent<IPage>();
-        page.Styles.ApplyStyles(view, view.Classes);
         
         handler.Init();
         

@@ -10,7 +10,13 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
 {
     INavigation IUiApp.Navigation => Navigation;
 
-    public void LoadStyles(Type type) => StylesContainer.ParseStyles(type);
+    public void LoadStyles(params Type[] types)
+    {
+        foreach (var type in types)
+        {
+            StylesContainer.ParseStyles(type);
+        }
+    }
 
     public Navigation Navigation { get; private set; }
     public RectangleF Bounds { get; private set; }

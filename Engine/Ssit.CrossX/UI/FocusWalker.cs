@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.UI.Handlers;
@@ -27,7 +28,6 @@ internal class FocusWalker(IPage page)
         if (string.IsNullOrWhiteSpace(focusable.UniqueId))
             return;
         
-        _focusCursorPosition = focusable.ScreenBounds.Center;
         FocusedElement = focusable;
     }
     
@@ -39,6 +39,9 @@ internal class FocusWalker(IPage page)
         var current = FocusedElement;
         if (current is null) return false;
 
+        _focusCursorPosition.X = MathF.Max(current.ScreenBounds.X, MathF.Min(current.ScreenBounds.Right, _focusCursorPosition.X));
+        _focusCursorPosition.Y = MathF.Max(current.ScreenBounds.Y, MathF.Min(current.ScreenBounds.Bottom, _focusCursorPosition.Y));
+        
         var bounds = page.RootHandler.ScreenBounds;
         
         switch (direction)
@@ -94,10 +97,12 @@ internal class FocusWalker(IPage page)
             if (direction is FocusDirection.Down or FocusDirection.Up)
             {
                 _focusCursorPosition.Y = FocusedElement.ScreenBounds.Center.Y;
+                _focusCursorPosition.X = MathF.Max(FocusedElement.ScreenBounds.X, MathF.Min(FocusedElement.ScreenBounds.Right, _focusCursorPosition.X));
             }
             else if (direction is FocusDirection.Left or FocusDirection.Right)
             {
                 _focusCursorPosition.X = FocusedElement.ScreenBounds.Center.X;
+                _focusCursorPosition.Y = MathF.Max(FocusedElement.ScreenBounds.Y, MathF.Min(FocusedElement.ScreenBounds.Bottom, _focusCursorPosition.Y));
             }
 
             return true;

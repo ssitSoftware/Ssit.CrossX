@@ -10,18 +10,20 @@ public class ButtonStateColors: IButtonStateColors
     public RgbaColor? Focused;
     public RgbaColor? Pushed;
     public RgbaColor? Disabled;
+    public RgbaColor? Checked;
     
     public RgbaColor? NormalGlow;
     public RgbaColor? HoverGlow;
     public RgbaColor? FocusedGlow;
     public RgbaColor? PushedGlow;
     public RgbaColor? DisabledGlow;
+    public RgbaColor? CheckedGlow;
 
-    public RgbaColor? GetColor(IRenderer2 renderer, IPaletteSource paletteSource, bool hover, bool focused, bool pushed, bool enabled)
+    public RgbaColor? GetColor(IRenderer2 renderer, IPaletteSource paletteSource, bool hover, bool focused, bool pushed, bool enabled, bool isChecked)
     {
         if (renderer.StateProvider.UseGlowTextures)
         {
-            return GetColorGlow(hover, focused, pushed, enabled);
+            return GetColorGlow(hover, focused, pushed, enabled, isChecked);
         }
         
         if (!enabled)
@@ -31,7 +33,7 @@ public class ButtonStateColors: IButtonStateColors
 
         if (pushed)
         {
-            return Pushed ?? Focused ?? Hover ?? Normal;
+            return Pushed ?? Normal;
         }
 
         if (hover)
@@ -44,10 +46,15 @@ public class ButtonStateColors: IButtonStateColors
             return Focused ?? Normal;
         }
 
+        if (isChecked)
+        {
+            return Checked ?? Normal;
+        }
+
         return Normal;
     }
     
-    private RgbaColor? GetColorGlow(bool hover, bool focused, bool pushed, bool enabled)
+    private RgbaColor? GetColorGlow(bool hover, bool focused, bool pushed, bool enabled, bool isChecked)
     {
         if (!enabled)
         {
@@ -67,6 +74,11 @@ public class ButtonStateColors: IButtonStateColors
         if (focused)
         {
             return FocusedGlow ?? (Focused?.A > 0 ? RgbaColor.Black : null);
+        }
+        
+        if (isChecked)
+        {
+            return CheckedGlow ?? (Checked?.A > 0 ? RgbaColor.Black : null);
         }
 
         return NormalGlow ?? (Normal?.A > 0 ? RgbaColor.Black : null);

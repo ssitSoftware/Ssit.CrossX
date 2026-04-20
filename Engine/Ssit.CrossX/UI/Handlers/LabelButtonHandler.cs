@@ -17,9 +17,11 @@ namespace Ssit.CrossX.UI.Handlers;
 public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInputConsumer, IFocusable where TLabelButton: LabelButton
 {
     private readonly PageInputContext _pageInputContext;
-    protected override RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) => AttachedView.TextColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, (focused ?? Focused) && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
-    protected override RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled );
+    protected override RgbaColor? BackgroundColor(IRenderer2 renderer) => AttachedView.BackgroundColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled, IsChecked);
+    protected override RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) => AttachedView.TextColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, (focused ?? Focused) && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled, IsChecked);
+    protected override RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColors?.GetColor(renderer, PaletteSource, _buttonHelper.IsHovered, Focused && _pageInputContext.ShowFocus, _buttonHelper.IsPressed || _buttonHelper.IsExecutingCommand, Enabled, IsChecked);
+ 
+    protected virtual bool IsChecked => false;
     
     public bool Enabled => _buttonHelper.IsEnabled;
     public bool DisableAllInput => _buttonHelper.IsExecutingCommand;

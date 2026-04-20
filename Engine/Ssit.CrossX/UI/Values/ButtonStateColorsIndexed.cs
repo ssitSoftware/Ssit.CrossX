@@ -11,13 +11,14 @@ public class ButtonStateColorsIndexed : IButtonStateColors
     public byte? Focused;
     public byte? Pushed;
     public byte? Disabled;
+    public byte? Checked;
     
-    public RgbaColor? GetColor(IRenderer2 renderer, IPaletteSource paletteSource, bool hover, bool focused, bool pushed, bool enabled)
+    public RgbaColor? GetColor(IRenderer2 renderer, IPaletteSource paletteSource, bool hover, bool focused, bool pushed, bool enabled, bool isChecked)
     {
         if (paletteSource is null)
             throw new InvalidOperationException();
         
-        var index = GetIndex(hover, focused, pushed, enabled) ?? 2;
+        var index = GetIndex(hover, focused, pushed, enabled, isChecked) ?? 2;
         
         if (renderer.StateProvider.UseGlowTextures)
         {
@@ -30,7 +31,7 @@ public class ButtonStateColorsIndexed : IButtonStateColors
         return paletteSource.Palette[index];
     }
 
-    private int? GetIndex(bool hover, bool focused, bool pushed, bool enabled)
+    private int? GetIndex(bool hover, bool focused, bool pushed, bool enabled, bool isChecked)
     {
         if (!enabled)
         {
@@ -44,12 +45,22 @@ public class ButtonStateColorsIndexed : IButtonStateColors
 
         if (hover)
         {
+            if (isChecked && Checked.HasValue)
+            {
+                return Checked;
+            }
+            
             return Hover ?? (focused ? Focused ?? Normal : Normal);
         }
 
         if (focused)
         {
             return Focused ?? Normal;
+        }
+
+        if (isChecked)
+        {
+            return Checked ?? Normal;
         }
 
         return Normal;

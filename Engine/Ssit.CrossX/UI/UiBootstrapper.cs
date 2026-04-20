@@ -50,6 +50,7 @@ public static class UiBootstrapper
             .AddMapping<Label, LabelHandler<Label>>()
             .AddMapping<LabelButton, LabelButtonHandler<LabelButton>>()
             .AddMapping<LabelButtonEx, LabelButtonExHandler>()
+            .AddMapping<LabelRadio, LabelRadioHandler<LabelRadio>>()
             .AddMapping<Button, ButtonHandler>()
             .AddMapping<VerticalStack, VerticalStackHandler<VerticalStack>>()
             .AddMapping<ImageView, ImageViewHandler>()

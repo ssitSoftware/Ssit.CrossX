@@ -19,9 +19,10 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
         get => field || _isExecutingDelayedCommand;
         private set;
     }
-
+    
     public bool IsHovered { get; private set; }
     public bool IsPressed { get; private set; }
+    
     public bool IsExecutingCommand => _isExecutingDelayedCommand;
 
     private readonly TViewHandler _viewHandler;
@@ -32,7 +33,6 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
     private TView AttachedView => (TView)_viewHandler.View;
     
     private int? _currentPointerId;
-
     private bool _isExecutingDelayedCommand;
 
     private bool HapticEnabled => (_viewHandler?.View as IButtonView)?.HapticFeedback?.Value ?? false;
@@ -148,14 +148,13 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
                     _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
                     
-                    context.CapturePointer(pointer.Id, _viewHandler);
-                    
                     var focusable = context.FindFocusable(null, _viewHandler);
                     if (focusable != null)
                     {
                         context.Focus(_viewHandler, _viewHandler);
                         _pageInputContext.ShowFocus = false;
                     }
+                    context.CapturePointer(pointer.Id, _viewHandler);
                     return true;
                 }
             }
@@ -166,7 +165,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     public void CancelPointer(int pointerId, IInputContext context)
     {
-        if (_currentPointerId == pointerId)
+        if (_currentPointerId == pointerId || context.FindFocusable(null, _viewHandler) != _viewHandler)
         {
             _currentPointerId = null;
             IsPressed = false;

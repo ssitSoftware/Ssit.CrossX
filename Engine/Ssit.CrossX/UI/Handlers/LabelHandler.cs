@@ -102,6 +102,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
             scale: TextScale,
             color: color,
             spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
+            paragraphSpacing: AttachedView.ParagraphSpacing,
             outlineColor: outlineColor,
             lineSpacing: AttachedView?.LineSpacing ?? 0,
             context: TextRenderingContext);

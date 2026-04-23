@@ -86,6 +86,14 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         }
     }
 
+    public Size GetWindowMaxSize()
+    {
+        var displayId = SDL_GetDisplayForWindow(window);
+        SDL_Rect rect;
+        SDL_GetDisplayBounds(displayId, &rect);
+        return new Size(rect.w, rect.h);
+    }
+
     public void RaiseAppExiting(WindowClosingEventArgs args)
     {
         Closing?.Invoke(args);

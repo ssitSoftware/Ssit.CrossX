@@ -24,7 +24,8 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         French = 8,
         Spanish = 16,
         Special = 32,
-        Dos = 64
+        Dos = 64,
+        Icons = 128
     }
 
     private const string PolishCharacters = "ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
@@ -33,7 +34,7 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
     private const string SpanishCharacters = "ÁÉÍÑÓÚáéíñóú";
     private const string SpecialCharacters = "®©™€§£";
     private const string DosCharacters = "⌂ ¡¢£¤¥¦§¨©ª«¬-®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƒơƷǺǻǼǽǾǿȘșȚțɑɸˆˇˉ˘˙˚˛˜˝;΄΅Ά·ΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϐϴЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџҐґ־אבגדU+05D3הוזחטיךכלםמןנסעףפץצקרשתװױײ׳״ᴛᴦᴨẀẁẂẃẄẅẟỲỳ‐‒–—―‗‘’‚‛“”„‟†‡•…‧‰′″‵‹›‼‾‿⁀⁄⁔⁴⁵⁶⁷⁸⁹⁺⁻ⁿ₁₂₃₄₅₆₇₈₉₊₋₣₤₧₪€℅ℓ№™Ω℮⅐⅑⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞←↑→↓↔↕↨∂∅∆∈∏∑−∕∙√∞∟∩∫≈≠≡≤≥⊙⌀⌂⌐⌠⌡─│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▄█▌▐░▒▓■□▪▫▬▲►▼◄◊○●◘◙◦☺☻☼♀♂♠♣♥♦♪♫✓ﬁﬂ";
-    
+    private const string IconsCharacters = "\xf6a2";
         
     
     public async Task Generate()
@@ -369,6 +370,14 @@ internal class XmlToFontConverter(string fullPath, XNode xmlNode) : IXmlFileConv
         if (charsets.HasFlag(CharSets.Special))
         {
             foreach (var c in SpecialCharacters)
+            {
+                set.Add(c);
+            }
+        }
+        
+        if (charsets.HasFlag(CharSets.Icons))
+        {
+            foreach (var c in IconsCharacters)
             {
                 set.Add(c);
             }

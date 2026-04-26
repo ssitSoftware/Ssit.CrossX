@@ -24,6 +24,7 @@ public class AabbGameInstance : IGameInstance
         public string MapPath { get; set; }
         public Action<IIoCContainerBuilder> RegisterServices { get; set; }
         public IMaterial[] Materials { get; set; }
+        public int BackgroundColorIndex { get; set; }
     }
     
     public event Action<float> FixedUpdate;
@@ -65,7 +66,8 @@ public class AabbGameInstance : IGameInstance
         _scheduler = scheduler;
         _gameTemplate = gameTemplate;
         _paletteSource = paletteSource;
-
+        _bgColorIndex = parameters.BackgroundColorIndex;
+        
         using var stream = contentManager.FilesProvider.Open(parameters.MapPath);
         var map = MapFile.FromStream(stream, gameTemplate);
 

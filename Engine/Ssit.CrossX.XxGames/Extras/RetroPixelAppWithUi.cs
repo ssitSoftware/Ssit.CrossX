@@ -66,7 +66,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
                 LampGlow = 0.3f,
                 LampDownSize = 6,
                 Distortion = 1.05f,
-                Interline = 0.4f,
+                Interline = 0.32f,
                 NoiseCount = 1000,
                 NoiseIntensity = 0.2f
             }

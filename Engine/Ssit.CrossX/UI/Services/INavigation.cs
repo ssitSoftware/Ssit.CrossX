@@ -10,8 +10,3 @@ public interface INavigation
     bool ParallelTransitions { get; set; }
     bool IsOnTop(object vmOrPage);
 }
-
-public interface INavigationEventHandler
-{
-    void OnNavigatedBackTo();
-}

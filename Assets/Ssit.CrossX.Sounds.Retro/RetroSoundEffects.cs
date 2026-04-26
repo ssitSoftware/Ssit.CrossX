@@ -19,6 +19,12 @@ namespace Ssit.CrossX.Sounds.Retro
             public const string ItemNavigation = "RetroSounds:/Set1/ItemNavigation.wav";
         }
 
+        public static class Game1
+        {
+            public const string Coin = "RetroSounds:/Game1/Coin.wav";
+            public const string Heart = "RetroSounds:/Game1/Heart.wav";
+        }
+        
         public static readonly IAssetsSource Source = new SourceClass();
     }
 }

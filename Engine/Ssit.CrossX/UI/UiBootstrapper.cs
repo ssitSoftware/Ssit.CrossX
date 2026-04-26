@@ -48,6 +48,7 @@ public static class UiBootstrapper
             .AddMapping<Background, BackgroundHandler>()
             .AddMapping<Frame, FrameHandler>()
             .AddMapping<Label, LabelHandler<Label>>()
+            .AddMapping<BlinkingLabel, BlinkingLabelHandler<BlinkingLabel>>()
             .AddMapping<LabelButton, LabelButtonHandler<LabelButton>>()
             .AddMapping<LabelButtonEx, LabelButtonExHandler>()
             .AddMapping<LabelRadio, LabelRadioHandler<LabelRadio>>()

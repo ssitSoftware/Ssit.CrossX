@@ -1,10 +1,11 @@
+using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Physics.Coliders;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
-public abstract class CollectibleObject : SpriteGameObject2, ICollectible
+public abstract class CollectibleObject : SpriteGameObject2, ICollectible, SpriteInstance.IHandler
 {
     private readonly string _idleSequence;
 
@@ -26,6 +27,7 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible
         Body.IsKinematic = true;
 
         InitializeSprite(spritePath);
+        Sprite.Handler = this;
         Sprite.SetSequence(_idleSequence);
     }
 
@@ -34,18 +36,20 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible
         if (!Body.Colliders[0].IsActive)
             return false;
 
+        Body.Colliders[0].IsActive = false;
         Sprite.SetSequence($"{_idleSequence} Collect");
-        Body.Colliders[0].IsActive = true;
         return true;
     }
 
-    protected override void OnSequenceFinished(string sequenceName)
+    public void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)
+    {
+    }
+
+    public void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
     {
         if (sequenceName.EndsWith("Collect"))
         {
             Body.Simulation.RemoveBody(Body);
-            return;
         }
-        base.OnSequenceFinished(sequenceName);
     }
 }

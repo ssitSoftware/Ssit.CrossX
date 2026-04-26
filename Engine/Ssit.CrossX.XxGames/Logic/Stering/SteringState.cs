@@ -1,4 +1,6 @@
+using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Stering;
 
@@ -14,6 +16,12 @@ public abstract class SteringState<TObject>
     
     public void SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
     public void Event(TObject obj, ISpriteEvent @event) => OnEvent(obj, @event);
+    
+    public void Collission(TObject obj, ICollider source, ICollider other, Vector2 impact) => OnCollision(obj, source, other, impact);   
+    
+    protected virtual void OnCollision(TObject obj, ICollider source, ICollider other, Vector2 impact)
+    {
+    }
     
     protected virtual void OnUpdate(TObject obj, float dt)
     {

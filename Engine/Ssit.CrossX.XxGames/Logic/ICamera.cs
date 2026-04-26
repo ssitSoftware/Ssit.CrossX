@@ -10,5 +10,6 @@ public interface ICamera
     void SetPrimaryTarget(IBody body, Vector2 offset, float followFactor);
     void SetTemporaryTarget(IBody body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter);
     void RemoveTemporaryTarget();
+    void SetCameraWindow(int? width, int? height);
     void Update(float dt);
 }

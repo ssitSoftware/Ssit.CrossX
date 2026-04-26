@@ -6,7 +6,7 @@ using static SDL.SDL3_mixer;
 
 namespace Ssit.CrossX.SDL.Audio;
 
-public unsafe class SdlMusicPlayer(SdlSoundManagerImpl soundManagerImpl): MusicPlayerBase
+public unsafe class SdlMusicPlayer : MusicPlayerBase
 {
     private SdlHandle<MIX_Track> _currentMusic;
     private SdlHandle<MIX_Track> _oldMusic;

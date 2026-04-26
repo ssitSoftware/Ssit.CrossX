@@ -49,7 +49,7 @@ public static class PhysicsHelpers
         QueryList.Clear();
     }
     
-    public static void DetectOnGround(this SpriteGameObject2 spriteGameObject, out bool isOnGround, out bool isOnPlatform, out bool isOnStaticGround, out IMaterial groundMaterial)
+    public static void DetectOnGround(this SpriteGameObject2 spriteGameObject, out bool isOnGround, out bool isOnPlatform, out bool isOnStaticGround, out IMaterial groundMaterial, Vector2 epsilon)
     {
         isOnGround = false;
         isOnPlatform = true;
@@ -58,10 +58,10 @@ public static class PhysicsHelpers
 
         var aabb = spriteGameObject.Body.Colliders[0].GetAabb(Vector2.Zero);
 
-        var leftX = aabb.Width / 2 - 0.001f;
-        var rightX = aabb.Width / 2 - 0.001f;
+        var leftX = aabb.Width / 2 - 0.001f + epsilon.X;
+        var rightX = aabb.Width / 2 - 0.001f + epsilon.X;
         
-        aabb = new Aabb(spriteGameObject.Body.Position - new Vector2(leftX, 0.001f), spriteGameObject.Body.Position + new Vector2(rightX, 0.1f));
+        aabb = new Aabb(spriteGameObject.Body.Position - new Vector2(leftX, 0.001f), spriteGameObject.Body.Position + new Vector2(rightX, 0.1f + epsilon.Y));
         spriteGameObject.Services.Simulation.CheckCollision(aabb, spriteGameObject.Body, 0, QueryList);
         
         aabb = spriteGameObject.Body.Colliders[0].Aabb;

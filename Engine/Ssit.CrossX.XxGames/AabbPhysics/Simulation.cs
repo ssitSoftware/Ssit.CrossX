@@ -111,6 +111,7 @@ internal class Simulation : ISimulation
     
     public IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
     {
+        _tempCollidersList.Clear();
         CheckCollision(aabb, testingBody, epsilon, _tempCollidersList, colliderType);
         return _tempCollidersList;
     }
@@ -151,6 +152,17 @@ internal class Simulation : ISimulation
     {
         var maxElementsPerNode = 8;
         _collidersRootNode = new QuadTreeNode<ICollider>(bounds, colliders, maxElementsPerNode);
+    }
+
+    public void AddCollider(ICollider collider)
+    {
+        _collidersRootNode.AddElement(collider);
+    }
+    
+    public void RemoveCollider(ICollider collider)
+    {
+        if(collider.AttachedBody != null) throw  new InvalidOperationException("Cannot remove collider from a non-static collider");
+        _collidersRootNode.RemoveElement(collider);
     }
 
     public void Update(float timeInSeconds, Action<float> onFixedUpdate)

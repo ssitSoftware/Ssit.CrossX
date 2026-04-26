@@ -19,4 +19,8 @@
       <Folder Include="Logic\Objects\Behaviors\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".claude\skills\Characters\skill.md" />
+    </ItemGroup>
+
 </Project>

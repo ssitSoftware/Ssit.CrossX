@@ -26,9 +26,31 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
     
     private Action _onTemporaryTargetFocused;
 
-    public Vector2 LookAt => _lookAt.TrimVectorToPixels(template.TrimToPixels);
+    public Vector2 LookAt => GetLookAt();
 
     private Vector2 _cameraMove;
+    
+    private int? _cameraWindowWidth;
+    private int? _cameraWindowHeight;
+    
+    private Vector2 GetLookAt()
+    {
+        var lookAt = _lookAt;
+        
+        if (_cameraWindowWidth.HasValue)
+        {
+            var index = (int)(lookAt.X / _cameraWindowWidth.Value);
+            lookAt.X = index * _cameraWindowWidth.Value + _cameraWindowWidth.Value / 2f;
+        }
+        
+        if (_cameraWindowHeight.HasValue)
+        {
+            var index = (int)(lookAt.Y / _cameraWindowHeight.Value);
+            lookAt.Y = index * _cameraWindowHeight.Value / 2f;
+        }
+        
+        return lookAt.TrimVectorToPixels(template.TrimToPixels);
+    }
     
     public void SetPrimaryTarget(IBody body, Vector2 offset, float followFactor)
     {
@@ -55,6 +77,12 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
         _temporaryReturnTime = 0f;
     }
 
+    public void SetCameraWindow(int? width, int? height)
+    {
+        _cameraWindowWidth = width;
+        _cameraWindowHeight = height;
+    }
+    
     public void Update(float dt)
     {
         if (Body is null)

@@ -29,7 +29,7 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     private readonly List<IUpdatable> _updatables = new();
     public RectangleF Bounds => BoundsRect.Offset(Body.Position);
     
-    public bool FaceLeft
+    public virtual bool FaceLeft
     {
         get => Transform == ImageTransform.FlipHorizontal;
         set => Transform = value ? ImageTransform.FlipHorizontal : ImageTransform.None;
@@ -105,6 +105,9 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
 
     protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
+        if (Sprite is null)
+            return;
+        
         var pos = Body.Position * Services.GameTemplate.TileSize;
         pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
         renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
@@ -113,7 +116,7 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     protected virtual void OnFixedUpdate(ref bool cancelUpdate)
     {
         var dt = Services.Simulation.SimulationParameters.TimeDelta;
-        Sprite.Advance(dt);
+        Sprite?.Advance(dt);
     }
 
     protected virtual void OnPostFixedUpdate()

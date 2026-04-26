@@ -47,6 +47,7 @@ public class IconCheckBoxHandler<TCheckBox> : BackgroundHandler<TCheckBox>, IInp
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex);
             Debugger.Break();
         }
 

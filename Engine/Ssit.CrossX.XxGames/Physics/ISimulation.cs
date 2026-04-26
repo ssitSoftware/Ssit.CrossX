@@ -31,6 +31,7 @@ public interface ISimulation: IDisposable
     IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0,
         ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
     void Debug_GetQuadTreeAreas(IList<Aabb> aabbs);
-    
+    void RemoveCollider(ICollider collider);
+    void AddCollider(ICollider collider);
     ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters : ColliderCreationParameters;
 }

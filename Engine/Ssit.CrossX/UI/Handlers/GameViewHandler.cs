@@ -29,7 +29,7 @@ internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters, I
         if (dt > 0 && (AttachedView.Active?.Value ?? true))
         {
             var gameInstance = AttachedView.GameInstance;
-            gameInstance.Update(dt);
+            gameInstance.Update(dt * AttachedView.SpeedFactor);
         }
     }
 }

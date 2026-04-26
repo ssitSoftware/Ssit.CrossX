@@ -196,7 +196,6 @@ public class PropertiesViewModel: BindableModel
 
         var propName = name.ToString();
         
-        
         if (prop.PropertyType == typeof(string))
         {
             Parameters.Add(new ParameterStringModel(propName, source, prop, handler));

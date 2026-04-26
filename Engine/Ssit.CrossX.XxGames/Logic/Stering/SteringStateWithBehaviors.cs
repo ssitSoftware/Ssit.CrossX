@@ -1,4 +1,6 @@
+using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Stering;
 
@@ -60,6 +62,17 @@ public class SteringStateWithBehaviors<TObject>(string name, params SteringBehav
         foreach (var behavior in behaviors)
         {
             if (behavior.SequenceFinished(obj, sequenceName))
+            {
+                break;
+            }
+        }
+    }
+    
+    protected override void OnCollision(TObject obj, ICollider source, ICollider other, Vector2 impact)
+    {
+        foreach (var behavior in behaviors)
+        {
+            if (behavior.Collision(obj, source, other, impact))
             {
                 break;
             }

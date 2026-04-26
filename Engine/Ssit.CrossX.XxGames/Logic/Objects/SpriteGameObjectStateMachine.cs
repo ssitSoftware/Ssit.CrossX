@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Logic.Stering;
@@ -36,6 +37,7 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
         }
         
         InternalStateMachine.SetState(state);
+        Debug.WriteLine($"{GetType().Name} Stering State: {stateName}");
     }
     
     public SpriteGameObjectStateMachine<TObject, TStateObject> RegisterState(SteringState<TStateObject> state)

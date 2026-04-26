@@ -1,4 +1,6 @@
+using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Stering;
 
@@ -8,7 +10,7 @@ public class SteringBehavior<TObject>
     internal void Exit(TObject obj) => OnExit(obj);
     internal bool Event(TObject obj, ISpriteEvent @event) => OnEvent(obj, @event);
     internal bool SequenceFinished(TObject obj, string name) => OnSequenceFinished(obj, name);
-    
+    internal bool Collision(TObject obj, ICollider source, ICollider other, Vector2 impact) => OnCollision(obj, source, other, impact);   
     internal bool Update(TObject obj, float dt) => OnUpdate(obj, dt);
     internal bool FixedUpdate(TObject obj, float dt) => OnFixedUpdate(obj, dt);
     
@@ -26,4 +28,6 @@ public class SteringBehavior<TObject>
     protected virtual void OnExit(TObject obj)
     {
     }
+
+    protected virtual bool OnCollision(TObject obj, ICollider source, ICollider other, Vector2 impact) => false;
 }

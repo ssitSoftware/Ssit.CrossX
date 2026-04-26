@@ -1,5 +1,6 @@
 using System.Numerics;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.UI.Parameters;
@@ -44,6 +45,9 @@ public class SpriteViewHandler : ViewHandler<SpriteView>
         var scale = CurrentScale;
         var x = AttachedView.ImageAnchorX?.Calculate(scale, ScreenBounds.Width) ?? 0;
         var y = AttachedView.ImageAnchorY?.Calculate(scale, ScreenBounds.Height) ?? 0;
+        
+        renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
+        
         renderer.SpriteRenderer.Draw(_spriteInstance, ScreenBounds.TopLeft + new Vector2(x, y), scale * AttachedView.Scale);
     }
 

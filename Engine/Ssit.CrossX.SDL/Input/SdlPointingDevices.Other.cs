@@ -1,4 +1,4 @@
-#if !IOS
+#if !IOS && !ANDROID
 
 namespace Ssit.CrossX.SDL.Input;
 

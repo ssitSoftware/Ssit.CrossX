@@ -57,6 +57,7 @@ public static class UiBootstrapper
             .AddMapping<ImageView, ImageViewHandler>()
             .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>()
             .AddMapping<VirtualButton, VirtualButtonHandler>()
-            .AddMapping<IconCheckBox, IconCheckBoxHandler<IconCheckBox>>();
+            .AddMapping<IconCheckBox, IconCheckBoxHandler<IconCheckBox>>()
+            .AddMapping<SpriteView, SpriteViewHandler>();
     }
 }

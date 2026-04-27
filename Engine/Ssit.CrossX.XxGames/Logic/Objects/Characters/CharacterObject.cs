@@ -8,7 +8,7 @@ using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
+public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
 {
     TParameters IGameObject.Get<TParameters>(bool create) => GetParameter<TParameters>(create);
     SteringState<ISteringCharacter> ISteringCharacter.CurrentSteringState => SteringStateMachine.InternalStateMachine.CurrentState;
@@ -81,5 +81,13 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
         
         SteringStateMachine.InternalStateMachine.OnStateChanged -= SteringStateMachineOnOnStateChanged;
         SoundContainer?.Dispose();
+    }
+
+    void IActivationHandler.Activate(bool active)
+    {
+        if (!active && SoundContainer is not null)
+        {
+            SoundContainer.StopAll();
+        }
     }
 }

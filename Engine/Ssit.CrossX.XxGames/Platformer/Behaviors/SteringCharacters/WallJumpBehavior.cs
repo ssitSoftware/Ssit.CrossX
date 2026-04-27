@@ -12,6 +12,7 @@ public class WallJumpBehavior : SteringBehavior<ISteringCharacter>
             return false;
 
         obj.FaceLeft = !obj.FaceLeft;
+        obj.SoundContainer.Play("WallJump");
         obj.SetSteringState("Raise");
         return true;
     }

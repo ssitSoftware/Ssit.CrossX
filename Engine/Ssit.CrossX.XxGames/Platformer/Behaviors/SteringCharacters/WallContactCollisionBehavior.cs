@@ -12,19 +12,22 @@ public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteringBe
     {
         if (MathF.Abs(impact.X) > 0.01f)
         {
-            if (other.Material.Index == wallClimbMaterialIndex)
+            if (other.Aabb.Bottom > source.Aabb.Center.Y)
             {
-                obj.SetSteringState("WallClimb");
-                return true;
+                if (other.Material.Index == wallClimbMaterialIndex)
+                {
+                    obj.SetSteringState("WallClimb");
+                    return true;
+                }
+
+                var stateName = obj.CurrentSteringState.Name;
+                if (!obj.SteringParameters.IsOnGround && stateName is "Raise" or "Fall")
+                {
+                    obj.SetSteringState("WallSlide");
+                    return true;
+                }
             }
 
-            var stateName = obj.CurrentSteringState.Name;
-            if (!obj.SteringParameters.IsOnGround && stateName is "Raise" or "Fall")
-            {
-                obj.SetSteringState("WallSlide");
-                return true;
-            }
-            
             var aabb = source.Aabb;
             aabb.Bottom -= 0.5f;
 

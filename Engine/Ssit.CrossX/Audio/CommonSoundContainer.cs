@@ -40,7 +40,7 @@ internal class CommonSoundContainer(IContentManager contentManager) : ICommonSou
 
         instance.Parameters = new SoundParameters
         {
-            Volume = volume
+            Volume = volume * sound.Item2
         };
         instance.Play();
     }

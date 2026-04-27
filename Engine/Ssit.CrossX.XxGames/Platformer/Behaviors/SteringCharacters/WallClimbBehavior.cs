@@ -28,6 +28,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
     protected override void OnExit(ISteringCharacter obj)
     {
         obj.Body.IsKinematic = false;
+        obj.SoundContainer.StopLoop("Climb");
     }
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
@@ -40,6 +41,8 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
             return true;
         }
 
+        obj.SoundContainer.PlayLoop("Climb");
+        
         var charAabb = obj.Body.Colliders[0].Aabb;
         var climbAabb = _climbAabb.Value;
         

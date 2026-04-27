@@ -17,6 +17,11 @@ public class ContextSoundContainer(IContentManager contentManager, ContextSoundC
     private readonly Dictionary<(string, int), (ISoundEffectInstance, float)> _instances = new();
     private readonly List<ResourceHandle<ISoundEffect>> _sounds = new();
 
+    public ContextSoundContainer RegisterSound(string name, string path, float volume = 1)
+    {
+        return RegisterSound(name, -1, path, volume);
+    }
+    
     public ContextSoundContainer RegisterSound(string name, int material, string path, float volume = 1)
     {
         var sound = contentManager.Get<ISoundEffect>(path);
@@ -34,7 +39,29 @@ public class ContextSoundContainer(IContentManager contentManager, ContextSoundC
         return this;
     }
 
-    public void Play(string name, IMaterial material = null, float volume = 1)
+    public void PlayLoop(string name)
+    {
+        if (!_instances.TryGetValue((name, -1), out var instance))
+        {
+            return;
+        }
+
+        if (!instance.Item1.IsPlaying)
+        {
+            instance.Item1.Play(true);
+        }
+    }
+
+    public void StopLoop(string name)
+    {
+        if (!_instances.TryGetValue((name, -1), out var instance))
+        {
+            return;
+        }
+        instance.Item1.Stop();
+    }
+
+    public void Play(string name, IMaterial material = null, float volume = 1, bool dontStop = false)
     {
         var materialIndex = material?.Index ?? -1;
         if (!_instances.TryGetValue((name, materialIndex), out var instance))
@@ -47,6 +74,9 @@ public class ContextSoundContainer(IContentManager contentManager, ContextSoundC
 
         if (instance.Item1.IsPlaying)
         {
+            if (dontStop)
+                return;
+            
             instance.Item1.Stop();
         }
 
@@ -71,5 +101,13 @@ public class ContextSoundContainer(IContentManager contentManager, ContextSoundC
             sound.Dispose();
         }
         _sounds.Clear();
+    }
+
+    public void StopAll()
+    {
+        foreach (var instance in _instances)
+        {
+            instance.Value.Item1.Stop();
+        }
     }
 }

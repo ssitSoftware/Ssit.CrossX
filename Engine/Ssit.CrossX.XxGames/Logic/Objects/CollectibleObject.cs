@@ -1,6 +1,4 @@
-using System;
 using Ssit.CrossX.Audio;
-using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Physics.Coliders;
@@ -11,18 +9,16 @@ namespace Ssit.CrossX.XxGames.Logic.Objects;
 public abstract class CollectibleObject : SpriteGameObject2, ICollectible, SpriteInstance.IHandler
 {
     private readonly string _idleSequence;
+    private readonly string _soundId;
+    private readonly ICommonSoundContainer _soundContainer;
 
-    private ResourceHandle<ISoundEffect> _collectSound;
-    
-    protected CollectibleObject(string spritePath, string idleSequence, string soundPath, GameObjectsServices services, ObjectCreationParameters parameters)
+    protected CollectibleObject(string spritePath, string idleSequence, string soundId, GameObjectsServices services, ObjectCreationParameters parameters)
         : base(services, parameters)
     {
         _idleSequence = idleSequence;
+        _soundId = soundId;
 
-        if (soundPath != null)
-        {
-            _collectSound = services.ContentManager.Get<ISoundEffect>(soundPath);
-        }
+        _soundContainer = services.CommonSoundContainer;
 
         var mainCollider = services.Simulation.CreateCollider(new RectColliderCreationParameters
         {
@@ -48,8 +44,8 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
 
         Body.Colliders[0].IsActive = false;
         Sprite.SetSequence($"{_idleSequence} Collect");
-        
-        _collectSound?.Resource.PlayOnce();
+
+        _soundContainer.Play(_soundId);
         return true;
     }
 
@@ -63,11 +59,5 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
         {
             Body.Simulation.RemoveBody(Body);
         }
-    }
-
-    protected override void OnDispose(bool disposing)
-    {
-        base.OnDispose(disposing);
-        _collectSound?.Dispose();
     }
 }

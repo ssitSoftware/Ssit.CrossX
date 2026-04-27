@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Ssit.CrossX.Input.Internal;
 
-internal class InputMapping : IMapper,  IMapperInt, IInputMapping
+internal class InputMapping : IMapper, IMapperInt, IInputMapping
 {
     private readonly Dictionary<string, GameControllerAxis> _axisToAxisMappings = new ();
     private readonly Dictionary<string, (GameControllerButton, GameControllerButton)> _buttonToButtonMapping = new ();

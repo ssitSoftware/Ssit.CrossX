@@ -10,6 +10,8 @@ internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters, I
     {
         base.OnDraw(renderer);
         
+        AttachedView.Active.ValueChanged += ActiveOnValueChanged;
+        
         var gameInstance = AttachedView.GameInstance;
         for (var pass = 0; pass < gameInstance.RenderPasses; pass++)
         {
@@ -20,6 +22,14 @@ internal class GameViewHandler(ViewHandler.CreateHandlerParameters parameters, I
         {
             gameInstance.RenderDebug(renderer, ScreenBounds, CurrentScale);
         }
+        
+        gameInstance.Activate(AttachedView.Active.Value);
+    }
+
+    private void ActiveOnValueChanged()
+    {
+        var gameInstance = AttachedView.GameInstance;
+        gameInstance.Activate(AttachedView.Active.Value);
     }
 
     public override void Update(float dt)

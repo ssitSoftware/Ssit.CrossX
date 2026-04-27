@@ -12,21 +12,13 @@ public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
     {
         bool Activate(out Vector2? direction);
     }
-    
-    private bool _jumpRequested;
-    
-    protected override bool OnUpdate(ISteringCharacter obj, float dt)
-    {
-        _jumpRequested =  obj.SteringInput.Jump == ButtonState.JustPressed;
-        return base.OnUpdate(obj, dt);
-    }
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
         if (obj.SteringParameters.IsOnGround)
             return false;
         
-        if (!_jumpRequested)
+        if (obj.SteringInput.Jump != ButtonState.JustPressed)
             return false;
 
         var charAabb = obj.Body.Colliders[0].Aabb;
@@ -58,7 +50,6 @@ public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
                     }
                 }
                 
-                _jumpRequested = false;
                 return true;
             }
         }

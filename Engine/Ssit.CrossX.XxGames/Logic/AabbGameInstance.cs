@@ -27,6 +27,8 @@ public class AabbGameInstance : IGameInstance
         public int BackgroundColorIndex { get; set; }
     }
     
+    IIoCContainer IGameInstance.Services => Container;
+    
     public event Action<float> FixedUpdate;
     public event Action Updated;
     
@@ -110,6 +112,15 @@ public class AabbGameInstance : IGameInstance
     void IGameInstance.Update(float deltaTime) => Update(deltaTime);
     
     public TService GetComponent<TService>() where TService : class => Container.Get<TService>();
+    
+    public void Activate(bool active)
+    {
+        foreach (var body in Simulation.Bodies)
+        {
+            if(body.Owner is IActivationHandler handler)
+                handler.Activate(active);
+        }
+    }
 
     protected virtual void Render(IRenderer2 renderer, RectangleF target, float scale)
     {

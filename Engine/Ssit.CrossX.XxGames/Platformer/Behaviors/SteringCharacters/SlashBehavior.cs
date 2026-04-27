@@ -15,6 +15,7 @@ public class SlashBehavior : SteringBehavior<ISteringCharacter>
             with { X = obj.FaceLeft ? 
                 -obj.PhysicsValues.SlashVelocity : obj.PhysicsValues.SlashVelocity };
         
+        obj.SoundContainer.Play("Slash");
         obj.SetSteringState("Slash");
         return true;
     }

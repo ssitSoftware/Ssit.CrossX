@@ -10,7 +10,7 @@ public class JumpBehavior : CheckAdditionalGroundBehaviorBase
         if (!IsOnGroundExtra(obj))
             return false;
         
-        if (obj.SteringInput.Jump != ButtonState.JustPressed)
+        if (obj.SteringInput.Button(SteringControlNames.Jump) != ButtonState.JustPressed)
             return false;
         
         obj.SoundContainer.Play("Jump");

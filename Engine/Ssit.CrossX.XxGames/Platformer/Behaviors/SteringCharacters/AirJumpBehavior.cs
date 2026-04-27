@@ -18,7 +18,7 @@ public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
         if (obj.SteringParameters.IsOnGround)
             return false;
         
-        if (obj.SteringInput.Jump != ButtonState.JustPressed)
+        if (obj.SteringInput.Button(SteringControlNames.Jump) != ButtonState.JustPressed)
             return false;
 
         var charAabb = obj.Body.Colliders[0].Aabb;

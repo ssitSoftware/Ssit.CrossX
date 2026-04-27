@@ -11,14 +11,14 @@ public class JumpAttackBehavior : SteringBehavior<ISteringCharacter>
     protected override void OnEnter(ISteringCharacter character)
     {
         base.OnEnter(character);
-        _canJumpAttack = character.SteringInput.Jump.IsDown;
+        _canJumpAttack = character.SteringInput.Button(SteringControlNames.Jump).IsDown;
     }
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        _canJumpAttack &= obj.SteringInput.Jump.IsDown;
+        _canJumpAttack &= obj.SteringInput.Button(SteringControlNames.Jump).IsDown;
         
-        if (!_canJumpAttack || obj.SteringInput.Attack != ButtonState.JustPressed )
+        if (!_canJumpAttack || obj.SteringInput.Button(SteringControlNames.Attack) != ButtonState.JustPressed )
             return false;
 
         obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpAttackRaiseVelocity };

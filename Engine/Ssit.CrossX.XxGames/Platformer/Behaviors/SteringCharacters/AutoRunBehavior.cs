@@ -14,7 +14,7 @@ public class AutoRunBehavior : SteringBehavior<ISteringCharacter>
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
         obj.SoundContainer.PlayLoop("Run");
-        obj.Body.Velocity = obj.Body.Velocity with { X = obj.SteringInput.HorizontalMove * obj.PhysicsValues.RunSpeed };
+        obj.Body.Velocity = obj.Body.Velocity with { X = obj.SteringInput.Value(SteringControlNames.HorizontalMove) * obj.PhysicsValues.RunSpeed };
         return false;
     }
 }

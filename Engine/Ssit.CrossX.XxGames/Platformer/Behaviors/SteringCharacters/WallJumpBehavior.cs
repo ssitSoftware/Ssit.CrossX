@@ -8,7 +8,7 @@ public class WallJumpBehavior : SteringBehavior<ISteringCharacter>
 {
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        if (obj.SteringInput.Jump != ButtonState.JustPressed)
+        if (obj.SteringInput.Button(SteringControlNames.Jump) != ButtonState.JustPressed)
             return false;
 
         obj.FaceLeft = !obj.FaceLeft;

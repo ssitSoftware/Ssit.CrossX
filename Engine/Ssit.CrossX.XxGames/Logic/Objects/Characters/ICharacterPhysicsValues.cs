@@ -15,6 +15,6 @@ public interface ICharacterPhysicsValues
     float WallSlideSpeed => 5.5f;
     float WallSlideTimeout => 0.44f;
     float WallClimbSpeed => 8.8f;
-    float SlashVelocity => 13.2f;
+    float AttackVelocity => 13.2f;
     float JumpAttackRaiseVelocity => JumpVelocity * 1.25f;
 }

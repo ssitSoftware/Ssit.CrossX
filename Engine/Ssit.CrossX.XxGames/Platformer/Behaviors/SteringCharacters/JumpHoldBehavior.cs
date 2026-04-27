@@ -8,7 +8,7 @@ public class JumpHoldBehavior : SteringBehavior<ISteringCharacter>
 {
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        if (obj.Body.Velocity.Y >= 0 || !obj.SteringInput.Jump.IsDown)
+        if (obj.Body.Velocity.Y >= 0 || !obj.SteringInput.Button(SteringControlNames.Jump).IsDown)
             return false;
 
         var physicsValues = obj.PhysicsValues;

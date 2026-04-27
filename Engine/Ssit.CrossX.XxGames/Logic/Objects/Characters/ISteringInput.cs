@@ -4,11 +4,6 @@ namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
 public interface ISteringInput
 {
-    float HorizontalMove { get; }
-    float Vertical { get; }
-    ButtonState Jump { get; }
-    ButtonState Attack { get; }
-    ButtonState SpecialAttack { get; }
-    ButtonState Operate { get; }
-    ButtonState Walk { get; }
+    ButtonState Button(string id);
+    float Value(string id);
 }

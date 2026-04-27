@@ -46,7 +46,12 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
         Sprite.SetSequence($"{_idleSequence} Collect");
 
         _soundContainer.Play(_soundId);
+        OnCollect();
         return true;
+    }
+
+    protected virtual void OnCollect()
+    {
     }
 
     public void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)

@@ -1,7 +1,5 @@
 #if ANDROID
 
-using System.Numerics;
-using Android.Views;
 using Org.Libsdl.App;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.SDL.Services;
@@ -14,10 +12,14 @@ public class CrossXSdlActivity<TApp> : SDLActivity where TApp : class, IApp, new
 
     protected override string[] GetLibraries() => ["SDL3", "SDL3_image", "SDL3_mixer"];
 
-    protected override void Main() => AppRunner<TApp>.Run(initializeAppDelegate: container =>
+    protected override void Main()
     {
-        _eventSource = (EventSource)container.Get<IEventSource>();
-    });
+        Console.WriteLine("Starting CrossXSdlActivity");
+        AppRunner<TApp>.Run(initializeAppDelegate: container =>
+        {
+            _eventSource = (EventSource)container.Get<IEventSource>();
+        });
+    }
 
     protected override void OnPause()
     {

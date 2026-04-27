@@ -142,19 +142,21 @@ public static class AppRunner<TApp> where TApp : class, IApp, new()
 
                         if (!exitArgs.Cancel)
                         {
+                            Console.WriteLine("[AppRunner] SDL_EVENT_QUIT received — closing app");
                             appWindowManager.Close();
                             shouldDisplayAndUpdate = false;
                         }
                     }
                     break;
-                    
+
                     case SDL_EventType.SDL_EVENT_WILL_ENTER_BACKGROUND:
                         shouldDisplayAndUpdate = false;
                         eventSource.OnPause();
                         app.SetActive(false);
                         break;
-                    
+
                     case SDL_EventType.SDL_EVENT_TERMINATING:
+                        Console.WriteLine("[AppRunner] SDL_EVENT_TERMINATING received — closing app");
                         shouldDisplayAndUpdate = false;
                         appWindowManager.Close();
                         break;

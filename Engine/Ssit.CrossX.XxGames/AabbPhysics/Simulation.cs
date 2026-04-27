@@ -10,9 +10,10 @@ namespace Ssit.CrossX.XxGames.AabbPhysics;
 
 internal class Simulation : ISimulation
 {
-    private double _timeToUpdate = 0;
+    private double _timeToUpdate;
 
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
+    public event Action<object> GameEvent;
 
     public SimulationParameters SimulationParameters { get; } = new()
     {
@@ -22,17 +23,13 @@ internal class Simulation : ISimulation
         TimeDelta = 0.01f
     };
 
-    
     public Aabb Bounds => _collidersRootNode.Aabb;
 
     public event Action Disposed;
-    public event Action<IBody> BodyRemoved;
-    public event Action<IBody> BodyAdded;
-
+    
     private readonly List<Body> _bodies = new();
     private readonly List<Body> _detachedBodies = new();
-
-    public event Action<bool> Activate;
+    
     private QuadTreeNode<ICollider> _collidersRootNode;
     private readonly List<ICollider> _collidersToTest = new();
 
@@ -55,6 +52,8 @@ internal class Simulation : ISimulation
 
     public ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters: ColliderCreationParameters
         => CollidersFactory.Create(creationParameters);
+
+    public void PublishGameEvent(object eventObject) => GameEvent?.Invoke(eventObject);
 
     public void GetColliders(Aabb bounds, IList<ICollider> colliders) => _collidersRootNode.GetElements(bounds, colliders);
 

@@ -9,10 +9,7 @@ public interface ISimulation: IDisposable
     SimulationParameters SimulationParameters { get; }
     float MovementEpsilon { get; }
 
-    event Action<IBody> BodyRemoved;
-    event Action<IBody> BodyAdded;
-    event Action<bool> Activate;
-
+    event Action<object> GameEvent;
     event Action Disposed;
     
     Aabb Bounds { get; }
@@ -34,4 +31,6 @@ public interface ISimulation: IDisposable
     void RemoveCollider(ICollider collider);
     void AddCollider(ICollider collider);
     ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters : ColliderCreationParameters;
+
+    void PublishGameEvent( object eventObject);
 }

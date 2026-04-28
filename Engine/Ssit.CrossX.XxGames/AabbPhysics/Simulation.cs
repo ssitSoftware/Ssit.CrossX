@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.XxGames.Algorithms;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Physics.Coliders;
@@ -14,6 +15,8 @@ internal class Simulation : ISimulation
 
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
     public event Action<object> GameEvent;
+
+    public IMessenger Messanger { get; internal set; }
 
     public SimulationParameters SimulationParameters { get; } = new()
     {
@@ -52,8 +55,6 @@ internal class Simulation : ISimulation
 
     public ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters: ColliderCreationParameters
         => CollidersFactory.Create(creationParameters);
-
-    public void PublishGameEvent(object eventObject) => GameEvent?.Invoke(eventObject);
 
     public void GetColliders(Aabb bounds, IList<ICollider> colliders) => _collidersRootNode.GetElements(bounds, colliders);
 
@@ -94,8 +95,8 @@ internal class Simulation : ISimulation
         {
             _detachedBodies.Add(body);
         }
-
-        foreach (var collider in body.Colliders)
+        
+        foreach (var collider in body.Colliders ?? [])
         {
             _collidersRootNode.RemoveElement(collider);
         }

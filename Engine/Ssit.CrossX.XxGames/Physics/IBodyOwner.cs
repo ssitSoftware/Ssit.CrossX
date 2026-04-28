@@ -4,8 +4,6 @@ namespace Ssit.CrossX.XxGames.Physics;
 
 public interface IBodyOwner: IDisposable
 {
-    event Action FixedUpdate;
-    
     IBody Body { get; }
     
     void OnFixedUpdate(out bool cancelUpdate)

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.XxGames.Physics.Coliders;
 
 namespace Ssit.CrossX.XxGames.Physics;
 
 public interface ISimulation: IDisposable
 {
+    IMessenger Messanger { get; }
     SimulationParameters SimulationParameters { get; }
     float MovementEpsilon { get; }
-
-    event Action<object> GameEvent;
     event Action Disposed;
     
     Aabb Bounds { get; }
@@ -31,6 +31,4 @@ public interface ISimulation: IDisposable
     void RemoveCollider(ICollider collider);
     void AddCollider(ICollider collider);
     ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters : ColliderCreationParameters;
-
-    void PublishGameEvent( object eventObject);
 }

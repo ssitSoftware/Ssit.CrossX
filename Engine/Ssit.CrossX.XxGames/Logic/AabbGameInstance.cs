@@ -1,14 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ssit.CrossX.Audio;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.XxFormats.Template;
-using Ssit.CrossX.XxGames.Audio;
+using Ssit.CrossX.XxGames.AabbPhysics;
 using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
@@ -17,7 +17,7 @@ using Ssit.IoC;
 
 namespace Ssit.CrossX.XxGames.Logic;
 
-public class AabbGameInstance : IGameInstance
+public class AabbGameInstance : IGameInstance, IMessenger
 {
     public class Parameters
     {
@@ -31,6 +31,9 @@ public class AabbGameInstance : IGameInstance
     
     public event Action<float> FixedUpdate;
     public event Action Updated;
+    public event Action<object> Message;
+
+    public IMessenger Messenger => this;
     
     public float WorldDelta => _timer.TimeDelta;
     private readonly GameTimer _timer = new();
@@ -48,7 +51,8 @@ public class AabbGameInstance : IGameInstance
     private bool _isDisposed;
 
     private int _bgColorIndex = 0;
-    
+    private Queue<object> _messages = new();
+
     int IGameInstance.RenderPasses => 1;
     
     void IGameInstance.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
@@ -89,6 +93,7 @@ public class AabbGameInstance : IGameInstance
 
         var worldBuilder = new AabbSimulationBuilder()
             .WithMap(map)
+            .WithMessenger(this)
             .WithFilesProvider(contentManager.FilesProvider)
             .WithContainer(container)
             .WithMaterials(parameters.Materials)
@@ -98,18 +103,25 @@ public class AabbGameInstance : IGameInstance
                 b
                     .WithInstance<IGameInstance>(this)
                     .WithSingleton<ICamera, Camera>()
-                    .WithCommonSoundsContainer()
                     .WithSingleton<GameObjectsServices, GameObjectsServices>();
             })
             .WithGameTemplate(gameTemplate);
         
         (Simulation, Container) = worldBuilder.Build();
+        
         _camera = Container.Get<ICamera>();
 
         FixedUpdate += _camera.Update;
     }
 
-    void IGameInstance.Update(float deltaTime) => Update(deltaTime);
+    void IGameInstance.Update(float deltaTime)
+    {
+        while (_messages.TryDequeue(out var message))
+        {
+            Message?.Invoke(message);
+        }
+        Update(deltaTime);   
+    }
     
     public TService GetComponent<TService>() where TService : class => Container.Get<TService>();
     
@@ -217,5 +229,10 @@ public class AabbGameInstance : IGameInstance
             Simulation.Dispose();
             Container?.Dispose();
         });
+    }
+    
+    public void PostMessage(object message)
+    {
+        _messages.Enqueue(message);
     }
 }

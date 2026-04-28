@@ -6,6 +6,7 @@ namespace Ssit.CrossX.Core;
 
 public interface IGameInstance: IDisposable
 {
+    IMessenger Messenger { get; }
     event Action<float> FixedUpdate;
     float WorldDelta { get; }
     int RenderPasses { get; }

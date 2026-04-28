@@ -150,6 +150,4 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
     {
         _body = simulation.CreateBody(this);
     }
-
-    
 }

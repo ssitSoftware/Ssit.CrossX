@@ -48,6 +48,8 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
         {
             updatable.FixedUpdate(dt);
         }
+
+        FixedUpdate?.Invoke();
     }
 
     void IBodyOwner.OnPostFixedUpdate()

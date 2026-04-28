@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.Utils;
 using Ssit.CrossX.XxFormats.Map;
@@ -39,6 +40,13 @@ public class AabbSimulationBuilder
     private Action<IIoCContainerBuilder> _registerServices;
 
     private IMaterial[] _materials;
+    private IMessenger _messenger;
+
+    public AabbSimulationBuilder WithMessenger(IMessenger messenger)
+    {
+        _messenger = messenger;
+        return this;
+    }
     
     public AabbSimulationBuilder WithContainer(IIoCContainer container)
     {
@@ -82,6 +90,7 @@ public class AabbSimulationBuilder
         servicesBuilder.WithParent(_container);
         
         var simulation = new Simulation();
+        simulation.Messanger = _messenger;
         simulation.SimulationParameters.GravityAcceleration = _gameTemplate.Gravity;
 
         servicesBuilder.WithInstance<ISimulation>(simulation);

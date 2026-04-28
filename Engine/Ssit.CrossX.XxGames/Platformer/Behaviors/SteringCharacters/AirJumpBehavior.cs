@@ -37,6 +37,8 @@ public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
             if (jp.Activate(out var dir))
             {
                 obj.SetSteringState("Raise");
+
+                obj.Body.Position = collider.Aabb.Center;
                 
                 obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };
                 obj.Body.Velocity = obj.Body.Velocity with { X = obj.FaceLeft ? -obj.PhysicsValues.RunSpeed : obj.PhysicsValues.RunSpeed };

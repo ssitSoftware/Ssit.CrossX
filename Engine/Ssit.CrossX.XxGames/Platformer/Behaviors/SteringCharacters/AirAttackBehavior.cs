@@ -12,8 +12,7 @@ public class AirAttackBehavior : SteringBehavior<ISteringCharacter>
             return false;
 
         obj.Body.Velocity = obj.Body.Velocity
-            with { X = obj.FaceLeft ?
-                -obj.PhysicsValues.AttackVelocity : obj.PhysicsValues.AttackVelocity };
+            with { Y = obj.PhysicsValues.AirAttackDownVelocity };
 
         obj.SoundContainer.Play("Attack");
         obj.SetSteringState("AirAttack");

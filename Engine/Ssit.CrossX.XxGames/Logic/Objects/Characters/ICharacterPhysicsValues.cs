@@ -17,4 +17,5 @@ public interface ICharacterPhysicsValues
     float WallClimbSpeed => 8.8f;
     float AttackVelocity => 13.2f;
     float JumpAttackRaiseVelocity => JumpVelocity * 1.25f;
+    float AirAttackDownVelocity => 15f;
 }

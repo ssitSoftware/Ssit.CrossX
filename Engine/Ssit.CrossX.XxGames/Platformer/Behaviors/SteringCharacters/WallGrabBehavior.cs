@@ -24,10 +24,8 @@ public class WallGrabBehavior(int grabMaterialIndex) : SteringBehavior<ISteringC
                 : grabAabb.Value.Left - charAabb.Right;
             var offsetY = grabAabb.Value.Center.Y - charAabb.Center.Y;
             _targetPosition = obj.Body.Position + new Vector2(offsetX, offsetY);
-        }
-        else
-        {
-            _targetPosition = obj.Body.Position;
+            
+            obj.SoundContainer.Play("WallGrab");
         }
     }
 
@@ -38,14 +36,13 @@ public class WallGrabBehavior(int grabMaterialIndex) : SteringBehavior<ISteringC
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        obj.Body.Position = Vector2.Lerp(obj.Body.Position, _targetPosition, MathF.Min(1f, 12f * dt));
-
         if (FindGrabAabb(obj) == null)
         {
             obj.SetSteringState("Fall");
             return true;
         }
-
+        
+        obj.Body.Position = Vector2.Lerp(obj.Body.Position, _targetPosition, MathF.Min(1f, 12f * dt));
         return false;
     }
 

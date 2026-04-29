@@ -51,7 +51,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
             GlowParameters = new PixelAppHost.GlowParameters
             {
               Blur = Blurs.Gaussian3X3,
-              BlurDivider = Blurs.Gaussian3X3Divider,
+              BlurDivider = Blurs.Gaussian3X3Divider * 0.75f,
               DisplacementFactorR = new Vector2(-1f, 1.0f) * scale,
               DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale,
               DisplacementFactorB = new Vector2(1f, -1.0f) * scale,

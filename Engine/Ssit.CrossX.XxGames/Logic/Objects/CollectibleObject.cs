@@ -1,3 +1,4 @@
+using System;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
@@ -35,6 +36,7 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
         InitializeSprite(spritePath);
         Sprite.Handler = this;
         Sprite.SetSequence(_idleSequence);
+        Sprite.Advance(Random.Shared.NextSingle() * 10);
     }
 
     bool ICollectible.Collect()

@@ -53,6 +53,38 @@ internal class Navigation: INavigation
         _uiApp = uiApp as UiApp;
     }
 
+    public void ClearNavigateToSerie(params Type[] types)
+    {
+        if (types.Length == 0)
+            throw new InvalidOperationException();
+        
+        foreach (var data in _navigationStack)
+        {
+            if (data.ViewModel is IDisposable disposable)
+            {
+                _objectsToDisposeOnTransitionFinished.Add(disposable);
+            }
+        }
+        _navigationStack.Clear();
+
+        object vm = null;
+        foreach (var type in types)
+        {
+            vm = _iocContainer.IoCConstruct(type);
+            _navigationStack.Push(new StackData(vm));
+        }
+
+        InitializePageNavigation(vm);
+        
+        if (PreviousPage != null)
+        {
+            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionType = TransitionType.NavigateBackFrom;
+        }
+        CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionType = TransitionType.NavigateBackTo;
+    }
+    
     public void ClearNavigateTo<TViewModel>(object parameter = null) where TViewModel : class
     {
         foreach (var data in _navigationStack)
@@ -66,17 +98,8 @@ internal class Navigation: INavigation
         NavigateTo<TViewModel>(parameter);
     }
 
-    public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    private void InitializePageNavigation(object vm)
     {
-        if (_navigationStack.Count > 0)
-        {
-            var data = _navigationStack.Peek();
-            data.FocusedId = CurrentPage.FocusedElement?.UniqueId;
-        }
-        
-        var vm = _iocContainer.IoCConstruct<TViewModel>(parameter);
-        _navigationStack.Push(new StackData(vm));
-        
         var page = InitializePage(vm, null);
         PreviousPage = CurrentPage;
         CurrentPage = page;
@@ -91,6 +114,20 @@ internal class Navigation: INavigation
         CurrentPage.TransitionType = TransitionType.NavigateTo;
         
         PreviousPageOnTop = false;
+    }
+
+    public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    {
+        if (_navigationStack.Count > 0)
+        {
+            var data = _navigationStack.Peek();
+            data.FocusedId = CurrentPage.FocusedElement?.UniqueId;
+        }
+        
+        var vm = _iocContainer.IoCConstruct<TViewModel>(parameter);
+        _navigationStack.Push(new StackData(vm));
+        
+        InitializePageNavigation(vm);
     }
 
     public void NavigateBack()

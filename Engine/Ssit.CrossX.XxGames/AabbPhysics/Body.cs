@@ -622,4 +622,9 @@ internal class Body : IBody
             rec.OnCollision(source, other, impact);
         }
     }
+
+    public void PostUpdate()
+    {
+        Owner?.OnPostUpdate();
+    }
 }

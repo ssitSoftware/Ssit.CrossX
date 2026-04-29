@@ -7,6 +7,7 @@ namespace Ssit.CrossX.XxGames.Physics;
 
 public interface ISimulation: IDisposable
 {
+    float ActiveTime { get; }
     IMessenger Messanger { get; }
     SimulationParameters SimulationParameters { get; }
     float MovementEpsilon { get; }

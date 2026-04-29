@@ -28,7 +28,7 @@ public class EmbeddedFilesProvider: IFilesProvider
     
     public Stream Open(string path)
     {
-        path = GetResourceName(path);
+        path = GetResourceName(path).Replace("!", "");
 
         if (!_files.Contains(path))
         {
@@ -41,7 +41,7 @@ public class EmbeddedFilesProvider: IFilesProvider
 
     public bool FileExists(string path)
     {
-        path = GetResourceName(path);
+        path = GetResourceName(path).Replace("!", "");
         return _files.Contains(path);
     }
 

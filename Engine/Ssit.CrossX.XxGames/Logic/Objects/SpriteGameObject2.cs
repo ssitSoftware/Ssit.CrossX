@@ -72,6 +72,16 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
         }
     }
     
+    void IBodyOwner.OnPostUpdate()
+    {
+        OnPostUpdate();
+        
+        foreach (var updatable in _updatables)
+        {
+            updatable.PostUpdate();
+        }
+    }
+    
     internal void CallSpriteEvent(ISpriteEvent @event) => OnSpriteEvent(@event);
     internal void CallSequenceFinished(string sequenceName) => OnSequenceFinished(sequenceName);
 
@@ -127,6 +137,11 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     
     protected virtual void OnUpdate(float dt)
     {
+    }
+
+    protected virtual void OnPostUpdate()
+    {
+        
     }
     
     void IDisposable.Dispose()

@@ -43,22 +43,22 @@ public class CacheFilesProvider: IFilesProvider
     
     public Stream Open(string path)
     {
-        return File.Open(Path.Combine(_dir, path), FileMode.Open);
+        return File.Open(Path.Combine(_dir, path).Replace("!", ""), FileMode.Open);
     }
 
     public bool FileExists(string path)
     {
-        return File.Exists(Path.Combine(_dir, path));
+        return File.Exists(Path.Combine(_dir, path).Replace("!", ""));
     }
 
     public string[] GetFiles(string path, string extension = null)
     {
         var ext = extension ?? "*";
-        return Directory.GetFiles(Path.Combine(_dir, path), $"*.{ext}");
+        return Directory.GetFiles(Path.Combine(_dir, path).Replace("!", ""), $"*.{ext}");
     }
 
     public string GetPhisicalFilePath(string path)
     {
-        return Path.Combine(_dir, path);
+        return Path.Combine(_dir, path).Replace("!", "");
     }
 }

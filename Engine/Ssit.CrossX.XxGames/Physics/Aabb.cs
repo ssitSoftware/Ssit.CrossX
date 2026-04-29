@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Drawing;
+using System.IO;
 using System.Numerics;
 
 namespace Ssit.CrossX.XxGames.Physics;
@@ -136,5 +137,18 @@ public struct Aabb
     public static explicit operator RectangleF(Aabb aabb)
     {
         return new RectangleF(aabb.Left, aabb.Top, aabb.Right-aabb.Left, aabb.Bottom-aabb.Top);
+    }
+
+    public void Serialize(BinaryWriter writer)
+    {
+        writer.Write(Left);
+        writer.Write(Top);
+        writer.Write(Right);
+        writer.Write(Bottom);
+    }
+
+    public static Aabb Deserialize(BinaryReader reader)
+    {
+        return new Aabb(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());   
     }
 }

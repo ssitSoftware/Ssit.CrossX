@@ -22,4 +22,9 @@ public interface IBodyOwner: IDisposable
     void Start()
     {
     }
+
+    void OnPostUpdate()
+    {
+        
+    }
 }

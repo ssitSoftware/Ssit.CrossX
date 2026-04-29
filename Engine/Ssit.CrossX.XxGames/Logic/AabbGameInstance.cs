@@ -6,9 +6,9 @@ using Ssit.CrossX.Content;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.IO;
 using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.XxFormats.Template;
-using Ssit.CrossX.XxGames.AabbPhysics;
 using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
@@ -25,6 +25,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         public Action<IIoCContainerBuilder> RegisterServices { get; set; }
         public IMaterial[] Materials { get; set; }
         public int BackgroundColorIndex { get; set; }
+        public float MinDelta { get; set; } = 0f;
     }
     
     IIoCContainer IGameInstance.Services => Container;
@@ -32,11 +33,10 @@ public class AabbGameInstance : IGameInstance, IMessenger
     public event Action<float> FixedUpdate;
     public event Action Updated;
     public event Action<object> Message;
-
     public IMessenger Messenger => this;
     
     public float WorldDelta => _timer.TimeDelta;
-    private readonly GameTimer _timer = new();
+    private readonly GameTimer _timer;
 
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
@@ -66,9 +66,10 @@ public class AabbGameInstance : IGameInstance, IMessenger
     void IGameInstance.RenderDebug(IRenderer2 renderer, RectangleF target, float scale) => RenderDebug(renderer, target, scale);
 
     public AabbGameInstance(IIoCContainer container, IContentManager contentManager,
-        IActionScheduler scheduler, IGameTemplate gameTemplate,
+        IActionScheduler scheduler, IGameTemplate gameTemplate, IFileStorage storage,
         Parameters parameters, IPaletteSource paletteSource = null)
     {
+        _timer = new GameTimer(parameters.MinDelta);
         _scheduler = scheduler;
         _gameTemplate = gameTemplate;
         _paletteSource = paletteSource;
@@ -107,11 +108,26 @@ public class AabbGameInstance : IGameInstance, IMessenger
             })
             .WithGameTemplate(gameTemplate);
         
-        (Simulation, Container) = worldBuilder.Build();
+        var cacheFilePath = parameters.MapPath.Replace('\\', '_').Replace('/', '_').Replace(':', '_');
+        try
+        {
+            var storedCache = storage.ReadData(cacheFilePath);
+            worldBuilder.WithCache(storedCache);
+        }
+        catch
+        {
+            // ignored - no cache read if error
+        }
+
+        (Simulation, Container, var cache) = worldBuilder.Build();
         
         _camera = Container.Get<ICamera>();
-
         FixedUpdate += _camera.Update;
+
+        if (cache?.Length > 0)
+        {
+            storage.WriteData(cacheFilePath, cache);
+        }
     }
 
     void IGameInstance.Update(float deltaTime)
@@ -120,7 +136,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         {
             Message?.Invoke(message);
         }
-        Update(deltaTime);   
+        Update(deltaTime);
     }
     
     public TService GetComponent<TService>() where TService : class => Container.Get<TService>();
@@ -129,7 +145,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
     {
         foreach (var body in Simulation.Bodies)
         {
-            if(body.Owner is IActivationHandler handler)
+            if (body.Owner is IActivationHandler handler)
                 handler.Activate(active);
         }
     }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Serialization.Formatters.Binary;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.Utils;
@@ -41,10 +43,17 @@ public class AabbSimulationBuilder
 
     private IMaterial[] _materials;
     private IMessenger _messenger;
+    private byte[] _cache;
 
     public AabbSimulationBuilder WithMessenger(IMessenger messenger)
     {
         _messenger = messenger;
+        return this;
+    }
+
+    public AabbSimulationBuilder WithCache(byte[] cache)
+    {
+        _cache = cache;
         return this;
     }
     
@@ -84,7 +93,7 @@ public class AabbSimulationBuilder
         return this;
     }
 
-    public (ISimulation, IIoCContainer) Build()
+    public (ISimulation, IIoCContainer, byte[]) Build()
     {
         var servicesBuilder = IoC.IoC.NewBuilder();
         servicesBuilder.WithParent(_container);
@@ -100,22 +109,38 @@ public class AabbSimulationBuilder
         
         var container = servicesBuilder.Build();
         
+        GenerateStaticColliders(simulation);
+        
+        try
+        {
+            GenerateObjects(_mapFile.MainLayer.Objects, container);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+        return (simulation, container, _cache);
+    }
+
+    private IMaterial[,] FillCollisions()
+    {
+        var width = _mapFile.MainLayer.Width * _gameTemplate.TileSize;
+        var height = _mapFile.MainLayer.Height * _gameTemplate.TileSize;
+        
+        var collisions = new IMaterial[width, height];
+        List<MapLayer> layers = [
+            _mapFile.MainLayer
+        ];
+        
         var tilesets = _mapFile.Tilesets.Select(o =>
         {
             using var stream = _filesProvider.Open(PathHelper.GetPathWithExtension(o, "mask.png"));
             return ImagesUtility.LoadImage(stream);
 
         }).ToArray();
-
-        var width = _mapFile.MainLayer.Width * _gameTemplate.TileSize;
-        var height = _mapFile.MainLayer.Height * _gameTemplate.TileSize;
         
-        var collisions = new IMaterial[width, height];
-
-        List<MapLayer> layers = [
-            _mapFile.MainLayer
-        ];
-
         foreach (var layer in layers)
         {
             for (var ix = 0; ix < layer.Width; ++ix)
@@ -133,31 +158,80 @@ public class AabbSimulationBuilder
             }
         }
 
-        GenerateStaticColliders(collisions, simulation);
-        
-        try
-        {
-            GenerateObjects(_mapFile.MainLayer.Objects, container);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        
-        return (simulation, container);
+        return collisions;
     }
     
-    private void GenerateStaticColliders(IMaterial[,] collisions, Simulation simulation)
+    private void GenerateStaticColliders(Simulation simulation)
     {
         var list = new List<RectCollider>();
-        var regionsFromArray = new RegionsFromArray<IMaterial>();
         
-        // ReSharper disable PossibleLossOfFraction
-        var mapAabb = new Aabb(0, 0, collisions.GetLength(0) / _gameTemplate.TileSize, collisions.GetLength(1) / _gameTemplate.TileSize);
-
-        regionsFromArray.GenerateRegions(collisions, null, new Matcher(), CreateCollider, list);
+        if (!LoadStaticCollisionsFromCache(list, out var mapAabb))
+        {
+            list.Clear();
+            
+            var collisions = FillCollisions();
+            var regionsFromArray = new RegionsFromArray<IMaterial>();
+        
+            // ReSharper disable PossibleLossOfFraction
+            mapAabb = new Aabb(0, 0, collisions.GetLength(0) / _gameTemplate.TileSize, collisions.GetLength(1) / _gameTemplate.TileSize);
+            regionsFromArray.GenerateRegions(collisions, null, new Matcher(), CreateCollider, list);
+            _cache = SaveCache(mapAabb, list);
+        }
+        
         simulation.InitializeStaticColliders(mapAabb, list);
+    }
+
+    private byte[] SaveCache(Aabb mapAabb, List<RectCollider> list)
+    {
+        using var memoryStream = new MemoryStream();
+        var binaryWriter = new BinaryWriter(memoryStream);
+            
+        binaryWriter.Write(DateTime.UtcNow.Ticks);
+            
+        mapAabb.Serialize(binaryWriter);
+            
+        binaryWriter.Write(list.Count);
+        foreach (var el in list)
+        {
+            el.Serialize(binaryWriter);
+        }
+            
+        return memoryStream.ToArray();
+    }
+
+    private bool LoadStaticCollisionsFromCache(List<RectCollider> list, out Aabb aabb)
+    {
+        aabb = Aabb.Empty;
+
+        if (_cache is null)
+            return false;
+        
+        var memoryStream = new MemoryStream(_cache);
+        
+        var reader = new BinaryReader(memoryStream);
+
+        var dateInt = reader.ReadInt64();
+        var date = new DateTime(dateInt);
+
+        if (date < _mapFile.Date)
+            return false;
+
+        try
+        {
+            aabb = Aabb.Deserialize(reader);
+
+            var count = reader.ReadInt32();
+            for (var i = 0; i < count; i++)
+            {
+                list.Add(RectCollider.Deserialize(reader, _materials));
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private void CreateCollider(IMaterial material, int x, int y, int width, int height, object listAsObject)

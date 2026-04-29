@@ -44,7 +44,9 @@ public class SpriteEx: IDisposable
             originAlignment = ContentAlign.Center | ContentAlign.VCenter;
         }
         
-        var sprite = JsonSpriteLoader.LoadInternal(path +  ".json", filesProvider);
+        var addedPersistent = path.EndsWith('!') ? "!" : "";
+        
+        var sprite = JsonSpriteLoader.LoadInternal(path +  ".json" + addedPersistent, filesProvider);
         
         JsonSpriteObjectDescription desc;
         Size sourceSize = Size.Zero;

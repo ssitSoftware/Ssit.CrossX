@@ -16,6 +16,7 @@ internal class Simulation : ISimulation
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
     public event Action<object> GameEvent;
 
+    public float ActiveTime { get; private set; }
     public IMessenger Messanger { get; internal set; }
 
     public SimulationParameters SimulationParameters { get; } = new()
@@ -167,6 +168,8 @@ internal class Simulation : ISimulation
 
     public void Update(float timeInSeconds, Action<float> onFixedUpdate)
     {
+        ActiveTime += timeInSeconds;
+        
         if (_bodiesChanged)
         {
             SortBodies();
@@ -189,6 +192,16 @@ internal class Simulation : ISimulation
                 SortBodies();
                 _bodiesChanged = false;
             }
+        }
+
+        OnPostUpdate();
+    }
+
+    private void OnPostUpdate()
+    {
+        for (var idx = 0; idx < _bodies.Count; ++idx)
+        {
+            _bodies[idx].PostUpdate();
         }
     }
 

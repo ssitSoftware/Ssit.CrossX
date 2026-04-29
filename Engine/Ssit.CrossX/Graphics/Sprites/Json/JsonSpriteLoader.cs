@@ -53,9 +53,11 @@ public static class JsonSpriteLoader
             }
             sequences.Add(new Sprite.SpriteSequence(sequence.Key, frames));
         }
-        
+
+        var addedPersistent = path.EndsWith('!') ? "!" : "";
+            
         var sheetDir = Path.GetDirectoryName(path);
-        var sheetFile = Path.GetFileNameWithoutExtension(path) + ".png";
+        var sheetFile = Path.GetFileNameWithoutExtension(path) + ".png" + addedPersistent;
         var sheetPath = Path.Combine(sheetDir ?? "", sheetFile);
         return new Sprite(sheetPath, sequences, sourceSize);
     }

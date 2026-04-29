@@ -19,6 +19,8 @@ public class MapFile: BindableModel
     
     public Guid TemplateId { get; }
     public int TileSize { get; }
+    
+    public DateTime Date { get; private set; }
 
     public int NextObjectId
     {
@@ -166,6 +168,9 @@ public class MapFile: BindableModel
     
     public void LoadRaw(BinaryReader reader, IGameTemplate gameTemplate)
     {
+        var date = reader.ReadInt64();
+        Date = new DateTime(date);
+        
         BackgroundColor = RgbaColor.FromRgba(reader.ReadUInt32(), false);
         Layers.Clear();
         
@@ -185,6 +190,7 @@ public class MapFile: BindableModel
     
     public void SaveRaw(BinaryWriter writer)
     {
+        writer.Write(DateTime.UtcNow.Ticks);
         writer.Write(BackgroundColor.ToUInt32());
         writer.Write((byte)Layers.Count);
         foreach (var layer in Layers)

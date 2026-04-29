@@ -129,7 +129,20 @@ public class PixelAppHost: IAppHost
         }
         finally
         {
+            EndRenderWrapped();
+        }
+    }
+
+    private void EndRenderWrapped()
+    {
+        try
+        {
             EndRender();
+        }
+        catch
+        {
+            _renderer.SetRenderTarget(null);
+            _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
         }
     }
 

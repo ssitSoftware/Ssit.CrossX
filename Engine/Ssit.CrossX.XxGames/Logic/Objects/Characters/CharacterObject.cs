@@ -10,7 +10,7 @@ namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
 public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
 {
-    TParameters IGameObject.Get<TParameters>(bool create) => GetParameter<TParameters>(create);
+    TParameters IGameObject.Get<TParameters>(bool create) => GetParameters<TParameters>(create);
     SteringState<ISteringCharacter> ISteringCharacter.CurrentSteringState => SteringStateMachine.InternalStateMachine.CurrentState;
     
     ISteringInput ISteringCharacter.SteringInput => SteringInput;
@@ -28,8 +28,10 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     protected SpriteGameObjectStateMachine<TCharacter, ISteringCharacter> SteringStateMachine { get; private set; }
 
     private readonly Dictionary<Type, object> _parameters = new();
+
+    TParameters ICharacter.GetParameters<TParameters>(bool create) => GetParameters<TParameters>(create);
     
-    protected virtual TParameters GetParameter<TParameters>(bool create)
+    protected virtual TParameters GetParameters<TParameters>(bool create)
     {
         if (create)
         {

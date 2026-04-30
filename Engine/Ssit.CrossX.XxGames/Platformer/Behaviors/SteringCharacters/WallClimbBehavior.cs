@@ -7,20 +7,26 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
 
 public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISteringCharacter>()
 {
-    private Aabb? _climbAabb;
-
+    // ReSharper disable once ClassNeverInstantiated.Local
+    private sealed class Parameters
+    {
+        public Aabb? ClimbAabb;
+    }
+    
     protected override void OnEnter(ISteringCharacter obj)
     {
-        _climbAabb = FindClimbAabb(obj);
+        var parameters = obj.GetParameters<Parameters>(true);
+        parameters.ClimbAabb = FindClimbAabb(obj);
+        
         obj.Body.IsKinematic = true;
         obj.Body.Velocity = Vector2.Zero;
 
-        if (_climbAabb.HasValue)
+        if (parameters.ClimbAabb.HasValue)
         {
             var charAabb = obj.Body.Colliders[0].Aabb;
             var offsetX = obj.FaceLeft
-                ? _climbAabb.Value.Right - charAabb.Left
-                : _climbAabb.Value.Left - charAabb.Right;
+                ? parameters.ClimbAabb.Value.Right - charAabb.Left
+                : parameters.ClimbAabb.Value.Left - charAabb.Right;
             obj.Body.Position += new Vector2(offsetX, 0);
         }
     }
@@ -33,9 +39,10 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        _climbAabb ??= FindClimbAabb(obj);
+        var parameters = obj.GetParameters<Parameters>(true);
+        parameters.ClimbAabb ??= FindClimbAabb(obj);
 
-        if (_climbAabb == null)
+        if (parameters.ClimbAabb == null)
         {
             obj.SetSteringState("Fall");
             return true;
@@ -44,7 +51,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
         obj.SoundContainer.PlayLoop("Climb");
         
         var charAabb = obj.Body.Colliders[0].Aabb;
-        var climbAabb = _climbAabb.Value;
+        var climbAabb = parameters.ClimbAabb.Value;
         
         // Reached the top — shift forward to stand on it
         if (charAabb.Bottom <= climbAabb.Top)

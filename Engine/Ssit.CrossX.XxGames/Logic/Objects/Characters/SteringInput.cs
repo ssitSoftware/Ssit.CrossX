@@ -3,7 +3,7 @@ using Ssit.CrossX.Input;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public class SteringInput(IInputMapping mapping): ISteringInput
+public class SteringInput(IInputMapping mapping = null): ISteringInputController
 {
     private readonly Dictionary<string, ButtonState> _buttonStates = new();
     private readonly Dictionary<string, float> _values = new();
@@ -29,6 +29,9 @@ public class SteringInput(IInputMapping mapping): ISteringInput
 
     public void FixedUpdate()
     {
+        if (mapping is null)
+            return;
+        
         foreach (var id in _buttonIds)
         {
             if (_mappings.TryGetValue(id, out var idState))

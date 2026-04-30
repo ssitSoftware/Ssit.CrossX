@@ -6,19 +6,26 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
 
 public class JumpAttackBehavior : SteringBehavior<ISteringCharacter>
 {
-    private bool _canJumpAttack;
+    // ReSharper disable once ClassNeverInstantiated.Local
+    private sealed class Parameters
+    {
+        public bool CanJumpAttack;
+    }
     
     protected override void OnEnter(ISteringCharacter character)
     {
         base.OnEnter(character);
-        _canJumpAttack = character.SteringInput.Button(SteringControlNames.Jump).IsDown;
+
+        var parameters = character.GetParameters<Parameters>(true);
+        parameters.CanJumpAttack = character.SteringInput.Button(SteringControlNames.Jump).IsDown; 
     }
 
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
-        _canJumpAttack &= obj.SteringInput.Button(SteringControlNames.Jump).IsDown;
+        var parameters = obj.GetParameters<Parameters>(true);
+        parameters.CanJumpAttack &= obj.SteringInput.Button(SteringControlNames.Jump).IsDown;
         
-        if (!_canJumpAttack || obj.SteringInput.Button(SteringControlNames.Attack) != ButtonState.JustPressed )
+        if (!parameters.CanJumpAttack || obj.SteringInput.Button(SteringControlNames.Attack) != ButtonState.JustPressed )
             return false;
 
         obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpAttackRaiseVelocity };

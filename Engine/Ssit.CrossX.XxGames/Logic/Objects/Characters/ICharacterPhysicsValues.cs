@@ -19,4 +19,6 @@ public interface ICharacterPhysicsValues
     float JumpAttackRaiseVelocity => JumpVelocity * 1.25f;
     float AirAttackDownVelocity => 15f;
     float ThrustDownVelocity => 18f;
+    float MoveAwayDistance => 2f;
+    float MoveAwaySpeed => 20f;
 }

@@ -4,23 +4,18 @@ using Ssit.CrossX.XxGames.Logic.Stering;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
 
-public class AirAttackBehavior(float horizontalMoveDivider = 1) : SteringBehavior<ISteringCharacter>
+public class DownwardThrustBehavior : SteringBehavior<ISteringCharacter>
 {
     protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
     {
         if (obj.SteringInput.Button(SteringControlNames.Attack) != ButtonState.JustPressed)
             return false;
 
-        obj.Body.Velocity = obj.Body.Velocity
-            with
-            {
-                X = obj.Body.Velocity.X / horizontalMoveDivider,
-                Y = obj.PhysicsValues.AirAttackDownVelocity
-            };
+        if (!obj.SteringInput.Button(SteringControlNames.Jump).IsDown)
+            return false;
 
-        obj.SoundContainer.Play("Attack");
-        obj.SetSteringState("AirAttack");
-        
+        obj.Body.Velocity = obj.Body.Velocity with { X = 0, Y = obj.PhysicsValues.ThrustDownVelocity };
+        obj.SetSteringState("Thrust");
         return true;
     }
 }

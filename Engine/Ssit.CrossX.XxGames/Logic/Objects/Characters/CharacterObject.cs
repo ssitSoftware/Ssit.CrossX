@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.XxGames.Audio;
 using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
@@ -23,6 +24,7 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     protected Vector2 GroundDetectionEpsilon { get; set; } = Vector2.Zero;
     
     public ICharacterPhysicsValues PhysicsValues { get; protected init; }
+    public ICommonSoundContainer CommonSoundContainer { get; }
     protected ContextSoundContainer SoundContainer { get; init; }
 
     protected SpriteGameObjectStateMachine<TCharacter, ISteeringCharacter> SteeringStateMachine { get; private set; }
@@ -57,6 +59,7 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     
     protected CharacterObject(GameObjectsServices services, ObjectCreationParameters parameters): base(services, parameters)
     {
+        CommonSoundContainer = services.CommonSoundContainer;
         Body.AddEventsReceiver(this);
     }
     

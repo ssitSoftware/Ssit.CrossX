@@ -3,11 +3,11 @@ using Ssit.CrossX.XxGames.Logic.Steering;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class ReturnToRunOrFallOnFinishedBehavior : SteeringBehavior<ISteeringCharacter>
+public class ReturnToIdleOnFinishedBehavior : SteeringBehavior<ISteeringCharacter>
 {
     protected override bool OnSequenceFinished(ISteeringCharacter obj, string name)
     {
-        obj.SetSteeringState(obj.SteeringParameters.IsOnGround ? "Run" : "Fall");
+        obj.SetSteeringState("Idle");
         return true;
     }
 }

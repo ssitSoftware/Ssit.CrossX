@@ -1,14 +1,14 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteringBehavior<ISteringCharacter>
+public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteeringBehavior<ISteeringCharacter>
 {
-    protected override bool OnCollision(ISteringCharacter obj, ICollider source, ICollider other, Vector2 impact)
+    protected override bool OnCollision(ISteeringCharacter obj, ICollider source, ICollider other, Vector2 impact)
     {
         if (MathF.Abs(impact.X) > 0.01f)
         {
@@ -16,14 +16,14 @@ public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteringBe
             {
                 if (other.Material.Index == wallClimbMaterialIndex)
                 {
-                    obj.SetSteringState("WallClimb");
+                    obj.SetSteeringState("WallClimb");
                     return true;
                 }
 
-                var stateName = obj.CurrentSteringState.Name;
-                if (!obj.SteringParameters.IsOnGround && stateName is "Raise" or "Fall")
+                var stateName = obj.CurrentSteeringState.Name;
+                if (!obj.SteeringParameters.IsOnGround && stateName is "Raise" or "Fall")
                 {
-                    obj.SetSteringState("WallSlide");
+                    obj.SetSteeringState("WallSlide");
                     return true;
                 }
             }
@@ -31,7 +31,7 @@ public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteringBe
             var aabb = source.Aabb;
             aabb.Bottom -= 0.5f;
 
-            if (aabb.Intersects(other.Aabb) && obj.SteringParameters.IsOnStaticGround)
+            if (aabb.Intersects(other.Aabb) && obj.SteeringParameters.IsOnStaticGround)
             {
                 obj.FaceLeft = !obj.FaceLeft;
                 return true;

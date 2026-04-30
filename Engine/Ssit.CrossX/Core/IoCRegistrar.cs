@@ -15,7 +15,7 @@ public static class IoCRegistrar
     /// <summary>
     /// Registers the essential Pixel Core components with the IoC Container Builder.
     /// </summary>
-    /// <param name="builder">The IoC container builder used for registering dependencies.</param>
+    /// <param name="builder">The IoC container builder used for regiSteering dependencies.</param>
     /// <returns>The IoC container builder with registered Pixel Core components.</returns>
     public static IIoCContainerBuilder WithPixelCore(this IIoCContainerBuilder builder)
     {

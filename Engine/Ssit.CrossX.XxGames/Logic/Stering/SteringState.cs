@@ -2,9 +2,9 @@ using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Logic.Stering;
+namespace Ssit.CrossX.XxGames.Logic.Steering;
 
-public abstract class SteringState<TObject>
+public abstract class SteeringState<TObject>
 {
     public abstract string Name { get; }
     

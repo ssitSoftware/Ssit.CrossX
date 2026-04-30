@@ -1,6 +1,6 @@
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public static class SteringControlNames
+public static class SteeringControlNames
 {
     public const string HorizontalMove = nameof(HorizontalMove);
     

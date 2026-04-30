@@ -1,11 +1,11 @@
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISteringCharacter>()
+public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<ISteeringCharacter>()
 {
     // ReSharper disable once ClassNeverInstantiated.Local
     private sealed class Parameters
@@ -13,7 +13,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
         public Aabb? ClimbAabb;
     }
     
-    protected override void OnEnter(ISteringCharacter obj)
+    protected override void OnEnter(ISteeringCharacter obj)
     {
         var parameters = obj.GetParameters<Parameters>(true);
         parameters.ClimbAabb = FindClimbAabb(obj);
@@ -31,20 +31,20 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
         }
     }
 
-    protected override void OnExit(ISteringCharacter obj)
+    protected override void OnExit(ISteeringCharacter obj)
     {
         obj.Body.IsKinematic = false;
         obj.SoundContainer.StopLoop("Climb");
     }
 
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         var parameters = obj.GetParameters<Parameters>(true);
         parameters.ClimbAabb ??= FindClimbAabb(obj);
 
         if (parameters.ClimbAabb == null)
         {
-            obj.SetSteringState("Fall");
+            obj.SetSteeringState("Fall");
             return true;
         }
 
@@ -59,7 +59,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
             var shift = obj.FaceLeft ? -0.6f : 0.6f;
             obj.Body.Position += new Vector2(shift, 0);
             obj.Body.Velocity = Vector2.Zero;
-            obj.SetSteringState("Run");
+            obj.SetSteeringState("Run");
             return true;
         }
 
@@ -67,13 +67,13 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteringBehavior<ISt
         obj.Body.KinematicMove(new Vector2(0, -obj.PhysicsValues.WallClimbSpeed * dt), true);
         if (obj.Body.Position.Y >= previousPosition.Y)
         {
-            obj.SetSteringState("Fall");
+            obj.SetSteeringState("Fall");
             return true;
         }
         return false;
     }
 
-    private Aabb? FindClimbAabb(ISteringCharacter obj)
+    private Aabb? FindClimbAabb(ISteeringCharacter obj)
     {
         var aabb = obj.Body.Colliders[0].Aabb;
         var probe = obj.FaceLeft

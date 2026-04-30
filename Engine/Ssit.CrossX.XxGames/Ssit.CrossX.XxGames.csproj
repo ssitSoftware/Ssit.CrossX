@@ -17,7 +17,6 @@
 
     <ItemGroup>
       <Folder Include="Logic\Objects\Behaviors\" />
-      <Folder Include="Platformer\Behaviors\SteringCharacters\Bots\" />
     </ItemGroup>
 
 </Project>

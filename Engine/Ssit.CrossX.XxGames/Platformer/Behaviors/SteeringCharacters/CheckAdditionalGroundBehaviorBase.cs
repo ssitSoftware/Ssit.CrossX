@@ -1,13 +1,13 @@
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class CheckAdditionalGroundBehaviorBase: SteringBehavior<ISteringCharacter>
+public class CheckAdditionalGroundBehaviorBase: SteeringBehavior<ISteeringCharacter>
 {
-    protected bool IsOnGroundExtra(ISteringCharacter obj)
+    protected bool IsOnGroundExtra(ISteeringCharacter obj)
     {
-        if (!obj.SteringParameters.IsOnGround)
+        if (!obj.SteeringParameters.IsOnGround)
         {
             var aabb =  obj.Body.Colliders[0].Aabb;
 

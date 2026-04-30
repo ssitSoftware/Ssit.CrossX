@@ -33,7 +33,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
     
     bool IStoryOperator.ExecuteStoryConversation(INpcCharacter npc, string conversationId)
     {
-        if (!SteringParameters.IsOnGround) 
+        if (!SteeringParameters.IsOnGround) 
             return false;
         
         if (npc is null)
@@ -50,7 +50,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
         Body.Velocity = Vector2.Zero;
         _camera.SetTemporaryTarget(Body, new Vector2(0,-4), 4, null, TimeSpan.FromDays(10));
         
-        SteringStateMachine.SetSteringState("Talking");
+        SteeringStateMachine.SetSteeringState("Talking");
         
         await _narrationSystem.StartNarration(conversationId);
 
@@ -66,7 +66,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
         
         _actionScheduler.Schedule(() =>
         { 
-            SteringStateMachine.SetSteringState("Idle");
+            SteeringStateMachine.SetSteeringState("Idle");
             OnGameStateUpdated();
         });
     }
@@ -77,7 +77,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
 
     protected virtual async void ExecuteStoryConversation(INpcCharacter npc, string conversationId = null)
     {
-        if (!SteringParameters.IsOnGround)
+        if (!SteeringParameters.IsOnGround)
             return;
         
         Body.Velocity = Vector2.Zero;
@@ -122,14 +122,14 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
                 return;
             }
 
-            SteringStateMachine.SetSteringState("WalkTo");
+            SteeringStateMachine.SetSteeringState("WalkTo");
             await WalkTo(targetPosX);
         }
         
         _actionScheduler.Schedule(() =>
         {
             Body.Velocity = Vector2.Zero;
-            SteringStateMachine.SetSteringState("Talking");
+            SteeringStateMachine.SetSteeringState("Talking");
             FaceLeft = faceLeft;
         });
         
@@ -146,13 +146,13 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
         
         _actionScheduler.Schedule(() =>
         {
-            SteringStateMachine.SetSteringState("Idle");
+            SteeringStateMachine.SetSteeringState("Idle");
         });
     }
     
     public async Task WalkTo(float targetPosX)
     {
-        SteringStateMachine.SetSteringState("WalkTo");
+        SteeringStateMachine.SetSteeringState("WalkTo");
 
         _walkToPositionX = targetPosX;
         

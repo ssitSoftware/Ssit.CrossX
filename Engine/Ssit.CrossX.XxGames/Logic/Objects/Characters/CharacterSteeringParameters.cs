@@ -4,10 +4,10 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public class CharacterSteringParameters
+public class CharacterSteeringParameters
 {
     public List<Vector2> InAirVelocity { get; } = [];
-    public float InAirSteringFactor;
+    public float InAirSteeringFactor;
 
     public bool CanEnterIdle;
     

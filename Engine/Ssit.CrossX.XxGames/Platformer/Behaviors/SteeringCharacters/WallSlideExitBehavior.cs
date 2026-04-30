@@ -1,12 +1,12 @@
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallSlideExitBehavior : SteringBehavior<ISteringCharacter>
+public class WallSlideExitBehavior : SteeringBehavior<ISteeringCharacter>
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         var aabb = obj.Body.Colliders[0].Aabb;
         var wallProbe = obj.FaceLeft
@@ -15,7 +15,7 @@ public class WallSlideExitBehavior : SteringBehavior<ISteringCharacter>
 
         if (!obj.Body.Simulation.CheckCollision(wallProbe, obj.Body, 0))
         {
-            obj.SetSteringState("Fall");
+            obj.SetSteeringState("Fall");
             return true;
         }
 

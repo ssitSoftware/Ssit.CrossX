@@ -2,22 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Audio;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteringCharacter where TCharacter: CharacterObject<TCharacter>
+public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteeringCharacter where TCharacter: CharacterObject<TCharacter>
 {
     TParameters IGameObject.Get<TParameters>(bool create) => GetParameters<TParameters>(create);
-    SteringState<ISteringCharacter> ISteringCharacter.CurrentSteringState => SteringStateMachine.InternalStateMachine.CurrentState;
+    SteeringState<ISteeringCharacter> ISteeringCharacter.CurrentSteeringState => SteeringStateMachine.InternalStateMachine.CurrentState;
     
-    ISteringInput ISteringCharacter.SteringInput => SteringInput;
+    ISteeringInput ISteeringCharacter.SteeringInput => SteeringInput;
     
-    public CharacterSteringParameters SteringParameters { get; } = new();
+    public CharacterSteeringParameters SteeringParameters { get; } = new();
     
-    protected abstract ISteringInput SteringInput { get; }
+    protected abstract ISteeringInput SteeringInput { get; }
     
     public Vector2 MomentumOffset { get; set; }
     protected Vector2 GroundDetectionEpsilon { get; set; } = Vector2.Zero;
@@ -25,7 +25,7 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     public ICharacterPhysicsValues PhysicsValues { get; protected init; }
     protected ContextSoundContainer SoundContainer { get; init; }
 
-    protected SpriteGameObjectStateMachine<TCharacter, ISteringCharacter> SteringStateMachine { get; private set; }
+    protected SpriteGameObjectStateMachine<TCharacter, ISteeringCharacter> SteeringStateMachine { get; private set; }
 
     private readonly Dictionary<Type, object> _parameters = new();
 
@@ -48,10 +48,10 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     
     void IBodyEventsReceiver.OnCollision(ICollider source, ICollider other, Vector2 impact)
     {
-        SteringStateMachine.InternalStateMachine.CurrentState?.Collission((TCharacter)this, source, other, impact);
+        SteeringStateMachine.InternalStateMachine.CurrentState?.Collission((TCharacter)this, source, other, impact);
     }
     
-    public void SetSteringState(string name) => SteringStateMachine.SetSteringState(name);
+    public void SetSteeringState(string name) => SteeringStateMachine.SetSteeringState(name);
     
     ContextSoundContainer IGameObject.SoundContainer => SoundContainer;
     
@@ -60,20 +60,20 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
         Body.AddEventsReceiver(this);
     }
     
-    protected void InitializeSteringStateMachine()
+    protected void InitializeSteeringStateMachine()
     {
-        SteringStateMachine = new SpriteGameObjectStateMachine<TCharacter, ISteringCharacter>((TCharacter)this);
-        SteringStateMachine.InternalStateMachine.OnStateChanged += SteringStateMachineOnOnStateChanged;
+        SteeringStateMachine = new SpriteGameObjectStateMachine<TCharacter, ISteeringCharacter>((TCharacter)this);
+        SteeringStateMachine.InternalStateMachine.OnStateChanged += SteeringStateMachineOnOnStateChanged;
     }
     
     protected void DetectOnGround()
     {
-        this.DetectOnGround(out SteringParameters.IsOnGround, out SteringParameters.IsOnPlatform, out SteringParameters.IsOnStaticGround, out SteringParameters.GroundMaterial, GroundDetectionEpsilon);
+        this.DetectOnGround(out SteeringParameters.IsOnGround, out SteeringParameters.IsOnPlatform, out SteeringParameters.IsOnStaticGround, out SteeringParameters.GroundMaterial, GroundDetectionEpsilon);
     }
     
-    private static void SteringStateMachineOnOnStateChanged(object sender, SteringState<ISteringCharacter> _)
+    private static void SteeringStateMachineOnOnStateChanged(object sender, SteeringState<ISteeringCharacter> _)
     {
-        var sm = (SteringStateMachine<ISteringCharacter>)sender;
+        var sm = (SteeringStateMachine<ISteeringCharacter>)sender;
         ((CharacterObject<TCharacter>)sm.Object).DetectOnGround();
     }
 
@@ -81,7 +81,7 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     {
         base.OnDispose(disposing);
         
-        SteringStateMachine.InternalStateMachine.OnStateChanged -= SteringStateMachineOnOnStateChanged;
+        SteeringStateMachine.InternalStateMachine.OnStateChanged -= SteeringStateMachineOnOnStateChanged;
         SoundContainer?.Dispose();
     }
 

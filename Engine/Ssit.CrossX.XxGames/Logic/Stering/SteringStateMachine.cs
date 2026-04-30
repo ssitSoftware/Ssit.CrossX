@@ -1,15 +1,15 @@
 using System;
 
-namespace Ssit.CrossX.XxGames.Logic.Stering;
+namespace Ssit.CrossX.XxGames.Logic.Steering;
 
-public sealed class SteringStateMachine<TObject>(TObject obj)
+public sealed class SteeringStateMachine<TObject>(TObject obj)
 {
     public TObject Object { get; } = obj;
-    public SteringState<TObject> CurrentState { get; private set; }
+    public SteeringState<TObject> CurrentState { get; private set; }
     
-    public event EventHandler<SteringState<TObject>> OnStateChanged;
+    public event EventHandler<SteeringState<TObject>> OnStateChanged;
     
-    public void SetState(SteringState<TObject> state)
+    public void SetState(SteeringState<TObject> state)
     {
         CurrentState?.Exit(Object);
         CurrentState = state;

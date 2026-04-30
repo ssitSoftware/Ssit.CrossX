@@ -1,11 +1,11 @@
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallSlidePhysicsBehavior : SteringBehavior<ISteringCharacter>
+public class WallSlidePhysicsBehavior : SteeringBehavior<ISteeringCharacter>
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         obj.Body.Velocity = obj.Body.Velocity with { X = 0 };
 

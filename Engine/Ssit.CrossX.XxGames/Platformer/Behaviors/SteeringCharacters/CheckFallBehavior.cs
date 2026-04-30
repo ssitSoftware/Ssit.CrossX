@@ -1,15 +1,15 @@
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
 public class CheckFallBehavior : CheckAdditionalGroundBehaviorBase
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         if (IsOnGroundExtra(obj))
             return false;
         
-        obj.SetSteringState("Fall");
+        obj.SetSteeringState("Fall");
         return true;
     }
 }

@@ -2,9 +2,9 @@ using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Logic.Stering;
+namespace Ssit.CrossX.XxGames.Logic.Steering;
 
-public class SteringBehavior<TObject>
+public class SteeringBehavior<TObject>
 {
     internal void Enter(TObject obj) => OnEnter(obj);
     internal void Exit(TObject obj) => OnExit(obj);

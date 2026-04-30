@@ -1,12 +1,12 @@
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallGrabCheckBehavior(int grabMaterialIndex) : SteringBehavior<ISteringCharacter>
+public class WallGrabCheckBehavior(int grabMaterialIndex) : SteeringBehavior<ISteeringCharacter>
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         var charAabb = obj.Body.Colliders[0].Aabb;
         var probe = obj.FaceLeft
@@ -22,7 +22,7 @@ public class WallGrabCheckBehavior(int grabMaterialIndex) : SteringBehavior<ISte
             var grabAabb = collider.Aabb;
             if (charAabb.Top + 0.1f < grabAabb.Top && charAabb.Bottom - 0.1f > grabAabb.Bottom)
             {
-                obj.SetSteringState("WallGrab");
+                obj.SetSteeringState("WallGrab");
                 return true;
             }
         }

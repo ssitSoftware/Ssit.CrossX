@@ -3,47 +3,47 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Sprites;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
 public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstance.IHandler, IUpdatable where TObject: SpriteGameObject2, TStateObject
 {
     private readonly TObject _obj;
-    public SteringStateMachine<TStateObject> InternalStateMachine { get; }
+    public SteeringStateMachine<TStateObject> InternalStateMachine { get; }
     
     private readonly Dictionary<string, string> _sequenceMapping = new();
-    private readonly Dictionary<string, SteringState<TStateObject>> _steringStates = new();
+    private readonly Dictionary<string, SteeringState<TStateObject>> _SteeringStates = new();
     
     public SpriteGameObjectStateMachine(TObject obj)
     {
         _obj = obj;
         obj.AddUpdatableInternal(this);
         
-        InternalStateMachine = new SteringStateMachine<TStateObject>(obj);
+        InternalStateMachine = new SteeringStateMachine<TStateObject>(obj);
         InternalStateMachine.OnStateChanged += OnStateChanged;
 
         obj.Sprite.Handler = this;
     }
 
-    public void SetSteringState(string stateName)
+    public void SetSteeringState(string stateName)
     {
         if (stateName.Equals(InternalStateMachine.CurrentState?.Name ?? ""))
             return;
         
-        if (!_steringStates.TryGetValue(stateName, out var state))
+        if (!_SteeringStates.TryGetValue(stateName, out var state))
         {
             throw new Exception($"State {stateName} not found");
         }
         
         InternalStateMachine.SetState(state);
-        Debug.WriteLine($"{GetType().Name} Stering State: {stateName}");
+        Debug.WriteLine($"{GetType().Name} Steering State: {stateName}");
     }
     
-    public SpriteGameObjectStateMachine<TObject, TStateObject> RegisterState(SteringState<TStateObject> state)
+    public SpriteGameObjectStateMachine<TObject, TStateObject> RegisterState(SteeringState<TStateObject> state)
     {
         var name =  state.Name;
-        _steringStates.Add(name, state);
+        _SteeringStates.Add(name, state);
         return this;
     }
 
@@ -53,7 +53,7 @@ public class SpriteGameObjectStateMachine<TObject, TStateObject> : SpriteInstanc
         return this;
     }
     
-    private void OnStateChanged(object sender, SteringState<TStateObject> state)
+    private void OnStateChanged(object sender, SteeringState<TStateObject> state)
     {
         if (!_sequenceMapping.TryGetValue(state.Name, out var sequenceName))
         {

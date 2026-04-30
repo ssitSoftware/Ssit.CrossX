@@ -1,24 +1,24 @@
 using System.Numerics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
+public class AirJumpBehavior : SteeringBehavior<ISteeringCharacter>
 {
     public interface IAirJumpPad
     {
         bool Activate(out Vector2? direction);
     }
 
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
-        if (obj.SteringParameters.IsOnGround)
+        if (obj.SteeringParameters.IsOnGround)
             return false;
         
-        if (obj.SteringInput.Button(SteringControlNames.Jump) != ButtonState.JustPressed)
+        if (obj.SteeringInput.Button(SteeringControlNames.Jump) != ButtonState.JustPressed)
             return false;
 
         var charAabb = obj.Body.Colliders[0].Aabb;
@@ -36,7 +36,7 @@ public class AirJumpBehavior : SteringBehavior<ISteringCharacter>
             
             if (jp.Activate(out var dir))
             {
-                obj.SetSteringState("Raise");
+                obj.SetSteeringState("Raise");
 
                 obj.Body.Position = collider.Aabb.Center;
                 

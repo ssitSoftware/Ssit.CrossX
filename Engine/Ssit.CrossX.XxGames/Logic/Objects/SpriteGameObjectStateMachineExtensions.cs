@@ -1,13 +1,13 @@
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 
 public static class SpriteGameObjectStateMachineExtensions
 {
     public static SpriteGameObjectStateMachine<TObject, TStateObject> WithBehaviorState<TObject, TStateObject>(
-        this SpriteGameObjectStateMachine<TObject, TStateObject> sm, string name, string sequence, SteringBehavior<TStateObject>[] behaviors) where TObject: SpriteGameObject2, TStateObject
+        this SpriteGameObjectStateMachine<TObject, TStateObject> sm, string name, string sequence, SteeringBehavior<TStateObject>[] behaviors) where TObject: SpriteGameObject2, TStateObject
     {
-        var state = new SteringStateWithBehaviors<TStateObject>(name, behaviors);
+        var state = new SteeringStateWithBehaviors<TStateObject>(name, behaviors);
         
         return sm
             .RegisterState(state)
@@ -15,7 +15,7 @@ public static class SpriteGameObjectStateMachineExtensions
     }
 
     public static SpriteGameObjectStateMachine<TObject, TStateObject> WithBehaviorState<TObject, TStateObject>(
-        this SpriteGameObjectStateMachine<TObject, TStateObject> sm, string name, SteringBehavior<TStateObject>[] behaviors)
+        this SpriteGameObjectStateMachine<TObject, TStateObject> sm, string name, SteeringBehavior<TStateObject>[] behaviors)
         where TObject : SpriteGameObject2, TStateObject =>
         sm.WithBehaviorState(name, name, behaviors);
 }

@@ -1,16 +1,20 @@
 using System;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallGrabBehavior(int grabMaterialIndex) : SteringBehavior<ISteringCharacter>
+public class WallGrabBehavior(int grabMaterialIndex) : SteeringBehavior<ISteeringCharacter>
 {
-    private Vector2 _targetPosition;
+    // ReSharper disable once ClassNeverInstantiated.Local
+    private sealed class Parameters
+    {
+        public Vector2 TargetPosition;
+    }
 
-    protected override void OnEnter(ISteringCharacter obj)
+    protected override void OnEnter(ISteeringCharacter obj)
     {
         obj.Body.IsKinematic = true;
         obj.Body.Velocity = Vector2.Zero;
@@ -23,30 +27,31 @@ public class WallGrabBehavior(int grabMaterialIndex) : SteringBehavior<ISteringC
                 ? grabAabb.Value.Right - charAabb.Left
                 : grabAabb.Value.Left - charAabb.Right;
             var offsetY = grabAabb.Value.Center.Y - charAabb.Center.Y;
-            _targetPosition = obj.Body.Position + new Vector2(offsetX, offsetY);
-            
+            obj.GetParameters<Parameters>(true).TargetPosition = obj.Body.Position + new Vector2(offsetX, offsetY);
+
             obj.SoundContainer.Play("WallGrab");
         }
     }
 
-    protected override void OnExit(ISteringCharacter obj)
+    protected override void OnExit(ISteeringCharacter obj)
     {
         obj.Body.IsKinematic = false;
     }
 
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         if (FindGrabAabb(obj) == null)
         {
-            obj.SetSteringState("Fall");
+            obj.SetSteeringState("Fall");
             return true;
         }
-        
-        obj.Body.Position = Vector2.Lerp(obj.Body.Position, _targetPosition, MathF.Min(1f, 12f * dt));
+
+        var targetPosition = obj.GetParameters<Parameters>(true).TargetPosition;
+        obj.Body.Position = Vector2.Lerp(obj.Body.Position, targetPosition, MathF.Min(1f, 12f * dt));
         return false;
     }
 
-    private Aabb? FindGrabAabb(ISteringCharacter obj)
+    private Aabb? FindGrabAabb(ISteeringCharacter obj)
     {
         var aabb = obj.Body.Colliders[0].Aabb;
         var probe = obj.FaceLeft

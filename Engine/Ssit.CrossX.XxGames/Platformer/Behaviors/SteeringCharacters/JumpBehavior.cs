@@ -1,20 +1,20 @@
 using Ssit.CrossX.Input;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
 public class JumpBehavior : CheckAdditionalGroundBehaviorBase
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         if (!IsOnGroundExtra(obj))
             return false;
         
-        if (obj.SteringInput.Button(SteringControlNames.Jump) != ButtonState.JustPressed)
+        if (obj.SteeringInput.Button(SteeringControlNames.Jump) != ButtonState.JustPressed)
             return false;
         
         obj.SoundContainer.Play("Jump");
-        obj.SetSteringState("Raise");
+        obj.SetSteeringState("Raise");
         return true;
     }
 }

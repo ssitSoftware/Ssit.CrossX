@@ -1,14 +1,14 @@
-namespace Ssit.CrossX.XxGames.Logic.Stering;
+namespace Ssit.CrossX.XxGames.Logic.Steering;
 
-public abstract class SingleSteringBehavior<TObject, TBehavior> : SteringBehavior<TObject> where TBehavior : SingleSteringBehavior<TObject, TBehavior>, new()
+public abstract class SingleSteeringBehavior<TObject, TBehavior> : SteeringBehavior<TObject> where TBehavior : SingleSteeringBehavior<TObject, TBehavior>, new()
 {
     public static readonly TBehavior Instance = new();
     
-    protected SingleSteringBehavior()
+    protected SingleSteeringBehavior()
     {
         if (Instance != null)
         {
-            throw new System.Exception("SingleSteringBehavior is a singleton");
+            throw new System.Exception("SingleSteeringBehavior is a singleton");
         }
     }
 }

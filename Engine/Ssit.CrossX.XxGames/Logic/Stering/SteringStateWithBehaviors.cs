@@ -2,9 +2,9 @@ using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Logic.Stering;
+namespace Ssit.CrossX.XxGames.Logic.Steering;
 
-public class SteringStateWithBehaviors<TObject>(string name, params SteringBehavior<TObject>[] behaviors) : SteringState<TObject>
+public class SteeringStateWithBehaviors<TObject>(string name, params SteeringBehavior<TObject>[] behaviors) : SteeringState<TObject>
 {
     public override string Name => name;
 

@@ -1,12 +1,12 @@
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public interface ISteringCharacter: ICharacter, IGameObject
+public interface ISteeringCharacter: ICharacter, IGameObject
 {
-    ISteringInput SteringInput { get; }
-    CharacterSteringParameters SteringParameters { get; }
+    ISteeringInput SteeringInput { get; }
+    CharacterSteeringParameters SteeringParameters { get; }
     ICharacterPhysicsValues PhysicsValues { get; }
-    SteringState<ISteringCharacter> CurrentSteringState { get; }
-    void SetSteringState(string name);
+    SteeringState<ISteeringCharacter> CurrentSteeringState { get; }
+    void SetSteeringState(string name);
 }

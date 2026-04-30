@@ -1,13 +1,13 @@
 using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Logic.Steering;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class CollectCollectiblesBehavior<TObject> : SteringBehavior<ISteringCharacter> where TObject: ISteringCharacter, ICollector
+public class CollectCollectiblesBehavior<TObject> : SteeringBehavior<ISteeringCharacter> where TObject: ISteeringCharacter, ICollector
 {
-    protected override bool OnFixedUpdate(ISteringCharacter obj, float dt)
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         var charAabb = obj.Body.Colliders[0].Aabb;
         var colliders = obj.Body.Simulation.GetColliders(charAabb, obj.Body, colliderType: ColliderType.Trigger);

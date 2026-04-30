@@ -6,12 +6,13 @@ using Ssit.CrossX.XxGames.Logic.Steering;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters.Bots;
 
-public class HorizontalPatrolBehavior : SteeringBehavior<ISteeringCharacter>
+public class HorizontalPatrolBehavior(bool returnToOriginalPositionIfNotVisible) : SteeringBehavior<ISteeringCharacter>
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class Parameters
     {
         internal bool MoveTowardsTarget { get; set; } = true;
+        internal bool WasInitialized { get; set; } = false;
         public ITarget Target{ get; set; }
         public bool WasDisplayed { get; set; }
         public Vector2 InitialPosition { get; set; }
@@ -21,15 +22,23 @@ public class HorizontalPatrolBehavior : SteeringBehavior<ISteeringCharacter>
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
         var parameters = obj.GetParameters<Parameters>(true);
+        parameters.WasInitialized |= parameters.WasDisplayed;
         
-        if (parameters.Target is null || !parameters.WasDisplayed)
+        if (parameters.Target is null || !parameters.WasInitialized)
             return false;
         
-        var destination = parameters.MoveTowardsTarget ? parameters.Target.Position.X : parameters.InitialPosition.X;
+        bool moveTowardsTarget = parameters.MoveTowardsTarget;
+
+        if (!parameters.WasDisplayed && returnToOriginalPositionIfNotVisible)
+        {
+            moveTowardsTarget = false;
+        }
+        
+        var destination = moveTowardsTarget ? parameters.Target.Position.X : parameters.InitialPosition.X;
 
         if (MathF.Abs(obj.Body.Position.X - destination) < 0.1f)
         {
-            parameters.MoveTowardsTarget = !parameters.MoveTowardsTarget;
+            parameters.MoveTowardsTarget = !moveTowardsTarget;
             destination = parameters.MoveTowardsTarget ? parameters.Target.Position.X : parameters.InitialPosition.X;
         }
 

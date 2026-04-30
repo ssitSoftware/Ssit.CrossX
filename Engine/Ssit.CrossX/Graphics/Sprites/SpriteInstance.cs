@@ -11,8 +11,13 @@ public class SpriteInstance : IDisposable
 {
     public interface IHandler
     {
-        void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event);
-        void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse);
+        void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)
+        {
+        }
+
+        void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
+        {
+        }
     }
     
     public class Event(string sequenceName, int frame, string eventName, JObject parameters): ISpriteEvent

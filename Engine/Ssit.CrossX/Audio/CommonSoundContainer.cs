@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Ssit.CrossX.Content;
+using Ssit.CrossX.Core;
+using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.Audio;
 
-internal class CommonSoundContainer(IContentManager contentManager) : ICommonSoundContainer, IDisposable
+internal class CommonSoundContainer(IContentManager contentManager, IActionScheduler scheduler) : ICommonSoundContainer, IDisposable
 {
     private readonly Dictionary<string, (ResourceHandle<ISoundEffect>, float, List<ISoundEffectInstance>)> _sounds = new();
 
@@ -17,32 +19,35 @@ internal class CommonSoundContainer(IContentManager contentManager) : ICommonSou
 
     public void Play(string name, float volume = 1, ISoundEmitter emitter = null)
     {
-        if (!_sounds.TryGetValue(name, out var sound))
+        scheduler.ExecuteOnMainThread(() =>
         {
-            return;
-        }
-        
-        ISoundEffectInstance instance = null;
-        foreach (var inst in sound.Item3)
-        {
-            if (!inst.IsPlaying)
+            if (!_sounds.TryGetValue(name, out var sound))
             {
-                instance = inst;
-                break;
+                return;
             }
-        }
 
-        if (instance == null)
-        {
-            instance = sound.Item1.Resource.CreateInstance();
-            sound.Item3.Add(instance);
-        }
+            ISoundEffectInstance instance = null;
+            foreach (var inst in sound.Item3)
+            {
+                if (!inst.IsPlaying)
+                {
+                    instance = inst;
+                    break;
+                }
+            }
 
-        instance.Parameters = new SoundParameters
-        {
-            Volume = volume * sound.Item2
-        };
-        instance.Play();
+            if (instance == null)
+            {
+                instance = sound.Item1.Resource.CreateInstance();
+                sound.Item3.Add(instance);
+            }
+
+            instance.Parameters = new SoundParameters
+            {
+                Volume = volume * sound.Item2
+            };
+            instance.Play();
+        });
     }
 
     public void Dispose()

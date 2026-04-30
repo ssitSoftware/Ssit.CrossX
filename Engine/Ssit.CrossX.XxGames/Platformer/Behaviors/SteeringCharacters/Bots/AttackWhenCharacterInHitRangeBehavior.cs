@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
@@ -6,7 +7,7 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters.Bots;
 
-public class AttackWhenCharacterInHitRangeBehavior(SizeF detectorSize, float detectorOffset = 0, float attackPower = 1) : SteeringBehavior<ISteeringCharacter>
+public class AttackWhenCharacterInHitRangeBehavior(SizeF detectorSize, float detectorOffset = 0, float attackPower = 1, Action<ISteeringCharacter> onAttackSuccessful = null) : SteeringBehavior<ISteeringCharacter>
 {
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
@@ -43,7 +44,10 @@ public class AttackWhenCharacterInHitRangeBehavior(SizeF detectorSize, float det
 
             obj.SetSteeringState("Attack");
             obj.CommonSoundContainer.Play("Slash");
-            hittable.Hit(new Vector2(obj.FaceLeft ? -1 : 1, 0), attackPower);
+            if (hittable.Hit(new Vector2(obj.FaceLeft ? -1 : 1, 0), attackPower))
+            {
+                onAttackSuccessful?.Invoke(obj);
+            }
             
             return true;
         }

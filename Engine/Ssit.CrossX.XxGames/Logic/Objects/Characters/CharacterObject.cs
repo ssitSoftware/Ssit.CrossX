@@ -33,19 +33,18 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
 
     TParameters ICharacter.GetParameters<TParameters>(bool create) => GetParameters<TParameters>(create);
     
-    protected virtual TParameters GetParameters<TParameters>(bool create)
+    protected TParameters GetParameters<TParameters>(bool create)
     {
-        if (create)
+        if (!_parameters.TryGetValue(typeof(TParameters), out var obj))
         {
-            if (!_parameters.TryGetValue(typeof(TParameters), out var obj))
+            if (create)
             {
                 obj = Activator.CreateInstance<TParameters>();
                 _parameters.Add(typeof(TParameters), obj);
             }
-            return (TParameters)obj;
+            else throw new Exception("No parameters of given type.");
         }
-
-        throw new Exception("No parameters of given type.");
+        return (TParameters)obj;
     }
     
     void IBodyEventsReceiver.OnCollision(ICollider source, ICollider other, Vector2 impact)

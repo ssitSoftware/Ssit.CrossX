@@ -21,6 +21,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Libs\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
     </ItemGroup>
 

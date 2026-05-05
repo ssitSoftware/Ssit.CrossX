@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Libs\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
       <ProjectReference Include="..\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
     </ItemGroup>
 

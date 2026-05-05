@@ -2,5 +2,5 @@ namespace Ssit.CrossX.UI.Common.Pages;
 
 public class PageInputContext
 {
-    public bool AlwaysShowFocus { get; set; }
+    public bool ShowFocus { get; set; }
 }

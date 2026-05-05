@@ -4,7 +4,7 @@ using Avalonia.Input;
 using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Tools
 {
@@ -15,14 +15,12 @@ namespace Ssit.CrossX.Editor.Tools
         public EraserTool(IEditorInstances instances) : base(Name, instances)
         {
         }
-    
-        private int _size = 1;
 
         public int Size
         {
-            get => _size;
-            set => SetField(ref _size, value);
-        }
+            get;
+            set => SetField(ref field, value);
+        } = 1;
 
         public override void OnMouseMove(MouseInputInfo input)
         {

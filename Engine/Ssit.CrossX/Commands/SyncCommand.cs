@@ -5,10 +5,13 @@ namespace Ssit.CrossX.Commands;
 
 public class SyncCommand: ICommand
 {
+    public static readonly ICommand Empty = new SyncCommand(o => { });
+    
     private readonly Func<object, bool> _canExecute;
     private readonly Action<object> _execute;
     
     public event EventHandler CanExecuteChanged;
+
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 
     public SyncCommand(Action<object> execute, Func<object, bool> canExecute = null)

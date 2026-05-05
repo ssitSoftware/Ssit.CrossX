@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SkiaSharp;
-using Ssit.CrossX.Games;
+using Ssit.CrossX.XxGames;
 
 namespace Ssit.CrossX.Editor.Helpers
 {

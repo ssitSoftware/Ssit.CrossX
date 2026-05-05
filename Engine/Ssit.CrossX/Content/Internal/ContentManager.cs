@@ -37,6 +37,8 @@ internal class ContentManager: IContentManager
 
         RegisterLoader<ITexture>(LoadTextureFunc);
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
+        RegisterLoader<SpriteEx>(path => SpriteEx.Load(path, filesProvider, this, _iocContainer));
+        RegisterLoader<SpriteCollider>(path => SpriteCollider.Load(path, filesProvider));
     }
 
     public void RemoveCache<TResource>(string path) where TResource : class, IDisposable
@@ -59,7 +61,6 @@ internal class ContentManager: IContentManager
         bool cache = false;
         if (path.EndsWith('!'))
         {
-            path = path.Substring(0, path.Length - 1);
             cache = true;
         }
         path = PathHelper.NormalizePath(path);
@@ -155,7 +156,7 @@ internal class ContentManager: IContentManager
         }
         
         var name = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path));
-        var ext = Path.GetExtension(path);
+        var ext = Path.GetExtension(path).TrimEnd('!');
 
         var glowPath =  name + ".glow" + ext;
         

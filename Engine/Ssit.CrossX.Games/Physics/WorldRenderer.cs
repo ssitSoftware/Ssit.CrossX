@@ -2,8 +2,8 @@ using System;
 using System.Numerics;
 using Ssit.CrossX.Games.Physics.Collision.Shapes;
 using Ssit.CrossX.Games.Physics.Dynamics;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Games.Physics;
 

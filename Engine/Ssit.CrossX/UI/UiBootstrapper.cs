@@ -48,11 +48,16 @@ public static class UiBootstrapper
             .AddMapping<Background, BackgroundHandler>()
             .AddMapping<Frame, FrameHandler>()
             .AddMapping<Label, LabelHandler<Label>>()
+            .AddMapping<BlinkingLabel, BlinkingLabelHandler<BlinkingLabel>>()
             .AddMapping<LabelButton, LabelButtonHandler<LabelButton>>()
-            // .AddMapping<TextView, TextViewHandler>()
+            .AddMapping<LabelButtonEx, LabelButtonExHandler>()
+            .AddMapping<LabelRadio, LabelRadioHandler<LabelRadio>>()
             .AddMapping<Button, ButtonHandler>()
             .AddMapping<VerticalStack, VerticalStackHandler<VerticalStack>>()
             .AddMapping<ImageView, ImageViewHandler>()
-            .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>();
+            .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>()
+            .AddMapping<VirtualButton, VirtualButtonHandler>()
+            .AddMapping<IconCheckBox, IconCheckBoxHandler<IconCheckBox>>()
+            .AddMapping<SpriteView, SpriteViewHandler>();
     }
 }

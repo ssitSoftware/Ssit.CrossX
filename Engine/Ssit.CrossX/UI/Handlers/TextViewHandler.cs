@@ -12,8 +12,9 @@
 //     private readonly IIoCContainer _container;
 //     private IVertexBuffer[] _vertexBuffers;
 //     private bool _recalculateVertices;
-//     
-//     public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container) : base(parameters, fontsManager)
+//
+//     public TextViewHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IIoCContainer container) :
+//         base(parameters, fontsManager)
 //     {
 //         _container = container;
 //         OnTextChanged();
@@ -25,13 +26,13 @@
 //         font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
 //
 //         var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(CurrentScale, font.LineSize) ?? 0;
-//         
+//
 //         CalculateSizeInternal(out var width, out var height);
 //         CalculateAlign(out var ha, out var va);
 //
 //         if (width.IsAuto && ha != Align.Fill)
 //         {
-//             font.CalculateMultilineText(AttachedView.Text, AttachedView?.TextSpacing ?? TextSpacing.Normal, 
+//             font.CalculateMultilineText(AttachedView.Text, AttachedView?.TextSpacing ?? TextSpacing.Normal,
 //                 float.MaxValue, paragraphSpacing, TextRenderingContext);
 //         }
 //         else
@@ -43,25 +44,26 @@
 //                 TextRenderingContext.Update("", font, TextSpacing.Normal, 0);
 //                 return;
 //             }
-//             
+//
 //             font.CalculateMultilineText(AttachedView.Text, AttachedView?.TextSpacing ?? TextSpacing.Normal,
 //                 maxWidth, paragraphSpacing, TextRenderingContext);
 //         }
 //
 //         _recalculateVertices = true;
 //     }
-//     
+//
 //     protected sealed override void OnTextChanged()
 //     {
 //         UpdateText();
 //         CalculateAlign(out var ha, out var va);
-//         
-//         if ((AttachedView.Width?.IsAuto ?? true) && ha != Align.Fill || (AttachedView.Height?.IsAuto ?? true) && va != Align.Fill)
+//
+//         if ((AttachedView.Width?.IsAuto ?? true) && ha != Align.Fill ||
+//             (AttachedView.Height?.IsAuto ?? true) && va != Align.Fill)
 //         {
 //             Parent?.RecalculateLayout(AttachedView);
 //         }
 //     }
-//     
+//
 //     protected override void OnDispose(bool disposing)
 //     {
 //         base.OnDispose(disposing);
@@ -78,7 +80,7 @@
 //
 //         var oldWidth = TextRenderingContext.Width * TextScale;
 //         var oldHeight = TextRenderingContext.Height * TextScale;
-//         
+//
 //         UpdateText();
 //
 //         var newWidth = TextRenderingContext.Width * TextScale;
@@ -88,7 +90,7 @@
 //         {
 //             Parent?.RecalculateLayout(AttachedView);
 //         }
-//         
+//
 //         if (MathF.Abs(oldWidth - newWidth) > float.Epsilon || MathF.Abs(oldHeight - newHeight) > float.Epsilon)
 //         {
 //             Parent?.RecalculateLayout(AttachedView);
@@ -98,17 +100,18 @@
 //     public override void Update(float dt)
 //     {
 //         base.Update(dt);
-//         if (AttachedView.Text.Length > 0 && MathF.Ceiling(TextRectangle.Height) < MathF.Max(1, TextRenderingContext.Height * TextScale))
+//         if (AttachedView.Text.Length > 0 &&
+//             MathF.Ceiling(TextRectangle.Height) < MathF.Max(1, TextRenderingContext.Height * TextScale))
 //         {
-//            Parent?.RecalculateLayout(AttachedView);
+//             Parent?.RecalculateLayout(AttachedView);
 //         }
 //     }
 //
 //     protected override void OnDraw(IRenderer renderer, RenderMode mode)
 //     {
 //         base.OnDraw(renderer, mode);
-//         
-//         if ( _recalculateVertices || _vertexBuffers == null)
+//
+//         if (_recalculateVertices || _vertexBuffers == null)
 //         {
 //             RecalculateVertices();
 //         }
@@ -141,14 +144,14 @@
 //     private void RecalculateVertices()
 //     {
 //         _recalculateVertices = false;
-//         
+//
 //         var font = (IGlyphFont)GetFont();
-//         var paragraphSpacing = AttachedView.ParagraphSpacing?.Calculate(CurrentScale, font.LineSize) ?? 0;
-//         
-//         // _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle, 
-//         //     AttachedView.TextAlign ?? ContentAlign.Left,
-//         //     TextScale,
-//         //     AttachedView.TextSpacing ?? TextSpacing.Normal,
-//         //     paragraphSpacing, 0, TextRenderingContext, _vertexBuffers);
+//         var paragraphSpacing = AttachedView.ParagraphSpacing * font.LineSize;
+//
+//         _vertexBuffers = font.CreateMultilineTextPrimitives(_container, AttachedView.Text, TextRectangle,
+//             AttachedView.TextAlign ?? ContentAlign.Left,
+//             TextScale,
+//             AttachedView.TextSpacing ?? TextSpacing.Normal,
+//             paragraphSpacing, 0, TextRenderingContext, _vertexBuffers);
 //     }
 // }

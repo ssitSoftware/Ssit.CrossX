@@ -16,6 +16,11 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
     public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource)
     {
         _actionDispatcher = actionDispatcher;
+    }
+
+    public override void Init()
+    {
+        base.Init();
         OnTextChanged();
     }
 
@@ -23,7 +28,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
     {
         var font = GetFont();
         TextRenderingContext.Reset();
-        font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
+        font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, AttachedView?.LineSpacing ?? 0, TextRenderingContext);
         
         CalculateSizeInternal(out var width, out var height);
         CalculateAlign(out var ha, out var va);
@@ -42,7 +47,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         var oldHeight = TextRenderingContext.Height * TextScale;
         
         var font = GetFont();
-        font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, TextRenderingContext);
+        font.CalculateText(AttachedView.Text, AttachedView.TextSpacing ?? TextSpacing.Normal, 0, TextRenderingContext);
 
         var newWidth = TextRenderingContext.Width * TextScale;
         var newHeight = TextRenderingContext.Height * TextScale;
@@ -97,7 +102,9 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
             scale: TextScale,
             color: color,
             spacing: AttachedView.TextSpacing ?? TextSpacing.Normal,
+            paragraphSpacing: AttachedView.ParagraphSpacing,
             outlineColor: outlineColor,
+            lineSpacing: AttachedView?.LineSpacing ?? 0,
             context: TextRenderingContext);
     }
 }

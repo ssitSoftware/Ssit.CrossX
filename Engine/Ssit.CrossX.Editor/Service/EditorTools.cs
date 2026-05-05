@@ -11,11 +11,11 @@ public class EditorTools: BindableModel, IEditorTools
 
     public EditorTool Current
     {
-        get => _current;
+        get;
         set
         {
-            var old = _current;
-            if (SetField(ref _current, value))
+            var old = field;
+            if (SetField(ref field, value))
             {
                 old?.OnFinished();
                 _instances.Editor?.Redraw();
@@ -24,7 +24,6 @@ public class EditorTools: BindableModel, IEditorTools
     }
 
     private readonly List<EditorTool> _tools = new();
-    private EditorTool _current;
 
     public EditorTools(IEditorInstances instances, IServices services)
     {

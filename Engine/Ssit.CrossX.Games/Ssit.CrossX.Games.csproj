@@ -7,7 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Ssit.CrossX.XxFormats\Ssit.CrossX.XxFormats.csproj" />
+      <ProjectReference Include="..\Ssit.CrossX.XxGames\Ssit.CrossX.XxGames.csproj" />
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Physics\**" />
+      <Compile Remove="Logic\Objects\Switch.cs" />
+      <Compile Remove="Logic\Objects\MechanicalDoor.cs" />
+      <Compile Remove="Logic\Objects\Pushable.cs" />
+      <Compile Remove="Logic\Objects\Elevator.cs" />
+      <Compile Remove="Logic\Objects\Behaviors\ElevatorBehavior.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Physics\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Physics\**" />
     </ItemGroup>
 
 </Project>

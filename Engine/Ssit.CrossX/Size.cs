@@ -40,4 +40,6 @@ public readonly struct Size : IEquatable<Size>
 
     public static Size operator /(Size s, int v) => new(s.Width / v, s.Height / v);
     public static Size operator *(Size s, int v) => new(s.Width * v, s.Height * v);
+    
+    public static implicit operator  Size ((int w, int h) v) => new(v.w, v.h);
 }

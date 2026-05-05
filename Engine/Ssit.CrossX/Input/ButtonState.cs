@@ -115,6 +115,8 @@ public readonly struct ButtonState : IEquatable<ButtonState>
     /// Indicates whether the button state has changed in the current pass.
     /// </summary>
     public bool IsChanged { get; }
+
+    public bool WasDown => IsDown ^ IsChanged;
     
     public static bool operator == (ButtonState b1, ButtonState b2)
     {

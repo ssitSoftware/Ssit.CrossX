@@ -14,7 +14,8 @@ namespace Ssit.CrossX.UI;
 public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 {
     protected TViewModel ViewModel { get; private set; }
-    protected IStylesManager Styles { get; private set; }
+
+    private StylesContainer _styles;
 
     private IIoCContainer _iocContainer;
     private ViewHandler _rootHandler;
@@ -22,25 +23,44 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     private bool _recalculateLayout;
     private bool _recalculationNeeded;
     private bool _renderingInvalid;
+
+    private FocusWalker _focusWalker;
     
     private RectangleF _bounds;
     private float _transitionProgress;
-    protected IIoCContainer Services => _iocContainer;
+
+    private int _nextId = 1;
     
-    protected IFocusable FocusedElement { get; private set; }
+    protected IIoCContainer Services => _iocContainer;
+
+    protected IFocusable FocusedElement => _focusWalker.FocusedElement;
 
     public virtual float TransitionTime => 0f;
     
     float IPage.TransitionProgress { get => _transitionProgress; set => _transitionProgress = value; }
 
+    StylesContainer IPage.Styles => _styles;
+    
     protected bool IsInTransition => _transitionProgress > 0;
     
     protected SizeF ScreenSize => _screenBounds.Size;
     
+    protected string DefaultFocusId { private get; set; }
+
+    protected string NextId()
+    {
+        var value = $"Id{_nextId++}";
+        if (string.IsNullOrWhiteSpace(DefaultFocusId))
+        {
+            DefaultFocusId = value;
+        }
+        return value;
+    }
+
     IFocusable IPage.FocusedElement
     {
         get => FocusedElement;
-        set => FocusedElement = value;
+        set => _focusWalker.SetFocus(value);
     }
 
     void IPage.InvalidateRendering()
@@ -59,13 +79,18 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     
     ViewHandler IPage.RootHandler => _rootHandler;
 
-    TParent IViewParent.GetParent<TParent>()
+    TParent IViewParent.GetParent<TParent>(bool optional)
     {
         if (this is TParent parent)
         {
             return parent;
         }
 
+        if (optional)
+        {
+            return null;
+        }
+        
         throw new NotSupportedException();
     }
     
@@ -75,6 +100,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     }
 
     void IPage.OnTransitionToFinished() => OnTransitionToFinished();
+    bool IPage.MoveFocus(FocusDirection direction) => _focusWalker.MoveFocus(direction);
 
     protected virtual void OnTransitionToFinished()
     {
@@ -89,20 +115,30 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         {
             parent.RecalculateLayout();
         }
-        
         _recalculationNeeded = true;
     }
     
     void IPage.Load(IUiServices services, IInputContext inputContext, object viewModel)
     {
+        var app = (UiApp)services.IoCContainer.Get<IUiApp>();
+        _styles = new StylesContainer(app.StylesContainer);
+        
+        _styles.ParseStyles(GetType());
+        _focusWalker = new FocusWalker(this);
+        
         ViewModel = (TViewModel)viewModel;
-        Styles = services.StylesManager;
         _iocContainer = services.IoCContainer;
 
         var root = CreateView();
         _rootHandler = services.HandlerMapper.Create(root, this);
         OnLoad(inputContext);
         _recalculateLayout = true;
+
+        if (!string.IsNullOrWhiteSpace(DefaultFocusId))
+        {
+            var focusable = inputContext.FindFocusable(DefaultFocusId, this);
+            inputContext.Focus(focusable, this);
+        }
     }
 
     protected virtual void OnLoad(IInputContext inputContext)
@@ -141,6 +177,14 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected virtual bool OnUiButton(UiButton button, IInputContext inputContext)
     {
+        if (ViewModel is IUiButtonHandler handler)
+        {
+            if (handler.OnUiButton(button))
+            {
+                return true;
+            }
+        }
+        
         switch (button)
         {
             case UiButton.Back:
@@ -181,7 +225,7 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
     void IPage.Draw(IRenderer2 renderer) => OnDraw(renderer);
     
     void IPage.SetBounds(RectangleF bounds, float scale) => SetBounds(bounds, scale);
-
+    
     private void SetBounds(RectangleF bounds, float scale)
     {
         Scale = scale;

@@ -17,14 +17,13 @@ public class ImageSelectorViewModel : BindableModel
     
     private readonly Parameters _parameters;
 
-    private IList<EditorImage> _objects;
     private EditorImage _selectedObject;
     public CategoryClass[] Categories { get; }
 
     public IList<EditorImage> Objects
     {
-        get => _objects;
-        private set => SetField(ref _objects, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     public EditorImage SelectedObject

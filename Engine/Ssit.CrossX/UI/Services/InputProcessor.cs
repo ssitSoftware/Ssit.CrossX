@@ -14,17 +14,22 @@ internal sealed class InputProcessor: IInputContext
     private readonly IGameControllers _gameControllers;
     private readonly IPointingDevices _pointingDevices;
     private readonly Navigation _navigation;
+    private readonly IVirtualGameInput _virtualGameInput;
     private readonly IInputCoordinateSystem _coordinateSystem;
 
     private readonly List<IInputConsumer> _inputConsumers = new();
     private readonly List<(int, IInputConsumer)> _capturedPointers = new();
+
+    private readonly List<Pointer> _processingPointers = new();
     
-    public InputProcessor(IKeyboard keyboard, IGameControllers gameControllers, IPointingDevices pointingDevices, Navigation navigation, IInputCoordinateSystem coordinateSystem = null)
+    public InputProcessor(IKeyboard keyboard, IGameControllers gameControllers, IPointingDevices pointingDevices, 
+        Navigation navigation, IVirtualGameInput virtualGameInput, IInputCoordinateSystem coordinateSystem = null)
     {
         _keyboard = keyboard;
         _gameControllers = gameControllers;
         _pointingDevices = pointingDevices;
         _navigation = navigation;
+        _virtualGameInput = virtualGameInput;
         _coordinateSystem = coordinateSystem;
     }
 
@@ -67,6 +72,8 @@ internal sealed class InputProcessor: IInputContext
     public void Process()
     {
         var page = _navigation.CurrentPage;
+        if (page is null)
+            return;
         
         if (GetUiButtonLeft())
         {
@@ -120,7 +127,7 @@ internal sealed class InputProcessor: IInputContext
         PrepareInputConsumers(page.RootHandler);
 
         var transform = _coordinateSystem?.Transform ?? Matrix3x2.Identity;
-
+        
         _pointingDevices.PushTransform(transform);
 
         try
@@ -153,13 +160,15 @@ internal sealed class InputProcessor: IInputContext
                     _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
                 }
 
+                _processingPointers.Clear();
+                _processingPointers.AddRange(_pointingDevices.Pointers);
+                
                 for (var idx = _inputConsumers.Count - 1; idx >= 0; --idx)
                 {
-                    if (_inputConsumers[idx].ProcessInput(_pointingDevices.Pointers, this))
+                    if (_inputConsumers[idx].ProcessInput(_processingPointers, this))
                     {
                         ProcessCapturedPointers();
                         _inputConsumers[idx].ProcessHover(_pointingDevices.HoverPosition, matchingPointerId, this);
-                        break;
                     }
                 }
             }
@@ -183,6 +192,8 @@ internal sealed class InputProcessor: IInputContext
                         cons.CancelPointer(pointerId, this);
                     }
                 }
+                
+                _processingPointers.RemoveAll(o => o.Id == pointerId);
             }
             _capturedPointers.Clear();
         }
@@ -191,17 +202,20 @@ internal sealed class InputProcessor: IInputContext
     private bool GetUiButtonSelect()
     {
         return _keyboard.GetKey(Key.Return) == ButtonState.JustPressed ||
-               _gameControllers.GetButton(0, GameControllerButton.A) == ButtonState.JustPressed;
+               _gameControllers.GetButton(0, GameControllerButton.A) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.A) == ButtonState.JustPressed;
     }
     
     private bool GetUiButtonBack()
     {
-        return _gameControllers.GetButton(0, GameControllerButton.B) == ButtonState.JustPressed;
+        return _gameControllers.GetButton(0, GameControllerButton.B) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.B) == ButtonState.JustPressed;
     }
     
     private bool GetUiButtonMenu()
     {
-        return _gameControllers.GetButton(0, GameControllerButton.Start) == ButtonState.JustPressed;
+        return _gameControllers.GetButton(0, GameControllerButton.Start) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.Start) == ButtonState.JustPressed;
     }
 
     private bool GetUiButtonMenuOrBack()
@@ -213,14 +227,16 @@ internal sealed class InputProcessor: IInputContext
     {
         return _keyboard.GetKey(Key.Left) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.DPadLeft) == ButtonState.JustPressed ||
-               _gameControllers.GetButton(0, GameControllerButton.LeftStickLeft) == ButtonState.JustPressed;
+               _gameControllers.GetButton(0, GameControllerButton.LeftStickLeft) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.DPadLeft) == ButtonState.JustPressed;
     }
     
     private bool GetUiButtonRight()
     {
         return _keyboard.GetKey(Key.Right) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.DPadRight) == ButtonState.JustPressed ||
-               _gameControllers.GetButton(0, GameControllerButton.LeftStickRight) == ButtonState.JustPressed;
+               _gameControllers.GetButton(0, GameControllerButton.LeftStickRight) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.DPadRight) == ButtonState.JustPressed;
 
     }
     
@@ -228,14 +244,16 @@ internal sealed class InputProcessor: IInputContext
     {
         return _keyboard.GetKey(Key.Up) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.DPadUp) == ButtonState.JustPressed ||
-               _gameControllers.GetButton(0, GameControllerButton.LeftStickUp) == ButtonState.JustPressed;
+               _gameControllers.GetButton(0, GameControllerButton.LeftStickUp) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.DPadUp) == ButtonState.JustPressed;
     }
     
     private bool GetUiButtonDown()
     {
         return _keyboard.GetKey(Key.Down) == ButtonState.JustPressed ||
                _gameControllers.GetButton(0, GameControllerButton.DPadDown) == ButtonState.JustPressed ||
-               _gameControllers.GetButton(0, GameControllerButton.LeftStickDown) == ButtonState.JustPressed;
+               _gameControllers.GetButton(0, GameControllerButton.LeftStickDown) == ButtonState.JustPressed ||
+               _virtualGameInput.GetButton(GameControllerButton.DPadDown) == ButtonState.JustPressed;
 
     }
 
@@ -252,7 +270,6 @@ internal sealed class InputProcessor: IInputContext
             return false;
         }
         
-        focusable?.SetFocus();
         if (page != null)
         {
             page.FocusedElement = focusable;
@@ -298,7 +315,13 @@ internal sealed class InputProcessor: IInputContext
         if (uniqueId == null) return page.FocusedElement;
         return FindFocusable(page.RootHandler, uniqueId);
     }
-    
+
+    public bool MoveFocus(FocusDirection direction, object caller)
+    {
+        var page = GetPage(caller);
+        return page.MoveFocus(direction);
+    }
+
     private IFocusable FindFocusable(ViewHandler handler, string name)
     {
         if (handler is IFocusable focusable && focusable.UniqueId == name)

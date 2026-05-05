@@ -24,8 +24,10 @@ public abstract class View: IHandlerView
 
     public ITransition[] Transitions { get; set; }
     
-    ViewHandler IHandlerView.Handler => Handler;
+    public string Style { get; set; } = "";
     
+    ViewHandler IHandlerView.Handler => Handler;
+
     public Type CustomHandlerType
     {
         set
@@ -41,17 +43,19 @@ public abstract class View: IHandlerView
             {
                 if (typeof(ViewHandler<>).MakeGenericType(GetType()).IsAssignableFrom(type))
                 {
-                    _customHandlerType = type;
+                    field = type;
                     return;
                 }
+
                 type = type.BaseType;
             }
+
             throw new ArgumentException($"Type '{value}' is not a view handler");
         }
-        
-        internal get => _customHandlerType;
+
+        internal get;
     }
-    
+
     public object CustomHandlerParameters { get; set; }
     
     public void RecalculatePositionAndSize() => Handler?.RecalculatePositionAndSize();
@@ -63,6 +67,4 @@ public abstract class View: IHandlerView
     protected virtual void Initialize(IUiServices services)
     {
     }
-    
-    private Type _customHandlerType;
 }

@@ -1,0 +1,3 @@
+[submodule "Engine/Ssit.IoC"]
+	path = Engine/Ssit.IoC
+	url = https://github.com/ssitSoftware/Ssit.IoC.git

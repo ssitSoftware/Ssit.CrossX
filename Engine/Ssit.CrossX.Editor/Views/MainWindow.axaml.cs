@@ -2,7 +2,7 @@ using System;
 using Avalonia.Controls;
 using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Editor.ViewModels;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.Views
 {

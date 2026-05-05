@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Editor.Helpers;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.Service;
 

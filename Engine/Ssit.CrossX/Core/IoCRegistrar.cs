@@ -1,5 +1,3 @@
-using Ssit.CrossX.Audio;
-using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Content.Internal;
 using Ssit.CrossX.Graphics;
@@ -17,7 +15,7 @@ public static class IoCRegistrar
     /// <summary>
     /// Registers the essential Pixel Core components with the IoC Container Builder.
     /// </summary>
-    /// <param name="builder">The IoC container builder used for registering dependencies.</param>
+    /// <param name="builder">The IoC container builder used for regiSteering dependencies.</param>
     /// <returns>The IoC container builder with registered Pixel Core components.</returns>
     public static IIoCContainerBuilder WithPixelCore(this IIoCContainerBuilder builder)
     {
@@ -25,7 +23,9 @@ public static class IoCRegistrar
             .WithSingleton<IFontsManager, FontsManager>()
             .WithSingleton<IContentManager, ContentManager>()
             .WithSingleton<IInputMappings, InputMappings>()
-            .WithSingleton<IActionScheduler, ActionScheduler>();
+            .WithSingleton<IVirtualGameInput, VirtualGameInput>()
+            .WithSingleton<IActionScheduler, ActionScheduler>()
+            .WithSingleton<ISmartTextRenderer, SmartTextRenderer>();
     }
     
     public static IIoCContainerBuilder WithIndexedRenderer(this IIoCContainerBuilder builder, params RgbaColor[] palette)

@@ -10,6 +10,8 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
+
+[Obsolete("Create menu items as views in vertical stack and use NextId do generate id.\nThis is no longer needed as navigation is not id based anymore.")]
 public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TButton : LabelButton, new() where TVerticalStack: VerticalStack, new()
 {
     public MenuItemsComponent()
@@ -33,6 +35,8 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
         }
     }
     
+    public int DoubleRows { get; set; }
+    
     public IPageCommandsSource CommandsSource { get; set; }
 
     public Action<TButton> ApplyButtonStyle { get; set; }
@@ -44,12 +48,9 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
     
     protected override void Initialize(IUiServices services)
     {
-        var translator = services.IoCContainer.Get<ITranslator>();
         var controls = new List<View>();
-        var commandsSource = CommandsSource;
         
         int navId = 0;
-        int navCount = ItemsWithCommandType.Count(o=> o.text?.Length > 0);
         
         for (var i = 0; i < ItemsWithCommandType.Count; i++)
         {
@@ -62,50 +63,16 @@ public class MenuItemsComponent<TButton, TVerticalStack>: VerticalStack where TB
                 });
                 continue;
             }
-            
-            var nextIndex = navId + 1;
-            var prevIndex = navId - 1;
-            
-            if (commandsSource?.BackCommand is null)
-            {
-                nextIndex %= navCount;
-                prevIndex = (prevIndex + navCount) % navCount;
-            }
-            else if(prevIndex < 0)
-            {
-                prevIndex = navCount;
-            }
 
             var button = new TButton
             {
                 Text = item.text,
                 UniqueId = $"{IdPrefix}{navId}",
-                VerticalNavigation = ($"{IdPrefix}{prevIndex}", $"{IdPrefix}{nextIndex}"),
-                Command = item.command,
-                EnableCommandType = item.enableCommandType
+                Command = item.command
             };
             ApplyButtonStyle?.Invoke(button);
             controls.Add(button);
             navId++;
-        }
-
-        if (commandsSource is not null && commandsSource.BackCommand != null)
-        {
-            controls.Add(new Background
-            {
-                Height = 4
-            });
-
-            var button = new TButton
-            {
-                Text = translator["Back"],
-                UniqueId = $"{IdPrefix}{navCount}",
-                VerticalNavigation = ($"{IdPrefix}{navCount - 1}", $"{IdPrefix}0"),
-                Command = commandsSource.BackCommand
-            };
-
-            ApplyButtonStyle?.Invoke(button);
-            controls.Add(button);
         }
         
         Children = controls.ToArray();

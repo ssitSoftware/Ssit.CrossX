@@ -1,8 +1,12 @@
+using System;
+
 namespace Ssit.CrossX.UI.Values;
 
+[Flags]
 public enum ButtonCommandType
 {
-    Select,
-    Next,
-    Previous
+    None = 0,
+    Select = 1,
+    Next = 2,
+    Previous = 4
 }

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Utils;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Core;
@@ -91,7 +91,7 @@ public class PixelAppHost: IAppHost
         _renderer = renderer;
     }
 
-    public void Resize(Size size, bool forceRecreation = false)
+    public void Resize(SizeF size, bool forceRecreation = false)
     {
         (Scale, _finalScale, var targetSize) = CalculateScaleAndSize(size);
         ResizeInternal(targetSize, forceRecreation);
@@ -129,7 +129,20 @@ public class PixelAppHost: IAppHost
         }
         finally
         {
+            EndRenderWrapped();
+        }
+    }
+
+    private void EndRenderWrapped()
+    {
+        try
+        {
             EndRender();
+        }
+        catch
+        {
+            _renderer.SetRenderTarget(null);
+            _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
         }
     }
 
@@ -192,8 +205,8 @@ public class PixelAppHost: IAppHost
             
             var height = _renderTarget.Size.Height;
             var width = _renderTarget.Size.Width;
-            
-            var count = _parameters.CrtParameters.NoiseCount;
+
+            var count = _parameters.CrtParameters.NoiseCount * Scale * Scale;
 
             if (_noise.Length != count)
             {
@@ -202,8 +215,8 @@ public class PixelAppHost: IAppHost
             
             for (var idx = 0; idx < count; ++idx)
             {
-                var x = Random.Shared.Next(width);
-                var y = Random.Shared.Next(height);
+                var x = (float)MersenneTwister.Shared.Next(0, (double)width);
+                var y = (float)MersenneTwister.Shared.Next(0, (double)height);
 
                 _noise[idx] = new Vector2(x, y);
             }
@@ -363,8 +376,8 @@ public class PixelAppHost: IAppHost
         }
 
         var targetSize = sourceTexture.Size.ToVector() * scale;
-        
-        var targetRect = new RectangleF((_renderer.TargetSize.ToVector() - targetSize) / 2f, targetSize);
+        var targetRect = new RectangleF((_renderer.Bounds.Size.ToVector() - targetSize) / 2f, targetSize) +
+                         new Vector2(_renderer.Bounds.X, _renderer.Bounds.Y);
         
         scale = MathF.Min((float)_renderer.TargetSize.Width / _renderTarget.Size.Width,
             (float)_renderer.TargetSize.Height / _renderTarget.Size.Height);
@@ -551,7 +564,7 @@ public class PixelAppHost: IAppHost
         return pos;
     }
 
-    private (int, int, Size) CalculateScaleAndSize(Size size)
+    private (int, int, Size) CalculateScaleAndSize(SizeF size)
     {
         float scale = 1;
 
@@ -586,11 +599,17 @@ public class PixelAppHost: IAppHost
 
             case Mode.WidthAndHeight:
             case Mode.Height:
-            case Mode.Width:
             {
                 var aspect = (float)size.Width / size.Height;
                 var height = _parameters.DesignSize.Height * targetScale;
                 var width = (int) MathF.Ceiling(height * aspect);
+                return (targetScale, scaleInt, new Size(width, height));
+            }
+            case Mode.Width:
+            {
+                var aspect = (float)size.Width / size.Height;
+                var width = _parameters.DesignSize.Width * targetScale;
+                var height = (int) MathF.Ceiling(width / aspect);
                 return (targetScale, scaleInt, new Size(width, height));
             }
         }
@@ -641,7 +660,7 @@ public class PixelAppHost: IAppHost
             });
         }
 
-        if (targetScale > 1)
+        //if (targetScale > 1)
         {
             _postRenderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
             {

@@ -14,9 +14,9 @@ public class EmbeddedFilesProvider: IFilesProvider
 
     public EmbeddedFilesProvider(Assembly assembly, string prefix = null)
     {
-        _prefix = (prefix ?? _assembly.GetName().Name) + '.';
+        _prefix = (prefix ?? assembly.GetName().Name) + '.';
         _assembly = assembly;
-        _files = new HashSet<string>(_assembly.GetManifestResourceNames()); 
+        _files = new HashSet<string>(_assembly.GetManifestResourceNames());
     }
     
     private string GetResourceName(string path)
@@ -28,7 +28,7 @@ public class EmbeddedFilesProvider: IFilesProvider
     
     public Stream Open(string path)
     {
-        path = GetResourceName(path);
+        path = GetResourceName(path).Replace("!", "");
 
         if (!_files.Contains(path))
         {
@@ -41,7 +41,7 @@ public class EmbeddedFilesProvider: IFilesProvider
 
     public bool FileExists(string path)
     {
-        path = GetResourceName(path);
+        path = GetResourceName(path).Replace("!", "");
         return _files.Contains(path);
     }
 

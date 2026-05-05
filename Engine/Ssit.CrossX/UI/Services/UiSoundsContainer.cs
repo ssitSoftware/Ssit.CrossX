@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Content;
 
@@ -24,8 +25,15 @@ public class UiSoundsContainer(IContentManager contentManager) : IUiSounds
 
     IUiSounds IUiSounds.AddSound(string id, string path)
     {
-        var sound = contentManager.Get<ISoundEffect>(path);
-        _sounds.Add(id, sound);
+        try
+        {
+            var sound = contentManager.Get<ISoundEffect>(path);
+            _sounds.Add(id, sound);
+        }
+        catch (FileNotFoundException)
+        {
+            // Ignore this exception
+        }
 
         return this;
     }

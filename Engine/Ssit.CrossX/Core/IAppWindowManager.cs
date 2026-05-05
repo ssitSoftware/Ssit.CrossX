@@ -10,4 +10,6 @@ public interface IAppWindowManager
     bool SetFullscreen();
     bool SetWindowed(Size size);
     void SetTitle(string title);
+    bool IsTouchScreen { get; }
+    Size GetWindowMaxSize();
 }

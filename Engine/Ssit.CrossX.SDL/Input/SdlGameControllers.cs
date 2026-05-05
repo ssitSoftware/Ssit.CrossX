@@ -5,6 +5,20 @@ namespace Ssit.CrossX.SDL.Input;
 
 internal class SdlGameControllers: IGameControllers
 {
+    private readonly HashSet<int> _switchButtons = new();
+    
+    public void SwitchButtons(int player, bool @switch)
+    {
+        if (@switch)
+        {
+            _switchButtons.Add(player);
+        }
+        else
+        {
+            _switchButtons.Remove(player);
+        }
+    }
+
     public byte VibrationForce { get; set; }
 
     private readonly SdlGameController[] _controllers =
@@ -17,6 +31,28 @@ internal class SdlGameControllers: IGameControllers
     
     public ButtonState GetButton(int player, GameControllerButton button)
     {
+        if (_switchButtons.Contains(player))
+        {
+            switch (button)
+            {
+                case GameControllerButton.A:
+                    button = GameControllerButton.B;
+                    break;
+                
+                case GameControllerButton.B:
+                    button = GameControllerButton.A;
+                    break;
+                
+                case GameControllerButton.X:
+                    button = GameControllerButton.Y;
+                    break;
+                
+                case GameControllerButton.Y:
+                    button = GameControllerButton.X;
+                    break;
+            }
+        }
+        
         return _controllers[player].GetButton(button);
     }
 

@@ -4,15 +4,15 @@ using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI;
 
-public abstract class MenuPage<TViewModel> : PageWithTranslator<TViewModel> where TViewModel: class
+public abstract class MenuPage<TViewModel>(float transitionTime = 0.3f) : PageWithTranslator<TViewModel> where TViewModel: class
 {
-    public override float TransitionTime => 0.3f;
+    public override float TransitionTime => transitionTime;
     
     protected string DefaultId { get; set; }
 
     protected override void OnLoad(IInputContext inputContext)
     {
-        if (Services.Get<PageInputContext>().AlwaysShowFocus)
+        if (Services.Get<PageInputContext>().ShowFocus)
         {
             var focusable = inputContext.FindFocusable(DefaultId, this);
             inputContext.Focus(focusable, this);
@@ -25,7 +25,7 @@ public abstract class MenuPage<TViewModel> : PageWithTranslator<TViewModel> wher
         {
             var focusable = inputContext.FindFocusable(DefaultId, this);
             inputContext.Focus(focusable, this);
-            Services.Get<PageInputContext>().AlwaysShowFocus = true;
+            Services.Get<PageInputContext>().ShowFocus = true;
             return true;
         }
         return base.OnUiButton(button, inputContext);

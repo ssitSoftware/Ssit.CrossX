@@ -34,7 +34,17 @@ internal class Navigation: INavigation
     
     public int NavigationStackCount => _navigationStack.Count;
     public bool ParallelTransitions { get; set; }
-    
+    public bool IsOnTop(object vmOrPage)
+    {
+        var top = _navigationStack.Peek();
+        if (top != null)
+        {
+            return ReferenceEquals(top.ViewModel, vmOrPage) || ReferenceEquals(CurrentPage, vmOrPage);
+        }
+
+        return false;
+    }
+
     public Navigation(NavigationMap navigationMap, IIoCContainer iocContainer, IUiServices uiServices, IUiApp uiApp)
     {
         _navigationMap = navigationMap;
@@ -43,17 +53,53 @@ internal class Navigation: INavigation
         _uiApp = uiApp as UiApp;
     }
 
-    public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    public void ClearNavigateToSerie(params Type[] types)
     {
-        if (_navigationStack.Count > 0)
+        if (types.Length == 0)
+            throw new InvalidOperationException();
+        
+        foreach (var data in _navigationStack)
         {
-            var data = _navigationStack.Peek();
-            data.FocusedId = CurrentPage.FocusedElement?.UniqueId;
+            if (data.ViewModel is IDisposable disposable)
+            {
+                _objectsToDisposeOnTransitionFinished.Add(disposable);
+            }
         }
+        _navigationStack.Clear();
+
+        object vm = null;
+        foreach (var type in types)
+        {
+            vm = _iocContainer.IoCConstruct(type);
+            _navigationStack.Push(new StackData(vm));
+        }
+
+        InitializePageNavigation(vm);
         
-        var vm = _iocContainer.IoCConstruct<TViewModel>(parameter);
-        _navigationStack.Push(new StackData(vm));
-        
+        if (PreviousPage != null)
+        {
+            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionType = TransitionType.NavigateBackFrom;
+        }
+        CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionType = TransitionType.NavigateBackTo;
+    }
+    
+    public void ClearNavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    {
+        foreach (var data in _navigationStack)
+        {
+            if (data.ViewModel is IDisposable disposable)
+            {
+                _objectsToDisposeOnTransitionFinished.Add(disposable);
+            }
+        }
+        _navigationStack.Clear();
+        NavigateTo<TViewModel>(parameter);
+    }
+
+    private void InitializePageNavigation(object vm)
+    {
         var page = InitializePage(vm, null);
         PreviousPage = CurrentPage;
         CurrentPage = page;
@@ -68,6 +114,20 @@ internal class Navigation: INavigation
         CurrentPage.TransitionType = TransitionType.NavigateTo;
         
         PreviousPageOnTop = false;
+    }
+
+    public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    {
+        if (_navigationStack.Count > 0)
+        {
+            var data = _navigationStack.Peek();
+            data.FocusedId = CurrentPage.FocusedElement?.UniqueId;
+        }
+        
+        var vm = _iocContainer.IoCConstruct<TViewModel>(parameter);
+        _navigationStack.Push(new StackData(vm));
+        
+        InitializePageNavigation(vm);
     }
 
     public void NavigateBack()
@@ -103,6 +163,11 @@ internal class Navigation: INavigation
         }
         CurrentPage.TransitionProgress = 1;
         CurrentPage.TransitionType = TransitionType.NavigateBackTo;
+
+        if (data.ViewModel is INavigationEventHandler handler)
+        {
+            handler.OnNavigatedBackTo();
+        }
     }
 
     public void NavigateBackTo<TViewModel>() where TViewModel : class
@@ -209,7 +274,7 @@ internal class Navigation: INavigation
         {
             foreach (var disposable in _objectsToDisposeOnTransitionFinished)
             {
-                disposable.Dispose();
+                disposable?.Dispose();
             }
             _objectsToDisposeOnTransitionFinished.Clear();
         }

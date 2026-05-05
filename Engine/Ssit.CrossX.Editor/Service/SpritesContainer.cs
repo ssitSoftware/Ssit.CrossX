@@ -3,10 +3,10 @@ using System.IO;
 using System.Numerics;
 using Ssit.CrossX.Editor.Helpers;
 using SkiaSharp;
-using Ssit.CrossX.Games;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Graphics.Sprites.Json;
+using Ssit.CrossX.XxFormats.Template;
+using Ssit.CrossX.XxGames;
 
 namespace Ssit.CrossX.Editor.Service;
 

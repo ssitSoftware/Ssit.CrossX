@@ -13,7 +13,7 @@ public abstract class Transition : ITransition
     
     private bool _applied;
     
-    void ITransition.Apply(IRenderer2 renderer, TransitionType type, float progress)
+    void ITransition.Apply(IRenderer2 renderer, float scale, TransitionType type, float progress)
     {
         if ((ForTransitions & type) == 0)
             return;
@@ -23,7 +23,7 @@ public abstract class Transition : ITransition
         progress = MathF.Max(0, Math.Min(1, (progress - ProgressMin) / (ProgressMax - ProgressMin)));
         progress = MathF.Pow(progress, Power);
         
-        OnApply(renderer, progress);
+        OnApply(renderer, scale, progress);
 
         _applied = true;
     }
@@ -37,5 +37,5 @@ public abstract class Transition : ITransition
         _applied = false;
     }
     
-    protected abstract void OnApply(IRenderer2 renderer, float progress);
+    protected abstract void OnApply(IRenderer2 renderer, float scale, float progress);
 }

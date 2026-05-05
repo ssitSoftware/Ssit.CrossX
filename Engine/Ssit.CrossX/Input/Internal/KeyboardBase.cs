@@ -1,3 +1,5 @@
+using System;
+
 namespace Ssit.CrossX.Input.Internal;
 
 public abstract class KeyboardBase: IKeyboard
@@ -7,7 +9,7 @@ public abstract class KeyboardBase: IKeyboard
         if(key == Key.None)
             return ButtonState.Empty;
         
-        return GetKeyInternal(key);   
+        return GetKeyInternal(key);
     }
     protected abstract ButtonState GetKeyInternal(Key key);
 }

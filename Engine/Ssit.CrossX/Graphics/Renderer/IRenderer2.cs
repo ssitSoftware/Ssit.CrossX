@@ -2,8 +2,9 @@ namespace Ssit.CrossX.Graphics.Renderer;
 
 public interface IRenderer2
 {
+    bool EnableSafeBounds { set; }
     Size TargetSize { get; }
-    
+    Rectangle Bounds { get; }
     IStateManager StateManager { get; }
     IRenderStateProvider StateProvider { get; }
     

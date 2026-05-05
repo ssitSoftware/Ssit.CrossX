@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Ssit.CrossX.Editor.Models.Parameters;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Utils;
-using EditorAttribute = Ssit.CrossX.Games.Editor.EditorAttribute;
+using Ssit.CrossX.XxFormats.Editor;
+using EditorAttribute = Ssit.CrossX.XxFormats.Editor.EditorAttribute;
 
 namespace Ssit.CrossX.Editor.ViewModels;
 
@@ -93,12 +93,11 @@ public class PropertiesViewModel: BindableModel
     private readonly IEditor _editor;
     private readonly IWindowService _windowService;
     private readonly IEditorInstances _instances;
-    private string _title;
 
     public string Title
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public MapFile MapFile
@@ -196,7 +195,6 @@ public class PropertiesViewModel: BindableModel
         }
 
         var propName = name.ToString();
-        
         
         if (prop.PropertyType == typeof(string))
         {

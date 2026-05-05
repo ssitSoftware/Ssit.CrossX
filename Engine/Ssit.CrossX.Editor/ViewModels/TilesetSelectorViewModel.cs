@@ -6,7 +6,7 @@ using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using SkiaSharp;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels
@@ -15,9 +15,7 @@ namespace Ssit.CrossX.Editor.ViewModels
     {
         private readonly IEditorInstances _instances;
         private Tileset _selectedTileset;
-        private Vector2 _size;
-        private bool _showGrid;
-    
+
         public Tileset SelectedTileset
         {
             get => _selectedTileset;
@@ -45,19 +43,19 @@ namespace Ssit.CrossX.Editor.ViewModels
                 return $"({rect.Left}, {rect.Top}, {rect.Width}, {rect.Height})";
             }
         }
-    
+
         public bool ShowGrid
         {
-            get => _showGrid;
+            get;
             set
             {
-                if (SetField(ref _showGrid, value))
+                if (SetField(ref field, value))
                 {
                     RedrawNeeded?.Invoke();
                 }
             }
         }
-    
+
 
         public event Action RedrawNeeded;
 
@@ -65,11 +63,11 @@ namespace Ssit.CrossX.Editor.ViewModels
         private SKPointI? _selectionEnd;
 
         private SKPaint _skPaint = new ();
-    
+
         public Vector2 Size
         {
-            get => _size;
-            set => SetField(ref _size, value);
+            get;
+            set => SetField(ref field, value);
         }
 
         public ZoomViewModel Zoom { get; }

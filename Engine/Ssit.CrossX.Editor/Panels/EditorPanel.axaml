@@ -9,12 +9,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="clr-namespace:Ssit.CrossX.Editor.Helpers"
     xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-    xmlns:map="clr-namespace:Ssit.CrossX.Games.Map;assembly=Ssit.CrossX.Games"
+    xmlns:map="clr-namespace:Ssit.CrossX.XxFormats.Map;assembly=Ssit.CrossX.XxFormats"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:template="clr-namespace:Ssit.CrossX.Games.Template;assembly=Ssit.CrossX.Games"
     xmlns:tools="clr-namespace:Ssit.CrossX.Editor.Tools;assembly=Ssit.CrossX.Editor"
     xmlns:viewModels="clr-namespace:Ssit.CrossX.Editor.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:template="clr-namespace:Ssit.CrossX.XxFormats.Template;assembly=Ssit.CrossX.XxFormats">
 
     <Grid RowDefinitions="Auto, *">
 

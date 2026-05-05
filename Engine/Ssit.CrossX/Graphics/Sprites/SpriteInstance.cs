@@ -2,27 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ssit.CrossX.Content;
 
 namespace Ssit.CrossX.Graphics.Sprites;
 
-public interface IEvent
-{
-    string EventName { get; }
-    TParameters GetParameters<TParameters>() where TParameters : class, new();
-}
-
 public class SpriteInstance : IDisposable
 {
     public interface IHandler
     {
-        void OnSpriteEvent(SpriteInstance instance, Event @event);
-        void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse);
+        void OnSpriteEvent(SpriteInstance instance, ISpriteEvent @event)
+        {
+        }
+
+        void OnSequenceFinished(SpriteInstance instance, string sequenceName, bool reverse)
+        {
+        }
     }
     
-    public class Event(string sequenceName, int frame, string eventName, JObject parameters): IEvent
+    public class Event(string sequenceName, int frame, string eventName, JObject parameters): ISpriteEvent
     {
         internal readonly int Frame = frame;
         public string EventName { get; } = eventName;
@@ -31,9 +29,6 @@ public class SpriteInstance : IDisposable
     }
     
     private readonly Vector2 _origin;
-
-    public delegate void SpriteEventDelegate(SpriteInstance instance, Event @event);
-    public delegate void SequenceFinishedDelegate(SpriteInstance instance, string sequenceName, bool reverse);
 
     private readonly ResourceHandle<Sprite> _sprite;
     private readonly ResourceHandle<ITexture> _spriteSheet;
@@ -53,7 +48,20 @@ public class SpriteInstance : IDisposable
 
     private readonly Dictionary<(string, int), Event[]> _events;
 
+    private readonly SpriteCollider _spriteCollider;
+    
     public IHandler Handler { get; set; }
+    
+    internal SpriteInstance(ResourceHandle<ITexture> spriteSheet, Sprite sprite, Vector2 origin, IReadOnlyList<Event> events, IContentManager contentManager)
+    {
+        _sprite = new ResourceHandleUnmanaged<Sprite>(sprite, "");
+        _spriteSheet = spriteSheet.Clone();
+
+        _origin = origin;
+        _events = PrepareEvents(events);
+
+        _spriteCollider = TryLoadMask(sprite.SheetName, contentManager);
+    }
     
     public SpriteInstance(string spritePath, Vector2 origin, IReadOnlyList<Event> events, IContentManager contentManager)
     {
@@ -62,6 +70,54 @@ public class SpriteInstance : IDisposable
 
         _origin = origin;
         _events = PrepareEvents(events);
+        
+        _spriteCollider = TryLoadMask(_sprite.Resource.SheetName, contentManager);
+    }
+    
+    public SpriteInstance(Sprite sprite, Vector2 origin, IReadOnlyList<Event> events, IContentManager contentManager)
+    {
+        _sprite = new ResourceHandleUnmanaged<Sprite>(sprite, "");
+        _spriteSheet = contentManager.Get<ITexture>(_sprite.Resource.SheetName);
+
+        _origin = origin;
+        _events = PrepareEvents(events);
+        
+        _spriteCollider = TryLoadMask(_sprite.Resource.SheetName, contentManager);
+    }
+
+    public MaskIndex CheckCollision(SpriteCollider other, Vector2 offset, Vector2 origin, RectangleF source, int scale, MaskIndex maskIndex = MaskIndex.All)
+    {
+        if (_spriteCollider is null)
+            return MaskIndex.None;
+        
+        offset -= origin;
+        offset += Origin;
+        
+        return other.CheckCollision(
+            source,
+            _spriteCollider, 
+            Source, offset, 
+            scale, 
+            SpriteSheet.Size.Width / _spriteCollider.Size.Width, 
+            maskIndex);
+    }
+
+    public MaskIndex CheckCollision(SpriteInstance other, Vector2 offset, MaskIndex maskIndex = MaskIndex.All)
+    {
+        if (other._spriteCollider is null)
+            return MaskIndex.None;
+        
+        return CheckCollision(other._spriteCollider, offset, other.Origin, other.Source,
+            other.SpriteSheet.Size.Width / other._spriteCollider.Size.Width, maskIndex);
+    }
+
+    private SpriteCollider TryLoadMask(string sheetPath, IContentManager contentManager)
+    {
+        var maskPath = sheetPath.Replace(".png", ".mask.png");
+        if (!contentManager.FilesProvider.FileExists(maskPath.TrimEnd('!')))
+            return null;
+        
+        return contentManager.Get<SpriteCollider>(maskPath);
     }
 
     private Dictionary<(string, int), Event[]> PrepareEvents(IReadOnlyList<Event> events)

@@ -1,0 +1,35 @@
+using System.Numerics;
+using Ssit.CrossX.Graphics;
+using Ssit.CrossX.IO;
+
+namespace Ssit.CrossX.XxFormats.Template;
+
+public interface IGameTemplate
+{
+    Vector2 Gravity { get; }
+    string Name { get; }
+    Guid Guid { get; }
+    int TileSize { get; }
+    
+    bool DisplayScreenGridVertical => false;
+    
+    RgbaColor GameBackground { get; }
+    RgbaColor EditorLayerBackground => GameBackground;
+    
+    LayerDescription[] Layers { get; }
+    ObjectDescription[] Objects { get; }
+    ImageDescription[] Images { get; }
+
+    string[] TileSets { get; }
+    ContentAlign ObjectsOriginAlignment { get; }
+    
+    MaterialInfo[] Materials { get; }
+    IFilesProvider AssetsProvider { get; }
+    decimal TilesetPanelZoom { get; }
+    int PreviewZoom { get; }
+    RgbaColor EmptyColor { get; }
+    RgbaColor TilesBgColor => EmptyColor;
+    int TrimToPixels => 0;
+    
+    Size TargetSize { get; }
+}

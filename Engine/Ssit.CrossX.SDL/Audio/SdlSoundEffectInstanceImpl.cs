@@ -1,7 +1,8 @@
 using SDL;
 using Ssit.CrossX.Audio;
-using Ssit.CrossX.Core;
 using Ssit.CrossX.SDL.Common;
+
+using static SDL.SDL3;
 using static SDL.SDL3_mixer;
 
 namespace Ssit.CrossX.SDL.Audio;
@@ -11,101 +12,163 @@ public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
     public event Action<ISoundEffectInstance> Finished;
     public ISoundEmitter Emitter { get; set; }
     public SoundParameters Parameters { get; set; }
+    
+    private bool _isLooped;
+    private bool _isPaused;
 
     public bool IsPlaying
     {
         get
         {
-            if (_currentChannel < 0)
+            if (_playbackTrack.Pointer == null)
             {
                 return false;
             }
             
-            return Mix_Playing(_currentChannel) > 0;
+            return MIX_TrackPlaying(_playbackTrack.Pointer);
         }
     }
 
-    private int _currentChannel = -1;
+    private SdlHandle<MIX_Track> _playbackTrack = SdlHandle<MIX_Track>.Empty;
     private readonly SdlSoundManagerImpl _sm;
-    private readonly SdlHandle<Mix_Chunk> _chunk;
-    private readonly IEventSource _eventSource;
+    private readonly SdlHandle<MIX_Audio> _chunk;
+    private readonly SdlTrackPool _trackPool;
+    private readonly SDL_PropertiesID _properties;
+    private long _startPosition;
+    private readonly long _duration;
 
-    public SdlSoundEffectInstanceImpl(ISoundManager sm, SdlHandle<Mix_Chunk> chunk, IEventSource eventSource)
+    public SdlSoundEffectInstanceImpl(SdlSoundManagerImpl sm, SdlHandle<MIX_Audio> chunk, SdlTrackPool trackPool)
     {
-        _sm = (SdlSoundManagerImpl)sm;
+        _sm = sm;
+        _sm.AttachInstance(this);
         _chunk = chunk;
-        _eventSource = eventSource;
-        _eventSource.Updating += CheckPlaying;
-        _sm.ChannelIntercepted += SmOnChannelFinished;
+        _trackPool = trackPool;
+        
+        _properties = SDL3.SDL_CreateProperties();
+        _duration = MIX_GetAudioDuration(_chunk.Pointer);
     }
 
-    private void CheckPlaying(float _)
+    public bool CheckPlaying()
     {
-        if (_currentChannel >= 0)
+        if (_playbackTrack.Pointer != null)
         {
-            if (Mix_Playing(_currentChannel) == 0)
+            var position = MIX_GetTrackPlaybackPosition(_playbackTrack.Pointer);
+            if (!MIX_TrackPlaying(_playbackTrack.Pointer) ||  position >= _duration)
             {
-                _currentChannel = -1;
+                _trackPool.ReturnTrack(_playbackTrack);
+                _playbackTrack = SdlHandle<MIX_Track>.Empty;
                 Finished?.Invoke(this);
+                return false;
             }
         }
-    }
 
-    private void SmOnChannelFinished(int channel)
-    {
-        if (_currentChannel == channel)
-        {
-            _currentChannel = -1;
-            Finished?.Invoke(this);
-        }
+        return true;
     }
 
     public void Dispose()
     {
-        _sm.ChannelIntercepted -= SmOnChannelFinished;
-        _eventSource.Updating -= CheckPlaying;
-        
-        if (_currentChannel >= 0)
+        if (_playbackTrack.Pointer != null)
         {
-            Mix_HaltChannel(_currentChannel);
-            _currentChannel = -1;
+            MIX_StopTrack(_playbackTrack.Pointer, 0);
+            _trackPool.ReturnTrack(_playbackTrack);
+            _playbackTrack = SdlHandle<MIX_Track>.Empty;
         }
+        
+        _sm.DetachInstance(this);
+        SDL_DestroyProperties(_properties);
     }
     
     public void Play(bool loop = false)
     {
-        if (_currentChannel < 0)
+        _isPaused = false;
+        
+        if (_playbackTrack.Pointer == null)
         {
-            var channel = Mix_PlayChannel(-1, _chunk.Pointer, loop ? 1 : 0);
-            Mix_Volume(channel, (int) (Parameters.Volume * 128));
+            _playbackTrack = _trackPool.GetAvailableTrack();
+
+            if (_playbackTrack.Pointer is null)
+            {
+                _sm.ForceFreeTracks();
+                _playbackTrack = _trackPool.GetAvailableTrack();
+
+                if (_playbackTrack.Pointer is null)
+                {
+                    return;
+                }
+            }
             
-            _sm.OnChannelIntercepted(channel);
-            _currentChannel = channel;
+            MIX_SetTrackGain(_playbackTrack.Pointer, Parameters.Volume);
+            MIX_SetTrackPlaybackPosition(_playbackTrack.Pointer, _startPosition);
+            MIX_SetTrackAudio(_playbackTrack.Pointer, _chunk.Pointer);
+            
+            SDL_SetNumberProperty(_properties, MIX_PROP_PLAY_LOOPS_NUMBER, loop ? -1 : 0);
+            
+            if (MIX_PlayTrack(_playbackTrack.Pointer, _properties) == false)
+            {
+                Console.WriteLine("Failed to play audio");
+            }
+            _isLooped = loop;
+            _startPosition = 0;
         }
     }
 
     public void Stop()
     {
-        if (_currentChannel >= 0)
+        if (_playbackTrack.Pointer != null)
         {
-            Mix_HaltChannel(_currentChannel);
-            _currentChannel = -1;
+            MIX_StopTrack(_playbackTrack.Pointer, 0);
+            _trackPool.ReturnTrack(_playbackTrack);
+            _playbackTrack = SdlHandle<MIX_Track>.Empty;
         }
+
+        _startPosition = 0;
+        _isPaused = false;
     }
 
     public void Pause()
     {
-        if (_currentChannel >= 0)
+        if (_playbackTrack.Pointer != null)
         {
-            Mix_Pause(_currentChannel);
+            MIX_PauseTrack(_playbackTrack.Pointer);
+            _startPosition = MIX_GetTrackPlaybackPosition(_playbackTrack.Pointer);
+            _isPaused = true;
         }
     }
 
     public void Resume()
     {
-        if (_currentChannel >= 0)
+        if (_playbackTrack.Pointer != null)
         {
-            Mix_Resume(_currentChannel);
+            MIX_ResumeTrack(_playbackTrack.Pointer);
+            _startPosition = 0;
         }
+        else
+        {
+            Play(_isLooped);
+        }
+
+        _isPaused = false;
+    }
+
+    public bool ForceFreeTrack()
+    {
+        if (_isPaused)
+        {
+            if (_playbackTrack.Pointer != null)
+            {
+                MIX_StopTrack(_playbackTrack.Pointer, 0);
+                _trackPool.ReturnTrack(_playbackTrack);
+                _playbackTrack = SdlHandle<MIX_Track>.Empty;
+                return true;
+            }
+        }
+        
+        if (_isLooped)
+            return false;
+        
+        MIX_StopTrack(_playbackTrack.Pointer, 0);
+        _trackPool.ReturnTrack(_playbackTrack);
+        _playbackTrack = SdlHandle<MIX_Track>.Empty;
+        return true;
     }
 }

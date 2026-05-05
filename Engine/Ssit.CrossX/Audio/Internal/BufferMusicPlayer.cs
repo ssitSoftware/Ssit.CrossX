@@ -10,8 +10,6 @@ namespace Ssit.CrossX.Audio.Internal;
 
 public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
 {
-    private const int BufferLength = 88200 / 10;
-    
     private readonly IFilesProvider _filesProvider;
     private readonly IEventSource _eventSource;
     private readonly IIoCContainer _iocContainer;

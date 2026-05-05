@@ -5,8 +5,8 @@ using System.Numerics;
 using Avalonia.Media.Imaging;
 using Ssit.CrossX.Editor.Service;
 using SkiaSharp;
-using Ssit.CrossX.Games.Template;
 using Ssit.CrossX.Graphics.Sprites;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.Helpers;
 

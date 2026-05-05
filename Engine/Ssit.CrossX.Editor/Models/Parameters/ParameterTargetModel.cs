@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games.Editor;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Editor;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Models.Parameters;
 
@@ -15,14 +15,12 @@ public class ParameterTargetModel : ParameterModel<int>
     private readonly Func<Type, Task<MapObject>> _findMatchingObject;
     private readonly MapFile _map;
 
-    private string _info;
-    
     public ICommand SelectObjectCommand { get; }
-    
+
     public string Info
     {
-        get => _info;
-        private set => SetField(ref _info, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     public ParameterTargetModel(string name, object source, PropertyInfo propertyInfo, 

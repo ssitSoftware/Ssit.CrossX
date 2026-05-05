@@ -7,16 +7,16 @@ public class TranslationTransition: Transition
 {
     public Vector2 Offset { get; init; }
     
-    protected override void OnApply(IRenderer2 renderer, float progress)
+    protected override void OnApply(IRenderer2 renderer, float scale, float progress)
     {
         var offset = Offset * progress;
-        renderer.StateManager.Translate(offset);
+        renderer.StateManager.Translate(offset * scale);
     }
 }
 
 public class HideTransition: Transition
 {
-    protected override void OnApply( IRenderer2 renderer, float progress)
+    protected override void OnApply( IRenderer2 renderer, float scale, float progress)
     {
         if (progress > 0)
         {

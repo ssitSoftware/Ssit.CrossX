@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using Ssit.CrossX.Games.Map;
 using Ssit.CrossX.Editor.Service;
+using Ssit.CrossX.XxFormats.Map;
 
 namespace Ssit.CrossX.Editor.Helpers;
 

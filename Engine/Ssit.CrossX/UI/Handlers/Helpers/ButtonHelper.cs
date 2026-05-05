@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Ssit.CrossX.Commands;
 using Ssit.CrossX.Input;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
@@ -15,27 +16,33 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 {
     public bool IsEnabled
     {
-        get => _isEnabled || _isExecutingDelayedCommand;
-        private set => _isEnabled = value;
+        get => field || _isExecutingDelayedCommand;
+        private set;
     }
-
+    
     public bool IsHovered { get; private set; }
     public bool IsPressed { get; private set; }
+    
     public bool IsExecutingCommand => _isExecutingDelayedCommand;
 
     private readonly TViewHandler _viewHandler;
     private readonly IUiSounds _uiSounds;
+    private readonly IHapticDevice _hapticDevice;
+    private readonly PageInputContext _pageInputContext;
+
     private TView AttachedView => (TView)_viewHandler.View;
     
     private int? _currentPointerId;
-
     private bool _isExecutingDelayedCommand;
-    private bool _isEnabled;
 
-    public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds)
+    private bool HapticEnabled => (_viewHandler?.View as IButtonView)?.HapticFeedback?.Value ?? false;
+    
+    public ButtonHelper(TViewHandler viewHandler, IUiSounds uiSounds, IHapticDevice hapticDevice, PageInputContext pageInputContext)
     {
         _viewHandler = viewHandler;
         _uiSounds = uiSounds;
+        _hapticDevice = hapticDevice;
+        _pageInputContext = pageInputContext;
 
         if (AttachedView.Command is not null)
         {
@@ -63,7 +70,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     public bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context)
     {
-        if (_isExecutingDelayedCommand)
+        if (_isExecutingDelayedCommand || !AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
         {
             return true;
         }
@@ -79,8 +86,12 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                     {
                         if (_viewHandler.ScreenBounds.Contains(pointer.Position))
                         {
-                            _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
-                            Execute(TimeSpan.Zero, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
+                            if (HapticEnabled)
+                            {
+                                _hapticDevice.Feedback(FeedbackStyle.ButtonRelease, pointer.OriginalPosition);
+                            }
+                            
+                            Execute(TimeSpan.Zero, AttachedView.EnabledCommandTypes > ButtonCommandType.Select ? ButtonCommandType.Select : null);
                             _currentPointerId = null;
                             return true;
                         }
@@ -90,7 +101,30 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                 }
                 else
                 {
+                    var wasPressed = IsPressed;
                     IsPressed = _viewHandler.ScreenBounds.Contains(pointer.Position);
+
+                    if (wasPressed != IsPressed)
+                    {
+                        if (IsPressed)
+                        {
+                            if (HapticEnabled)
+                            {
+                                _hapticDevice.Feedback(FeedbackStyle.ButtonPush, pointer.OriginalPosition);
+                            }
+
+                            _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
+                        }
+                        else
+                        {
+                            if (HapticEnabled)
+                            {
+                                _hapticDevice.Feedback(FeedbackStyle.ButtonRelease, pointer.OriginalPosition);
+                            }
+
+                            _uiSounds[UiSounds.ButtonReleaseSound]?.PlayOnce();
+                        }
+                    }
                 }
                 return true;
             }
@@ -106,13 +140,21 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
                 {
                     _currentPointerId = pointer.Id;
                     IsPressed = true;
+
+                    if (HapticEnabled)
+                    {
+                        _hapticDevice.Feedback(FeedbackStyle.ButtonPush, pointer.OriginalPosition);
+                    }
+
+                    _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
                     
-                    context.CapturePointer(pointer.Id, _viewHandler);
                     var focusable = context.FindFocusable(null, _viewHandler);
                     if (focusable != null)
                     {
                         context.Focus(_viewHandler, _viewHandler);
+                        _pageInputContext.ShowFocus = false;
                     }
+                    context.CapturePointer(pointer.Id, _viewHandler);
                     return true;
                 }
             }
@@ -123,7 +165,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     public void CancelPointer(int pointerId, IInputContext context)
     {
-        if (_currentPointerId == pointerId)
+        if (_currentPointerId == pointerId || context.FindFocusable(null, _viewHandler) != _viewHandler)
         {
             _currentPointerId = null;
             IsPressed = false;
@@ -136,58 +178,74 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
         {
             return true;
         }
+
+        FocusDirection focusDirection = FocusDirection.None;
         
-        string focusId = null;
         switch (button)
         {
             case UiButton.Left:
-                focusId = AttachedView?.HorizontalNavigation.left;
-                
-                if (focusId is null && true == AttachedView?.EnableCommandType)
+                if (AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Previous))
                 {
-                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Previous);
+                    _uiSounds[UiSounds.ChangeValueSound]?.PlayOnce();
+                    Execute(TimeSpan.Zero, ButtonCommandType.Previous);
                 }
+                else focusDirection = FocusDirection.Left;
                 break;
             
             case UiButton.Right:
-                focusId = AttachedView?.HorizontalNavigation.right;
-                
-                if (focusId is null && true == AttachedView?.EnableCommandType)
+                if (AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Next) )
                 {
-                    Execute(AttachedView.KeyCommandDelay, ButtonCommandType.Next);
+                    _uiSounds[UiSounds.ChangeValueSound]?.PlayOnce();
+                    Execute(TimeSpan.Zero, ButtonCommandType.Next);
                 }
+                else focusDirection = FocusDirection.Right;
                 break;
             
             case UiButton.Up:
-                focusId = AttachedView?.VerticalNavigation.up;
+                focusDirection = FocusDirection.Up;
                 break;
             
             case UiButton.Down:
-                focusId = AttachedView?.VerticalNavigation.down;
+                focusDirection = FocusDirection.Down;
                 break;
             
             case UiButton.Select:
                 if (IsEnabled)
                 {
-                    _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
-                    Execute(AttachedView.KeyCommandDelay, true == AttachedView?.EnableCommandType ? ButtonCommandType.Select : null);
+                    if (true == AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
+                    {
+                        if (!_pageInputContext.ShowFocus)
+                        {
+                            _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+                            _pageInputContext.ShowFocus = true;
+                            return false;
+                        }
+
+                        if (AttachedView!.KeyCommandDelay.Milliseconds > 10)
+                        {
+                            _uiSounds[UiSounds.ButtonPushSound]?.PlayOnce();
+                        }
+
+                        Execute(AttachedView.KeyCommandDelay,
+                            AttachedView.EnabledCommandTypes > ButtonCommandType.Select ? ButtonCommandType.Select : null);
+                    }
                 }
                 break;
         }
 
-        if (focusId != null)
+        if (focusDirection != FocusDirection.None)
         {
-            var focusable = context.FindFocusable(focusId, _viewHandler);
-            if (focusable != null)
+            if (!_pageInputContext.ShowFocus)
             {
-                if (!focusable.SkipNavigation && focusable.Enabled)
-                {
-                    context.Focus(focusable, _viewHandler);
-                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
-                    return true;
-                }
-                
-                return focusable.OnUiButton(button, context);
+                _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+                _pageInputContext.ShowFocus = true;
+                context.Focus(_viewHandler, _viewHandler);
+                return true;
+            }
+
+            if (context.MoveFocus(focusDirection, _viewHandler))
+            {
+                _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
             }
         }
 
@@ -196,12 +254,23 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
 
     private void Execute(TimeSpan delay, ButtonCommandType? commandType)
     {
+        if (commandType.HasValue)
+        {
+            if (!(AttachedView.Command?.CanExecute((AttachedView.CommandParameter, commandType.Value)) ?? false))
+                return;
+        }
+        else
+        {
+            if (!(AttachedView.Command?.CanExecute(AttachedView.CommandParameter) ?? false))
+                return;
+        }
+        
         if (AttachedView.Command is not IAsyncCommand asyncCommand)
         {
             asyncCommand = new AsyncCommand( o => Task.Run( async () =>
             {
                 await Task.Yield();
-                AttachedView?.Command?.Execute(o);
+                AttachedView.Command?.Execute(o);
             }));
         }
         
@@ -213,6 +282,11 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             if (delay.TotalSeconds > 0)
             {
                 await Task.Delay(delay);
+            }
+
+            if (!commandType.HasValue || commandType == ButtonCommandType.Select)
+            {
+                (_uiSounds[UiSounds.ExecuteSound] ?? _uiSounds[UiSounds.ButtonReleaseSound])?.PlayOnce();
             }
 
             IsPressed = false;

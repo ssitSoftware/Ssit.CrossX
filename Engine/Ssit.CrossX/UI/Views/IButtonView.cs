@@ -1,8 +1,10 @@
 using System;
 using System.Windows.Input;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
+
 
 public interface IButtonView: IFocusableView
 {
@@ -11,6 +13,7 @@ public interface IButtonView: IFocusableView
     TimeSpan KeyCommandDelay { get; }
     TimeSpan CommandDelay { get; }
     string CommandSoundId { get; }
-    bool EnableCommandType { get; }
+    ButtonCommandType EnabledCommandTypes { get; }
     IUiSounds CustomSounds { get; }
+    SharedValue<bool> HapticFeedback { get; }
 }

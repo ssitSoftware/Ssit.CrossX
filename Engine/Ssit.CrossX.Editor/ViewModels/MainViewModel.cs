@@ -11,8 +11,8 @@ using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
-using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Map;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {
@@ -21,8 +21,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         private readonly IEditorInstances _instances;
         private readonly IFileService _fileService;
         private readonly IWindowService _windowService;
-        private bool _isModified;
-        
+
         public EditorViewModel EditorViewModel { get; }
         public TilesetSelectorViewModel TilesetSelectorViewModel { get; }
 
@@ -36,10 +35,10 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public bool IsModified
         {
-            get => _isModified;
+            get;
             set
             {
-                if (SetField(ref _isModified, value))
+                if (SetField(ref field, value))
                 {
                     SaveCommand.NotifyCanExecuteChanged();
                     UpdateTitle();
@@ -91,15 +90,14 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public string Title
         {
-            get => _title;
-            set => SetField(ref _title, value);
+            get;
+            set => SetField(ref field, value);
         }
 
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
 
         private string _filePath;
-        private string _title;
         private MapFile _mapFile;
 
         private readonly EditorData _editorData;
@@ -268,15 +266,25 @@ namespace Ssit.CrossX.Editor.ViewModels
         
             foreach (var layer in template.Layers)
             {
-                mapFile.Layers.Add(new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
+                MapLayer mapLayer;
+                if (layer.Id.Equals(LayerDescription.MainLayerId, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Name = layer.Name,
-                    HorizontalSpeed = layer.HorizontalSpeed,
-                    VerticalSpeed = layer.VerticalSpeed,
-                    Depth = layer.Depth,
-                    TintColor = layer.Tint,
-                    FogColor = layer.Fog
-                });
+                    mapLayer = new MainLayer(layer.Size.Width, layer.Size.Height, template);
+                }
+                else
+                {
+                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height, template);
+                }
+
+                mapLayer.Name = layer.Name;
+                mapLayer.HorizontalSpeed = layer.HorizontalSpeed;
+                mapLayer.VerticalSpeed = layer.VerticalSpeed;
+                mapLayer.Depth = layer.Depth;
+                mapLayer.TintColor = layer.Tint;
+                mapLayer.FogColor = layer.Fog;
+                
+                mapFile.Layers.Add(mapLayer);
+                
             }
 
             _editorData.SelectedLayer = LayerDescription.MainLayerId;
@@ -361,7 +369,7 @@ namespace Ssit.CrossX.Editor.ViewModels
                 var mapLayer = mapFile.Layers.FirstOrDefault(o => string.Equals(o.Name, layer.Name, StringComparison.InvariantCultureIgnoreCase));
                 if (mapLayer is null)
                 {
-                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height)
+                    mapLayer = new MapLayer(layer.Id, layer.Size.Width, layer.Size.Height, _instances.Template)
                     {
                         Name = layer.Name,
                         HorizontalSpeed = layer.HorizontalSpeed,

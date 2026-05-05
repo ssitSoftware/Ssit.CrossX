@@ -15,6 +15,16 @@ public class FilesStorage(string appName) : IFileStorage
         File.WriteAllText(Path.Combine(StorageDirectory(appName), path), text);
     }
 
+    public void WriteData(string path, byte[] data)
+    {
+        File.WriteAllBytes(Path.Combine(StorageDirectory(appName), path), data);
+    }
+
+    public byte[] ReadData(string path)
+    {
+        return File.ReadAllBytes(Path.Combine(StorageDirectory(appName), path));
+    }
+
     private static string StorageDirectory(string appName)
     {
         var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);

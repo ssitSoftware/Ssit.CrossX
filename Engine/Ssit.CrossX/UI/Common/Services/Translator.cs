@@ -55,7 +55,7 @@ internal class Translator : ITranslator
             {
                 list.Add(new Dictionary<string, string>());
             }
-            list[listId].Add(key, value);
+            list[listId].Add(key, value.Replace('|', '\n'));
         }
     }
 

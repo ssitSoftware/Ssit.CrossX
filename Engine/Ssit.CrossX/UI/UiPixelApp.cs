@@ -12,6 +12,8 @@ namespace Ssit.CrossX.UI;
 
 public abstract class UiPixelApp : IApp
 {
+    public virtual bool IsPortrait => false;
+
     void IDisposable.Dispose()
     {
         OnDispose(true);
@@ -32,7 +34,7 @@ public abstract class UiPixelApp : IApp
     protected IAppHost AppHost { get; private set; }
     private IRenderer2 _renderer;
 
-    private Size _size;
+    private SizeF _size;
         
     protected abstract RgbaColor BackgroundColor { get; }
     
@@ -42,7 +44,7 @@ public abstract class UiPixelApp : IApp
         {
             UiApp?.Dispose();
             UiApp = null;
-                
+
             AppHost?.Dispose();
             AppHost = null;
         }
@@ -54,7 +56,7 @@ public abstract class UiPixelApp : IApp
         AppHost = CreateAppHost(container);
             
         UiApp = container.InitializeUi(OnInitializeUi);
-        OnResize(_renderer.TargetSize);
+        OnResize(_renderer.Bounds.Size);
     }
 
     protected virtual void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
@@ -71,7 +73,7 @@ public abstract class UiPixelApp : IApp
     {
     }
         
-    protected void OnResize(Size size)
+    protected void OnResize(SizeF size)
     {
         _size = size;
         AppHost.Resize(_size);
@@ -86,7 +88,7 @@ public abstract class UiPixelApp : IApp
         AppHost.Resize(_size, true);
         UiApp.SetBounds(new RectangleF(Vector2.Zero, AppHost.TargetSize / AppHost.Scale), AppHost.Scale);
     }
-        
+
     protected virtual void OnDraw(IRenderer2 renderer)
     {
         Debug.Assert(renderer == _renderer, "renderer is not the same as the one used in the app");
@@ -97,7 +99,6 @@ public abstract class UiPixelApp : IApp
     
     protected virtual void OnStart(object args)
     {
-        
     }
 
     protected virtual void PostRender(IRenderer2 renderer)
@@ -107,6 +108,10 @@ public abstract class UiPixelApp : IApp
     private static void Render(object state)
     {
         var app = (UiPixelApp)state;
+
+        if (!app.IsActive)
+            return;
+        
         app.UiApp.Draw(app._renderer, app.BackgroundColor);
         app.PostRender(app._renderer);
     }

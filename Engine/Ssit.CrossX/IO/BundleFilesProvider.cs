@@ -10,7 +10,7 @@ public class BundleFilesProvider: IFilesProvider
     {
         var location = AppDomain.CurrentDomain.BaseDirectory;
         var dir = Path.GetDirectoryName(location) ?? string.Empty;
-
+        
         Console.WriteLine($"Location: {dir}");
         
         string[] dirs = [
@@ -34,14 +34,14 @@ public class BundleFilesProvider: IFilesProvider
     
     public Stream Open(string path)
     {
-        var resPath = GetFullPath(path);
+        var resPath = GetFullPath(path).Replace("!", "");;
         return File.Open(resPath, FileMode.Open, FileAccess.Read, FileShare.Read);
     }
 
     public bool FileExists(string path)
     {
-        path = GetFullPath(path);
-        return FileExists(path);
+        path = GetFullPath(path).Replace("!", "");
+        return File.Exists(path);
     }
 
     public string[] GetFiles(string path, string extension = null)
@@ -51,13 +51,13 @@ public class BundleFilesProvider: IFilesProvider
 
     public string GetPhisicalFilePath(string path)
     {
-        return GetFullPath(path);
+        return GetFullPath(path).Replace("!", "");
     }
 
     private string GetFullPath(string path)
     {
         path = PathHelper.NormalizePath(path);
-        path = Path.Combine(_bundleDir, path);
+        path = Path.Combine(_bundleDir, path).Replace("!", "");
 
         return path;
     }

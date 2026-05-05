@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
+using Avalonia.Markup.Xaml.Templates;
 using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
@@ -10,8 +11,8 @@ using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
 using SkiaSharp;
 using Ssit.CrossX.Editor.Models;
-using Ssit.CrossX.Games.Map;
-using Ssit.CrossX.Games.Utils;
+using Ssit.CrossX.XxFormats.Map;
+using Ssit.CrossX.XxGames.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels
 {
@@ -45,13 +46,13 @@ namespace Ssit.CrossX.Editor.ViewModels
             get => Tools.GetTool<SetMaterialTool>().MaterialIndex;
             set => Tools.GetTool<SetMaterialTool>().MaterialIndex = value;
         }
-        
+
         public int SelectedObject
         {
-            get => _selectedObject;
+            get;
             set
             {
-                if (SetField(ref _selectedObject, value))
+                if (SetField(ref field, value))
                 {
                     PropertiesView.MapFile = _instances.Map;
                 }
@@ -60,27 +61,29 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public MapLayer SelectedLayer
         {
-            get => _selectedLayer;
+            get;
             set
             {
-                var oldLayer = _selectedLayer;
+                var oldLayer = field;
 
                 if (value is null)
                     return;
-                
-                if (SetField(ref _selectedLayer, value))
+
+                if (SetField(ref field, value))
                 {
-                    if (oldLayer != null && _selectedLayer != null)
+                    if (oldLayer != null && field != null)
                     {
-                        var offset = LayerOffsetCalculator.CalculateGlobalOffset(oldLayer, _instances.Map.MainLayer, Offset);
-                        Offset = LayerOffsetCalculator.CalculateLayerOffset(SelectedLayer, _instances.Map.MainLayer, offset);
+                        var offset =
+                            LayerOffsetCalculator.CalculateGlobalOffset(oldLayer, _instances.Map.MainLayer, Offset);
+                        Offset = LayerOffsetCalculator.CalculateLayerOffset(SelectedLayer, _instances.Map.MainLayer,
+                            offset);
                     }
 
                     PropertiesView.MapFile = _instances.Map;
 
-                    if (_selectedLayer is not null)
+                    if (field is not null)
                     {
-                        _editorData.SelectedLayer = _selectedLayer.Id;
+                        _editorData.SelectedLayer = field.Id;
                         _editorData.RequestSave();
                     }
 
@@ -93,14 +96,14 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public IEditorTools Tools { get; }
 
-        private List<MapObjectInfo> _currentObjects = new();
+        private readonly List<MapObjectInfo> _currentObjects = new();
 
         public bool IsFullscreen
         {
-            get => _isFullscreen;
+            get;
             set
             {
-                if (SetField(ref _isFullscreen, value))
+                if (SetField(ref field, value))
                 {
                     SelectedTool = value ? EmptyTool.Name : SelectionTool.Name;
                 }
@@ -209,11 +212,8 @@ namespace Ssit.CrossX.Editor.ViewModels
         private SKPaint _skPaint = new();
     
         private Vector2 _currentSize;
-        private MapLayer _selectedLayer;
-        private bool _isFullscreen;
 
         private Dictionary<int, SKColorFilter> _colorFilters = new();
-        private int _selectedObject;
 
         public Vector2 Offset
         {
@@ -365,8 +365,8 @@ namespace Ssit.CrossX.Editor.ViewModels
             _skPaint.IsStroke = false;
             _skPaint.StrokeWidth = 1;
             _skPaint.Color = ShowAllLayers
-                ? _instances.Map.BackgroundColor.ToSkia()
-                : _instances.Template.DefaultBackground.ToSkia();
+                ? _instances.Template.GameBackground.ToSkia()
+                : _instances.Template.EditorLayerBackground.ToSkia();
         
             skCanvas.DrawRect(new SKRect(start.X, start.Y, end.X, end.Y), _skPaint);
 
@@ -453,6 +453,22 @@ namespace Ssit.CrossX.Editor.ViewModels
                 for (var idx = 0; idx < yl; ++idx)
                 {
                     skCanvas.DrawLine(start.X, idx * ts + start.Y, end.X, idx* ts + start.Y, _skPaint);
+                }
+            }
+            
+            if (_instances.Template.DisplayScreenGridVertical)
+            {
+                var st = MapToScreen(Vector2.Zero);
+                var en = MapToScreen(new Vector2(SelectedLayer.Width, SelectedLayer.Height));
+             
+                _skPaint.IsStroke = true;
+                _skPaint.StrokeWidth = 1;
+                _skPaint.Color = SKColors.White.WithAlpha(96);
+                
+                var xl = (int)MathF.Ceiling(SelectedLayer.Width * ts / w);
+                for (var idx = 0; idx <= xl; ++idx)
+                {
+                    skCanvas.DrawLine(st.X + idx * w, st.Y, st.X + idx * w, en.Y, _skPaint);
                 }
             }
         
@@ -735,28 +751,28 @@ namespace Ssit.CrossX.Editor.ViewModels
             {
                 skCanvas.DrawImage(img, srcRect, destRect, skPaint);
             }
-
+            
             if (SelectedObject == mapObject?.Id)
             {
                 skPaint.ColorFilter = null;
                 skPaint.Color = SKColors.Orange.WithAlpha(192);
                 skPaint.IsStroke = true;
-                
+
                 skCanvas.DrawRect(rect.ToSkia(), skPaint);
-                
+
                 skPaint.Color = SKColors.GreenYellow.WithAlpha(192);
                 skCanvas.DrawLine(pos.X + 10, pos.Y + 10, pos.X - 10, pos.Y - 10, skPaint);
                 skCanvas.DrawLine(pos.X + 10, pos.Y - 10, pos.X - 10, pos.Y + 10, skPaint);
             }
-            else if ( layer == SelectedLayer && !IsFullscreen)
+            else if (layer == SelectedLayer && !IsFullscreen && (!ShowAllLayers || ShowGrid))
             {
                 skPaint.ColorFilter = null;
                 skPaint.Color = SKColors.Orange.WithAlpha(64);
                 skPaint.IsStroke = true;
-                
+
                 skCanvas.DrawRect(rect.ToSkia(), skPaint);
             }
-            
+
             skPaint.Color = SKColors.White;
             skPaint.ColorFilter = oldFilter;
             

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Handlers;
 using Ssit.CrossX.UI.Services;
@@ -23,4 +24,6 @@ internal interface IPage: IViewParent, IDisposable
     void SignalRecalculationPending();
     void InvalidateRendering();
     void OnTransitionToFinished();
+    bool MoveFocus(FocusDirection direction);
+    StylesContainer Styles { get; }
 }

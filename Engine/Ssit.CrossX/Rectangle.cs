@@ -62,6 +62,8 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     /// </summary>
     public bool IsEmpty => Width == 0 || Height == 0;
 
+    public Size Size => new Size(Width, Height);
+
     /// <summary>
     /// Computes the intersection of this rectangle with another rectangle.
     /// </summary>

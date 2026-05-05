@@ -1,10 +1,51 @@
+using System.Collections.Generic;
+
 namespace Ssit.CrossX.Input.Internal;
 
 public abstract class GameControllersBase: IGameControllers
 {
-    public byte VibrationForce { get; set; } = 3;
+    private readonly HashSet<int> _switchButtons = new();
     
-    public ButtonState GetButton(int player, GameControllerButton button) => GetButtonInternal(player, button);
+    public void SwitchButtons(int player, bool @switch)
+    {
+        if (@switch)
+        {
+            _switchButtons.Add(player);
+        }
+        else
+        {
+            _switchButtons.Remove(player);
+        }
+    }
+
+    public byte VibrationForce { get; set; } = 3;
+
+    public ButtonState GetButton(int player, GameControllerButton button)
+    {
+        if (_switchButtons.Contains(player))
+        {
+            switch (button)
+            {
+                case GameControllerButton.A:
+                    button = GameControllerButton.B;
+                    break;
+                
+                case GameControllerButton.B:
+                    button = GameControllerButton.A;
+                    break;
+                
+                case GameControllerButton.X:
+                    button = GameControllerButton.Y;
+                    break;
+                
+                case GameControllerButton.Y:
+                    button = GameControllerButton.X;
+                    break;
+            }
+        }
+        
+        return GetButtonInternal(player, button);   
+    }
     public float GetAxis(int player, GameControllerAxis axis) => GetAxisInternal(player, axis);
     public bool IsConnected(int player) => IsConnectedInternal(player);
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
@@ -8,7 +9,7 @@ namespace Ssit.CrossX.Graphics.Internal;
 public class TextRenderer(IQuadsRenderer quadsRenderer): ITextRenderer
 {
     public void DrawText(IFont font, TextSource text, Vector2 position, ContentAlign align = ContentAlign.Left, float scale = 1,
-        RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null,
+        RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, RgbaColor? outlineColor = null, int lineSpacing = 1,
         TextRenderingContext context = null)
     {
         if (font is not IGlyphFont glyphFont)
@@ -16,12 +17,12 @@ public class TextRenderer(IQuadsRenderer quadsRenderer): ITextRenderer
             return;
         }
         
-        GlyphFontRenderer.RenderText(quadsRenderer, glyphFont, text, position, align, scale, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, context);
+        GlyphFontRenderer.RenderText(quadsRenderer, glyphFont, text, position, align, scale, color ?? RgbaColor.White, outlineColor ?? RgbaColor.Black, spacing, lineSpacing, context);
     }
 
     public void DrawText(IFont font, TextSource text, RectangleF position, ContentAlign align = ContentAlign.Left, float scale = 1,
         RgbaColor? color = null, TextSpacing spacing = TextSpacing.Normal, float paragraphSpacing = -1,
-        RgbaColor? outlineColor = null, TextRenderingContext context = null)
+        RgbaColor? outlineColor = null, int lineSpacing = 0, TextRenderingContext context = null)
     {
         if (font is not IGlyphFont glyphFont)
         {
@@ -34,6 +35,6 @@ public class TextRenderer(IQuadsRenderer quadsRenderer): ITextRenderer
         }
 
         GlyphFontRenderer.RenderText(quadsRenderer, glyphFont, text, position, align, scale, color ?? RgbaColor.White,
-            outlineColor ?? RgbaColor.Black, spacing, paragraphSpacing, context);
+            outlineColor ?? RgbaColor.Black, spacing, paragraphSpacing, lineSpacing, context);
     }
 }

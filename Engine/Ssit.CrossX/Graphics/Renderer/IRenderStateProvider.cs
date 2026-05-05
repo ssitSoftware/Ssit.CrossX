@@ -9,4 +9,5 @@ public interface IRenderStateProvider
     bool UseGlowTextures { get; }
     BlendMode BlendMode { get; }
     TextureFilter TextureFilter { get; }
+    RectangleF? ClipRect { get; }
 }

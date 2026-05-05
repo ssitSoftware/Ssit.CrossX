@@ -5,6 +5,8 @@ namespace Ssit.CrossX.Audio.Internal;
 
 public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
 {
+    protected const int BufferLength = 88200 / 10;
+    
     private readonly Dictionary<string, MusicPlaylist> _playlists = new();
     private MusicPlaylist _currentPlaylist;
 

@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games.Editor;
 using Ssit.CrossX.Utils;
+using Ssit.CrossX.XxFormats.Editor;
 
 namespace Ssit.CrossX.Editor.Models.Parameters;
 
@@ -22,7 +22,6 @@ public abstract class ParameterModel<TValue> : ParameterModel
     private readonly object _owner;
     private readonly PropertyInfo _propertyInfo;
     private readonly IPropertyHandler _handler;
-    private bool _isInvalid;
 
     public bool Enabled { get; }
 
@@ -50,10 +49,10 @@ public abstract class ParameterModel<TValue> : ParameterModel
 
     public bool IsInvalid
     {
-        get => _isInvalid;
-        protected set => SetField(ref _isInvalid, value);
+        get;
+        protected set => SetField(ref field, value);
     }
-    
+
     public ICommand FocusLostCommand { get; }
 
     private bool _disableUpdatingEvent;

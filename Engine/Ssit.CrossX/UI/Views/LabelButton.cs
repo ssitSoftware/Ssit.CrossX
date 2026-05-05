@@ -17,10 +17,8 @@ public class LabelButton: Label, IButtonView
     public TimeSpan CommandDelay { get; set; } = TimeSpan.FromMilliseconds(33);
     
     public string UniqueId { get; set; }
-    public (string left, string right) HorizontalNavigation { get; set; }
-    public (string up, string down) VerticalNavigation { get; set; }
-    
     public string CommandSoundId { get; set; }
-    public bool EnableCommandType { get; set; }
+    public ButtonCommandType EnabledCommandTypes { get; set; } = ButtonCommandType.Select;
     public IUiSounds CustomSounds { get; set; }
+    public SharedValue<bool> HapticFeedback { get; set; } = false;
 }

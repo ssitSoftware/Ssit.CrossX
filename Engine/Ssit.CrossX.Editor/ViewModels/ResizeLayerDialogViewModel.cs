@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.Games.Map;
+using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.Utils;
 
 namespace Ssit.CrossX.Editor.ViewModels;
@@ -12,9 +12,6 @@ public class ResizeLayerDialogViewModel: BindableModel, IDialog
 {
     private readonly MapLayer _layer;
     private readonly IEditorInstances _instances;
-    private int _width;
-    private int _height;
-    private MapAlign _align;
 
     public event Action RequestClose;
     
@@ -22,24 +19,24 @@ public class ResizeLayerDialogViewModel: BindableModel, IDialog
 
     public MapAlign Align
     {
-        get => _align;
-        set => SetField(ref _align, value);
+        get;
+        set => SetField(ref field, value);
     }
-    
+
     public MapAlign[] Aligns { get; }
 
     public int Width
     {
-        get => _width;
-        set => SetField(ref _width, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public int Height
     {
-        get => _height;
-        set => SetField(ref _height, value);
+        get;
+        set => SetField(ref field, value);
     }
-    
+
     public ICommand CloseCommand { get; }
     public ICommand ApplyCommand { get; }
 

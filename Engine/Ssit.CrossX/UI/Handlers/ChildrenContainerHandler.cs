@@ -22,14 +22,14 @@ public abstract class ChildrenContainerHandler<TContainer>
 
     IReadOnlyList<ViewHandler> IChildrenContainer.Children => _childrenHandlersList;
 
-    TParent IViewParent.GetParent<TParent>()
+    TParent IViewParent.GetParent<TParent>(bool optional)
     {
         if (this is TParent parent)
         {
             return parent;
         }
 
-        return Parent.GetParent<TParent>();
+        return Parent.GetParent<TParent>(optional);
     }
     
     RectangleF IViewParent.CalculateTargetBounds()

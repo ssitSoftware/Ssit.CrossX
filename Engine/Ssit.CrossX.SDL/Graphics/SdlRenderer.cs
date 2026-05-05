@@ -8,23 +8,60 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Graphics;
 
-public unsafe class SdlRenderer: IRenderer2
+public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
 {
     private readonly SDL_Renderer* _renderer;
     private readonly SdlQuadsRenderer _quadsRenderer;
     private readonly SdlSpriteRenderer _spriteRenderer;
     private readonly SdlGeometryRenderer _geometryRenderer;
 
-    public Size TargetSize
+    public bool EnableSafeBounds { get; set; }
+    
+    public Size TargetSize => Bounds.Size;
+
+    public Rectangle Bounds
     {
         get
         {
+            int x = 0, y = 0;
             int w, h;
             SDL_GetRenderOutputSize(_renderer, &w, &h);
-            return new Size(w, h);
+
+            if (EnableSafeBounds)
+            {
+                if (SDL_GetRenderTarget(_renderer) is null)
+                {
+                    var rect = new SDL_Rect();
+                    SDL_GetRenderSafeArea(_renderer, &rect);
+
+                    if (rect.w > rect.h)
+                    {
+                        var left = rect.x;
+                        var right = w - (rect.w + rect.x);
+
+                        x = left;
+                        w -= left + right;
+                    }
+                    else
+                    {
+                        x = rect.x;
+                        y = rect.y;
+                        w = rect.w;
+                        h = rect.h;
+
+#if ANDROID
+                        // TODO: Safe area top on Android doesn't make any sense! Check out better solution
+                        h += +y / 2;
+                        y /= 2;
+#endif
+                    }
+                }
+            }
+
+            return new Rectangle(x, y, w, h);
         }
     }
-    
+
     public IStateManager StateManager { get; }
     public IRenderStateProvider StateProvider { get; }
 
@@ -36,13 +73,11 @@ public unsafe class SdlRenderer: IRenderer2
 
     public ITextRenderer TextRenderer { get; }
 
-    internal bool DisableRendering;
-
     public SdlRenderer(SDL_Renderer* renderer)
     {
         _renderer = renderer;
-        
-        var stateManager = new StateManager();
+
+        var stateManager = new StateManager(this);
         StateManager = stateManager;
         StateProvider = stateManager;
         
@@ -50,14 +85,31 @@ public unsafe class SdlRenderer: IRenderer2
         _geometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
         _spriteRenderer = new SdlSpriteRenderer(_renderer, stateManager);
         TextRenderer = new TextRenderer(QuadsRenderer);
-
-        stateManager.UpdateBlendMode += UpdateBendMode;
-        UpdateBendMode(stateManager.BlendMode);
+        UpdateHwMode(stateManager.BlendMode, stateManager.ClipRect);
     }
-
-    private void UpdateBendMode(BlendMode mode)
+    
+    public void UpdateHwMode(BlendMode mode, RectangleF? clipRect)
     {
         SDL_SetRenderDrawBlendMode(_renderer, mode.ToSdlBlendMode());
+
+        if (clipRect.HasValue)
+        {
+            var r = clipRect.Value;
+            
+            var rect = new SDL_Rect
+            {
+                x = (int)r.X,
+                y = (int)r.Y,
+                w = (int)r.Width,
+                h = (int)r.Height
+            };
+            SDL_SetRenderClipRect(_renderer, &rect);
+        }
+        else
+        {
+            SDL_SetRenderClipRect(_renderer, null);
+            SDL_SetRenderViewport(_renderer, null);
+        }
     }
 
     public void Clear(RgbaColor color)

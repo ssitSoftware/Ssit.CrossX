@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
-using Ssit.CrossX.Games.Template;
+using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor.Models;
 

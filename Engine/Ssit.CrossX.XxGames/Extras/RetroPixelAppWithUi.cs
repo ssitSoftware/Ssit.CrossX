@@ -35,8 +35,8 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     private IPaletteSource _paletteSource;
     
     protected PixelAppHost.Parameters HostParameters { get; private set; }
-    
-    protected PixelAppHost.Parameters CreateAppHostParameters()
+
+    private PixelAppHost.Parameters CreateAppHostParameters()
     {
         const float scale = 0.5f;
         

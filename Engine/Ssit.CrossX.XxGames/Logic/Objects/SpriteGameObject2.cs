@@ -17,7 +17,7 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     public GameObjectsServices Services { get; }
     public IBody Body { get; }
     public event Action FixedUpdate;
-    public int ZOrder { get; }
+    public int ZOrder { get; protected set; }
     
     public SpriteInstance Sprite { get; private set; }
     private ResourceHandle<SpriteEx> _spriteObject;

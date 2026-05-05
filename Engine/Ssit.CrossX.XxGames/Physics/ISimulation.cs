@@ -22,12 +22,14 @@ public interface ISimulation: IDisposable
     IBody CreateBody(IBodyOwner owner);
     void RemoveBody(IBody body);
     void InitializeStaticColliders(Aabb bounds, IEnumerable<ICollider> colliders);
-    bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
+    bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false);
     void GetColliders(Aabb bounds, IList<ICollider> colliders);
     IReadOnlyList<ICollider> GetColliders(Aabb bounds);
 
     IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0,
-        ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic);
+        ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false);
+
+    IReadOnlyList<Aabb> Debug_GetCollisionChecks();
     void Debug_GetQuadTreeAreas(IList<Aabb> aabbs);
     void RemoveCollider(ICollider collider);
     void AddCollider(ICollider collider);

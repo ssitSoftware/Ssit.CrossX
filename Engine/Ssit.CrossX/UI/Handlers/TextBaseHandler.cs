@@ -12,8 +12,8 @@ public abstract class TextBaseHandler<TTextView> : BackgroundHandler<TTextView> 
     private readonly IFontsManager _fontsManager;
     protected readonly TextRenderingContext TextRenderingContext = new ();
     
-    protected virtual RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) => AttachedView.TextColor.GetColor(PaletteSource, renderer, _colorSource);
-    protected virtual RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColor.GetColor(PaletteSource, renderer, _colorSource);
+    protected virtual RgbaColor? TextColor(IRenderer2 renderer, bool? focused = null) => AttachedView.TextColor?.GetColor(PaletteSource, renderer, _colorSource);
+    protected virtual RgbaColor? TextOutlineColor(IRenderer2 renderer) => AttachedView.TextOutlineColor?.GetColor(PaletteSource, renderer, _colorSource);
     
     protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : _scale;
 

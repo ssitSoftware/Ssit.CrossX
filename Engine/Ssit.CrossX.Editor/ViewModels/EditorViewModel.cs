@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
+using Avalonia.Markup.Xaml.Templates;
 using Ssit.CrossX.Editor.Helpers;
 using Ssit.CrossX.Editor.Input;
 using Ssit.CrossX.Editor.Service;
@@ -452,6 +453,22 @@ namespace Ssit.CrossX.Editor.ViewModels
                 for (var idx = 0; idx < yl; ++idx)
                 {
                     skCanvas.DrawLine(start.X, idx * ts + start.Y, end.X, idx* ts + start.Y, _skPaint);
+                }
+            }
+            
+            if (_instances.Template.DisplayScreenGridVertical)
+            {
+                var st = MapToScreen(Vector2.Zero);
+                var en = MapToScreen(new Vector2(SelectedLayer.Width, SelectedLayer.Height));
+             
+                _skPaint.IsStroke = true;
+                _skPaint.StrokeWidth = 1;
+                _skPaint.Color = SKColors.White.WithAlpha(96);
+                
+                var xl = (int)MathF.Ceiling(SelectedLayer.Width * ts / w);
+                for (var idx = 0; idx <= xl; ++idx)
+                {
+                    skCanvas.DrawLine(st.X + idx * w, st.Y, st.X + idx * w, en.Y, _skPaint);
                 }
             }
         

@@ -66,5 +66,10 @@ public static class SimulationRenderer
             DrawLine(renderer, new Vector2(aabb.Right, aabb.Top), new Vector2(aabb.Right, aabb.Bottom),
                 (collider.Material.Sides & ColliderSides.Right) != 0 ? color : color * 0.25f);
         }
+
+        foreach (var aabb in simulation.Debug_GetCollisionChecks())
+        {
+            renderer.DrawRectangle((RectangleF)aabb, RgbaColor.PaleVioletRed);
+        }
     }
 }

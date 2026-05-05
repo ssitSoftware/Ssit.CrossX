@@ -12,7 +12,7 @@ public class HorizontalPatrolBehavior(bool returnToOriginalPositionIfNotVisible)
     public sealed class Parameters
     {
         internal bool MoveTowardsTarget { get; set; } = true;
-        internal bool WasInitialized { get; set; } = false;
+        internal bool WasInitialized { get; set; }
         public ITarget Target{ get; set; }
         public bool WasDisplayed { get; set; }
         public Vector2 InitialPosition { get; set; }

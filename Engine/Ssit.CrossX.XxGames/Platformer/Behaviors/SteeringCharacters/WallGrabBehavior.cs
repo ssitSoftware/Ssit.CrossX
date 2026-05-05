@@ -24,11 +24,10 @@ public class WallGrabBehavior(int grabMaterialIndex) : SteeringBehavior<ISteerin
         {
             var charAabb = obj.Body.Colliders[0].Aabb;
             var offsetX = obj.FaceLeft
-                ? grabAabb.Value.Right - charAabb.Left
-                : grabAabb.Value.Left - charAabb.Right;
+                ? grabAabb.Value.Center.X - charAabb.Left
+                : grabAabb.Value.Center.X - charAabb.Right;
             var offsetY = grabAabb.Value.Center.Y - charAabb.Center.Y;
             obj.GetParameters<Parameters>(true).TargetPosition = obj.Body.Position + new Vector2(offsetX, offsetY);
-
             obj.SoundContainer.Play("WallGrab");
         }
     }

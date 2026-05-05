@@ -11,6 +11,8 @@ public interface IGameTemplate
     Guid Guid { get; }
     int TileSize { get; }
     
+    bool DisplayScreenGridVertical => false;
+    
     RgbaColor GameBackground { get; }
     RgbaColor EditorLayerBackground => GameBackground;
     

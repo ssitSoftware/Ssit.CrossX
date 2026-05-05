@@ -14,8 +14,7 @@ internal class Simulation : ISimulation
     private double _timeToUpdate;
 
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
-    public event Action<object> GameEvent;
-
+    
     public float ActiveTime { get; private set; }
     public IMessenger Messanger { get; internal set; }
 
@@ -43,6 +42,8 @@ internal class Simulation : ISimulation
 
     private readonly List<ICollider> _tempCollidersList = new();
 
+    private readonly List<Aabb> _collisionChecks = new();
+
     private bool _bodiesChanged;
     
     public IReadOnlyList<ICollider> GetColliders(Aabb bounds)
@@ -53,6 +54,8 @@ internal class Simulation : ISimulation
     }
 
     public void Debug_GetQuadTreeAreas(IList<Aabb> aabbs) => _collidersRootNode.Debug_GetNodesAabbs(aabbs);
+
+    public IReadOnlyList<Aabb> Debug_GetCollisionChecks() => _collisionChecks;
 
     public ICollider CreateCollider<TCreationParameters>(TCreationParameters creationParameters) where TCreationParameters: ColliderCreationParameters
         => CollidersFactory.Create(creationParameters);
@@ -110,14 +113,14 @@ internal class Simulation : ISimulation
         _bodies.Sort((o1, o2) => o1.UpdateOrder - o2.UpdateOrder);
     }
     
-    public IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
+    public IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false)
     {
         _tempCollidersList.Clear();
-        CheckCollision(aabb, testingBody, epsilon, _tempCollidersList, colliderType);
+        CheckCollision(aabb, testingBody, epsilon, _tempCollidersList, colliderType, debugRegister);
         return _tempCollidersList;
     }
 
-    public bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic)
+    public bool CheckCollision(Aabb aabb, IBody testingBody, float epsilon = 0, IList<ICollider> colliders = null, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool registerDebug = false)
     {
         _collidersToTest.Clear();
         _collidersRootNode.GetElements(aabb, _collidersToTest);
@@ -137,6 +140,11 @@ internal class Simulation : ISimulation
             colliders.Add(collider);
         }
 
+        if (registerDebug)
+        {
+            _collisionChecks.Add(aabb);
+        }
+        
         return colliders?.Count > 0;
     }
 
@@ -168,6 +176,7 @@ internal class Simulation : ISimulation
 
     public void Update(float timeInSeconds, Action<float> onFixedUpdate)
     {
+        _collisionChecks.Clear();
         ActiveTime += timeInSeconds;
         
         if (_bodiesChanged)

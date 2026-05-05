@@ -14,7 +14,6 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
 {
     public GameObjectsServices Services { get; }
     public IBody Body { get; }
-    public event Action FixedUpdate;
     public SpriteInstance Sprite { get; private set; }
     private ResourceHandle<SpriteEx> _spriteObject; 
 

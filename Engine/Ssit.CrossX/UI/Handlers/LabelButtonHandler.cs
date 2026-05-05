@@ -58,6 +58,7 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
         }
         catch (Exception ex)
         {
+            Debug.WriteLine(ex);
             Debugger.Break();
         }
 

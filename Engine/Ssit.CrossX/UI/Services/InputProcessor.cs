@@ -65,6 +65,7 @@ internal sealed class InputProcessor: IInputContext
         }
         catch (Exception ex)
         {
+            Debug.WriteLine(ex);
             Debugger.Break();
         }
     }

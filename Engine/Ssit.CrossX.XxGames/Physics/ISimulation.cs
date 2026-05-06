@@ -8,7 +8,7 @@ namespace Ssit.CrossX.XxGames.Physics;
 public interface ISimulation: IDisposable
 {
     float ActiveTime { get; }
-    IMessenger Messanger { get; }
+    IMessenger Messenger { get; }
     SimulationParameters SimulationParameters { get; }
     float MovementEpsilon { get; }
     event Action Disposed;

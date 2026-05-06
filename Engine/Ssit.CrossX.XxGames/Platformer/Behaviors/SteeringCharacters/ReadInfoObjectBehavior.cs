@@ -23,7 +23,7 @@ public class ReadInfoObjectBehavior : SteeringBehavior<ISteeringCharacter>
                 var text = infoObject.ConsumeInformation();
                 if (text != null)
                 {
-                    obj.Body.Simulation.Messanger.PostMessage(new InfoMessage(text));
+                    obj.Body.Simulation.Messenger.PostMessage(new InfoMessage(text));
                     obj.SetSteeringState("Read");
                 }
             }

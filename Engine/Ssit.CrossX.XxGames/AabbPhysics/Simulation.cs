@@ -16,7 +16,7 @@ internal class Simulation : ISimulation
     public float MovementEpsilon => MovementCollisionCalculator.MovementEpsilon;
     
     public float ActiveTime { get; private set; }
-    public IMessenger Messanger { get; internal set; }
+    public IMessenger Messenger { get; internal set; }
 
     public SimulationParameters SimulationParameters { get; } = new()
     {

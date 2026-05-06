@@ -99,7 +99,7 @@ public class AabbSimulationBuilder
         servicesBuilder.WithParent(_container);
         
         var simulation = new Simulation();
-        simulation.Messanger = _messenger;
+        simulation.Messenger = _messenger;
         simulation.SimulationParameters.GravityAcceleration = _gameTemplate.Gravity;
 
         servicesBuilder.WithInstance<ISimulation>(simulation);

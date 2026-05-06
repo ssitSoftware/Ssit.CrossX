@@ -10,8 +10,8 @@ public static class EditorRunner
         var appBuilder = BuildAvaloniaApp(gameTemplate);
         appBuilder.StartWithClassicDesktopLifetime(args);
     }
-    
-    public static AppBuilder BuildAvaloniaApp(IGameTemplate gameTemplate)
+
+    private static AppBuilder BuildAvaloniaApp(IGameTemplate gameTemplate)
     {
         return AppBuilder.Configure(() => new App(gameTemplate))
             .UseSkia()

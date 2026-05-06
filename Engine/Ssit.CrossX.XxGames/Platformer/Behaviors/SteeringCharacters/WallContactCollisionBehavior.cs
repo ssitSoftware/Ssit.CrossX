@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 using Ssit.CrossX.XxGames.Logic.Steering;
@@ -6,8 +7,10 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteeringBehavior<ISteeringCharacter>
+public class WallContactCollisionBehavior(int wallClimbMaterialIndex, params string[] wallSlideFromStates): SteeringBehavior<ISteeringCharacter>
 {
+    private readonly HashSet<string> _wallSlideFromStates = new(wallSlideFromStates);
+    
     protected override bool OnCollision(ISteeringCharacter obj, ICollider source, ICollider other, Vector2 impact)
     {
         if (MathF.Abs(impact.X) > 0.01f)
@@ -21,7 +24,7 @@ public class WallContactCollisionBehavior(int wallClimbMaterialIndex): SteeringB
                 }
 
                 var stateName = obj.CurrentSteeringState.Name;
-                if (!obj.SteeringParameters.IsOnGround && stateName is "Raise" or "Fall")
+                if (!obj.SteeringParameters.IsOnGround && _wallSlideFromStates.Contains(stateName))
                 {
                     obj.SetSteeringState("WallSlide");
                     return true;

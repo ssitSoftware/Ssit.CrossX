@@ -1,4 +1,5 @@
 using System.Numerics;
+using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 using Ssit.CrossX.XxGames.Logic.Steering;
@@ -8,8 +9,17 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
 public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 1) : SteeringBehavior<ISteeringCharacter>
 {
+    private class Parameters
+    {
+        public bool CanHit;
+    }
+
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
+        var parameters = obj.GetParameters<Parameters>(true);
+        if (!parameters.CanHit)
+            return false;
+        
         var flippedOffset = new Vector2(obj.FaceLeft ? -offset.X : offset.X, offset.Y - size.Height / 2);
         var center = obj.Body.Position + flippedOffset;
 
@@ -24,7 +34,24 @@ public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 
 
             hittable.Hit(new Vector2(obj.FaceLeft ? -1 : 1, 0), attackPower);
         }
+        
+        return false;
+    }
 
+    protected override bool OnEvent(ISteeringCharacter obj, ISpriteEvent @event)
+    {
+        var parameters = obj.GetParameters<Parameters>(true);
+
+        switch (@event.EventName)
+        {
+            case "Begin":
+                parameters.CanHit = true;
+                break;
+            
+            case "End":
+                parameters.CanHit = false;
+                break;
+        }
         return false;
     }
 }

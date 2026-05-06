@@ -44,6 +44,14 @@ public class InsertObjectTool : InsertImageTool
 
         return objDesc.TargetType;
     }
+
+    protected override int GetObjectZOrder()
+    {
+        var objDesc = Instances.Template.Objects.FirstOrDefault(o => o.FullName == Image.Id);
+        if (objDesc is null) return 0;
+
+        return objDesc.DefaultZOrder;
+    }
 }
 
 public class InsertImageTool : EditorTool
@@ -146,6 +154,7 @@ public class InsertImageTool : EditorTool
             HasLogic = HasLogic,
             Position = _insertPosition.Value,
             ParametersObject = parametersObj,
+            ZOrder = GetObjectZOrder(),
             Flipped = Flipped,
             Type = GetObjectType()
         });
@@ -155,6 +164,8 @@ public class InsertImageTool : EditorTool
         Editor.Redraw();
         Instances.Map.OnModified();
     }
+
+    protected virtual int GetObjectZOrder() => 0;
 
     protected virtual Type GetObjectType() => null;
 

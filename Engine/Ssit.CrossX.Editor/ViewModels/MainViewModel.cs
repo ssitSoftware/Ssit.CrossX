@@ -10,7 +10,6 @@ using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
-using DynamicData;
 using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.XxFormats.Template;
 
@@ -401,7 +400,11 @@ namespace Ssit.CrossX.Editor.ViewModels
             if (!same)
             {
                 mapFile.Layers.Clear();
-                mapFile.Layers.AddRange(newLayers);
+                foreach (var layer in newLayers)
+                {
+                    mapFile.Layers.Add(layer);
+                }
+
                 return true;
             }
 

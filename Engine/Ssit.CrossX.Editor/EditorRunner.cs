@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.ReactiveUI;
 using Ssit.CrossX.XxFormats.Template;
 
 namespace Ssit.CrossX.Editor;
@@ -18,7 +17,6 @@ public static class EditorRunner
             .UseSkia()
             .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI()
             .UsePlatformDetect();
     }
 }

@@ -1,7 +1,9 @@
 #if IOS
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using CoreGraphics;
 using Ssit.CrossX.Input;
+using UIKit;
 
 namespace Ssit.CrossX.SDL.Input;
 

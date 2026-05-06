@@ -1,3 +1,4 @@
+using System;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;
@@ -57,8 +58,6 @@ public unsafe class SdlMusicPlayer : MusicPlayerBase
 
     protected override void SwitchSong(Song song, int fadeTime, int startPosition = 0)
     {
-        var pos = startPosition;
-
         if (_oldMusic != null &&  _oldMusic.Pointer != null)
         {
             MIX_StopTrack(_oldMusic.Pointer, 0);
@@ -67,7 +66,6 @@ public unsafe class SdlMusicPlayer : MusicPlayerBase
         }
         
         _oldMusic = _currentMusic;
-        //_currentMusic = new SdlHandle<MIX_Track>(MIX_CreateTrack(soundManagerImpl.MixerHandle.Pointer));
         
         _fadeInPosition = 0;
         _fadeInSpeed = 1f / fadeTime;

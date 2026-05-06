@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;

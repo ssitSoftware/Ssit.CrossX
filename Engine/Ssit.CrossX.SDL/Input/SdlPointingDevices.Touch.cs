@@ -1,5 +1,6 @@
 #if IOS || ANDROID
 
+using System.Collections.Generic;
 using System.Numerics;
 using SDL;
 using Ssit.CrossX.Input;

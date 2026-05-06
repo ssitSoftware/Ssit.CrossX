@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Audio.Internal;

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using SDL;
 using SkiaSharp;
 using Ssit.CrossX.Core;

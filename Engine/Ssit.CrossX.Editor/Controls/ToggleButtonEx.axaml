@@ -11,5 +11,5 @@
     <ToggleButton
         Click="Button_OnClick"
         Content="{Binding #Root.View}"
-        x:Name="Button" />
+        x:Name="Btn" />
 </UserControl>

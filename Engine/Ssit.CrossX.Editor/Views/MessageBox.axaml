@@ -20,7 +20,7 @@
         <StackPanel
             Margin="0,22,0,0"
             Orientation="Vertical"
-            x:Name="Panel">
+            x:Name="Pnl">
 
             <TextBlock
                 HorizontalAlignment="Center"

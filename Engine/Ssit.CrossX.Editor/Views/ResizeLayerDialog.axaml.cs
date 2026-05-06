@@ -14,6 +14,6 @@ public partial class ResizeLayerDialog : Window
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        WindowHelpers.FitDialog(this, Panel);
+        WindowHelpers.FitDialog(this, Pnl);
     }
 }

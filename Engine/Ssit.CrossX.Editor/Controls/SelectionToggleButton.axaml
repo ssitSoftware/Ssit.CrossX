@@ -15,5 +15,5 @@
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         i:Attached.Icon="{Binding #Root.Icon}"
-        x:Name="Button" />
+        x:Name="Btn" />
 </UserControl>

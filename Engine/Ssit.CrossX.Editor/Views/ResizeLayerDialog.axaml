@@ -17,7 +17,7 @@
         ColumnDefinitions="Auto, 10, 160"
         Margin="10"
         RowDefinitions="Auto, 10, Auto, 10, Auto 20, Auto"
-        x:Name="Panel">
+        x:Name="Pnl">
         <Label
             Content="Width: "
             Grid.Column="0"

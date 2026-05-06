@@ -31,7 +31,7 @@ namespace Ssit.CrossX.Editor.Views
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            WindowHelpers.FitDialog(this, Panel);
+            WindowHelpers.FitDialog(this, Pnl);
         }
     }
 }

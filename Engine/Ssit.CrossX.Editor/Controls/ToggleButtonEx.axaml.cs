@@ -46,7 +46,7 @@ public partial class ToggleButtonEx : UserControl
 
         if (change.Property == ValueProperty || change.Property == SelectedValueProperty)
         {
-            Button.IsChecked = Value?.Equals(SelectedValue) ?? false;
+            Btn.IsChecked = Value?.Equals(SelectedValue) ?? false;
         }
     }
 
@@ -54,6 +54,6 @@ public partial class ToggleButtonEx : UserControl
     {
         SelectedValue = null;
         SelectedValue = Value;
-        Button.IsChecked = true;
+        Btn.IsChecked = true;
     }
 }

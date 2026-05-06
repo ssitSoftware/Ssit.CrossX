@@ -56,13 +56,13 @@ namespace Ssit.CrossX.Editor.Controls
 
             if (change.Property == ValueProperty || change.Property == SelectedValueProperty)
             {
-                Button.IsChecked = Value?.Equals(SelectedValue) ?? false;
+                Btn.IsChecked = Value?.Equals(SelectedValue) ?? false;
             }
         }
 
         private void Button_OnClick(object sender, RoutedEventArgs e)
         {
-            Button.IsChecked = true;
+            Btn.IsChecked = true;
             SelectedValue = Value;
         }
     }

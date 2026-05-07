@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Drawing;
 using System.IO;
 using System.Numerics;
 
@@ -81,7 +80,7 @@ public struct Aabb
     }
 
     [Pure]
-    public bool Contains(PointF point)
+    public bool Contains(Vector2 point)
     {
         return point.X >= Left && point.X <= Right && point.Y >= Top && point.Y <= Bottom;
     }

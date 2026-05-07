@@ -1,5 +1,4 @@
-using System;
-using System.Linq;
+using System.Runtime.InteropServices;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
@@ -19,11 +18,12 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL;
 
-public static class AppRunner<TApp> where TApp : class, IApp, new()
+internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
 {
     public delegate void InitializeServicesDelegate(IIoCContainerBuilder builder);
 
     public delegate void InitializeAppDelegate(IIoCContainer container);
+
 
     public static void Run(object args = null, InitializeServicesDelegate initializeServicesDelegate = null, InitializeAppDelegate initializeAppDelegate = null)
     {

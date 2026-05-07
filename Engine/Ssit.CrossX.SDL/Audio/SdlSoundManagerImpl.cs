@@ -22,11 +22,11 @@ public unsafe class SdlSoundManagerImpl: ISoundManager, IUpdatable
     
     public float MasterVolume
     {
-        get => MIX_GetMasterGain(MixerHandle.Pointer);
+        get => MIX_GetMixerGain(MixerHandle.Pointer);
         
         set
         {
-            MIX_SetMasterGain(MixerHandle.Pointer, value);
+            MIX_SetMixerGain(MixerHandle.Pointer, value);
             MasterVolumeUpdated?.Invoke();
         }
     }

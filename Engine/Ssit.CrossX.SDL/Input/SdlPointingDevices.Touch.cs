@@ -37,7 +37,7 @@ public unsafe partial class SdlPointingDevices
         if (_touchDevices.Count == 0)
             return;
         
-        for(var idx =0; idx < _fingers.Count;)
+        for (var idx =0; idx < _fingers.Count;)
         {
             var pointerId = GetTouchId((ulong)_fingers[idx]);
             var pointer = GetPointer(pointerId);

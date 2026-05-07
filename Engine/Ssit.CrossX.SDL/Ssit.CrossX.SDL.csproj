@@ -26,10 +26,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ppy.SDL3-CS" Version="2025.1205.0" />
-      <PackageReference Include="ppy.SDL3_image-CS" Version="2025.1205.0" />
-      <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.1205.0" />
-      <PackageReference Include="ppy.SDL3_ttf-CS" Version="2025.1205.0" />
+      <PackageReference Include="ppy.SDL3-CS" Version="2026.429.0" />
+      <PackageReference Include="ppy.SDL3_image-CS" Version="2026.429.0" />
+      <PackageReference Include="ppy.SDL3_mixer-CS" Version="2026.429.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,8 +36,8 @@
       <None Remove="ogg" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
-      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.2" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
+      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.5" />
     </ItemGroup>
 
 </Project>

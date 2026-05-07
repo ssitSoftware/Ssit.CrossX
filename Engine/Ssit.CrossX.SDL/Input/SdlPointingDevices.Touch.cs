@@ -28,7 +28,11 @@ public unsafe partial class SdlPointingDevices
             }
         }
     }
-    
+
+    private void AnalyzeMouse()
+    {
+    }
+
     private void ProcessTouch()
     {
         int width, height;

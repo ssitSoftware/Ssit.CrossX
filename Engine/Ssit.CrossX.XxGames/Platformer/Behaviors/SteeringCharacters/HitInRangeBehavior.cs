@@ -9,10 +9,14 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
 public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 1) : SteeringBehavior<ISteeringCharacter>
 {
+    // ReSharper disable once ClassNeverInstantiated.Local
     private class Parameters
     {
         public bool CanHit;
     }
+
+    protected override void OnEnter(ISteeringCharacter obj) => SetCanHit(obj, false);
+    protected override void OnExit(ISteeringCharacter obj) => SetCanHit(obj, false);
 
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
@@ -40,18 +44,22 @@ public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 
 
     protected override bool OnEvent(ISteeringCharacter obj, ISpriteEvent @event)
     {
-        var parameters = obj.GetParameters<Parameters>(true);
-
         switch (@event.EventName)
         {
             case "Begin":
-                parameters.CanHit = true;
+                SetCanHit(obj, true);
                 break;
             
             case "End":
-                parameters.CanHit = false;
+                SetCanHit(obj, false);
                 break;
         }
         return false;
+    }
+    
+    private static void SetCanHit(ISteeringCharacter obj, bool value)
+    {
+        var parameters = obj.GetParameters<Parameters>(true);
+        parameters.CanHit = value;
     }
 }

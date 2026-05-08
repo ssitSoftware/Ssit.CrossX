@@ -55,8 +55,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
               DisplacementFactorR = new Vector2(-1f, 1.0f) * scale,
               DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale,
               DisplacementFactorB = new Vector2(1f, -1.0f) * scale,
-              EnableGameGlow = true,
-              SelfGlowFactor = 0.3f
+              SelfGlowFactor = 0.35f
             },
             CrtParameters = new PixelAppHost.CrtParameters
             {

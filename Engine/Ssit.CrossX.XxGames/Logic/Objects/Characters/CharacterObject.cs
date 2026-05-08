@@ -83,6 +83,8 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     {
         base.OnDispose(disposing);
         
+        Body.RemoveEventsReceiver(this);
+        
         SteeringStateMachine.InternalStateMachine.OnStateChanged -= SteeringStateMachineOnOnStateChanged;
         SoundContainer?.Dispose();
     }

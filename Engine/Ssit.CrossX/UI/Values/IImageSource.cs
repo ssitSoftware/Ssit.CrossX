@@ -9,4 +9,5 @@ public interface IImageSource: IDisposable
 {
     event Action ImageChanged;
     ResourceHandle<ITexture> GetTexture(IIoCContainer container);
+    Rectangle? SourceRect { get; }
 }

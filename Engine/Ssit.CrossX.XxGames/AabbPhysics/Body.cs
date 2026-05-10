@@ -80,7 +80,7 @@ internal class Body : IBody
 
     private readonly List<ICollider> _staticCollisions = new();
 
-    private double _timeSinceLastTouch = 0;
+    private double _timeSinceLastTouch;
 
     internal Body(Simulation simulation)
     {

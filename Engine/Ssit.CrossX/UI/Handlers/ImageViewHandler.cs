@@ -14,7 +14,6 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     private readonly IIoCContainer _container;
 
     private ImageScalingMode ScalingMode => AttachedView.Scaling ?? ImageScalingMode.None;
-    private ContentAlign ContentAlign => AttachedView.ContentAlign ?? ContentAlign.Center | ContentAlign.VCenter;
     
     public ImageViewHandler(CreateHandlerParameters parameters, IIoCContainer container, IPaletteSource paletteSource = null) : base(parameters,paletteSource)
     {
@@ -80,16 +79,17 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         if (width.IsAuto || height.IsAuto)
         {
             var texture = AttachedView.Source?.GetTexture(_container);
-
+            var size = AttachedView.Source?.SourceRect?.Size ?? texture?.Resource.Size;
+            
             if (width.IsAuto)
             {
                 if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
                 {
-                    width = texture?.Resource.Size.Height ?? 0;
+                    width = size?.Height ?? 0;
                 }
                 else
                 {
-                    width = texture?.Resource.Size.Width ?? 0;
+                    width = size?.Width ?? 0;
                 }
             }
 
@@ -97,11 +97,11 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
             {
                 if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
                 {
-                    height = texture?.Resource.Size.Width ?? 0;
+                    height = size?.Width ?? 0;
                 }
                 else
                 {
-                    height = texture?.Resource.Size.Height ?? 0;
+                    height = size?.Height ?? 0;
                 }
             }
         }
@@ -127,14 +127,16 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         {
             return;
         }
+        
+        var source = AttachedView.Source.SourceRect;
 
-        CalculateTargetRects(texture.Resource, out var targetRect, out var sourceRect);
+        CalculateTargetRects(texture.Resource, source, out var targetRect, out var sourceRect);
         renderer.SpriteRenderer.Draw(texture.Resource, targetRect, sourceRect, null, AttachedView?.TintColor, AttachedView?.Transform ?? ImageTransform.None);
     }
 
-    private void CalculateTargetRects(ITexture texture, out RectangleF targetRect, out RectangleF sourceRect)
+    private void CalculateTargetRects(ITexture texture, Rectangle? source, out RectangleF targetRect, out RectangleF sourceRect)
     {
-        var size = texture.Size;
+        var size = source?.Size ?? texture.Size;
         
         if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
         {
@@ -225,9 +227,15 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
         
         sourceRect = new Rectangle( (int)(offX / scaleX), (int)(offY / scaleY), (int)(targetRect.Width / scaleX), (int)(targetRect.Height / scaleY));
         
-        if ((AttachedView.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
+        if ((AttachedView!.Transform ?? ImageTransform.None) is ImageTransform.Rotate90 or ImageTransform.Rotate270)
         {
             sourceRect = new RectangleF(sourceRect.Y, sourceRect.X, sourceRect.Height, sourceRect.Width);
+        }
+
+        if (source.HasValue)
+        {
+            var src = source.Value;
+            sourceRect = new RectangleF(sourceRect.X + src.X, sourceRect.Y + src.Y, sourceRect.Width, sourceRect.Height);
         }
 
         targetRect = targetRect.Offset(ScreenBounds.TopLeft);

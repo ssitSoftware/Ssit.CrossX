@@ -17,11 +17,36 @@ public class ObjectCreationParameters
 
     public ILinkMap LinkMap { get; internal set; }
     public int ZOrder { get; internal set; }
+    
+    public static ObjectCreationParameters Create(Vector2 position, bool flipped, int zOrder, ILinkMap linkMap = null)
+    {
+        return new ObjectCreationParameters
+        {
+            Position = position,
+            Flipped = flipped,
+            LinkMap = linkMap,
+            ZOrder = zOrder
+        };
+    }
 }
 
 public class ObjectCreationParameters<TParameters>: ObjectCreationParameters
     where TParameters : class
 {
+    public static ObjectCreationParameters<TParameters> Create(Vector2 position, bool flipped, int zOrder,
+        TParameters parameters,
+        ILinkMap linkMap = null)
+    {
+        return new ObjectCreationParameters<TParameters>
+        {
+            Position = position,
+            Flipped = flipped,
+            LinkMap = linkMap,
+            ZOrder = zOrder,
+            Parameters = parameters
+        };
+    }
+    
     public TParameters Parameters { get; private set; }
 
     internal override object ParametersObject

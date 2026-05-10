@@ -13,6 +13,7 @@ namespace Ssit.CrossX.UI.Values;
 public sealed class ImageSource: IImageSource
 {
     public static implicit operator ImageSource(string path) => new(path);
+    public static implicit operator ImageSource((string path, Rectangle rect) o) => new(o.path, o.rect);
     public static implicit operator ImageSource(Uri uri) => new(uri);
     
     private string _resourcePath;
@@ -88,7 +89,9 @@ public sealed class ImageSource: IImageSource
         }
     }
 
-    public void SetSource(string path)
+    public Rectangle? SourceRect { get; private set; }
+
+    public void SetSource(string path, Rectangle? sourceRect = null)
     {
         lock (_lock)
         {
@@ -98,6 +101,8 @@ public sealed class ImageSource: IImageSource
             
             _resourcePath = path;
             _reload = true;
+
+            SourceRect = sourceRect;
         }
     }
 
@@ -118,9 +123,10 @@ public sealed class ImageSource: IImageSource
     {
     }
     
-    public ImageSource(string resourcePath)
+    public ImageSource(string resourcePath, Rectangle? sourceRect = null)
     {
         _resourcePath = resourcePath;
+        SourceRect = sourceRect;
     }
 
     public ImageSource(Uri uri)

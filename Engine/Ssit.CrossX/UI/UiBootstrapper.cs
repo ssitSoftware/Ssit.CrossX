@@ -1,5 +1,6 @@
 using Ssit.IoC;
 using Ssit.CrossX.UI.Handlers;
+using Ssit.CrossX.UI.Handlers.Markdown;
 using Ssit.CrossX.UI.Internal;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
@@ -58,6 +59,7 @@ public static class UiBootstrapper
             .AddMapping<ScrollView, ScrollViewHandler<ScrollView>>()
             .AddMapping<VirtualButton, VirtualButtonHandler>()
             .AddMapping<IconCheckBox, IconCheckBoxHandler<IconCheckBox>>()
-            .AddMapping<SpriteView, SpriteViewHandler>();
+            .AddMapping<SpriteView, SpriteViewHandler>()
+            .AddMapping<MarkdownView, MarkdownViewHandler>();
     }
 }

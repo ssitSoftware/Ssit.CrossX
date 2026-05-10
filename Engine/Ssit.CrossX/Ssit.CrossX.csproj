@@ -30,8 +30,4 @@
       <ProjectReference Include="..\..\Libs\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="UI\Handlers\Markdown\" />
-    </ItemGroup>
-
 </Project>

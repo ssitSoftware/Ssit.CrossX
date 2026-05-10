@@ -295,6 +295,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         {
             if (linePieces.Count > 0 || lineHeight > 0)
             {
+                var hasImage = linePieces.Exists(p => p.Texture != null);
                 _layoutLines.Add(new LayoutLine
                 {
                     Y = y,
@@ -302,7 +303,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                     Width = currentX,
                     Pieces = new List<LayoutPiece>(linePieces),
                 });
-                y += lineHeight + extraSpacing;
+                y += lineHeight + (hasImage ? 0f : extraSpacing);
                 linePieces.Clear();
                 currentX = 0f;
                 lineHeight = 0f;
@@ -325,23 +326,22 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                     if (wordPart.Length == 0) continue;
 
                     var joinText = pendingText.Length > 0 ? pendingText + " " + wordPart : wordPart;
-                    var joinWidth = font.TextSize((TextSource)NormalizeSpaces(joinText), TextSpacing.Normal).Width * fontScale;
+                    var joinWidth = font.TextSize((TextSource)NormalizeSpaces(joinText)).Width * fontScale;
 
                     if (pieceStartX + joinWidth > maxWidth + 0.5f && currentX > 0)
                     {
                         if (pendingText.Length > 0)
                         {
-                            var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText), TextSpacing.Normal).Width * fontScale;
+                            var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText)).Width * fontScale;
                             linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
                             pendingText = "";
                         }
                         lineHeight = MathF.Max(lineHeight, spanLineH);
                         FinishLine(lineSpacing);
                         pieceStartX = 0;
-                        lineHeight = spanLineH;
 
                         pendingText = wordPart;
-                        currentX = font.TextSize((TextSource)NormalizeSpaces(wordPart), TextSpacing.Normal).Width * fontScale;
+                        currentX = font.TextSize((TextSource)NormalizeSpaces(wordPart)).Width * fontScale;
                     }
                     else
                     {
@@ -354,7 +354,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
                 if (pendingText.Length > 0)
                 {
-                    var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText), TextSpacing.Normal).Width * fontScale;
+                    var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText)).Width * fontScale;
                     linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
                     currentX = pieceStartX + pw;
                 }
@@ -364,7 +364,6 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 {
                     lineHeight = MathF.Max(lineHeight, spanLineH);
                     FinishLine(lineSpacing);
-                    lineHeight = spanLineH;
                 }
             }
         }
@@ -451,6 +450,8 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
             // Text block
             var blockStyle = BlockTypeToStyle(block.Type);
+            var blockStartLineIdx = _layoutLines.Count;
+            var yBeforeBlock = y;
 
             foreach (var span in block.Spans)
             {
@@ -489,6 +490,24 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
             if (_layoutLines.Count > 0)
                 _layoutLines[^1].IsLastInBlock = true;
+
+            // Equalize all line heights within this block to the maximum.
+            var blockLineCount = _layoutLines.Count - blockStartLineIdx;
+            if (blockLineCount > 1)
+            {
+                var maxH = 0f;
+                for (var li = blockStartLineIdx; li < _layoutLines.Count; li++)
+                    maxH = MathF.Max(maxH, _layoutLines[li].Height);
+
+                var newY = yBeforeBlock;
+                for (var li = blockStartLineIdx; li < _layoutLines.Count; li++)
+                {
+                    _layoutLines[li].Y = newY;
+                    _layoutLines[li].Height = maxH;
+                    newY += maxH + (_layoutLines[li].IsLastInBlock ? 0f : lineSpacing);
+                }
+                y = newY;
+            }
 
             y += AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom;
         }

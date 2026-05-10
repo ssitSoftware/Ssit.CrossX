@@ -73,20 +73,31 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         if (!width.IsAuto && width.Percent == 0 && width.Value > 0)
         {
             var pixelWidth = width.Calculate(CurrentScale, 0);
-            if (pixelWidth > 0 && MathF.Abs(pixelWidth - _lastLayoutWidth) > 0.5f)
+            var (padL, padR) = GetHorizontalPadding(pixelWidth);
+            var contentWidth = MathF.Max(pixelWidth - padL - padR, 0f);
+            if (contentWidth > 0 && MathF.Abs(contentWidth - _lastLayoutWidth) > 0.5f)
             {
-                LayoutContent(pixelWidth);
+                LayoutContent(contentWidth);
             }
         }
 
-        height = _totalHeight > 0 ? new Length(pixels: _totalHeight) : Length.Auto;
+        if (_totalHeight > 0)
+        {
+            var (padT, padB) = GetVerticalPadding();
+            height = new Length(pixels: _totalHeight + padT + padB);
+        }
+        else
+        {
+            height = Length.Auto;
+        }
     }
 
     public override void SetBounds(RectangleF rectangleF)
     {
         base.SetBounds(rectangleF);
 
-        var w = ScreenBounds.Width;
+        var contentRect = ContentRect;
+        var w = contentRect.Width;
         if (w > 0 && MathF.Abs(w - _lastLayoutWidth) > 0.5f)
         {
             LayoutContent(w);
@@ -101,17 +112,52 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         var textColor = AttachedView.TextColor?.GetColor(PaletteSource, renderer, _colorSource) ?? RgbaColor.White;
         var outlineColor = AttachedView.TextOutlineColor?.GetColor(PaletteSource, renderer, _colorSource);
 
-        var originX = ScreenBounds.X;
-        var originY = ScreenBounds.Y;
+        var align = AttachedView.TextAlign;
+        var cr = ContentRect;
+        var contentWidth = cr.Width;
+
+        var originX = cr.X;
+        var originY = cr.Y;
+
+        // Vertical offset — only when height is explicitly set
+        if (AttachedView.Height.HasValue && _totalHeight < cr.Height)
+        {
+            if ((align & ContentAlign.VCenter) == ContentAlign.VCenter)
+                originY += (cr.Height - _totalHeight) / 2f;
+            else if ((align & ContentAlign.Bottom) == ContentAlign.Bottom)
+                originY += cr.Height - _totalHeight;
+        }
+
+        var isJustified = (align & ContentAlign.Justified) == ContentAlign.Justified;
+        var isRight     = (align & ContentAlign.Right)     == ContentAlign.Right;
+        var isCenter    = (align & ContentAlign.Center)    == ContentAlign.Center;
 
         foreach (var line in _layoutLines)
         {
-            foreach (var piece in line.Pieces)
+            // Horizontal offset for this line
+            float lineOffsetX;
+            if (isJustified && !line.IsLastInBlock && line.Pieces.Count > 1)
+                lineOffsetX = 0; // justified: handled per-piece below
+            else if (isRight)
+                lineOffsetX = contentWidth - line.Width;
+            else if (isCenter)
+                lineOffsetX = (contentWidth - line.Width) / 2f;
+            else
+                lineOffsetX = 0;
+
+            var justifiedGap = isJustified && !line.IsLastInBlock && line.Pieces.Count > 1
+                ? (contentWidth - line.Width) / (line.Pieces.Count - 1)
+                : 0f;
+
+            for (var pi = 0; pi < line.Pieces.Count; pi++)
             {
+                var piece = line.Pieces[pi];
+                var pieceX = piece.X + lineOffsetX + pi * justifiedGap;
+
                 if (piece.Texture != null)
                 {
                     var targetRect = new RectangleF(
-                        originX + piece.X,
+                        originX + pieceX,
                         originY + line.Y + (line.Height - piece.TextureSize.Height) / 2f,
                         piece.TextureSize.Width,
                         piece.TextureSize.Height);
@@ -119,7 +165,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 }
                 else if (piece.Text != null && piece.Font != null)
                 {
-                    var pos = new Vector2(originX + piece.X, originY + line.Y + line.Height / 2f);
+                    var pos = new Vector2(originX + pieceX, originY + line.Y + line.Height / 2f);
                     renderer.TextRenderer.DrawText(
                         font: piece.Font,
                         text: (TextSource)piece.Text,
@@ -147,6 +193,50 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             handle.Dispose();
         }
         _textures.Clear();
+    }
+
+    // ── Padding helpers ───────────────────────────────────────────────────────
+
+    private RectangleF ContentRect
+    {
+        get
+        {
+            var x = ScreenBounds.X;
+            var y = ScreenBounds.Y;
+            var w = ScreenBounds.Width;
+            var h = ScreenBounds.Height;
+
+            var padding = AttachedView.Padding;
+            if (padding.HasValue)
+            {
+                var p = padding.Value;
+                var pl = p.Left?.Calculate(CurrentScale, w) ?? 0f;
+                var pr = p.Right?.Calculate(CurrentScale, w) ?? 0f;
+                var pt = p.Top?.Calculate(CurrentScale, h) ?? 0f;
+                var pb = p.Bottom?.Calculate(CurrentScale, h) ?? 0f;
+                x += pl; y += pt; w -= pl + pr; h -= pt + pb;
+            }
+
+            return new RectangleF(x, y, MathF.Max(w, 0f), MathF.Max(h, 0f));
+        }
+    }
+
+    private (float top, float bottom) GetVerticalPadding()
+    {
+        var padding = AttachedView.Padding;
+        if (!padding.HasValue) return (0f, 0f);
+        var p = padding.Value;
+        return (p.Top?.Calculate(CurrentScale, 0f) ?? 0f,
+                p.Bottom?.Calculate(CurrentScale, 0f) ?? 0f);
+    }
+
+    private (float left, float right) GetHorizontalPadding(float refWidth)
+    {
+        var padding = AttachedView.Padding;
+        if (!padding.HasValue) return (0f, 0f);
+        var p = padding.Value;
+        return (p.Left?.Calculate(CurrentScale, refWidth) ?? 0f,
+                p.Right?.Calculate(CurrentScale, refWidth) ?? 0f);
     }
 
     // ── Font helpers ──────────────────────────────────────────────────────────
@@ -199,7 +289,9 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         var currentX = 0f;
         var lineHeight = 0f;
 
-        void FinishLine()
+        var lineSpacing = AttachedView.LineSpacing >= 0f ? AttachedView.LineSpacing : 0f;
+
+        void FinishLine(float extraSpacing = 0f)
         {
             if (linePieces.Count > 0 || lineHeight > 0)
             {
@@ -207,9 +299,10 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 {
                     Y = y,
                     Height = lineHeight,
+                    Width = currentX,
                     Pieces = new List<LayoutPiece>(linePieces),
                 });
-                y += lineHeight;
+                y += lineHeight + extraSpacing;
                 linePieces.Clear();
                 currentX = 0f;
                 lineHeight = 0f;
@@ -232,23 +325,23 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                     if (wordPart.Length == 0) continue;
 
                     var joinText = pendingText.Length > 0 ? pendingText + " " + wordPart : wordPart;
-                    var joinWidth = font.TextSize((TextSource)joinText, TextSpacing.Normal).Width * fontScale;
+                    var joinWidth = font.TextSize((TextSource)NormalizeSpaces(joinText), TextSpacing.Normal).Width * fontScale;
 
                     if (pieceStartX + joinWidth > maxWidth + 0.5f && currentX > 0)
                     {
                         if (pendingText.Length > 0)
                         {
-                            var pw = font.TextSize((TextSource)pendingText, TextSpacing.Normal).Width * fontScale;
-                            linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = pendingText, Font = font, FontScale = fontScale });
+                            var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText), TextSpacing.Normal).Width * fontScale;
+                            linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
                             pendingText = "";
                         }
                         lineHeight = MathF.Max(lineHeight, spanLineH);
-                        FinishLine();
+                        FinishLine(lineSpacing);
                         pieceStartX = 0;
                         lineHeight = spanLineH;
 
                         pendingText = wordPart;
-                        currentX = font.TextSize((TextSource)wordPart, TextSpacing.Normal).Width * fontScale;
+                        currentX = font.TextSize((TextSource)NormalizeSpaces(wordPart), TextSpacing.Normal).Width * fontScale;
                     }
                     else
                     {
@@ -261,8 +354,8 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
                 if (pendingText.Length > 0)
                 {
-                    var pw = font.TextSize((TextSource)pendingText, TextSpacing.Normal).Width * fontScale;
-                    linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = pendingText, Font = font, FontScale = fontScale });
+                    var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText), TextSpacing.Normal).Width * fontScale;
+                    linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
                     currentX = pieceStartX + pw;
                 }
 
@@ -270,7 +363,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 if (li < lines.Length - 1)
                 {
                     lineHeight = MathF.Max(lineHeight, spanLineH);
-                    FinishLine();
+                    FinishLine(lineSpacing);
                     lineHeight = spanLineH;
                 }
             }
@@ -284,7 +377,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             var texW = (float)texture.Size.Width;
             var texH = (float)texture.Size.Height;
 
-            var s = AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : 1f;
+            var s = AttachedView.Scaling != TextScaling.None ? CurrentScale : 1f;
             var dispW = texW * s;
             var dispH = texH * s;
 
@@ -297,7 +390,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
             if (currentX + dispW > maxWidth + 0.5f && currentX > 0)
             {
-                FinishLine();
+                FinishLine(lineSpacing);
             }
 
             linePieces.Add(new LayoutPiece
@@ -322,9 +415,10 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 {
                     var texW = (float)texture.Size.Width;
                     var texH = (float)texture.Size.Height;
-                    var s = texW > maxWidth ? maxWidth / texW : 1f;
+                    var s = AttachedView.Scaling != TextScaling.None ? CurrentScale : 1f;
                     var dispW = texW * s;
                     var dispH = texH * s;
+                    if (dispW > maxWidth) { s = maxWidth / texW; dispW = maxWidth; dispH = texH * s; }
 
                     _layoutLines.Add(new LayoutLine
                     {
@@ -344,14 +438,14 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                     y += dispH;
                 }
 
-                y += block.MarginBottom;
+                y += AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom;
                 continue;
             }
 
             if (block.Type == MarkdownBlockType.Rule)
             {
                 _layoutLines.Add(new LayoutLine { Y = y, Height = 2f });
-                y += 2f + block.MarginBottom;
+                y += 2f + (AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom);
                 continue;
             }
 
@@ -373,15 +467,16 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 if (block.Type == MarkdownBlockType.Code)
                 {
                     var codeLines = span.Text.Split('\n');
-                    foreach (var codeLine in codeLines)
+                    for (var cli = 0; cli < codeLines.Length; cli++)
                     {
+                        var codeLine = codeLines[cli];
                         if (codeLine.Length > 0)
                         {
                             var cw = font.TextSize((TextSource)codeLine, TextSpacing.Normal).Width * fontScale;
                             linePieces.Add(new LayoutPiece { X = 0, Width = cw, Text = codeLine, Font = font, FontScale = fontScale });
                         }
                         lineHeight = MathF.Max(lineHeight, spanLineH);
-                        FinishLine();
+                        FinishLine(cli < codeLines.Length - 1 ? lineSpacing : 0f);
                     }
                 }
                 else
@@ -392,7 +487,10 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
             FinishLine();
 
-            y += block.MarginBottom;
+            if (_layoutLines.Count > 0)
+                _layoutLines[^1].IsLastInBlock = true;
+
+            y += AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom;
         }
 
         _totalHeight = y;
@@ -416,6 +514,8 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             return null;
         }
     }
+
+    private static string NormalizeSpaces(string s) => s.Replace('\u00A0', ' ');
 
     // ── Markdown parser ───────────────────────────────────────────────────────
 
@@ -593,6 +693,14 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 if (end < 0) { sb.Append('`'); continue; }
                 spans.Add(new InlineSpan { Text = text.Substring(i, end - i), Style = MarkdownStyle.Code });
                 i = end + 1;
+                continue;
+            }
+
+            // HTML entity: &nbsp;
+            if (text[i] == '&' && i + 5 < text.Length && text.Substring(i, 6) == "&nbsp;")
+            {
+                sb.Append('\u00A0');
+                i += 6;
                 continue;
             }
 

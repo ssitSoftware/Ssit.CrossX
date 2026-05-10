@@ -6,5 +6,7 @@ internal class LayoutLine
 {
     public float Y;
     public float Height;
+    public float Width;
+    public bool IsLastInBlock;
     public List<LayoutPiece> Pieces = new();
 }

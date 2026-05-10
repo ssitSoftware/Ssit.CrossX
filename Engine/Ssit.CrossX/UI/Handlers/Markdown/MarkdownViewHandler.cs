@@ -13,7 +13,7 @@ using Ssit.CrossX.UI.Views.Markdown;
 
 namespace Ssit.CrossX.UI.Handlers.Markdown;
 
-public class MarkdownViewHandler : BackgroundHandler<MarkdownView>
+public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownView> where TMarkdownView: MarkdownView
 {
     private readonly IFontsManager _fontsManager;
     private readonly IContentManager _contentManager;
@@ -112,19 +112,19 @@ public class MarkdownViewHandler : BackgroundHandler<MarkdownView>
                 {
                     var targetRect = new RectangleF(
                         originX + piece.X,
-                        originY + line.Y,
+                        originY + line.Y + (line.Height - piece.TextureSize.Height) / 2f,
                         piece.TextureSize.Width,
                         piece.TextureSize.Height);
                     renderer.SpriteRenderer.Draw(piece.Texture, targetRect);
                 }
                 else if (piece.Text != null && piece.Font != null)
                 {
-                    var pos = new Vector2(originX + piece.X, originY + line.Y);
+                    var pos = new Vector2(originX + piece.X, originY + line.Y + line.Height / 2f);
                     renderer.TextRenderer.DrawText(
                         font: piece.Font,
                         text: (TextSource)piece.Text,
                         position: pos,
-                        align: ContentAlign.Left,
+                        align: ContentAlign.Left | ContentAlign.VCenter,
                         scale: piece.FontScale,
                         color: textColor,
                         outlineColor: outlineColor);
@@ -276,6 +276,41 @@ public class MarkdownViewHandler : BackgroundHandler<MarkdownView>
             }
         }
 
+        void LayoutSpanImage(string imagePath)
+        {
+            var texture = GetOrLoadTexture(imagePath);
+            if (texture == null) return;
+
+            var texW = (float)texture.Size.Width;
+            var texH = (float)texture.Size.Height;
+
+            var s = AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : 1f;
+            var dispW = texW * s;
+            var dispH = texH * s;
+
+            if (dispW > maxWidth)
+            {
+                s = maxWidth / texW;
+                dispW = maxWidth;
+                dispH = texH * s;
+            }
+
+            if (currentX + dispW > maxWidth + 0.5f && currentX > 0)
+            {
+                FinishLine();
+            }
+
+            linePieces.Add(new LayoutPiece
+            {
+                X = currentX,
+                Width = dispW,
+                Texture = texture,
+                TextureSize = new SizeF(dispW, dispH),
+            });
+            currentX += dispW;
+            lineHeight = MathF.Max(lineHeight, dispH);
+        }
+
         for (var blockIdx = 0; blockIdx < _blocks.Count; blockIdx++)
         {
             var block = _blocks[blockIdx];
@@ -325,6 +360,12 @@ public class MarkdownViewHandler : BackgroundHandler<MarkdownView>
 
             foreach (var span in block.Spans)
             {
+                if (span.ImagePath != null)
+                {
+                    LayoutSpanImage(span.ImagePath);
+                    continue;
+                }
+
                 var style = span.Style == MarkdownStyle.Paragraph ? blockStyle : span.Style;
                 var (font, fontScale) = GetStyledFont(style);
                 var spanLineH = font.LineSize * fontScale;
@@ -553,6 +594,24 @@ public class MarkdownViewHandler : BackgroundHandler<MarkdownView>
                 spans.Add(new InlineSpan { Text = text.Substring(i, end - i), Style = MarkdownStyle.Code });
                 i = end + 1;
                 continue;
+            }
+
+            // Inline image: ![alt](path)
+            if (text[i] == '!' && i + 1 < text.Length && text[i + 1] == '[')
+            {
+                var closeB = text.IndexOf(']', i + 2);
+                if (closeB > i + 2 && closeB + 1 < text.Length && text[closeB + 1] == '(')
+                {
+                    var closeP = text.IndexOf(')', closeB + 2);
+                    if (closeP > closeB + 2)
+                    {
+                        FlushSpan(spans, sb);
+                        var imgPath = text.Substring(closeB + 2, closeP - closeB - 2);
+                        spans.Add(new InlineSpan { ImagePath = imgPath, Style = MarkdownStyle.Paragraph });
+                        i = closeP + 1;
+                        continue;
+                    }
+                }
             }
 
             // Link: [text](url) — renders link text with Link style, ignores URL

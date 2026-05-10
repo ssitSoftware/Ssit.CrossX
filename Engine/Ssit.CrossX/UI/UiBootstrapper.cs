@@ -60,6 +60,6 @@ public static class UiBootstrapper
             .AddMapping<VirtualButton, VirtualButtonHandler>()
             .AddMapping<IconCheckBox, IconCheckBoxHandler<IconCheckBox>>()
             .AddMapping<SpriteView, SpriteViewHandler>()
-            .AddMapping<MarkdownView, MarkdownViewHandler>();
+            .AddMapping<MarkdownView, MarkdownViewHandler<MarkdownView>>();
     }
 }

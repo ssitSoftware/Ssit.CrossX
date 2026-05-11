@@ -4,6 +4,7 @@ using Ssit.CrossX.UI.Handlers.Markdown;
 using Ssit.CrossX.UI.Internal;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Views;
+using Ssit.CrossX.UI.Views.Markdown;
 
 namespace Ssit.CrossX.UI;
 

@@ -1,8 +1,7 @@
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Values;
-using Ssit.CrossX.UI.Views.Markdown;
 
-namespace Ssit.CrossX.UI.Views;
+namespace Ssit.CrossX.UI.Views.Markdown;
 
 public class MarkdownView: Background
 {
@@ -11,7 +10,7 @@ public class MarkdownView: Background
     public ColorWrapper? TextColor { get; set; }
     public ColorWrapper? TextOutlineColor { get; set; }
     public TextScaling Scaling { get; set; }
-    public ContentAlign TextAlign { get; set; } = ContentAlign.Left;
+    public ContentAlign? TextAlign { get; set; }
 
     public IMarkdownMapper Mapper { get; set; }
 

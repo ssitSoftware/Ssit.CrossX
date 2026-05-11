@@ -69,12 +69,21 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             return;
         }
 
-        // If we have a fixed pixel width, pre-calculate height now.
+        // Resolve a reference pixel width for height pre-computation.
+        // Fixed explicit widths are known immediately; Fill widths become known
+        // only after SetBounds has run once and updated ScreenBounds.
+        float refPixelWidth;
         if (!width.IsAuto && width.Percent == 0 && width.Value > 0)
+            refPixelWidth = width.Calculate(CurrentScale, 0);
+        else if (ScreenBounds.Width > 0)
+            refPixelWidth = ScreenBounds.Width;
+        else
+            refPixelWidth = 0;
+
+        if (refPixelWidth > 0)
         {
-            var pixelWidth = width.Calculate(CurrentScale, 0);
-            var (padL, padR) = GetHorizontalPadding(pixelWidth);
-            var contentWidth = MathF.Max(pixelWidth - padL - padR, 0f);
+            var (padL, padR) = GetHorizontalPadding(refPixelWidth);
+            var contentWidth = MathF.Max(refPixelWidth - padL - padR, 0f);
             if (contentWidth > 0 && MathF.Abs(contentWidth - _lastLayoutWidth) > 0.5f)
             {
                 LayoutContent(contentWidth);
@@ -98,6 +107,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
         var contentRect = ContentRect;
         var w = contentRect.Width;
+
         if (w > 0 && MathF.Abs(w - _lastLayoutWidth) > 0.5f)
         {
             LayoutContent(w);

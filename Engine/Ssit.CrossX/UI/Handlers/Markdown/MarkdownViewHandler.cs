@@ -323,50 +323,38 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         void LayoutSpanWords(string spanText, IFont font, float fontScale, float spanLineH)
         {
             var lines = spanText.Split('\n');
+            var spaceWidth = font.TextSize((TextSource)" ").Width * fontScale;
 
             for (var li = 0; li < lines.Length; li++)
             {
-                var pieceStartX = currentX;
-                var pendingText = "";
-
                 var wordParts = lines[li].Split(' ');
 
                 foreach (var wordPart in wordParts)
                 {
                     if (wordPart.Length == 0) continue;
 
-                    var joinText = pendingText.Length > 0 ? pendingText + " " + wordPart : wordPart;
-                    var joinWidth = font.TextSize((TextSource)NormalizeSpaces(joinText)).Width * fontScale;
+                    var wordWidth = font.TextSize((TextSource)NormalizeSpaces(wordPart)).Width * fontScale;
+                    var spaceBefore = currentX > 0 ? spaceWidth : 0f;
 
-                    if (pieceStartX + joinWidth > maxWidth + 0.5f && currentX > 0)
+                    if (currentX + spaceBefore + wordWidth > maxWidth + 0.5f && currentX > 0)
                     {
-                        if (pendingText.Length > 0)
-                        {
-                            var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText)).Width * fontScale;
-                            linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
-                            pendingText = "";
-                        }
                         lineHeight = MathF.Max(lineHeight, spanLineH);
                         FinishLine(lineSpacing);
-                        pieceStartX = 0;
-
-                        pendingText = wordPart;
-                        currentX = font.TextSize((TextSource)NormalizeSpaces(wordPart)).Width * fontScale;
+                        spaceBefore = 0f;
                     }
-                    else
+
+                    currentX += spaceBefore;
+
+                    linePieces.Add(new LayoutPiece
                     {
-                        pendingText = joinText;
-                        currentX = pieceStartX + joinWidth;
-                    }
-
+                        X = currentX,
+                        Width = wordWidth,
+                        Text = NormalizeSpaces(wordPart),
+                        Font = font,
+                        FontScale = fontScale,
+                    });
+                    currentX += wordWidth;
                     lineHeight = MathF.Max(lineHeight, spanLineH);
-                }
-
-                if (pendingText.Length > 0)
-                {
-                    var pw = font.TextSize((TextSource)NormalizeSpaces(pendingText)).Width * fontScale;
-                    linePieces.Add(new LayoutPiece { X = pieceStartX, Width = pw, Text = NormalizeSpaces(pendingText), Font = font, FontScale = fontScale });
-                    currentX = pieceStartX + pw;
                 }
 
                 // Explicit newline between lines (not after last)

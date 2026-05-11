@@ -9,17 +9,27 @@ namespace Ssit.CrossX.UI.Handlers;
 public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null)
     : ChildrenContainerHandler<TVerticalStack>(parameters, handlerMapper, paletteSource) where TVerticalStack: VerticalStack
 {
+    private float _lastTotalHeight = -1f;
+
     protected override void RecalculateChildrenLayouts()
     {
         if (RecalculateChildren.Count == 0)
             return;
 
+        // Iterate in visual order (not HashSet order) so offsetY accumulates correctly.
         var offsetY = 0f;
-        foreach (var child in RecalculateChildren)
+        foreach (var child in AttachedView.Children)
         {
             CalculateChildPosition(child, ref offsetY);
         }
         RecalculateChildren.Clear();
+
+        // Propagate height change upward only when our height is auto and actually changed.
+        if ((View.Height == null || View.Height.Value.IsAuto) && MathF.Abs(offsetY - _lastTotalHeight) > 0.5f)
+        {
+            _lastTotalHeight = offsetY;
+            Parent?.RecalculateLayout(AttachedView);
+        }
     }
 
     public override void CalculateSize(out Length width, out Length height)
@@ -118,7 +128,7 @@ public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParam
     public override void RecalculateLayout(View view = null)
     {
         RecalculateChildren.UnionWith(AttachedView.Children);
-        
+
         foreach (var child in RecalculateChildren)
         {
             if (child is IViewParent parent)

@@ -53,4 +53,16 @@ public class ObjectCreationParameters<TParameters>: ObjectCreationParameters
     {
         set =>  Parameters = (TParameters)value;
     }
+
+    public ObjectCreationParameters<T> Cast<T>() where T: class
+    {
+        return new ObjectCreationParameters<T>
+        {
+            Position = Position,
+            Flipped = Flipped,
+            LinkMap = LinkMap,
+            ZOrder = ZOrder,
+            Parameters = (T)(object)Parameters
+        };
+    }
 }

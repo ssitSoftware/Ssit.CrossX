@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.XxFormats.Editor;
@@ -15,7 +14,7 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
     public class Parameters
     {
         [EditorLink(typeof(ITarget))] public int End { get; set; }
-        [EditorFloat(0, 5, 0.1f)] public float WindStrength { get; set; } = 1f;
+        [EditorFloat(0, 10, 0.1f)] public float WindStrength { get; set; } = 1f;
     }
     
     private const float PendulumDamping = 0.995f;
@@ -318,13 +317,23 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
         if (_positions == null) return;
 
         var tileSize = Services.GameTemplate.TileSize;
-
-        Vector2 lastPosition = _positions[0] - new Vector2(0, 1);
+        
         for (var i = 0; i < _positions.Length; i++)
         {
             var screenPos = _positions[i] * tileSize;
-            var dir = Vector2.Normalize(_positions[i] - lastPosition);
-            lastPosition = _positions[i];
+
+            var dir = new Vector2(0, -1);
+            if (i > 0)
+            {
+                dir = Vector2.Normalize(_positions[i] - _positions[i - 1]);
+            }
+
+            if (i < _positions.Length - 1)
+            {
+                var dir2 = Vector2.Normalize(_positions[i + 1] - _positions[i]);
+                dir = Vector2.Lerp(dir, dir2, 0.5f);
+            }
+            
             RenderSegment(renderer, i, screenPos, dir);
         }
     }
@@ -333,7 +342,7 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
 
     void IDisposable.Dispose() => OnDispose();
 
-    protected virtual void OnDispose()
+    public virtual void OnDispose()
     {
     }
 }

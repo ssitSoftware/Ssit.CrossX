@@ -13,7 +13,7 @@ public class MarkdownView: Background
     public TextScaling Scaling { get; set; }
     public ContentAlign TextAlign { get; set; } = ContentAlign.Left;
 
-    public IMarkdownFontMapper FontMapper { get; set; }
+    public IMarkdownMapper Mapper { get; set; }
 
     public Thickness? Padding { get; set; }
 

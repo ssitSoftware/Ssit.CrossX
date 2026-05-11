@@ -9,5 +9,6 @@ internal enum MarkdownBlockType
     Quote,
     Code,
     Image,
+    InlineImage,
     Rule,
 }

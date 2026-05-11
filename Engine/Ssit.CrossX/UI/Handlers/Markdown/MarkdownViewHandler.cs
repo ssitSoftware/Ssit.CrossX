@@ -63,7 +63,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         else
             width = Length.Fill;
 
-        if (AttachedView.Height.HasValue)
+        if (AttachedView.Height is { IsAuto: false })
         {
             height = AttachedView.Height.Value;
             return;
@@ -243,7 +243,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
     private (IFont font, float scale) GetStyledFont(MarkdownStyle style)
     {
-        var mapper = AttachedView.FontMapper;
+        var mapper = AttachedView.Mapper;
         FontDesc desc = mapper != null
             ? mapper.GetFont(style)
             : new FontDesc { FontFamily = "Default", FontSize = 12 };
@@ -368,7 +368,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             }
         }
 
-        void LayoutSpanImage(string imagePath)
+        void LayoutSpanImage(string imagePath, bool includeImageHeightToLineHeight)
         {
             var texture = GetOrLoadTexture(imagePath);
             if (texture == null) return;
@@ -400,7 +400,11 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 TextureSize = new SizeF(dispW, dispH),
             });
             currentX += dispW;
-            lineHeight = MathF.Max(lineHeight, dispH);
+
+            if (includeImageHeightToLineHeight)
+            {
+                lineHeight = MathF.Max(lineHeight, dispH);
+            }
         }
 
         for (var blockIdx = 0; blockIdx < _blocks.Count; blockIdx++)
@@ -457,7 +461,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             {
                 if (span.ImagePath != null)
                 {
-                    LayoutSpanImage(span.ImagePath);
+                    LayoutSpanImage(span.ImagePath, false);
                     continue;
                 }
 
@@ -524,7 +528,8 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
         try
         {
-            var handle = _contentManager.Get<ITexture>(path);
+            var resourcePath = AttachedView?.Mapper?.GetImagePath(path) ?? path;
+            var handle = _contentManager.Get<ITexture>(resourcePath);
             _textures[path] = handle;
             return handle.Resource;
         }
@@ -643,6 +648,8 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 }
                 var block = new MarkdownBlock { Type = MarkdownBlockType.Paragraph, MarginBottom = 4f };
                 block.Spans.AddRange(ParseInline(sb.ToString()));
+                if (block.Spans.Exists(s => s.ImagePath != null))
+                    block.Type = MarkdownBlockType.InlineImage;
                 blocks.Add(block);
             }
         }

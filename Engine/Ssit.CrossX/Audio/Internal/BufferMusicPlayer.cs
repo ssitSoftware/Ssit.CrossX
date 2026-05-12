@@ -8,10 +8,9 @@ using Ssit.IoC;
 
 namespace Ssit.CrossX.Audio.Internal;
 
-public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
+public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
 {
     private readonly IFilesProvider _filesProvider;
-    private readonly IEventSource _eventSource;
     private readonly IIoCContainer _iocContainer;
     private readonly IActionScheduler _scheduler;
 
@@ -19,17 +18,14 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
 
     public override float Volume { get; set; } = 0.5f;
     
-    public BufferMusicPlayer(IFilesProvider filesProvider, IEventSource eventSource, IIoCContainer iocContainer, IActionScheduler scheduler)
+    public BufferMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler)
     {
         _filesProvider = filesProvider;
-        _eventSource = eventSource;
         _iocContainer = iocContainer;
         _scheduler = scheduler;
-
-        _eventSource.Updating += EventSourceOnUpdating;
     }
 
-    private void EventSourceOnUpdating(float dt)
+    void IUpdatable.Update(float dt)
     {
         for (var idx =0; idx < _musicPlayers.Count; )
         {
@@ -42,6 +38,11 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
                 continue;
             }
             ++idx;
+        }
+
+        if (_musicPlayers.Count == 0)
+        {
+            NextTrack();
         }
     }
 
@@ -87,6 +88,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider
 
     public VorbisDataProvider GetNext()
     {
+        if (!IsCurrentPlaylistSingleSong) return null;
         var song = GetNextSong();
         var songStream = _filesProvider.Open(song.Path);
         return new VorbisDataProvider(songStream);

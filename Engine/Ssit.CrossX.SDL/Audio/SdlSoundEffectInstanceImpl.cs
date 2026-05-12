@@ -1,4 +1,3 @@
-using System;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.SDL.Common;
@@ -45,8 +44,18 @@ public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
         _chunk = chunk;
         _trackPool = trackPool;
         
-        _properties = SDL3.SDL_CreateProperties();
+        _properties = SDL_CreateProperties();
         _duration = MIX_GetAudioDuration(_chunk.Pointer);
+        
+        sm.SoundVolumeUpdated += SmOnSoundVolumeUpdated;
+    }
+
+    private void SmOnSoundVolumeUpdated()
+    {
+        if (_playbackTrack != null && _playbackTrack.Pointer != null)
+        {
+            MIX_SetTrackGain(_playbackTrack.Pointer, Parameters.Volume * _sm.SoundVolume);
+        }
     }
 
     public bool CheckPlaying()
@@ -77,6 +86,8 @@ public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
         
         _sm.DetachInstance(this);
         SDL_DestroyProperties(_properties);
+        
+        _sm.SoundVolumeUpdated += SmOnSoundVolumeUpdated;
     }
     
     public void Play(bool loop = false)
@@ -98,7 +109,7 @@ public unsafe class SdlSoundEffectInstanceImpl : ISoundEffectInstance
                 }
             }
             
-            MIX_SetTrackGain(_playbackTrack.Pointer, Parameters.Volume);
+            MIX_SetTrackGain(_playbackTrack.Pointer, Parameters.Volume * _sm.SoundVolume);
             MIX_SetTrackPlaybackPosition(_playbackTrack.Pointer, _startPosition);
             MIX_SetTrackAudio(_playbackTrack.Pointer, _chunk.Pointer);
             

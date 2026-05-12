@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using SDL;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
@@ -12,25 +10,37 @@ namespace Ssit.CrossX.SDL.Audio;
 
 public unsafe class SdlSoundManagerImpl: ISoundManager, IUpdatable
 {
-    public event Action MasterVolumeUpdated;
+    public event Action SoundVolumeUpdated;
+    public event Action MusicVolumeUpdated;
     public event Action Disposing;
     public ISoundListener SoundListener { get; set; }
 
     public readonly SdlHandle<MIX_Mixer> MixerHandle;
-    
     private readonly List<SdlSoundEffectInstanceImpl> _attachedInstances = new();
-    
-    public float MasterVolume
+    private float _soundVolume = 1;
+    private float _musicVolume = 1;
+
+    public float SoundVolume
     {
-        get => MIX_GetMixerGain(MixerHandle.Pointer);
-        
+        get => _soundVolume;
+
         set
         {
-            MIX_SetMixerGain(MixerHandle.Pointer, value);
-            MasterVolumeUpdated?.Invoke();
+            _soundVolume = value;
+            SoundVolumeUpdated?.Invoke();
         }
     }
-    
+
+    public float MusicVolume
+    {
+        get => _musicVolume;
+        set
+        {
+            _musicVolume = value;
+            MusicVolumeUpdated?.Invoke();
+        }
+    }
+
     public SdlSoundManagerImpl()
     {
         MIX_Init();
@@ -57,7 +67,7 @@ public unsafe class SdlSoundManagerImpl: ISoundManager, IUpdatable
 
     void IUpdatable.Update(float dt)
     {
-        for ( var idx =0; idx < _attachedInstances.Count; )
+        for (var idx =0; idx < _attachedInstances.Count;)
         {
             var inst = _attachedInstances[idx];
             if (inst.CheckPlaying())

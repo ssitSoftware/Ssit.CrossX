@@ -38,7 +38,8 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
 
     private PixelAppHost.Parameters CreateAppHostParameters()
     {
-        const float scale = 0.5f;
+        const float scaleX = 0.5f;
+        const float scaleY = 0.5f;
         
         var mode = GameTemplate.TargetSize.Height > GameTemplate.TargetSize.Width ? PixelAppHost.Mode.Width : PixelAppHost.Mode.Height;
         
@@ -51,21 +52,21 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
             GlowParameters = new PixelAppHost.GlowParameters
             {
               Blur = Blurs.Gaussian3X3,
-              BlurDivider = Blurs.Gaussian3X3Divider * 0.8f,
-              DisplacementFactorR = new Vector2(-1f, 1.0f) * scale,
-              DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale,
-              DisplacementFactorB = new Vector2(1f, -1.0f) * scale,
+              BlurDivider = Blurs.Gaussian3X3Divider * 0.65f,
+              DisplacementFactorR = new Vector2(-scaleX, scaleY),
+              DisplacementFactorG = new Vector2(0.0f, 0.0f),
+              DisplacementFactorB = new Vector2(scaleX, -scaleY),
               SelfGlowFactor = 0.5f
             },
             CrtParameters = new PixelAppHost.CrtParameters
             {
-                DisplacementFactorR = new Vector2(-1f, 1.0f) * scale,
-                DisplacementFactorG = new Vector2(0.0f, 0.0f) * scale,
-                DisplacementFactorB = new Vector2(1f, -1.0f) * scale,
+                DisplacementFactorR = new Vector2(-scaleX, scaleY),
+                DisplacementFactorG = new Vector2(0.0f, 0.0f),
+                DisplacementFactorB = new Vector2(scaleX, -scaleY),
                 LampGlow = 0.3f,
-                LampDownSize = 6,
+                LampDownSize = 4,
                 Distortion = 1.05f,
-                Interline = 0.32f,
+                Interline = 0.4f,
                 NoiseCount = 1000,
                 NoiseIntensity = 0.2f
             }

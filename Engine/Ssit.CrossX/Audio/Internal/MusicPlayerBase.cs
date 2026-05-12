@@ -12,6 +12,8 @@ public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
 
     public abstract float Volume { get; set; }
 
+    protected bool IsCurrentPlaylistSingleSong => _currentPlaylist?.List.Count == 1;
+
     public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
     {
         _playlists.Add(name, playlist);

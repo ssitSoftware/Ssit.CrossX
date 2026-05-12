@@ -69,6 +69,14 @@ public unsafe class SdlSoundEffectImpl: ISoundEffect
 
     public void PlayOnce()
     {
+        var instance = CreateInstance();
+        
+        _instances.Add(instance);
+        
+        instance.Finished += InstanceOnFinished;
+        instance.Parameters = new SoundParameters();
+        instance.Play();
+        
         MIX_PlayAudio(_soundManager.MixerHandle.Pointer, _audioHandle.Pointer);
     }
 

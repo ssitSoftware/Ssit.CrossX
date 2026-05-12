@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using SDL;
 using Ssit.CrossX.Audio;
+using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Core.Internal;
 using Ssit.CrossX.Graphics;
@@ -50,7 +51,7 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
             .WithSingleton<ISoundManager, SdlSoundManagerImpl>().As<SdlSoundManagerImpl>()
             .WithSingleton<SdlTrackPool, SdlTrackPool>()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
-            .WithSingleton<IMusicPlayer, SdlMusicPlayer>()
+            .WithImplementation<ISingleMusicPlayer, SdlSingleMusicPlayer>()
             .WithSingleton<IHapticDevice, SdlHapticDevice>()
             .WithPixelCore();
 
@@ -99,7 +100,7 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
         }
         
         var services = builder.Build();
-        
+
         var actionScheduler = services.Get<IActionScheduler>();
 
         var updatables = services.Fetch<IUpdatable>().ToArray();

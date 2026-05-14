@@ -20,8 +20,10 @@ public abstract class UiPixelApp : IApp
         GC.SuppressFinalize(this);
     }
     
-    void IApp.Initialize( IIoCContainer container ) => OnInitialize(container);
+    void IApp.Initialize(IIoCContainer container) => OnInitialize(container);
+
     void IApp.SetActive(bool active) => IsActive = active;
+
     void IApp.Update( float dt ) => OnUpdate(dt);
     void IApp.Draw(IRenderer2 renderer) => OnDraw(renderer);
     void IApp.Resize( Size size ) => OnResize(size);
@@ -37,6 +39,14 @@ public abstract class UiPixelApp : IApp
     private SizeF _size;
         
     protected abstract RgbaColor BackgroundColor { get; }
+    
+    protected virtual void OnPaused()
+    {
+    }
+
+    protected virtual void OnResumed()
+    {
+    }
     
     protected virtual void OnDispose(bool disposing)
     {

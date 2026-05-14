@@ -98,7 +98,7 @@ internal class Navigation: INavigation
         NavigateTo<TViewModel>(parameter);
     }
 
-    private void InitializePageNavigation(object vm)
+    private void InitializePageNavigation(object vm, bool skipTransition = false)
     {
         var page = InitializePage(vm, null);
         PreviousPage = CurrentPage;
@@ -106,17 +106,22 @@ internal class Navigation: INavigation
 
         if (PreviousPage != null)
         {
-            PreviousPage.TransitionProgress = 0.001f;
+            PreviousPage.TransitionProgress = skipTransition ? 0.99999999f : 0.001f;
             PreviousPage.TransitionType = TransitionType.NavigateFrom;
         }
         
-        CurrentPage.TransitionProgress = 1;
+        CurrentPage.TransitionProgress = skipTransition ? 0.00001f : 1;
         CurrentPage.TransitionType = TransitionType.NavigateTo;
         
         PreviousPageOnTop = false;
+
+        if (skipTransition)
+        {
+            Update(0.1f);
+        }
     }
 
-    public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : class
+    public void NavigateTo<TViewModel>(object parameter = null, bool skipTransition = false) where TViewModel : class
     {
         if (_navigationStack.Count > 0)
         {
@@ -127,7 +132,7 @@ internal class Navigation: INavigation
         var vm = _iocContainer.IoCConstruct<TViewModel>(parameter);
         _navigationStack.Push(new StackData(vm));
         
-        InitializePageNavigation(vm);
+        InitializePageNavigation(vm, skipTransition);
     }
 
     public void NavigateBack()

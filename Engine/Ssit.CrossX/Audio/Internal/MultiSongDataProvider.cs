@@ -13,7 +13,7 @@ public class MultiSongDataProvider : IMusicDataProvider
     private short[] _tempBuffer;
 
     public int Position { get; private set; }
-    public int Frequency { get; private set; }
+    public int Frequency { get; private set; } = 0;
 
     public int CurrentSongIndex => _songIndex;
     public int CurrentSongBlock => _current?.Position ?? 0;
@@ -33,11 +33,17 @@ public class MultiSongDataProvider : IMusicDataProvider
         var stream = _filesProvider.Open(_songs[index].Path);
         _current = new VorbisDataProvider(stream);
         _songIndex = index;
-        if (index == 0) Frequency = _current.Frequency;
+
+        if (Frequency == 0 || index == 0)
+        {
+            Frequency = _current.Frequency;
+        }
     }
 
     public int Read(short[] buffer)
     {
+        if(_current is null) return 0;
+        
         var samplesRead = _current.Read(buffer);
 
         if (samplesRead < buffer.Length)

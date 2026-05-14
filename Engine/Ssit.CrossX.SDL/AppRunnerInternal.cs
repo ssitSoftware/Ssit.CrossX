@@ -152,12 +152,21 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
                     }
                     break;
 
+                    case SDL_EventType.SDL_EVENT_WINDOW_FOCUS_LOST:
+                        eventSource.OnPause();
+                        break;
+                    
+                    case SDL_EventType.SDL_EVENT_WINDOW_FOCUS_GAINED:
+                        eventSource.OnResume();
+                        app.SetActive(true);
+                        break;
+                    
                     case SDL_EventType.SDL_EVENT_WILL_ENTER_BACKGROUND:
                         shouldDisplayAndUpdate = false;
                         eventSource.OnPause();
                         app.SetActive(false);
                         break;
-
+                    
                     case SDL_EventType.SDL_EVENT_TERMINATING:
                         Console.WriteLine("[AppRunner] SDL_EVENT_TERMINATING received — closing app");
                         shouldDisplayAndUpdate = false;

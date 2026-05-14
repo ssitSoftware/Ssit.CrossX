@@ -10,6 +10,7 @@ namespace Ssit.CrossX.UI;
 
 internal interface IPage: IViewParent, IDisposable
 {
+    object ViewModel { get; }
     void Load(IUiServices services, IInputContext inputContext, object viewModel);
     void Update(float dt);
     void Draw(IRenderer2 renderer);

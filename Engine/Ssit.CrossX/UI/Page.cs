@@ -15,6 +15,8 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 {
     protected TViewModel ViewModel { get; private set; }
 
+    object IPage.ViewModel => ViewModel;
+    
     private StylesContainer _styles;
 
     private IIoCContainer _iocContainer;

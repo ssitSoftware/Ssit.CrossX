@@ -14,15 +14,51 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
     private readonly IFilesProvider _filesProvider;
     private readonly IIoCContainer _iocContainer;
     private readonly IActionScheduler _scheduler;
+    private readonly IEventSource _eventSource;
 
     private readonly Dictionary<string, MusicPlaylist> _playlists = new();
     private readonly List<ISingleMusicPlayer> _players = new();
 
-    public LoopsMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler)
+    private MusicPlaylist _currentPlaylist;
+    private MultiSongDataProvider _currentMusicProvider;
+
+    private bool _isActive = true;
+
+    private string _currentPlaylistName = "";
+    
+    public LoopsMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler, IEventSource eventSource)
     {
         _filesProvider = filesProvider;
         _iocContainer = iocContainer;
         _scheduler = scheduler;
+        
+        eventSource.Paused += EventSourceOnPaused;
+        eventSource.Resumed += EventSourceOnResumed;
+    }
+
+    private void EventSourceOnResumed()
+    {
+        if (_isActive)
+            return;
+        
+        _isActive = true;
+        
+        if (!string.IsNullOrWhiteSpace(_currentPlaylistName))
+        {
+            var name = _currentPlaylistName;
+            _currentPlaylistName = "";
+            ChangePlaylist(name);
+        }
+    }
+
+    private void EventSourceOnPaused()
+    {
+        foreach (var player in _players)
+        {
+            player.FadeOut(10);
+        }
+        
+        _isActive = false;
     }
 
     public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
@@ -33,13 +69,31 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
 
     public void ChangePlaylist(string name, int fadeTimeMs = 250, bool resetProgress = false)
     {
+        if (_currentPlaylistName == name)
+            return;
+
+        if (!_isActive)
+        {
+            _currentPlaylistName = name;
+            return;
+        }
+        
         if (!_playlists.TryGetValue(name, out var playlist)) return;
+        
+        if (_currentPlaylist != null && _currentMusicProvider != null)
+        {
+            _currentPlaylist.CurrentSong = _currentMusicProvider.CurrentSongIndex;
+            _currentPlaylist.CurrentPosition = _currentMusicProvider.CurrentSongBlock;
+        }
+        
+        _currentPlaylist = playlist;
+        _currentPlaylistName = name;
         
         var songs = playlist.List;
 
         Task.Run(() =>
         {
-            var provider = new MultiSongDataProvider(_filesProvider, songs);
+            _currentMusicProvider = new MultiSongDataProvider(_filesProvider, songs, _currentPlaylist.CurrentSong, _currentPlaylist.CurrentPosition);
 
             _scheduler.Schedule(() =>
             {
@@ -50,7 +104,7 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
 
                 var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>();
                 _players.Add(newPlayer);
-                newPlayer.Start(provider, BufferLength, fadeTimeMs);
+                newPlayer.Start(_currentMusicProvider, BufferLength, fadeTimeMs);
             });
         });
     }

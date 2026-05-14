@@ -1,5 +1,6 @@
+using System;
 using System.IO;
-using NAudio.Wave;
+using System.Text;
 
 namespace Ssit.CrossX.Audio.Internal;
 
@@ -7,24 +8,76 @@ public static class WavLoader
 {
     public static (short[] buffer, int sampleRate) LoadMonoWav(Stream stream)
     {
-        using var waveReader = new WaveFileReader(stream);
-        using var wave = new WaveChannel32(waveReader);
-        wave.PadWithZeroes = false;
-        
-        var stereoSampleLength = wave.Length / sizeof(float);
-        var sampleProvider = wave.ToSampleProvider().ToMono();
+        using var reader = new BinaryReader(stream, Encoding.ASCII, leaveOpen: true);
 
-        var monoLength = stereoSampleLength / 2;
-        var buffer = new float[monoLength + 256];
-        
-        var size = sampleProvider.Read(buffer, 0, buffer.Length);
-        
-        var shorts = new short[size];
-        for (var idx = 0; idx < size; idx++)
+        // RIFF header
+        reader.ReadBytes(4); // "RIFF"
+        reader.ReadInt32();  // file size
+        reader.ReadBytes(4); // "WAVE"
+
+        var channels = 1;
+        var sampleRate = 44100;
+        var bitsPerSample = 16;
+        short[] audioData = null;
+
+        while (stream.Position < stream.Length - 8)
         {
-            shorts[idx] = (short)(buffer[idx] * short.MaxValue);
+            var chunkIdBytes = reader.ReadBytes(4);
+            var chunkSize = reader.ReadInt32();
+            var chunkEnd = stream.Position + chunkSize;
+
+            var id = Encoding.ASCII.GetString(chunkIdBytes);
+
+            if (id == "fmt ")
+            {
+                reader.ReadInt16(); // audio format (1 = PCM)
+                channels = reader.ReadInt16();
+                sampleRate = reader.ReadInt32();
+                reader.ReadInt32(); // byte rate
+                reader.ReadInt16(); // block align
+                bitsPerSample = reader.ReadInt16();
+            }
+            else if (id == "data")
+            {
+                audioData = ReadMonoData(reader, chunkSize, channels, bitsPerSample);
+            }
+
+            stream.Position = chunkEnd;
         }
-        
-        return (shorts, sampleProvider.WaveFormat.SampleRate);
+
+        return (audioData ?? Array.Empty<short>(), sampleRate);
+    }
+
+    private static short[] ReadMonoData(BinaryReader reader, int dataSize, int channels, int bitsPerSample)
+    {
+        var bytesPerSample = bitsPerSample / 8;
+        var totalFrames = dataSize / (bytesPerSample * channels);
+        var result = new short[totalFrames];
+
+        for (var i = 0; i < totalFrames; i++)
+        {
+            var sum = 0;
+            for (var c = 0; c < channels; c++)
+            {
+                if (bitsPerSample == 16)
+                {
+                    sum += reader.ReadInt16();
+                }
+                else if (bitsPerSample == 8)
+                {
+                    sum += (reader.ReadByte() - 128) << 8;
+                }
+                else if (bitsPerSample == 24)
+                {
+                    reader.ReadByte(); // lo
+                    int mid = reader.ReadByte();
+                    int hi = (sbyte)reader.ReadByte();
+                    sum += (hi << 8) | mid ; // keep top 16 bits
+                }
+            }
+            result[i] = (short)(sum / channels);
+        }
+
+        return result;
     }
 }

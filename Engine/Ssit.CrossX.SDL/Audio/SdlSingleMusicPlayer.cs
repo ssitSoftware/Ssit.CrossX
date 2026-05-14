@@ -18,8 +18,10 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
     private int _bufferLength;
     private short[] _shortBuffer;
     private bool _sourceExhausted;
+    private bool _fadingOut;
 
     public int Position => _provider?.Position ?? 0;
+    public string Name { get; set; } = "???";
 
     public SdlSingleMusicPlayer(SdlSoundManagerImpl soundManager, IMusicDataProvider musicDataProvider)
     {
@@ -107,7 +109,7 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
             return;
         }
 
-        if (_sourceExhausted)
+        if (_sourceExhausted || _fadingOut)
         {
             finished = !MIX_TrackPlaying(_track.Pointer);
             return;
@@ -126,6 +128,7 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
     {
         if (_track.Pointer != null)
         {
+            _fadingOut = true;
             MIX_StopTrack(_track.Pointer, fadeOutMilliseconds);
         }
     }

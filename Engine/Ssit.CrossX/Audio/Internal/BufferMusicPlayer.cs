@@ -15,6 +15,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
     private readonly IActionScheduler _scheduler;
 
     private readonly List<ISingleMusicPlayer> _musicPlayers = new ();
+    private bool _switching;
     
     public BufferMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler)
     {
@@ -38,7 +39,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
             ++idx;
         }
 
-        if (_musicPlayers.Count == 0)
+        if (_musicPlayers.Count == 0 && !_switching)
         {
             NextTrack();
         }
@@ -63,21 +64,25 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
     protected override void SwitchSong(Song song, int fadeTime, int startPosition = 0)
     {
         fadeTime =  Math.Max(50, fadeTime);
+        _switching = true;
 
         Task.Run(() =>
         {
             var songStream = _filesProvider.Open(song.Path);
             var songProvider = new VorbisDataProvider(songStream);
             songProvider.Skip(startPosition, BufferLength);
-            
+
             _scheduler.Schedule(() =>
             {
+                _switching = false;
+
                 foreach (var player in _musicPlayers)
                 {
                     player.FadeOut(fadeTime);
                 }
-                        
+
                 var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
+                newPlayer.Name = song.Name;
                 _musicPlayers.Add(newPlayer);
                 newPlayer.Start(songProvider, BufferLength, fadeTime);
             });

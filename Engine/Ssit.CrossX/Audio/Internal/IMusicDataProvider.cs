@@ -1,6 +1,10 @@
+using System;
+
 namespace Ssit.CrossX.Audio.Internal;
 
-public interface IMusicDataProvider
+public interface IMusicDataProvider : IDisposable
 {
-    VorbisDataProvider GetNext();
+    int Position { get; }
+    int Frequency { get; }
+    int Read(short[] buffer);
 }

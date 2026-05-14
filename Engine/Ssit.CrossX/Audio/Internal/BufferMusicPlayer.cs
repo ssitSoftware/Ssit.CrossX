@@ -2,21 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ssit.CrossX.Audio;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.IO;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.Audio.Internal;
 
-public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
+public class BufferMusicPlayer : MusicPlayerBase, IUpdatable
 {
     private readonly IFilesProvider _filesProvider;
     private readonly IIoCContainer _iocContainer;
     private readonly IActionScheduler _scheduler;
 
-    private readonly List<ISingleMusicPlayer> _musicPlayers = new ();
+    private readonly List<ISingleMusicPlayer> _musicPlayers = new();
     private bool _switching;
-    
+
+    public float Volume { get; set; } = 0.5f;
+
     public BufferMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler)
     {
         _filesProvider = filesProvider;
@@ -26,7 +29,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
 
     void IUpdatable.Update(float dt)
     {
-        for (var idx =0; idx < _musicPlayers.Count; )
+        for (var idx = 0; idx < _musicPlayers.Count;)
         {
             _musicPlayers[idx].Update(dt, out var finished);
 
@@ -36,6 +39,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
                 _musicPlayers.RemoveAt(idx);
                 continue;
             }
+
             ++idx;
         }
 
@@ -49,7 +53,7 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
     {
         var players = _musicPlayers.ToArray();
         _musicPlayers.Clear();
-        
+
         foreach (var player in players)
         {
             player.Dispose();
@@ -63,14 +67,23 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
 
     protected override void SwitchSong(Song song, int fadeTime, int startPosition = 0)
     {
-        fadeTime =  Math.Max(50, fadeTime);
+        fadeTime = Math.Max(50, fadeTime);
         _switching = true;
 
         Task.Run(() =>
         {
-            var songStream = _filesProvider.Open(song.Path);
-            var songProvider = new VorbisDataProvider(songStream);
-            songProvider.Skip(startPosition, BufferLength);
+            IMusicDataProvider provider;
+            if (IsCurrentPlaylistSingleSong)
+            {
+                provider = new MultiSongDataProvider(_filesProvider, new[] { song });
+            }
+            else
+            {
+                var songStream = _filesProvider.Open(song.Path);
+                var vorbis = new VorbisDataProvider(songStream);
+                if (startPosition > 0) vorbis.Skip(startPosition, BufferLength);
+                provider = vorbis;
+            }
 
             _scheduler.Schedule(() =>
             {
@@ -81,19 +94,11 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
                     player.FadeOut(fadeTime);
                 }
 
-                var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>(this);
+                var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>();
                 newPlayer.Name = song.Name;
                 _musicPlayers.Add(newPlayer);
-                newPlayer.Start(songProvider, BufferLength, fadeTime);
+                newPlayer.Start(provider, BufferLength, fadeTime);
             });
         });
-    }
-
-    public VorbisDataProvider GetNext()
-    {
-        if (!IsCurrentPlaylistSingleSong) return null;
-        var song = GetNextSong();
-        var songStream = _filesProvider.Open(song.Path);
-        return new VorbisDataProvider(songStream);
     }
 }

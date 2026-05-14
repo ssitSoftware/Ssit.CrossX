@@ -10,11 +10,10 @@ namespace Ssit.CrossX.SDL.Audio;
 public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
 {
     private readonly SdlSoundManagerImpl _soundManager;
-    private readonly IMusicDataProvider _musicDataProvider;
 
     private SdlHandle<MIX_Track> _track = SdlHandle<MIX_Track>.Empty;
     private SDL_AudioStream* _audioStream;
-    private VorbisDataProvider _provider;
+    private IMusicDataProvider _provider;
     private int _bufferLength;
     private short[] _shortBuffer;
     private bool _sourceExhausted;
@@ -23,13 +22,12 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
     public int Position => _provider?.Position ?? 0;
     public string Name { get; set; } = "???";
 
-    public SdlSingleMusicPlayer(SdlSoundManagerImpl soundManager, IMusicDataProvider musicDataProvider)
+    public SdlSingleMusicPlayer(SdlSoundManagerImpl soundManager)
     {
         _soundManager = soundManager;
-        _musicDataProvider = musicDataProvider;
         _soundManager.MusicVolumeUpdated += SoundManagerOnMusicVolumeUpdated;
     }
-    
+
     private void SoundManagerOnMusicVolumeUpdated()
     {
         if (_track != null && _track.Pointer != null)
@@ -38,7 +36,7 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
         }
     }
 
-    public void Start(VorbisDataProvider provider, int bufferLength, int fadeInMilliseconds)
+    public void Start(IMusicDataProvider provider, int bufferLength, int fadeInMilliseconds)
     {
         _provider = provider;
         _bufferLength = bufferLength;
@@ -65,8 +63,7 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
         {
             SDL_SetNumberProperty(properties, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, fadeInMilliseconds);
         }
-        
-        MIX_SetTrackGain(_track.Pointer, _soundManager.MusicVolume);
+
         MIX_PlayTrack(_track.Pointer, properties);
         SDL_DestroyProperties(properties);
     }
@@ -78,19 +75,8 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
         var samplesRead = _provider.Read(_shortBuffer);
         if (samplesRead == 0)
         {
-            var next = _musicDataProvider?.GetNext();
-            if (next != null)
-            {
-                _provider.Dispose();
-                _provider = next;
-                samplesRead = _provider.Read(_shortBuffer);
-            }
-
-            if (samplesRead == 0)
-            {
-                _sourceExhausted = true;
-                return;
-            }
+            _sourceExhausted = true;
+            return;
         }
 
         fixed (short* ptr = _shortBuffer)
@@ -150,7 +136,7 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
 
         _provider?.Dispose();
         _provider = null;
-        
+
         _soundManager.MusicVolumeUpdated -= SoundManagerOnMusicVolumeUpdated;
     }
 }

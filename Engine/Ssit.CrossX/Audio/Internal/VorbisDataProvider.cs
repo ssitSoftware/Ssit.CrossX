@@ -4,7 +4,7 @@ using NVorbis;
 
 namespace Ssit.CrossX.Audio.Internal;
 
-public class VorbisDataProvider: IDisposable
+public class VorbisDataProvider : IMusicDataProvider
 {
     private VorbisReader _reader;
 
@@ -24,13 +24,14 @@ public class VorbisDataProvider: IDisposable
         {
             _buffer = new float[blockSize];
         }
-        
+
         for (var idx = 0; idx < blocks; ++idx)
         {
             if (_reader.ReadSamples(_buffer, 0, _buffer.Length) == 0)
             {
                 return;
             }
+            Position++;
         }
     }
     

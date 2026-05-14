@@ -10,8 +10,6 @@ public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
     private readonly Dictionary<string, MusicPlaylist> _playlists = new();
     private MusicPlaylist _currentPlaylist;
 
-    public abstract float Volume { get; set; }
-
     protected bool IsCurrentPlaylistSingleSong => _currentPlaylist?.List.Count == 1;
 
     public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)

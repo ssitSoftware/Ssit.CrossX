@@ -117,7 +117,9 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
         }
         _recalculationNeeded = true;
     }
-    
+
+    protected sealed override void Initialize(IUiServices services) => base.Initialize(services);
+
     void IPage.Load(IUiServices services, IInputContext inputContext, object viewModel)
     {
         var app = (UiApp)services.IoCContainer.Get<IUiApp>();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Ssit.CrossX.Content;
@@ -55,6 +56,10 @@ public class AabbGameInstance : IGameInstance, IMessenger
 
     int IGameInstance.RenderPasses => 1;
     
+    private readonly Stopwatch _internalStopwatch = new();
+    private TimeSpan _lastTimeElapsed = TimeSpan.Zero;
+    private float _lastDeltaTime = 0;
+    
     void IGameInstance.Render(IRenderer2 renderer, RectangleF target, int renderPass, float scale)
     {
         if (renderPass != 0)
@@ -70,6 +75,8 @@ public class AabbGameInstance : IGameInstance, IMessenger
         Parameters parameters, IPaletteSource paletteSource = null)
     {
         _timer = new GameTimer(parameters.MinDelta);
+        _internalStopwatch.Start();
+        
         _scheduler = scheduler;
         _gameTemplate = gameTemplate;
         _paletteSource = paletteSource;
@@ -129,9 +136,22 @@ public class AabbGameInstance : IGameInstance, IMessenger
             storage.WriteData(cacheFilePath, cache);
         }
     }
+    
+    
 
     void IGameInstance.Update(float deltaTime)
     {
+        var timeElapsed = _internalStopwatch.Elapsed;
+
+        if (timeElapsed - _lastTimeElapsed < TimeSpan.FromMicroseconds(50) 
+            && Math.Abs(deltaTime - _lastDeltaTime) < float.Epsilon)
+        {
+            return;
+        }
+
+        _lastDeltaTime = deltaTime;
+        _lastTimeElapsed = timeElapsed;
+        
         while (_messages.TryDequeue(out var message))
         {
             Message?.Invoke(message);

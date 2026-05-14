@@ -15,8 +15,6 @@ public class BufferMusicPlayer: MusicPlayerBase, IMusicDataProvider, IUpdatable
     private readonly IActionScheduler _scheduler;
 
     private readonly List<ISingleMusicPlayer> _musicPlayers = new ();
-
-    public override float Volume { get; set; } = 0.5f;
     
     public BufferMusicPlayer(IFilesProvider filesProvider, IIoCContainer iocContainer, IActionScheduler scheduler)
     {

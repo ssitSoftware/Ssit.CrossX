@@ -14,7 +14,6 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
     private readonly IFilesProvider _filesProvider;
     private readonly IIoCContainer _iocContainer;
     private readonly IActionScheduler _scheduler;
-    private readonly IEventSource _eventSource;
 
     private readonly Dictionary<string, MusicPlaylist> _playlists = new();
     private readonly List<ISingleMusicPlayer> _players = new();
@@ -58,7 +57,15 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
             player.FadeOut(10);
         }
         
+        if (_currentPlaylist != null && _currentMusicProvider != null)
+        {
+            _currentPlaylist.CurrentSong = _currentMusicProvider.CurrentSongIndex;
+            _currentPlaylist.CurrentPosition = _currentMusicProvider.CurrentSongBlock;
+        }
+        
         _isActive = false;
+        _currentPlaylist = null;
+        _currentMusicProvider = null;
     }
 
     public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
@@ -69,9 +76,6 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
 
     public void ChangePlaylist(string name, int fadeTimeMs = 250, bool resetProgress = false)
     {
-        if (_currentPlaylistName == name)
-            return;
-
         if (!_isActive)
         {
             _currentPlaylistName = name;
@@ -79,6 +83,8 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
         }
         
         if (!_playlists.TryGetValue(name, out var playlist)) return;
+
+        if (ReferenceEquals(_currentPlaylist, playlist)) return;
         
         if (_currentPlaylist != null && _currentMusicProvider != null)
         {
@@ -103,6 +109,8 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
                 }
 
                 var newPlayer = _iocContainer.IoCConstruct<ISingleMusicPlayer>();
+                newPlayer.Name = name;
+                
                 _players.Add(newPlayer);
                 newPlayer.Start(_currentMusicProvider, BufferLength, fadeTimeMs);
             });

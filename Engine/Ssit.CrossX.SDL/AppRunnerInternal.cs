@@ -152,6 +152,7 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
                     }
                     break;
 
+#if !ANDROID && !IOS
                     case SDL_EventType.SDL_EVENT_WINDOW_FOCUS_LOST:
                         eventSource.OnPause();
                         break;
@@ -160,6 +161,7 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
                         eventSource.OnResume();
                         app.SetActive(true);
                         break;
+#endif
                     
                     case SDL_EventType.SDL_EVENT_WILL_ENTER_BACKGROUND:
                         shouldDisplayAndUpdate = false;

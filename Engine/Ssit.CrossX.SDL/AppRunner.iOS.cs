@@ -21,23 +21,8 @@ public static class AppRunner
         
         _runAction = () => AppRunnerInternal<TApp>.Run();
         
-        SDL3.SDL_AddEventWatch(&AppEventWatch, IntPtr.Zero);
+        SDL3.SDL_AddEventWatch(&AppEventWatcher.AppEventWatch, IntPtr.Zero);
         SDL3.SDL_RunApp(0, null, &Run, IntPtr.Zero);
-    }
-    
-    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe SDLBool AppEventWatch(IntPtr _, SDL_Event* eventPtr)
-    {
-        if (eventPtr->type == (uint)SDL_EventType.SDL_EVENT_DID_ENTER_BACKGROUND)
-        {
-            AppEventWatcher.CallAppDeativated();
-        }
-        
-        if (eventPtr->type == (uint)SDL_EventType.SDL_EVENT_DID_ENTER_FOREGROUND)
-        {
-            AppEventWatcher.CallAppActivated();
-        }
-        return false;
     }
     
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]

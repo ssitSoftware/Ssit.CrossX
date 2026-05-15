@@ -127,7 +127,7 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
                 _currentPlaylist.CurrentPosition = 0;
             }
             
-            _currentMusicProvider = new MultiSongDataProvider(_filesProvider, songs, songIndex, songBlock);
+            var musicProvider = new MultiSongDataProvider(_filesProvider, songs, songIndex, songBlock);
 
             _scheduler.Schedule(() =>
             {
@@ -140,7 +140,8 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
                 newPlayer.Name = name;
                 
                 _players.Add(newPlayer);
-                newPlayer.Start(_currentMusicProvider, BufferLength, fadeTimeMs);
+                newPlayer.Start(musicProvider, BufferLength, fadeTimeMs);
+                _currentMusicProvider = musicProvider;
             });
         });
     }

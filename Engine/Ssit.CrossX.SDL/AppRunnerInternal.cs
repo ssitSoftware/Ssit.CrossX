@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SDL;
 using Ssit.CrossX.Audio;
@@ -26,6 +27,21 @@ internal static class AppEventWatcher
     
     public static void CallAppActivated() => AppActivated?.Invoke();
     public static void CallAppDeativated() => AppDeativated?.Invoke();
+    
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    public static unsafe SDLBool AppEventWatch(IntPtr _, SDL_Event* eventPtr)
+    {
+        if (eventPtr->type == (uint)SDL_EventType.SDL_EVENT_DID_ENTER_BACKGROUND)
+        {
+            CallAppDeativated();
+        }
+        
+        if (eventPtr->type == (uint)SDL_EventType.SDL_EVENT_DID_ENTER_FOREGROUND)
+        {
+            CallAppActivated();
+        }
+        return false;
+    }
 }
 
 internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
@@ -139,8 +155,8 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
             lastTicks = SDL_GetTicksNS();
         };
         
-        AppEventWatcher.AppActivated += () => eventSource.OnResume();
-        AppEventWatcher.AppDeativated += () => eventSource.OnPause();
+        AppEventWatcher.AppActivated += () => actionScheduler.Schedule(eventSource.OnResume);
+        AppEventWatcher.AppDeativated += () => actionScheduler.Schedule(eventSource.OnPause);
         
         while (appWindowManager.ShouldContinue)
         {

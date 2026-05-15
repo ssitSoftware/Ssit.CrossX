@@ -447,6 +447,14 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 continue;
             }
 
+            // Add top spacing for header blocks (half of paragraph spacing)
+            var isHeader = block.Type is MarkdownBlockType.Header1 or MarkdownBlockType.Header2 or MarkdownBlockType.Header3;
+            if (isHeader && blockIdx > 0)
+            {
+                var paragraphSpacing = AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom;
+                y += paragraphSpacing / 2f;
+            }
+
             // Text block
             var blockStyle = BlockTypeToStyle(block.Type);
             var blockStartLineIdx = _layoutLines.Count;

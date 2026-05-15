@@ -1,25 +1,53 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IViewParent where TScrollView: ScrollView
+public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IViewParent, IInputConsumer, IChildrenContainer where TScrollView: ScrollView
 {
-    private bool _recalculateLayout;
+    private const float InertiaDecay = 8f;
+    private const float InertiaStopThreshold = 1f; // pixels/sec squared
+    
     private ViewHandler _contentHandler;
+
+    private readonly VelocityTracker _velocityTracker = new();
+
+    private Vector2 _scrollOffset = Vector2.Zero;
+    private Vector2 _velocity = Vector2.Zero;
+    private int? _trackingPointerId;
+    private Vector2 _lastPointerPosition;
+    private SizeF _contentSize;
+
+    private List<ViewHandler> _children;
+    IReadOnlyList<ViewHandler> IChildrenContainer.Children => _children;
 
     public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null) : base(parameters, paletteSource)
     {
         _contentHandler = handlerMapper.Create(AttachedView.ContentView, this);
-        _recalculateLayout = true;
+        _children = [_contentHandler];
     }
 
     public override void Update(float dt)
     {
+        if (!_trackingPointerId.HasValue && _velocity != Vector2.Zero)
+        {
+            _scrollOffset += _velocity * dt;
+            ClampScrollOffset();
+            _velocity *= MathF.Exp(-InertiaDecay * dt);
+            if (_velocity.LengthSquared() < InertiaStopThreshold)
+                _velocity = Vector2.Zero;
+        }
+
         var child = AttachedView.ContentView;
         if (child is not null)
         {
@@ -33,28 +61,28 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     protected override void OnDraw(IRenderer2 renderer)
     {
         base.OnDraw(renderer);
-        
+
         renderer.StateManager.SaveState();
         renderer.StateManager.SetClipRect(ScreenBounds);
+
         
         _contentHandler?.Draw(renderer);
-        
+
         renderer.StateManager.RestoreState();
     }
 
     protected virtual void RecalculateChildrenLayouts()
     {
-        if (!_recalculateLayout || AttachedView.ContentView == null)
+        if (AttachedView.ContentView == null)
             return;
-        
+
         CalculateChildPosition(AttachedView.ContentView);
-        _recalculateLayout = false;
     }
-    
+
     private void CalculateChildPosition(View child)
     {
         var handlerView = (IHandlerView)child;
-        
+
         var x = child.AnchorX ?? Length.Auto;
         var y = child.AnchorY ?? Length.Auto;
 
@@ -70,17 +98,17 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
                 case Align.End:
                     x = Length.Fill;
                     break;
-                
+
                 case Align.Center:
                     x = new Length(0, 0.5f);
                     break;
-                
+
                 case Align.Fill:
                     x = Length.Zero;
                     break;
             }
         }
-        
+
         if (y.IsAuto)
         {
             switch (verticalAlign)
@@ -88,71 +116,71 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
                 case Align.End:
                     y = Length.Fill;
                     break;
-                
+
                 case Align.Center:
                     y = new Length(0, 0.5f);
                     break;
-                
+
                 case Align.Fill:
                     y = Length.Zero;
                     break;
             }
         }
-        
+
         var xx = bounds.X + x.Calculate(CurrentScale, bounds.Width);
         var yy = bounds.Y + y.Calculate(CurrentScale, bounds.Height);
         var ww = width.Calculate(CurrentScale, bounds.Width);
         var hh = height.Calculate(CurrentScale, bounds.Height);
-        
+
         switch (horizontalAlign)
         {
             case Align.Fill:
                 ww = bounds.Width;
                 break;
-            
+
             case Align.Start:
                 break;
-            
+
             case Align.Center:
                 xx -= ww / 2f;
                 break;
-            
+
             case Align.End:
                 xx -= ww;
                 break;
         }
-        
+
         switch (verticalAlign)
         {
             case Align.Fill:
                 hh = bounds.Height;
                 break;
-            
+
             case Align.Start:
                 break;
-            
+
             case Align.Center:
                 yy -= hh / 2f;
                 break;
-            
+
             case Align.End:
                 yy -= hh;
                 break;
         }
-        
-        handlerView.Handler.SetBounds(new RectangleF(xx, yy, ww, hh));
+
+        _contentSize = new SizeF(ww, hh);
+        handlerView.Handler.SetBounds(new RectangleF(xx - _scrollOffset.X, yy - _scrollOffset.Y, ww, hh));
     }
 
     public void RecalculateLayout(View view = null)
     {
-        _recalculateLayout = true;
         if (AttachedView.ContentView is IViewParent parent)
         {
             parent.RecalculateLayout();
         }
         SignalRecalculationPending();
     }
-    
+
     public RectangleF CalculateTargetBounds()
     {
         return new RectangleF(0, 0, Bounds.Width, Bounds.Height);
@@ -163,6 +191,7 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         base.OnDispose(disposing);
         _contentHandler?.Dispose();
         _contentHandler = null;
+        _children = [];
     }
 
     public override void SetBounds(RectangleF rectangleF)
@@ -178,5 +207,94 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
             return parent;
         }
         return Parent.GetParent<TParent>(optional);
+    }
+
+    private void ClampScrollOffset()
+    {
+        var maxX = Math.Max(0f, _contentSize.Width - Bounds.Width);
+        var maxY = Math.Max(0f, _contentSize.Height - Bounds.Height);
+        _scrollOffset = new Vector2(
+            Math.Clamp(_scrollOffset.X, 0f, maxX),
+            Math.Clamp(_scrollOffset.Y, 0f, maxY)
+        );
+    }
+
+    public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context)
+    {
+    }
+
+    public bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context)
+    {
+        var scrollMode = AttachedView.ScrollMode;
+        if (scrollMode == ScrollMode.None) return false;
+
+        if (_trackingPointerId.HasValue)
+        {
+            var pointer = pointers.FirstOrDefault(o => o.Id == _trackingPointerId.Value);
+            if (pointer != null)
+            {
+                var delta = _lastPointerPosition - pointer.Position;
+                if ((scrollMode & ScrollMode.Horizontal) == 0) delta = new Vector2(0, delta.Y);
+                if ((scrollMode & ScrollMode.Vertical) == 0) delta = new Vector2(delta.X, 0);
+
+                _scrollOffset += delta;
+                ClampScrollOffset();
+
+                if (delta != Vector2.Zero)
+                {
+                    CalculateChildPosition(AttachedView.ContentView);
+                }
+
+                _velocityTracker.AddTouchMovement(_trackingPointerId.Value, pointer.Position, Environment.TickCount64 * 0.001);
+                _lastPointerPosition = pointer.Position;
+
+                if (pointer.State == ButtonState.JustReleased)
+                {
+                    var vx = (scrollMode & ScrollMode.Horizontal) != 0
+                        ? -_velocityTracker.CalculateTouchVelocity(_trackingPointerId.Value, false)
+                        : 0f;
+                    var vy = (scrollMode & ScrollMode.Vertical) != 0
+                        ? -_velocityTracker.CalculateTouchVelocity(_trackingPointerId.Value, true)
+                        : 0f;
+                    _velocity = new Vector2(vx, vy);
+                    _velocityTracker.Reset();
+                    _trackingPointerId = null;
+                }
+                else if (pointer.State == ButtonState.Empty)
+                {
+                    _velocity = Vector2.Zero;
+                    _velocityTracker.Reset();
+                    _trackingPointerId = null;
+                }
+                return false;
+            }
+            _velocityTracker.Reset();
+            _trackingPointerId = null;
+        }
+
+        foreach (var pointer in pointers)
+        {
+            if (pointer.State == ButtonState.JustPressed && ScreenBounds.Contains(pointer.Position))
+            {
+                _trackingPointerId = pointer.Id;
+                _lastPointerPosition = pointer.Position;
+                _velocity = Vector2.Zero;
+                _velocityTracker.Reset();
+                context.CapturePointer(pointer.Id, this);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void CancelPointer(int pointerId, IInputContext context)
+    {
+        if (_trackingPointerId == pointerId)
+        {
+            _trackingPointerId = null;
+            _velocity = Vector2.Zero;
+            _velocityTracker.Reset();
+        }
     }
 }

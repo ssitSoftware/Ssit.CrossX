@@ -57,7 +57,7 @@ public class VerticalStackHandler<TVerticalStack>(ViewHandler.CreateHandlerParam
                 h += AttachedView?.Spacing?.Calculate(CurrentScale, 0) * spaces ?? 0;
                 
                 height = new Length(pixels: h);
-                height = CalculateLengthWithPadding(height, AttachedView.Padding?.Top, AttachedView.Padding?.Bottom);
+                height = CalculateLengthWithPadding(height, AttachedView!.Padding?.Top, AttachedView.Padding?.Bottom);
             }
 
             if (width.IsAuto)

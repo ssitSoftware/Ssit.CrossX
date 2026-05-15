@@ -33,18 +33,9 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     protected override void OnDraw(IRenderer2 renderer)
     {
         base.OnDraw(renderer);
-
-        var rect = ScreenBounds;
-        var l = (int)MathF.Ceiling(rect.X);
-        var t = (int)MathF.Ceiling(rect.Y);
-        
-        var r = (int)MathF.Floor(rect.Right);
-        var b = (int)MathF.Floor(rect.Bottom);
         
         renderer.StateManager.SaveState();
-        
-        // TODO: Clipping
-        //renderer.StateManager.ClipRectangle(new Rectangle(l, t, r - l, b - t));
+        renderer.StateManager.SetClipRect(ScreenBounds);
         
         _contentHandler?.Draw(renderer);
         

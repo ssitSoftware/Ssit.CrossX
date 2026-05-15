@@ -83,7 +83,6 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
         var filesProvider = new AggregatedFilesProvider();
 
         filesProvider.AddProvider("assets:", new EmbeddedFilesProvider(assembly, assembly.GetName().Name + ".Assets"));
-        filesProvider.AddProvider("music:", new CacheFilesProvider(assembly, assembly.GetName().Name + ".Music",  "Music"));
 
         foreach (var fontSource in FontSources)
         {

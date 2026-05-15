@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.IO;
@@ -68,10 +69,25 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
         _currentMusicProvider = null;
     }
 
-    public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
+    public IMusicPlayer RegisterPlaylist(string name, params string[] songs)
     {
+        var playlist = new MusicPlaylist(songs.Select(o=> new Song(o)).ToArray());
         _playlists.Add(name, playlist);
         return this;
+    }
+    
+    public IMusicPlayer RegisterPlaylist(string name, params Song[] songs)
+    {
+        var playlist = new MusicPlaylist(songs);
+        _playlists.Add(name, playlist);
+        return this;
+    }
+    
+    public void ResetPlaylistPosition(string name)
+    {
+        if (!_playlists.TryGetValue(name, out var playlist)) return;
+        playlist.CurrentPosition = 0;
+        playlist.CurrentSong = 0;
     }
 
     public void ChangePlaylist(string name, int fadeTimeMs = 250, bool resetProgress = false)
@@ -99,7 +115,19 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
 
         Task.Run(() =>
         {
-            _currentMusicProvider = new MultiSongDataProvider(_filesProvider, songs, _currentPlaylist.CurrentSong, _currentPlaylist.CurrentPosition);
+            var songIndex = _currentPlaylist.CurrentSong;
+            var songBlock = _currentPlaylist.CurrentPosition;
+
+            if (resetProgress)
+            {
+                songIndex = 0;
+                songBlock = 0;
+
+                _currentPlaylist.CurrentSong = 0;
+                _currentPlaylist.CurrentPosition = 0;
+            }
+            
+            _currentMusicProvider = new MultiSongDataProvider(_filesProvider, songs, songIndex, songBlock);
 
             _scheduler.Schedule(() =>
             {

@@ -7,8 +7,19 @@ public interface IMusicPlayer
 {
     /// <summary>Registers a new music playlist with the specified name.</summary>
     /// <param name="name">The name of the playlist to register.</param>
-    /// <param name="playlist">The playlist object containing the songs.</param>
-    IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist);
+    /// <param name="songs">An array of songs to include in the playlist.</param>
+    /// <returns>An instance of <see cref="IMusicPlayer"/> to allow for method chaining.</returns>
+    IMusicPlayer RegisterPlaylist(string name, params Song[] songs);
+
+    /// <summary>Registers a new music playlist with the specified name and associated songs.</summary>
+    /// <param name="name">The name of the playlist to register.</param>
+    /// <param name="songs">An array of song file paths to include in the playlist.</param>
+    /// <returns>An instance of <see cref="IMusicPlayer"/> to allow for method chaining.</returns>
+    IMusicPlayer RegisterPlaylist(string name, params string[] songs);
+
+    /// <summary>Resets the playback position of the specified playlist to the beginning.</summary>
+    /// <param name="name">The name of the playlist whose position is to be reset.</param>
+    void ResetPlaylistPosition(string name);
 
     /// <summary>Changes the current music playlist to the specified one.</summary>
     /// <param name="name">The name of the playlist to switch to.</param>

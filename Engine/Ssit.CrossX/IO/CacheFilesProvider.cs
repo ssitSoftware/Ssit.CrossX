@@ -43,7 +43,7 @@ public class CacheFilesProvider: IFilesProvider
     
     public Stream Open(string path)
     {
-        return File.Open(Path.Combine(_dir, path).Replace("!", ""), FileMode.Open);
+        return File.Open(Path.Combine(_dir, path).Replace("!", ""), FileMode.Open, FileAccess.Read);
     }
 
     public bool FileExists(string path)

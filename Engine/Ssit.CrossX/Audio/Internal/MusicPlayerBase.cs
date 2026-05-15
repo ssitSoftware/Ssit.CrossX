@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ssit.CrossX.Audio.Internal;
 
@@ -12,8 +13,23 @@ public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
 
     protected bool IsCurrentPlaylistSingleSong => _currentPlaylist?.List.Count == 1;
 
-    public IMusicPlayer RegisterPlaylist(string name, MusicPlaylist playlist)
+    public IMusicPlayer RegisterPlaylist(string name, params string[] songs)
     {
+        var playlist = new MusicPlaylist(songs.Select(o=> new Song(o)).ToArray());
+        _playlists.Add(name, playlist);
+        return this;
+    }
+
+    public void ResetPlaylistPosition(string name)
+    {
+        if (!_playlists.TryGetValue(name, out var playlist)) return;
+        playlist.CurrentPosition = 0;
+        playlist.CurrentSong = 0;
+    }
+
+    public IMusicPlayer RegisterPlaylist(string name, params Song[] songs)
+    {
+        var playlist = new MusicPlaylist(songs);
         _playlists.Add(name, playlist);
         return this;
     }

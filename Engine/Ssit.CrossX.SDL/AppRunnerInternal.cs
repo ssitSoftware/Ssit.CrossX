@@ -19,12 +19,20 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL;
 
+internal static class AppEventWatcher
+{
+    public static event Action AppActivated;
+    public static event Action AppDeativated;
+    
+    public static void CallAppActivated() => AppActivated?.Invoke();
+    public static void CallAppDeativated() => AppDeativated?.Invoke();
+}
+
 internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
 {
     public delegate void InitializeServicesDelegate(IIoCContainerBuilder builder);
 
     public delegate void InitializeAppDelegate(IIoCContainer container);
-
 
     public static void Run(object args = null, InitializeServicesDelegate initializeServicesDelegate = null, InitializeAppDelegate initializeAppDelegate = null)
     {
@@ -131,6 +139,9 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
             lastTicks = SDL_GetTicksNS();
         };
         
+        AppEventWatcher.AppActivated += () => eventSource.OnResume();
+        AppEventWatcher.AppDeativated += () => eventSource.OnPause();
+        
         while (appWindowManager.ShouldContinue)
         {
             SDL_Event @event;
@@ -163,6 +174,12 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
                         break;
 #endif
                     
+                    case SDL_EventType.SDL_EVENT_DID_ENTER_BACKGROUND:
+                        shouldDisplayAndUpdate = false;
+                        eventSource.OnPause();
+                        app.SetActive(false);
+                        break;
+                    
                     case SDL_EventType.SDL_EVENT_WILL_ENTER_BACKGROUND:
                         shouldDisplayAndUpdate = false;
                         eventSource.OnPause();
@@ -175,12 +192,9 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
                         appWindowManager.Close();
                         break;
                     
-                    case SDL_EventType.SDL_EVENT_WILL_ENTER_FOREGROUND:
-                        eventSource.OnResume();
-                        break;
-                    
                     case SDL_EventType.SDL_EVENT_DID_ENTER_FOREGROUND:
                         shouldDisplayAndUpdate = true;
+                        eventSource.OnResume();
                         app.SetActive(true);
                         break;
 

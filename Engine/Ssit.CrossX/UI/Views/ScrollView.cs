@@ -6,12 +6,12 @@ namespace Ssit.CrossX.UI.Views;
 public class ScrollView: Background, IFocusableView
 {
     public View ContentView { get; set; }
+    public View FocusFrameView { get; set; }
     public ScrollMode ScrollMode { get; set; }
-    public Length? ManualScrollSpeed { get; set; }
-    
-    public RgbaColor? FocusedBackgroundColor { get; set; }
+    public Length? ScrollExceed { get; set; }
+    public Length? AutoScrollSpeedX { get; set; }
+    public Length? AutoScrollSpeedY { get; set; }
+    public float AutoScrollResumeDelay { get; set; } = 1f;
     
     public string UniqueId { get; set; }
-    public (string left, string right) HorizontalNavigation { get; set; }
-    public (string up, string down) VerticalNavigation { get; set; }
 }

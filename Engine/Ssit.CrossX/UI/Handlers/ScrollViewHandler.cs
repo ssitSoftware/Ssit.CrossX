@@ -17,6 +17,7 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
 {
     private const float InertiaDecay = 8f;
     private const float InertiaStopThreshold = 1f; // pixels/sec squared
+    private const float BounceSpringRate = 18f;
     
     private ViewHandler _contentHandler;
 
@@ -39,13 +40,27 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
 
     public override void Update(float dt)
     {
-        if (!_trackingPointerId.HasValue && _velocity != Vector2.Zero)
+        if (!_trackingPointerId.HasValue)
         {
-            _scrollOffset += _velocity * dt;
-            ClampScrollOffset();
-            _velocity *= MathF.Exp(-InertiaDecay * dt);
-            if (_velocity.LengthSquared() < InertiaStopThreshold)
+            var (maxX, maxY) = GetMaxScrollOffset();
+            var clampedOffset = new Vector2(Math.Clamp(_scrollOffset.X, 0f, maxX), Math.Clamp(_scrollOffset.Y, 0f, maxY));
+
+            if (_scrollOffset != clampedOffset)
+            {
+                var springFactor = 1f - MathF.Exp(-BounceSpringRate * dt);
+                _scrollOffset = Vector2.Lerp(_scrollOffset, clampedOffset, springFactor);
                 _velocity = Vector2.Zero;
+                if ((_scrollOffset - clampedOffset).LengthSquared() < 0.01f)
+                    _scrollOffset = clampedOffset;
+            }
+            else if (_velocity != Vector2.Zero)
+            {
+                _scrollOffset += _velocity * dt;
+                ClampScrollOffset();
+                _velocity *= MathF.Exp(-InertiaDecay * dt);
+                if (_velocity.LengthSquared() < InertiaStopThreshold)
+                    _velocity = Vector2.Zero;
+            }
         }
 
         var child = AttachedView.ContentView;
@@ -209,14 +224,42 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         return Parent.GetParent<TParent>(optional);
     }
 
+    private (float maxX, float maxY) GetMaxScrollOffset() =>
+        (Math.Max(0f, _contentSize.Width - Bounds.Width),
+         Math.Max(0f, _contentSize.Height - Bounds.Height));
+
     private void ClampScrollOffset()
     {
-        var maxX = Math.Max(0f, _contentSize.Width - Bounds.Width);
-        var maxY = Math.Max(0f, _contentSize.Height - Bounds.Height);
+        var (maxX, maxY) = GetMaxScrollOffset();
         _scrollOffset = new Vector2(
             Math.Clamp(_scrollOffset.X, 0f, maxX),
             Math.Clamp(_scrollOffset.Y, 0f, maxY)
         );
+    }
+
+    private void RubberBandScrollOffset(float exceed)
+    {
+        var (maxX, maxY) = GetMaxScrollOffset();
+        _scrollOffset = new Vector2(
+            RubberBand(_scrollOffset.X, 0f, maxX, exceed),
+            RubberBand(_scrollOffset.Y, 0f, maxY, exceed)
+        );
+    }
+
+    // Maps excess drag beyond [min,max] to a resistance curve that asymptotically approaches ±exceed.
+    private static float RubberBand(float value, float min, float max, float exceed)
+    {
+        if (value < min)
+        {
+            var over = min - value;
+            return min - exceed * over / (over + exceed);
+        }
+        if (value > max)
+        {
+            var over = value - max;
+            return max + exceed * over / (over + exceed);
+        }
+        return value;
     }
 
     public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context)
@@ -238,14 +281,18 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
                 if ((scrollMode & ScrollMode.Vertical) == 0) delta = new Vector2(delta.X, 0);
 
                 _scrollOffset += delta;
-                ClampScrollOffset();
+                var scrollExceed = AttachedView.ScrollExceed.Calculate(CurrentScale, Math.Max(Bounds.Width, Bounds.Height));
+                if (scrollExceed > 0)
+                    RubberBandScrollOffset(scrollExceed);
+                else
+                    ClampScrollOffset();
 
                 if (delta != Vector2.Zero)
                 {
                     CalculateChildPosition(AttachedView.ContentView);
                 }
 
-                _velocityTracker.AddTouchMovement(_trackingPointerId.Value, pointer.Position, Environment.TickCount64 * 0.001);
+                _velocityTracker.AddTouchMovement(_trackingPointerId.Value, pointer.Position, DateTime.Now.TimeOfDay.TotalSeconds);
                 _lastPointerPosition = pointer.Position;
 
                 if (pointer.State == ButtonState.JustReleased)

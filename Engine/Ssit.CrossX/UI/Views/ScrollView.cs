@@ -8,6 +8,7 @@ public class ScrollView: Background, IFocusableView
     public View ContentView { get; set; }
     public ScrollMode ScrollMode { get; set; }
     public Length? ManualScrollSpeed { get; set; }
+    public Length ScrollExceed { get; set; }
     
     public RgbaColor? FocusedBackgroundColor { get; set; }
     

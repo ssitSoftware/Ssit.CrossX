@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Ssit.CrossX.Content;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -10,14 +14,17 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class HorizontalSliderHandler<TSlider> : ViewHandler<TSlider>, IUiCommandHandler where TSlider: HorizontalSlider, new()
+public class HorizontalSliderHandler<TSlider> : ViewHandler<TSlider>, IUiCommandHandler, IInputConsumer where TSlider: HorizontalSlider, new()
 {
+    private readonly PageInputContext _pageInputContext;
     private readonly IPaletteSource _paletteSource;
     private readonly ResourceHandle<DualTexture> _texture;
     private readonly IColorSource _colorSource;
+    private int? _currentPointerId;
     
-    public HorizontalSliderHandler(CreateHandlerParameters parameters, IContentManager contentManager, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null) : base(parameters)
+    public HorizontalSliderHandler(CreateHandlerParameters parameters, IContentManager contentManager, PageInputContext pageInputContext, IPaletteSource paletteSource = null) : base(parameters)
     {
+        _pageInputContext = pageInputContext;
         _paletteSource = paletteSource;
         _texture = contentManager.Get<DualTexture>(AttachedView.Template.Path);
         _colorSource = parameters.Parent?.GetParent<IColorSource>(true);
@@ -98,7 +105,7 @@ public class HorizontalSliderHandler<TSlider> : ViewHandler<TSlider>, IUiCommand
                     return true;
                 }
                 break;
-            
+
             case UiButton.Right:
                 if (AttachedView?.Value is not null)
                 {
@@ -110,5 +117,72 @@ public class HorizontalSliderHandler<TSlider> : ViewHandler<TSlider>, IUiCommand
                 break;
         }
         return false;
+    }
+
+    public void ProcessHover(Vector2? hoverPosition, int? matchingPointerId, IInputContext context)
+    {
+    }
+
+    public bool ProcessInput(IReadOnlyList<Pointer> pointers, IInputContext context)
+    {
+        if (AttachedView?.Value is null) return false;
+
+        if (_currentPointerId.HasValue)
+        {
+            var pointer = pointers.FirstOrDefault(o => o.Id == _currentPointerId.Value);
+            if (pointer != null)
+            {
+                UpdateValueFromPosition(pointer.Position.X);
+
+                if (pointer.State == ButtonState.JustReleased || pointer.State == ButtonState.Empty)
+                {
+                    _currentPointerId = null;
+                }
+                return true;
+            }
+            _currentPointerId = null;
+        }
+
+        foreach (var pointer in pointers)
+        {
+            if (pointer.State == ButtonState.JustPressed && ScreenBounds.Contains(pointer.Position))
+            {
+                _currentPointerId = pointer.Id;
+                context.CapturePointer(pointer.Id, this);
+                UpdateValueFromPosition(pointer.Position.X);
+
+                _pageInputContext.ShowFocus = false;
+                
+                var focusable = Parent.GetParent<IFocusable>(true);
+                if (focusable is not null)
+                {
+                    context.Focus(focusable, this);
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void CancelPointer(int pointerId, IInputContext context)
+    {
+        if (_currentPointerId == pointerId)
+        {
+            _currentPointerId = null;
+        }
+    }
+
+    private void UpdateValueFromPosition(float pointerX)
+    {
+        var sb = ScreenBounds;
+        var thumbWidth = AttachedView.Template.Thumb.Width * CurrentScale;
+        var totalWidth = sb.Width - thumbWidth;
+
+        if (totalWidth <= 0) return;
+
+        var floatOffset = Math.Clamp((pointerX - sb.X - thumbWidth / 2f) / totalWidth, 0f, 1f);
+        var range = AttachedView.Max - AttachedView.Min;
+        AttachedView.Value.Value = AttachedView.Min + (int)Math.Round(floatOffset * range);
     }
 }

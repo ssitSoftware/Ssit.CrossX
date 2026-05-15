@@ -14,7 +14,7 @@ public class FocusableContainerHandler(ViewHandler.CreateHandlerParameters param
     : ContainerHandler<FocusableContainer>(parameters, handlerMapper, paletteSource), IFocusable,
         IInputConsumer, IColorSource
 {
-    protected override RgbaColor? BackgroundColor(IRenderer2 _) => Focused ? AttachedView.FocusBackgroundColor?.GetColor(PaletteSource, renderer) ?? base.BackgroundColor(renderer) : base.BackgroundColor(renderer);
+    protected override RgbaColor? BackgroundColor(IRenderer2 _) => Focused && pageInputContext.ShowFocus ? AttachedView.FocusBackgroundColor?.GetColor(PaletteSource, renderer) ?? base.BackgroundColor(renderer) : base.BackgroundColor(renderer);
     
     public bool Enabled => !string.IsNullOrWhiteSpace(AttachedView.UniqueId);
     public bool Focused { get; private set; }
@@ -22,15 +22,15 @@ public class FocusableContainerHandler(ViewHandler.CreateHandlerParameters param
     
     public RgbaColor? GetColor(string id)
     {
-        if (Focused)
+        if (Focused && pageInputContext.ShowFocus)
         {
             switch (id)
             {
                 case nameof(FocusableContainer.FocusColor):
-                    return AttachedView.FocusColor?.GetColor(paletteSource, renderer);
+                    return AttachedView.FocusColor?.GetColor(PaletteSource, renderer);
                 
                 case nameof(FocusableContainer.FocusOutlineColor):
-                    return AttachedView.FocusOutlineColor?.GetColor(paletteSource, renderer);
+                    return AttachedView.FocusOutlineColor?.GetColor(PaletteSource, renderer);
             }
         }
 

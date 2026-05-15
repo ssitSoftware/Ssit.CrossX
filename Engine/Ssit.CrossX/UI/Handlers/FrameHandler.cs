@@ -13,9 +13,21 @@ public class FrameHandler(ViewHandler.CreateHandlerParameters parameters, IPalet
         base.OnDraw(renderer);
         
         var frameColor = FrameColor(renderer);
+        var frameWidth = AttachedView.FrameWidth?.Calculate(CurrentScale, ScreenBounds.Width) ?? CurrentScale;
+        
         if (frameColor.HasValue)
         {
-            renderer.GeometryRenderer.DrawRectangle(ScreenBounds, frameColor.Value);
+            var topRect =  new RectangleF(ScreenBounds.X, ScreenBounds.Y, ScreenBounds.Width, frameWidth);
+            renderer.GeometryRenderer.DrawRectangle(topRect, frameColor.Value);
+            
+            var bottomRect = new RectangleF(ScreenBounds.X, ScreenBounds.Bottom - frameWidth, ScreenBounds.Width, frameWidth);
+            renderer.GeometryRenderer.DrawRectangle(bottomRect, frameColor.Value);
+            
+            var leftRect = new RectangleF(ScreenBounds.X, ScreenBounds.Y + frameWidth, frameWidth, ScreenBounds.Height - frameWidth * 2);
+            renderer.GeometryRenderer.DrawRectangle(leftRect, frameColor.Value);
+            
+            var rightRect = new RectangleF(ScreenBounds.Right - frameWidth, ScreenBounds.Y + frameWidth, frameWidth, ScreenBounds.Height - frameWidth * 2);
+            renderer.GeometryRenderer.DrawRectangle(rightRect, frameColor.Value);
         }
     }
 }

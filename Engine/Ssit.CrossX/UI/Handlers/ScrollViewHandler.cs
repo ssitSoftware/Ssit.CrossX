@@ -6,6 +6,7 @@ using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
+using Ssit.CrossX.UI.Common.Pages;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
@@ -13,13 +14,21 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
-public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IViewParent, IInputConsumer, IChildrenContainer where TScrollView: ScrollView
+public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IViewParent, IInputConsumer, IChildrenContainer, IFocusable where TScrollView: ScrollView
 {
+    private readonly IUiSounds _uiSounds;
+    private readonly PageInputContext _pageInputContext;
+    private IInputContext _inputContext;
     private const float InertiaDecay = 8f;
     private const float InertiaStopThreshold = 1f; // pixels/sec squared
     private const float BounceSpringRate = 36f;
     
     private ViewHandler _contentHandler;
+    private ViewHandler _focusFrameHandler;
+    private ViewHandler _activeFrameHandler;
+
+    private bool _focused;
+    private bool _scrollActive;
 
     private readonly VelocityTracker _velocityTracker = new();
 
@@ -36,9 +45,17 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     private float ScrollExceed =>
         AttachedView?.ScrollExceed?.Calculate(CurrentScale, Math.Max(Bounds.Width, Bounds.Height)) ?? 0f;
 
-    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, IPaletteSource paletteSource = null) : base(parameters, paletteSource)
+    public ScrollViewHandler(CreateHandlerParameters parameters, IHandlerMapper handlerMapper, 
+        IUiSounds uiSounds, PageInputContext pageInputContext,
+        IPaletteSource paletteSource = null) : base(parameters, paletteSource)
     {
+        _uiSounds = uiSounds;
+        _pageInputContext = pageInputContext;
         _contentHandler = handlerMapper.Create(AttachedView.ContentView, this);
+        if (AttachedView.FocusFrameView != null)
+            _focusFrameHandler = handlerMapper.Create(AttachedView.FocusFrameView, this);
+        if (AttachedView.ActiveFrameView != null)
+            _activeFrameHandler = handlerMapper.Create(AttachedView.ActiveFrameView, this);
         _children = [_contentHandler];
         _autoScrollPausedTimer = AttachedView.AutoScrollResumeDelay;
     }
@@ -101,9 +118,34 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
                 }
             }
         }
-        else
+
+        if (_scrollActive || _trackingPointerId.HasValue)
         {
             _autoScrollPausedTimer = AttachedView.AutoScrollResumeDelay;
+        }
+
+        if (_scrollActive && _inputContext != null)
+        {
+            var scrollMode = AttachedView.ScrollMode;
+            var manualScrollSpeed = AttachedView.ManualScrollSpeed?.Calculate(CurrentScale, 1) ?? CurrentScale * 50;
+            if ((scrollMode & ScrollMode.Vertical) != 0)
+            {
+                var verticalSpeed = _inputContext.IsUiButtonDown(UiButton.Up) ? 1f : 0;
+                verticalSpeed += _inputContext.IsUiButtonDown(UiButton.Down) ? -1f : 0;
+                verticalSpeed *= manualScrollSpeed;
+                    
+                _scrollOffset.Y -= verticalSpeed * dt;
+                ClampScrollOffset();
+            }
+
+            if ((scrollMode & ScrollMode.Horizontal) != 0)
+            {
+                var horizontalSpeed = _inputContext.IsUiButtonDown(UiButton.Left) ? 1f : 0;
+                horizontalSpeed += _inputContext.IsUiButtonDown(UiButton.Right) ? -1f : 0;
+                horizontalSpeed *= manualScrollSpeed;
+                
+                _scrollOffset.X -= horizontalSpeed * dt;
+            }
         }
 
         var child = AttachedView.ContentView;
@@ -112,6 +154,9 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
             var handlerView = (IHandlerView)child;
             handlerView.Handler.Update(dt);
         }
+
+        _focusFrameHandler?.Update(dt);
+        _activeFrameHandler?.Update(dt);
 
         RecalculateChildrenLayouts();
     }
@@ -122,11 +167,13 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
 
         renderer.StateManager.SaveState();
         renderer.StateManager.SetClipRect(ScreenBounds);
-
-        
         _contentHandler?.Draw(renderer);
-
         renderer.StateManager.RestoreState();
+
+        if (_scrollActive)
+            _activeFrameHandler?.Draw(renderer);
+        else if (_focused)
+            _focusFrameHandler?.Draw(renderer);
     }
 
     protected virtual void RecalculateChildrenLayouts()
@@ -135,6 +182,10 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
             return;
 
         CalculateChildPosition(AttachedView.ContentView);
+
+        var frameBounds = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+        _focusFrameHandler?.SetBounds(frameBounds);
+        _activeFrameHandler?.SetBounds(frameBounds);
     }
 
     private void CalculateChildPosition(View child)
@@ -249,6 +300,10 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         base.OnDispose(disposing);
         _contentHandler?.Dispose();
         _contentHandler = null;
+        _focusFrameHandler?.Dispose();
+        _focusFrameHandler = null;
+        _activeFrameHandler?.Dispose();
+        _activeFrameHandler = null;
         _children = [];
     }
 
@@ -390,5 +445,64 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
             _velocity = Vector2.Zero;
             _velocityTracker.Reset();
         }
+    }
+
+    // IFocusable
+    bool IFocusable.Enabled => !string.IsNullOrEmpty(AttachedView?.UniqueId);
+    bool IFocusable.Focused => _focused;
+    bool IFocusable.DisableAllInput => false;
+    bool IFocusable.SkipNavigation => false;
+    string IFocusable.UniqueId => AttachedView?.UniqueId;
+
+    void IFocusable.SetFocus() => _focused = true;
+
+    bool IFocusable.ResetFocus()
+    {
+        _focused = false;
+        _scrollActive = false;
+        return true;
+    }
+
+    bool IFocusable.OnUiButton(UiButton button, IInputContext context)
+    {
+        _inputContext = context;
+        
+        if (button == UiButton.Select)
+        {
+            _scrollActive = !_scrollActive;
+            return true;
+        }
+
+        if (!_scrollActive)
+        {
+            var focusDirection = button switch
+            {
+                UiButton.Up => FocusDirection.Up,
+                UiButton.Down => FocusDirection.Down,
+                UiButton.Left => FocusDirection.Left,
+                UiButton.Right => FocusDirection.Right,
+                _ => FocusDirection.None
+            };
+
+            if (focusDirection != FocusDirection.None)
+            {
+                if (!_pageInputContext.ShowFocus)
+                {
+                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+                    _pageInputContext.ShowFocus = true;
+                    context.Focus(this, this);
+                    return true;
+                }
+
+                if (context.MoveFocus(focusDirection, this))
+                {
+                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

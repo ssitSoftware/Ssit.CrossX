@@ -323,6 +323,38 @@ internal sealed class InputProcessor: IInputContext
         return page.MoveFocus(direction);
     }
 
+    public bool IsUiButtonDown(UiButton button)
+    {
+        switch (button)
+        {
+            case UiButton.Left:
+                return _keyboard.GetKey(Key.Left).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.DPadLeft).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.LeftStickLeft).IsDown ||
+                       _virtualGameInput.GetButton(GameControllerButton.DPadLeft).IsDown;
+            
+            case UiButton.Right:
+                return _keyboard.GetKey(Key.Right).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.DPadRight).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.LeftStickRight).IsDown ||
+                       _virtualGameInput.GetButton(GameControllerButton.DPadRight).IsDown;
+            
+            case UiButton.Up:
+                return _keyboard.GetKey(Key.Up).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.DPadUp).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.LeftStickUp).IsDown ||
+                       _virtualGameInput.GetButton(GameControllerButton.DPadUp).IsDown;
+            
+            case UiButton.Down:
+                return _keyboard.GetKey(Key.Down).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.DPadDown).IsDown ||
+                       _gameControllers.GetButton(0, GameControllerButton.LeftStickDown).IsDown ||
+                       _virtualGameInput.GetButton(GameControllerButton.DPadDown).IsDown;
+        }
+
+        return false;
+    }
+
     private IFocusable FindFocusable(ViewHandler handler, string name)
     {
         if (handler is IFocusable focusable && focusable.UniqueId == name)

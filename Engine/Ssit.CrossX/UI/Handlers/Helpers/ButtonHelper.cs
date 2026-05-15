@@ -213,7 +213,7 @@ public class ButtonHelper<TView, TViewHandler>: IDisposable where TView: View, I
             case UiButton.Select:
                 if (IsEnabled)
                 {
-                    if (true == AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
+                    if (AttachedView.EnabledCommandTypes.HasFlag(ButtonCommandType.Select))
                     {
                         if (!_pageInputContext.ShowFocus)
                         {

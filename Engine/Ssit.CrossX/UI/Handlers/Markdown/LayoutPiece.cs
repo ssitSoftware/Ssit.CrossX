@@ -3,6 +3,7 @@ using Ssit.CrossX.Graphics.Font;
 
 namespace Ssit.CrossX.UI.Handlers.Markdown;
 
+// This class was created with Claude Code assistance
 internal class LayoutPiece
 {
     public float X;

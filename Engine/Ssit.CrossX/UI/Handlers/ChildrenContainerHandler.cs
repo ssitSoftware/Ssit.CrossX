@@ -22,6 +22,8 @@ public abstract class ChildrenContainerHandler<TContainer>
 
     IReadOnlyList<ViewHandler> IChildrenContainer.Children => _childrenHandlersList;
 
+    protected IReadOnlyList<ViewHandler> Children => _childrenHandlersList;
+    
     TParent IViewParent.GetParent<TParent>(bool optional)
     {
         if (this is TParent parent)

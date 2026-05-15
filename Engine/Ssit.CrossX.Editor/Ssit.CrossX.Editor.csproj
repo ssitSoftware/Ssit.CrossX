@@ -6,13 +6,13 @@
         <RootNamespace>Ssit.CrossX.Editor</RootNamespace>
         <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
     </PropertyGroup>
-
-
+    
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.22.0" />
         <PackageReference Include="Avalonia" Version="11.3.11" />
         <PackageReference Include="Avalonia.Desktop" Version="11.3.11" />
         <PackageReference Include="Avalonia.Skia" Version="11.3.11" />

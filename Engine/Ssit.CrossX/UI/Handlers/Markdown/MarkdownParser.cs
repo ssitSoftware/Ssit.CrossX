@@ -3,6 +3,7 @@ using Ssit.CrossX.UI.Views.Markdown;
 
 namespace Ssit.CrossX.UI.Handlers.Markdown;
 
+// Markdown parser class created with Claude Code assistance
 internal static class MarkdownParser
 {
     public static List<MarkdownBlock> Parse(string text)

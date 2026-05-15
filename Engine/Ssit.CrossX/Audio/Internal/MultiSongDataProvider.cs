@@ -4,6 +4,7 @@ using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.Audio.Internal;
 
+// This class was partially created with Claude Code assistance
 public class MultiSongDataProvider : IMusicDataProvider
 {
     private readonly IFilesProvider _filesProvider;
@@ -23,15 +24,23 @@ public class MultiSongDataProvider : IMusicDataProvider
     {
         _filesProvider = filesProvider;
         _songs = songs;
+        
         OpenSong(startSongIndex);
-        if (startBlockOffset > 0) _current.Skip(startBlockOffset, blockSize);
+        
+        if (startBlockOffset > 0)
+        {
+            _current.Skip(startBlockOffset, blockSize);
+        }
     }
 
     private void OpenSong(int index)
     {
         _current?.Dispose();
+        
         var stream = _filesProvider.Open(_songs[index].Path);
+        
         _current = new VorbisDataProvider(stream);
+        
         _songIndex = index;
 
         if (Frequency == 0 || index == 0)
@@ -53,16 +62,20 @@ public class MultiSongDataProvider : IMusicDataProvider
             if (samplesRead < buffer.Length)
             {
                 if (_tempBuffer == null || _tempBuffer.Length < buffer.Length)
+                {
                     _tempBuffer = new short[buffer.Length];
+                }
 
                 var more = _current.Read(_tempBuffer);
                 var toCopy = Math.Min(more, buffer.Length - samplesRead);
+                
                 Array.Copy(_tempBuffer, 0, buffer, samplesRead, toCopy);
                 samplesRead += toCopy;
             }
         }
 
         if (samplesRead > 0) Position++;
+        
         return samplesRead;
     }
 

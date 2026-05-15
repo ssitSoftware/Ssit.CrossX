@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Internal;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Graphics.Sprites.Json;
 using Ssit.CrossX.IO;
@@ -39,6 +40,11 @@ internal class ContentManager: IContentManager
         RegisterLoader<Sprite>(path => JsonSpriteLoader.Load(path, filesProvider));
         RegisterLoader<SpriteEx>(path => SpriteEx.Load(path, filesProvider, this, _iocContainer));
         RegisterLoader<SpriteCollider>(path => SpriteCollider.Load(path, filesProvider));
+        RegisterLoader<DualTexture>(path =>
+        {
+            var (t1,t2) = TextureHelper.LoadComplexSheet(filesProvider, iocContainer, path);
+            return new DualTexture(t1, t2);
+        });
     }
 
     public void RemoveCache<TResource>(string path) where TResource : class, IDisposable

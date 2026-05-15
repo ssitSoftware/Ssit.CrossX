@@ -54,10 +54,7 @@ public class IconCheckBoxHandler<TCheckBox> : BackgroundHandler<TCheckBox>, IInp
         return false;
     }
 
-    public void SetFocus()
-    {
-        Focused = true;
-    }
+    public void SetFocus() => Focused = true;
 
     public bool ResetFocus()
     {

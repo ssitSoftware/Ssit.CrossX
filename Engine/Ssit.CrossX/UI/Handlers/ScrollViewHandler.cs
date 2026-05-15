@@ -14,6 +14,7 @@ using Ssit.CrossX.UI.Views;
 
 namespace Ssit.CrossX.UI.Handlers;
 
+// This class was partially created with Claude Code assistance
 public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IViewParent, IInputConsumer, IChildrenContainer, IFocusable where TScrollView: ScrollView
 {
     private readonly IUiSounds _uiSounds;
@@ -290,10 +291,7 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         SignalRecalculationPending();
     }
 
-    public RectangleF CalculateTargetBounds()
-    {
-        return new RectangleF(0, 0, Bounds.Width, Bounds.Height);
-    }
+    public RectangleF CalculateTargetBounds() => new(0, 0, Bounds.Width, Bounds.Height);
 
     protected override void OnDispose(bool disposing)
     {
@@ -453,7 +451,6 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
     bool IFocusable.DisableAllInput => false;
     bool IFocusable.SkipNavigation => false;
     string IFocusable.UniqueId => AttachedView?.UniqueId;
-
     void IFocusable.SetFocus() => _focused = true;
 
     bool IFocusable.ResetFocus()
@@ -469,40 +466,40 @@ public class ScrollViewHandler<TScrollView> : BackgroundHandler<TScrollView>, IV
         
         if (button == UiButton.Select)
         {
+            _uiSounds[UiSounds.ExecuteSound]?.PlayOnce();
             _scrollActive = !_scrollActive;
             return true;
         }
 
-        if (!_scrollActive)
+        if (_scrollActive) 
+            return false;
+        
+        var focusDirection = button switch
         {
-            var focusDirection = button switch
-            {
-                UiButton.Up => FocusDirection.Up,
-                UiButton.Down => FocusDirection.Down,
-                UiButton.Left => FocusDirection.Left,
-                UiButton.Right => FocusDirection.Right,
-                _ => FocusDirection.None
-            };
+            UiButton.Up => FocusDirection.Up,
+            UiButton.Down => FocusDirection.Down,
+            UiButton.Left => FocusDirection.Left,
+            UiButton.Right => FocusDirection.Right,
+            _ => FocusDirection.None
+        };
 
-            if (focusDirection != FocusDirection.None)
-            {
-                if (!_pageInputContext.ShowFocus)
-                {
-                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
-                    _pageInputContext.ShowFocus = true;
-                    context.Focus(this, this);
-                    return true;
-                }
-
-                if (context.MoveFocus(focusDirection, this))
-                {
-                    _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
-                }
-
-                return true;
-            }
+        if (focusDirection == FocusDirection.None) 
+            return false;
+        
+        if (!_pageInputContext.ShowFocus)
+        {
+            _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+            _pageInputContext.ShowFocus = true;
+            context.Focus(this, this);
+            return true;
         }
 
-        return false;
+        if (context.MoveFocus(focusDirection, this))
+        {
+            _uiSounds[UiSounds.ItemNavigateSound]?.PlayOnce();
+        }
+
+        return true;
+
     }
 }

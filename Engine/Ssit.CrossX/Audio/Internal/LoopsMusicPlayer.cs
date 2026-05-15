@@ -8,6 +8,7 @@ using Ssit.IoC;
 
 namespace Ssit.CrossX.Audio.Internal;
 
+// This class was partially created with Claude Code assistance
 public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
 {
     private const int BufferLength = 88200 / 10;

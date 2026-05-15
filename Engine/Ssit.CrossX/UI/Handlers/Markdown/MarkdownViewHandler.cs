@@ -13,17 +13,19 @@ using Ssit.CrossX.UI.Views.Markdown;
 
 namespace Ssit.CrossX.UI.Handlers.Markdown;
 
+// MarkdownView handler class created with Claude Code assistance
 public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownView> where TMarkdownView: MarkdownView
 {
     private readonly IFontsManager _fontsManager;
     private readonly IContentManager _contentManager;
     private readonly IColorSource _colorSource;
 
-    private List<MarkdownBlock> _blocks = new();
     private readonly List<LayoutLine> _layoutLines = new();
+    private readonly Dictionary<string, ResourceHandle<ITexture>> _textures = new();
+
+    private List<MarkdownBlock> _blocks = new();
     private float _totalHeight;
     private float _lastLayoutWidth = -1;
-    private readonly Dictionary<string, ResourceHandle<ITexture>> _textures = new();
 
     public MarkdownViewHandler(
         CreateHandlerParameters parameters,
@@ -50,15 +52,13 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         _lastLayoutWidth = -1;
         _layoutLines.Clear();
         _totalHeight = 0;
+
         Parent?.RecalculateLayout(AttachedView);
     }
 
     public override void CalculateSize(out Length width, out Length height)
     {
-        if (AttachedView.Width.HasValue)
-            width = AttachedView.Width.Value;
-        else
-            width = Length.Fill;
+        width = AttachedView.Width ?? Length.Fill;
 
         if (AttachedView.Height is { IsAuto: false })
         {
@@ -70,7 +70,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
         // Fixed explicit widths are known immediately; Fill widths become known
         // only after SetBounds has run once and updated ScreenBounds.
         float refPixelWidth;
-        if (!width.IsAuto && width.Percent == 0 && width.Value > 0)
+        if (width is { IsAuto: false, Percent: 0, Value: > 0 })
             refPixelWidth = width.Calculate(CurrentScale, 0);
         else if (ScreenBounds.Width > 0)
             refPixelWidth = ScreenBounds.Width;
@@ -255,7 +255,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             ? mapper.GetFont(style)
             : new FontDesc { FontFamily = "Default", FontSize = 12 };
 
-        var requestedSize = desc.FontSize > 0 ? (float)desc.FontSize : 12f;
+        var requestedSize = desc.FontSize > 0 ? desc.FontSize : 12f;
 
         if (AttachedView.Scaling == TextScaling.Default)
         {
@@ -368,21 +368,21 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             var texture = GetOrLoadTexture(imagePath);
             if (texture == null) return;
 
-            var texW = (float)texture.Size.Width;
-            var texH = (float)texture.Size.Height;
+            var textureWidth = (float)texture.Size.Width;
+            var textureHeight = (float)texture.Size.Height;
 
             var s = AttachedView.Scaling != TextScaling.None ? CurrentScale : 1f;
-            var dispW = texW * s;
-            var dispH = texH * s;
+            var displayWidth = textureWidth * s;
+            var displayHeight = textureHeight * s;
 
-            if (dispW > maxWidth)
+            if (displayWidth > maxWidth)
             {
-                s = maxWidth / texW;
-                dispW = maxWidth;
-                dispH = texH * s;
+                s = maxWidth / textureWidth;
+                displayWidth = maxWidth;
+                displayHeight = textureHeight * s;
             }
 
-            if (currentX + dispW > maxWidth + 0.5f && currentX > 0)
+            if (currentX + displayWidth > maxWidth + 0.5f && currentX > 0)
             {
                 FinishLine(lineSpacing);
             }
@@ -390,15 +390,15 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
             linePieces.Add(new LayoutPiece
             {
                 X = currentX,
-                Width = dispW,
+                Width = displayWidth,
                 Texture = texture,
-                TextureSize = new SizeF(dispW, dispH),
+                TextureSize = new SizeF(displayWidth, displayHeight),
             });
-            currentX += dispW;
+            currentX += displayWidth;
 
             if (includeImageHeightToLineHeight)
             {
-                lineHeight = MathF.Max(lineHeight, dispH);
+                lineHeight = MathF.Max(lineHeight, displayHeight);
             }
         }
 
@@ -411,29 +411,35 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                 var texture = GetOrLoadTexture(block.ImagePath);
                 if (texture != null)
                 {
-                    var texW = (float)texture.Size.Width;
-                    var texH = (float)texture.Size.Height;
+                    var textureWidth = (float)texture.Size.Width;
+                    var textureHeight = (float)texture.Size.Height;
                     var s = AttachedView.Scaling != TextScaling.None ? CurrentScale : 1f;
-                    var dispW = texW * s;
-                    var dispH = texH * s;
-                    if (dispW > maxWidth) { s = maxWidth / texW; dispW = maxWidth; dispH = texH * s; }
+                    var displayWidth = textureWidth * s;
+                    var displayHeight = textureHeight * s;
+
+                    if (displayWidth > maxWidth)
+                    {
+                        s = maxWidth / textureWidth;
+                        displayWidth = maxWidth;
+                        displayHeight = textureHeight * s; }
 
                     _layoutLines.Add(new LayoutLine
                     {
                         Y = y,
-                        Height = dispH,
+                        Height = displayHeight,
+                        Width = displayWidth,
                         Pieces =
                         {
                             new LayoutPiece
                             {
                                 X = 0,
-                                Width = dispW,
+                                Width = displayWidth,
                                 Texture = texture,
-                                TextureSize = new SizeF(dispW, dispH),
+                                TextureSize = new SizeF(displayWidth, displayHeight),
                             }
                         },
                     });
-                    y += dispH;
+                    y += displayHeight;
                 }
 
                 y += AttachedView.ParagraphSpacing >= 0f ? AttachedView.ParagraphSpacing : block.MarginBottom;
@@ -480,7 +486,7 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
                         var codeLine = codeLines[cli];
                         if (codeLine.Length > 0)
                         {
-                            var cw = font.TextSize((TextSource)codeLine, TextSpacing.Normal).Width * fontScale;
+                            var cw = font.TextSize((TextSource)codeLine).Width * fontScale;
                             linePieces.Add(new LayoutPiece { X = 0, Width = cw, Text = codeLine, Font = font, FontScale = fontScale });
                         }
                         lineHeight = MathF.Max(lineHeight, spanLineH);
@@ -526,8 +532,11 @@ public class MarkdownViewHandler<TMarkdownView> : BackgroundHandler<TMarkdownVie
 
     private ITexture GetOrLoadTexture(string path)
     {
-        if (path == null) return null;
-        if (_textures.TryGetValue(path, out var cached)) return cached.Resource;
+        if (path == null) 
+            return null;
+        
+        if (_textures.TryGetValue(path, out var cached)) 
+            return cached.Resource;
 
         try
         {

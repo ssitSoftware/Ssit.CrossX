@@ -155,8 +155,8 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
             lastTicks = SDL_GetTicksNS();
         };
         
-        AppEventWatcher.AppActivated += () => actionScheduler.Schedule(eventSource.OnResume);
-        AppEventWatcher.AppDeativated += () => actionScheduler.Schedule(eventSource.OnPause);
+        AppEventWatcher.AppActivated += eventSource.OnResume;
+        AppEventWatcher.AppDeativated += eventSource.OnPause;
         
         while (appWindowManager.ShouldContinue)
         {

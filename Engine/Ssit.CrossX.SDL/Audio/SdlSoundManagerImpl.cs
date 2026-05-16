@@ -17,6 +17,7 @@ public unsafe class SdlSoundManagerImpl: ISoundManager, IUpdatable
 
     public readonly SdlHandle<MIX_Mixer> MixerHandle;
     private readonly List<SdlSoundEffectInstanceImpl> _attachedInstances = new();
+    
     private float _soundVolume = 1;
     private float _musicVolume = 1;
 

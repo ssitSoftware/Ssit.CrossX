@@ -35,6 +35,9 @@ internal sealed class InputProcessor: IInputContext
 
     private void PrepareInputConsumers(ViewHandler handler)
     {
+        if (!handler.View.Visible.Value)
+            return;
+        
         if (handler is IInputConsumer consumer)
         {
             _inputConsumers.Add(consumer);

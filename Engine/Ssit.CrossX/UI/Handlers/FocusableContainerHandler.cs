@@ -37,15 +37,31 @@ public class FocusableContainerHandler(ViewHandler.CreateHandlerParameters param
         return null;
     }
     
-    public bool OnUiButton(UiButton button, IInputContext context)
+    private void GetChildrenCommandHandlers(IList<IUiCommandHandler> list, IReadOnlyList<ViewHandler> children)
     {
-        foreach (var child in Children)
+        foreach (var child in children)
         {
             if (child is IUiCommandHandler handler)
             {
-                if (handler.OnUiButton(button, context))
-                    return true;
+                list.Add(handler);
             }
+
+            if (child is IChildrenContainer container)
+            {
+                GetChildrenCommandHandlers(list, container.Children);
+            }
+        }
+    }
+    
+    public bool OnUiButton(UiButton button, IInputContext context)
+    {
+        var handlers = new List<IUiCommandHandler>();
+        GetChildrenCommandHandlers(handlers, Children);
+        
+        foreach (var handler in handlers)
+        {
+            if (handler.OnUiButton(button, context))
+                return true;
         }
         
         var focusDirection = button switch

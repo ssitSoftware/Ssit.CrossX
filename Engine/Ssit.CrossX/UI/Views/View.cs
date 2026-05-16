@@ -60,7 +60,7 @@ public abstract class View: IHandlerView
     
     public void RecalculatePositionAndSize() => Handler?.RecalculatePositionAndSize();
 
-    internal ViewHandler Handler { private get; set; }
+    internal ViewHandler Handler { get; set; }
 
     void IHandlerView.Initialize(IUiServices services) => Initialize(services);
     

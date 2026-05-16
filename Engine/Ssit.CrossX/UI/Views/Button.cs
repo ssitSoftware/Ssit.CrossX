@@ -7,8 +7,8 @@ namespace Ssit.CrossX.UI.Views;
 
 public class Button: Container, IButtonView
 {
-    public IButtonStateColors TextColors { get; set; }
-    public IButtonStateColors TextOutlineColors { get; set; }
+    public IButtonStateColors ForegroundColors { get; set; }
+    public IButtonStateColors OutlineColors { get; set; }
     public IButtonStateColors BackgroundColors { get; set; }
     
     public TimeSpan KeyCommandDelay { get; set; } = TimeSpan.FromMilliseconds(100);

@@ -92,7 +92,7 @@ internal class Body : IBody
         _simulation = simulation;
         Owner = owner;
         
-        if(owner is IBodyEventsReceiver rec)
+        if (owner is IBodyEventsReceiver rec)
         {
             _eventsReceivers.Add(rec);
         }

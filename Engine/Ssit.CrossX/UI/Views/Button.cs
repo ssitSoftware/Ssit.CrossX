@@ -1,16 +1,25 @@
+using System;
 using System.Windows.Input;
+using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
-public class Button: View
+public class Button: Container, IButtonView
 {
-    public SharedString Text { get; set; }
+    public IButtonStateColors TextColors { get; set; }
+    public IButtonStateColors TextOutlineColors { get; set; }
+    public IButtonStateColors BackgroundColors { get; set; }
     
-    public RgbaColor? Color { get; set; }
-    public RgbaColor? SelectedColor { get; set; }
-    public RgbaColor? PushedColor { get; set; }
-    public RgbaColor? DisabledColor { get; set; }
+    public TimeSpan KeyCommandDelay { get; set; } = TimeSpan.FromMilliseconds(100);
+    public TimeSpan CommandDelay { get; set; } = TimeSpan.FromMilliseconds(33);
     
     public ICommand Command { get; set; }
+    public object CommandParameter { get; set; }
+    
+    public string UniqueId { get; set; }
+    public string CommandSoundId { get; set; }
+    public ButtonCommandType EnabledCommandTypes { get; set; } = ButtonCommandType.Select;
+    public IUiSounds CustomSounds { get; set; }
+    public SharedValue<bool> HapticFeedback { get; set; } = false;
 }

@@ -68,7 +68,7 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
         SteeringStateMachine.InternalStateMachine.OnStateChanged += SteeringStateMachineOnOnStateChanged;
     }
     
-    protected void DetectOnGround()
+    protected virtual void DetectOnGround()
     {
         this.DetectOnGround(out SteeringParameters.IsOnGround, out SteeringParameters.IsOnPlatform, out SteeringParameters.IsOnStaticGround, out SteeringParameters.GroundMaterial, GroundDetectionEpsilon);
     }

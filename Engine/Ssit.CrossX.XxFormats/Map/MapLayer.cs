@@ -1,3 +1,4 @@
+using System.Numerics;
 using Ssit.CrossX.Utils;
 using Ssit.CrossX.XxFormats.Editor;
 using Ssit.CrossX.XxFormats.Template;
@@ -96,8 +97,6 @@ public class MainLayer : MapLayer
     {
         if (CameraAreas.GetLength(0) == 0)
             return;
-        
-        
     }
 }
 
@@ -266,6 +265,11 @@ public class MapLayer: BindableModel
         }
 
         Tiles = tiles;
+
+        foreach (var obj in Objects)
+        {
+            obj.Position += new Vector2(offsetX, offsetY);
+        }
         
         OnPropertyChanged(nameof(Width));
         OnPropertyChanged(nameof(Height));

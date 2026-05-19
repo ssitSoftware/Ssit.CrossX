@@ -47,19 +47,25 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
     protected GameObjectsServices Services { get; }
 
     public int ZOrder { get; }
-    public RectangleF Bounds { get; private set; }
+    public virtual RectangleF Bounds { get; protected set; }
     public IBody Body { get; }
+    
+    private readonly bool _isBackground;
 
-    protected RopeObjectBase(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters, float segmentDistance, IMaterial ropeTriggerMaterial)
+    protected RopeObjectBase(GameObjectsServices services, ObjectCreationParameters<Parameters> parameters, float segmentDistance, IMaterial ropeTriggerMaterial, bool isBackground = false)
     {
         Services = services;
 
         _maxSegmentDistance = segmentDistance;
         _anchorPosition = parameters.Position;
         _windStrength = parameters.Parameters.WindStrength;
+        _isBackground = isBackground;
+        
         ZOrder = parameters.ZOrder;
         _ropeTriggerMaterial = ropeTriggerMaterial;
 
+        _windTime = Random.Shared.NextSingle() * 17f;
+        
         Body = services.Simulation.CreateBody(this);
         Body.IsKinematic = true;
         Body.Position = parameters.Position;
@@ -95,7 +101,7 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
         var pad = new Vector2(totalLength + 1, totalLength + 1);
         Bounds = new RectangleF(start - pad with { Y = 1 }, new SizeF(pad.X * 2, pad.Y + 1));
 
-        if (_triggerCollider == null)
+        if (_triggerCollider == null && !_isBackground)
         {
             _triggerCollider = Services.Simulation.CreateCollider(new RectColliderCreationParameters
             {
@@ -334,11 +340,11 @@ public abstract class RopeObjectBase : IBodyOwner, IGameObjectRenderer2, IPendul
                 dir = Vector2.Lerp(dir, dir2, 0.5f);
             }
             
-            RenderSegment(renderer, i, screenPos, dir);
+            RenderSegment(renderer, i,  _positions.Length, screenPos, dir);
         }
     }
 
-    protected abstract void RenderSegment(IRenderer2 renderer, int segmentIndex, Vector2 screenPosition, Vector2 direction);
+    protected abstract void RenderSegment(IRenderer2 renderer, int segmentIndex, int segmentCount, Vector2 screenPosition, Vector2 direction);
 
     void IDisposable.Dispose() => OnDispose();
 

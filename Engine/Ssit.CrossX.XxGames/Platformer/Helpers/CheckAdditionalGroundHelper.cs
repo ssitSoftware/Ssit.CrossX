@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Steering;
 
-namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
+namespace Ssit.CrossX.XxGames.Platformer.Helpers;
 
-public class CheckAdditionalGroundBehaviorBase: SteeringBehavior<ISteeringCharacter>
+public class CheckAdditionalGroundHelper(params int[] excludeMaterials)
 {
-    protected bool IsOnGroundExtra(ISteeringCharacter obj)
+    private readonly HashSet<int> _excludesMaterials = [..excludeMaterials];
+    
+    public bool IsOnGroundExtra(ISteeringCharacter obj)
     {
         if (!obj.SteeringParameters.IsOnGround)
         {
@@ -28,6 +30,14 @@ public class CheckAdditionalGroundBehaviorBase: SteeringBehavior<ISteeringCharac
             var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body);
             if (colliders.Count == 0)
                 return false;
+
+            foreach (var collider in colliders)
+            {
+                if (_excludesMaterials.Contains(collider.Material.Index))
+                {
+                    return false;
+                }
+            }
         }
 
         return true;

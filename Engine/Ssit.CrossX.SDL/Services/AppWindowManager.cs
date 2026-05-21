@@ -95,6 +95,14 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
         return new Size(rect.w, rect.h);
     }
 
+    public (int w, int h, int hz) GetDisplayMode()
+    {
+        var display =  SDL_GetDisplayForWindow(window);
+        var mode = SDL_GetCurrentDisplayMode(display);
+
+        return (mode->w, mode->h, (int)Math.Ceiling(mode->refresh_rate));
+    }
+
     public void RaiseAppExiting(WindowClosingEventArgs args)
     {
         Closing?.Invoke(args);

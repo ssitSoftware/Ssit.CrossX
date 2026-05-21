@@ -2,7 +2,7 @@ using System;
 
 namespace Ssit.CrossX.XxGames.Logic;
 
-public class GameTimer(float minDelta)
+public class GameTimer(float? minDelta): IGameTimer
 {
     private float _gameTime;
     private int _framesCount;
@@ -42,12 +42,12 @@ public class GameTimer(float minDelta)
 
             var dt = 1 / fps;
 
-            TimeDelta = TimeDeltas[0];
+            var timeDelta = TimeDeltas[0];
             for (var i = 1; i < TimeDeltas.Length; i++)
             {
-                if ( MathF.Abs(dt - TimeDeltas[i]) <= MathF.Abs(dt - TimeDelta) )
+                if ( MathF.Abs(dt - TimeDeltas[i]) <= MathF.Abs(dt - timeDelta) )
                 {
-                    TimeDelta = TimeDeltas[i];
+                    timeDelta = TimeDeltas[i];
                 }
             }
 
@@ -56,20 +56,22 @@ public class GameTimer(float minDelta)
             {
                 div++;
                 dt = 1 / fps / div;
-                TimeDelta = TimeDeltas[0];
+                timeDelta = TimeDeltas[0];
                 for (var i = 1; i < TimeDeltas.Length; i++)
                 {
-                    if ( MathF.Abs(dt - TimeDeltas[i]) <= MathF.Abs(dt - TimeDelta) )
+                    if ( MathF.Abs(dt - TimeDeltas[i]) <= MathF.Abs(dt - timeDelta) )
                     {
-                        TimeDelta = TimeDeltas[i];
+                        timeDelta = TimeDeltas[i];
                     }
                 }
             }
 
-            if (TimeDelta < minDelta)
+            if (timeDelta < minDelta.GetValueOrDefault())
             {
-                TimeDelta = minDelta;
+                timeDelta = minDelta.GetValueOrDefault();
             }
+
+            TimeDelta = timeDelta;
         }
     }
 }

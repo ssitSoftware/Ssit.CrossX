@@ -26,7 +26,8 @@ public class AabbGameInstance : IGameInstance, IMessenger
         public Action<IIoCContainerBuilder> RegisterServices { get; set; }
         public IMaterial[] Materials { get; set; }
         public int BackgroundColorIndex { get; set; }
-        public float MinDelta { get; set; } = 0f;
+        public int? MaxFps { get; set; }
+        public int? FixedFps { get; set; }
     }
     
     IIoCContainer IGameInstance.Services => Container;
@@ -36,8 +37,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
     public event Action<object> Message;
     public IMessenger Messenger => this;
     
-    public float WorldDelta => _timer.TimeDelta;
-    private readonly GameTimer _timer;
+    private readonly IGameTimer _timer;
 
     private readonly IActionScheduler _scheduler;
     private readonly IGameTemplate _gameTemplate;
@@ -74,7 +74,15 @@ public class AabbGameInstance : IGameInstance, IMessenger
         IActionScheduler scheduler, IGameTemplate gameTemplate, IFileStorage storage,
         Parameters parameters, IPaletteSource paletteSource = null)
     {
-        _timer = new GameTimer(parameters.MinDelta);
+        if (parameters.FixedFps.HasValue)
+        {
+            _timer = new GameTimerSimple(1f /  parameters.FixedFps.Value);
+        }
+        else
+        {
+            _timer = new GameTimer(parameters.MaxFps.HasValue ? 1f / parameters.MaxFps.Value : 0f);
+        }
+
         _internalStopwatch.Start();
         
         _scheduler = scheduler;
@@ -246,9 +254,8 @@ public class AabbGameInstance : IGameInstance, IMessenger
 
         _timer.Update(deltaTime);
         
-        Simulation.SimulationParameters.TimeDelta = _timer.TimeDelta;
+        Simulation.SimulationParameters.TimeDelta = deltaTime;
         Simulation.Update(deltaTime, FixedUpdate);
-        
         _mapDisplayElement.Update(deltaTime);
         Updated?.Invoke();
     }

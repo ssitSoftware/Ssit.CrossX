@@ -27,7 +27,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         public IMaterial[] Materials { get; set; }
         public int BackgroundColorIndex { get; set; }
         public int? MaxFps { get; set; }
-        public int? FixedFps { get; set; }
+        public int? TargetFps { get; set; }
     }
     
     IIoCContainer IGameInstance.Services => Container;
@@ -74,9 +74,9 @@ public class AabbGameInstance : IGameInstance, IMessenger
         IActionScheduler scheduler, IGameTemplate gameTemplate, IFileStorage storage,
         Parameters parameters, IPaletteSource paletteSource = null)
     {
-        if (parameters.FixedFps.HasValue)
+        if (parameters.TargetFps.HasValue)
         {
-            _timer = new GameTimerSimple(1f /  parameters.FixedFps.Value);
+            _timer = container.IoCConstruct<TargetGameTimer>(new TargetGameTimer.Parameters{ TargetFps = parameters.TargetFps.Value});
         }
         else
         {

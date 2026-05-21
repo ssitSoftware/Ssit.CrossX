@@ -12,6 +12,7 @@ using Ssit.CrossX.IO;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Common;
 using Ssit.CrossX.UI.Services;
+using Ssit.CrossX.Utils;
 using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
@@ -36,6 +37,18 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     
     protected PixelAppHost.Parameters HostParameters { get; private set; }
 
+    private GlobalStopwatchControl _globalStopwatch = null;
+    
+    protected void InitializeGlobalStopwatch(GlobalStopwatchParameters parameters)
+    {
+        if (_globalStopwatch is null)
+        {
+            _globalStopwatch = new GlobalStopwatchControl(UiApp.Services.Get<IFontsManager>(), _paletteSource);
+        }
+
+        _globalStopwatch.Parameters = parameters;
+    }
+    
     private PixelAppHost.Parameters CreateAppHostParameters()
     {
         const float scaleX = 0.5f;
@@ -75,7 +88,24 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     
     protected sealed override void OnStart(object args) => base.OnStart(args);
     public sealed override void OnUpdate(float elapsedTime) => base.OnUpdate(elapsedTime);
-    protected sealed override void PostRender(IRenderer2 renderer) => base.PostRender(renderer);
+
+    protected sealed override void PostRender(IRenderer2 renderer)
+    {
+        if (_globalStopwatch.Parameters.ShouldDisplay.Value)
+        {
+            _globalStopwatch.Update();
+            
+            var w = AppHost.TargetSize.Width;
+            var h = AppHost.TargetSize.Height;
+            var gameArea = new RectangleF(0, 0, w, h);
+            
+            _globalStopwatch.Draw(renderer, gameArea, AppHost.Scale);
+        }
+        else
+        {
+            _globalStopwatch.Reset();
+        }
+    }
 
     protected sealed override void OnInitializeServices(IIoCContainerBuilder builder)
     {

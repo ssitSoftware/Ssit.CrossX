@@ -4,6 +4,8 @@ namespace Ssit.CrossX.UI.Values;
 
 public readonly struct Thickness
 {
+    public static readonly Thickness Zero = new(Length.Zero, Length.Zero, Length.Zero, Length.Zero);
+    
     public Length? Left { get; }
     public Length? Right { get; }
     public Length? Top { get; }

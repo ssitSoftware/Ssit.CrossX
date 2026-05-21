@@ -11,6 +11,7 @@ using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.UI;
 using Ssit.CrossX.UI.Common;
+using Ssit.CrossX.UI.Components;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.Utils;
 using Ssit.CrossX.XxFormats.Template;
@@ -37,16 +38,16 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     
     protected PixelAppHost.Parameters HostParameters { get; private set; }
 
-    private GlobalStopwatchControl _globalStopwatch = null;
+    private StopwatchComponent _stopwatch = null;
     
-    protected void InitializeGlobalStopwatch(GlobalStopwatchParameters parameters)
+    protected void InitializeGlobalStopwatch(StopwatchComponentParameters componentParameters)
     {
-        if (_globalStopwatch is null)
+        if (_stopwatch is null)
         {
-            _globalStopwatch = new GlobalStopwatchControl(UiApp.Services.Get<IFontsManager>(), _paletteSource);
+            _stopwatch = new StopwatchComponent(UiApp.Services.Get<IFontsManager>(), _paletteSource);
         }
 
-        _globalStopwatch.Parameters = parameters;
+        _stopwatch.ComponentParameters = componentParameters;
     }
     
     private PixelAppHost.Parameters CreateAppHostParameters()
@@ -91,19 +92,19 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
 
     protected sealed override void PostRender(IRenderer2 renderer)
     {
-        if (_globalStopwatch.Parameters.ShouldDisplay.Value)
+        if (_stopwatch.ComponentParameters.ShouldDisplay.Value)
         {
-            _globalStopwatch.Update();
+            _stopwatch.Update();
             
             var w = AppHost.TargetSize.Width;
             var h = AppHost.TargetSize.Height;
             var gameArea = new RectangleF(0, 0, w, h);
             
-            _globalStopwatch.Draw(renderer, gameArea, AppHost.Scale);
+            _stopwatch.Draw(renderer, gameArea, AppHost.Scale);
         }
         else
         {
-            _globalStopwatch.Reset();
+            _stopwatch.Reset();
         }
     }
 

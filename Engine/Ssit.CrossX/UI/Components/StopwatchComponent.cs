@@ -5,20 +5,20 @@ using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.UI.Views;
 
-namespace Ssit.CrossX.Utils;
+namespace Ssit.CrossX.UI.Components;
 
-public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource paletteSource = null)
+public class StopwatchComponent(IFontsManager fontsManager, IPaletteSource paletteSource = null)
 {
     private readonly StringBuilder _text = new();
     private readonly TextRenderingContext _textRenderingContext = new();
     private float _scale = 1;
     private DateTime _lastTime = DateTime.MinValue;
 
-    public GlobalStopwatchParameters Parameters { get; set; }
+    public StopwatchComponentParameters ComponentParameters { get; set; }
 
     public void Update()
     {
-        var newStartTime = Parameters.StartTime?.Value;
+        var newStartTime = ComponentParameters.StartTime?.Value;
         var nowTime = DateTime.UtcNow;
         var startTime = newStartTime ?? nowTime;
 
@@ -38,10 +38,10 @@ public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource p
             return;
 
         var font = GetFont(scale);
-        var textColor = Parameters.TextColor.GetColor(paletteSource, renderer);
-        var outlineColor = Parameters.OutlineColor.GetColor(paletteSource, renderer);
+        var textColor = ComponentParameters.TextColor.GetColor(paletteSource, renderer);
+        var outlineColor = ComponentParameters.OutlineColor.GetColor(paletteSource, renderer);
 
-        var padding = Parameters.Padding;
+        var padding = ComponentParameters.Padding;
         var left = padding.Left?.Calculate(scale, bounds.Width) ?? 0;
         var top = padding.Top?.Calculate(scale, bounds.Height) ?? 0;
         var right = padding.Right?.Calculate(scale, bounds.Width) ?? 0;
@@ -52,7 +52,7 @@ public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource p
             font: font,
             text: _text,
             position: bounds,
-            align: Parameters.Align,
+            align: ComponentParameters.Align,
             scale: GetTextScale(scale),
             color: textColor,
             outlineColor: outlineColor,
@@ -73,15 +73,15 @@ public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource p
 
         var changed = false;
 
-        if ((Parameters.TimeComponents & StopwatchComponents.Milliseconds) != 0)
+        if ((ComponentParameters.TimeTimeElements & StopwatchTimeElements.Milliseconds) != 0)
             changed = (int)current.TotalMilliseconds != (int)last.TotalMilliseconds;
-        else if ((Parameters.TimeComponents & StopwatchComponents.TenthSeconds) != 0)
+        else if ((ComponentParameters.TimeTimeElements & StopwatchTimeElements.TenthSeconds) != 0)
             changed = (int)(current.TotalMilliseconds / 100) != (int)(last.TotalMilliseconds / 100);
-        else if ((Parameters.TimeComponents & StopwatchComponents.Seconds) != 0)
+        else if ((ComponentParameters.TimeTimeElements & StopwatchTimeElements.Seconds) != 0)
             changed = (int)current.TotalSeconds != (int)last.TotalSeconds;
-        else if ((Parameters.TimeComponents & StopwatchComponents.Minutes) != 0)
+        else if ((ComponentParameters.TimeTimeElements & StopwatchTimeElements.Minutes) != 0)
             changed = (int)current.TotalMinutes != (int)last.TotalMinutes;
-        else if ((Parameters.TimeComponents & StopwatchComponents.Hours) != 0)
+        else if ((ComponentParameters.TimeTimeElements & StopwatchTimeElements.Hours) != 0)
             changed = (int)current.TotalHours != (int)last.TotalHours;
 
         if (changed)
@@ -92,11 +92,11 @@ public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource p
 
     private void FormatElapsedTime(TimeSpan elapsed)
     {
-        var hasHours = (Parameters.TimeComponents & StopwatchComponents.Hours) != 0;
-        var hasMinutes = (Parameters.TimeComponents & StopwatchComponents.Minutes) != 0;
-        var hasSeconds = (Parameters.TimeComponents & StopwatchComponents.Seconds) != 0;
-        var hasMs = (Parameters.TimeComponents & StopwatchComponents.Milliseconds) != 0;
-        var hasTenthSeconds = (Parameters.TimeComponents & StopwatchComponents.TenthSeconds) != 0;
+        var hasHours = (ComponentParameters.TimeTimeElements & StopwatchTimeElements.Hours) != 0;
+        var hasMinutes = (ComponentParameters.TimeTimeElements & StopwatchTimeElements.Minutes) != 0;
+        var hasSeconds = (ComponentParameters.TimeTimeElements & StopwatchTimeElements.Seconds) != 0;
+        var hasMs = (ComponentParameters.TimeTimeElements & StopwatchTimeElements.Milliseconds) != 0;
+        var hasTenthSeconds = (ComponentParameters.TimeTimeElements & StopwatchTimeElements.TenthSeconds) != 0;
 
         _text.Clear();
 
@@ -140,19 +140,19 @@ public class GlobalStopwatchControl(IFontsManager fontsManager, IPaletteSource p
 
     private IFont GetFont(float scale)
     {
-        var size = Parameters.Font.FontSize > 0 ? Parameters.Font.FontSize : 12;
+        var size = ComponentParameters.Font.FontSize > 0 ? ComponentParameters.Font.FontSize : 12;
 
-        if (Parameters.Scaling == TextScaling.Default)
+        if (ComponentParameters.Scaling == TextScaling.Default)
         {
             size = (int)MathF.Ceiling(size * scale);
         }
 
-        var font = fontsManager.GetFont(Parameters.Font.FontFamily ?? "Default", size);
+        var font = fontsManager.GetFont(ComponentParameters.Font.FontFamily ?? "Default", size);
         _scale = (float)size / Math.Max(1, font.Size);
         return font;
     }
 
-    private float GetTextScale(float scale) => Parameters.Scaling == TextScaling.Pixel ? scale : _scale;
+    private float GetTextScale(float scale) => ComponentParameters.Scaling == TextScaling.Pixel ? scale : _scale;
 
     public void Reset()
     {

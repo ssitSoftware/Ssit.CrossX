@@ -1,18 +1,17 @@
 using System;
 using Ssit.CrossX.Graphics;
-using Ssit.CrossX.Graphics.Font;
 using Ssit.CrossX.UI.Values;
 using Ssit.CrossX.UI.Views;
 
-namespace Ssit.CrossX.Utils;
+namespace Ssit.CrossX.UI.Components;
 
-public class GlobalStopwatchParameters
+public class StopwatchComponentParameters
 {
     public FontDesc Font { get; set; }
     public ColorWrapper TextColor { get; set; }
     public ColorWrapper OutlineColor { get; set; }
     public TextScaling Scaling { get; set; }
-    public StopwatchComponents TimeComponents { get; set; } = StopwatchComponents.Minutes | StopwatchComponents.Seconds | StopwatchComponents.Milliseconds;
+    public StopwatchTimeElements TimeTimeElements { get; set; } = StopwatchTimeElements.Minutes | StopwatchTimeElements.Seconds | StopwatchTimeElements.Milliseconds;
     public SharedValue<DateTime?> StartTime { get; set; }
     public SharedBool ShouldDisplay { get; set; }
     public Thickness Padding { get; set; }

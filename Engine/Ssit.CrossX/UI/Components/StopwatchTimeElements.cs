@@ -1,9 +1,9 @@
 using System;
 
-namespace Ssit.CrossX.Utils;
+namespace Ssit.CrossX.UI.Components;
 
 [Flags]
-public enum StopwatchComponents
+public enum StopwatchTimeElements
 {
     None = 0,
     Hours = 1,

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Avalonia;
 using Ssit.CrossX.XxFormats.Template;
 
@@ -5,8 +6,12 @@ namespace Ssit.CrossX.Editor;
 
 public static class EditorRunner
 {
-    public static void Run(string[] args, IGameTemplate gameTemplate)
+    internal static Assembly RunAssembly { get; private set; }
+    
+    public static void Run(string[] args, IGameTemplate gameTemplate, Assembly runAssembly = null)
     {
+        RunAssembly = runAssembly;
+        
         var appBuilder = BuildAvaloniaApp(gameTemplate);
         appBuilder.StartWithClassicDesktopLifetime(args);
     }

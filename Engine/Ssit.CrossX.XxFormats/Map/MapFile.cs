@@ -131,7 +131,7 @@ public class MapFile: BindableModel
         }
     }
 
-    public void Save(Stream stream, bool compress = true)
+    public void Save(Stream stream, bool compress = true, bool resetModified = true)
     {
         BinaryWriter writer;
         GZipStream gzipStream = null;
@@ -163,7 +163,11 @@ public class MapFile: BindableModel
         stream.Flush();
         gzipStream?.Flush();
         gzipStream?.Dispose();
-        IsModified = false;
+
+        if (resetModified)
+        {
+            IsModified = false;
+        }
     }
     
     public void LoadRaw(BinaryReader reader, IGameTemplate gameTemplate)

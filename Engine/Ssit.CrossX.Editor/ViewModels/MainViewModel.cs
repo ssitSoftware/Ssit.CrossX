@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ssit.CrossX.Editor.Helpers;
@@ -10,7 +12,7 @@ using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
-using Ssit.CrossX.SDL;
+using Ssit.CrossX.Commands;
 using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.XxFormats.Template;
 
@@ -96,7 +98,7 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
-        public RelayCommand RunCommand { get; }
+        public AsyncCommand RunCommand { get; }
 
         private string _filePath;
         private MapFile _mapFile;
@@ -160,7 +162,7 @@ namespace Ssit.CrossX.Editor.ViewModels
             
             EnterFullscreenCommand = new RelayCommand(() => EditorViewModel.IsFullscreen = true);
 
-            RunCommand = new RelayCommand(Run, CanRun);
+            RunCommand = new AsyncCommand( () => Run(), CanRun);
             
             HorizontalFlipCommand = new RelayCommand(() =>
             {
@@ -197,32 +199,53 @@ namespace Ssit.CrossX.Editor.ViewModels
             Menu = GenerateMenu();
         }
 
-        private bool CanRun() => _runAppTask?.IsCompleted ?? true;
+        private bool CanRun() => !_isRunningGame && EditorRunner.RunAssembly != null;
 
-        private void Run()
+        private async Task Run()
         {
-            if (false == (_runAppTask?.IsCompleted ?? true))
-            {
+            if (_isRunningGame)
                 return;
-            }
 
-            _runAppTask = Task.Delay(1000);
-            RunCommand.NotifyCanExecuteChanged();
+            if (EditorRunner.RunAssembly is null)
+                return;
             
-            var tempDir = Path.GetTempPath();
-            Directory.CreateDirectory(tempDir);
-            
-            var path = Path.Combine(tempDir, "RunMap.map");
-
-            using (var stream = File.Open(path, FileMode.Create))
+            try
             {
-                MapFile.Save(stream);
+                _isRunningGame = true;
+                RunCommand.RaiseCanExecuteChanged();
+
+                await Save();
+
+                if (_filePath is null || MapFile.IsModified)
+                {
+                    return;
+                }
+
+                var path = _filePath;
+
+                var execPath = EditorRunner.RunAssembly.Location;
+                
+                if (execPath.EndsWith(".dll"))
+                {
+#if WINDOWS
+                    execPath = execPath.Replace(".dll", ".exe");
+#else
+                    execPath = execPath.Replace(".dll", "");
+#endif
+                }
+
+                var process = Process.Start(execPath, $"-r:{path}");
+
+                if (process != null)
+                {
+                    await process.WaitForExitAsync();
+                }
             }
-
-            using var app = _instances.Template.GenerateAppForEditor(path);
-            AppRunner.Run(app);
-
-            RunCommand.NotifyCanExecuteChanged();
+            finally
+            {
+                _isRunningGame = false;
+                RunCommand.RaiseCanExecuteChanged();
+            }
         }
 
         private void MapOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -321,9 +344,13 @@ namespace Ssit.CrossX.Editor.ViewModels
             _editorData.SelectedLayer = LayerDescription.MainLayerId;
             _editorData.RecentMapPath = null;
             _editorData.RequestSave();
+
+            _filePath = null;
             
             MapFile = mapFile;
             IsModified = false;
+            
+            UpdateTitle();
         }
 
         private async Task<bool> CheckIfSave()
@@ -459,7 +486,7 @@ namespace Ssit.CrossX.Editor.ViewModels
         }
 
         private bool _forceClose;
-        private Task _runAppTask;
+        private bool _isRunningGame;
 
         public bool CanClose()
         {

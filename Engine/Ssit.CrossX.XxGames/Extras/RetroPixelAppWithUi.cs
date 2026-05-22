@@ -24,7 +24,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
 {
     protected virtual Assembly ResourceAssembly => GetType().Assembly;
 
-    protected sealed override RgbaColor BackgroundColor => _paletteSource.Palette[1];
+    protected override RgbaColor BackgroundColor => _paletteSource.Palette[1];
     ContentAlign IDefaultSpriteConfiguration.OriginAlignment => GameTemplate.ObjectsOriginAlignment;
 
     protected readonly TGameTemplate GameTemplate = new();

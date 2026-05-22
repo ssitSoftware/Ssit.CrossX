@@ -44,18 +44,18 @@ internal static class AppEventWatcher
     }
 }
 
-internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
+internal static class AppRunnerInternal
 {
     public delegate void InitializeServicesDelegate(IIoCContainerBuilder builder);
 
     public delegate void InitializeAppDelegate(IIoCContainer container);
 
-    public static void Run(object args = null, InitializeServicesDelegate initializeServicesDelegate = null, InitializeAppDelegate initializeAppDelegate = null)
+    public static void Run(IApp app, object args = null, InitializeServicesDelegate initializeServicesDelegate = null, InitializeAppDelegate initializeAppDelegate = null)
     {
-        RunInternal(args, initializeServicesDelegate, initializeAppDelegate);
+        RunInternal(app, args, initializeServicesDelegate, initializeAppDelegate);
     }
 
-    private static unsafe void RunInternal(object args, InitializeServicesDelegate initializeServicesDelegate,
+    private static unsafe void RunInternal(IApp app, object args, InitializeServicesDelegate initializeServicesDelegate,
         InitializeAppDelegate initializeAppDelegate)
     {
         SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD | SDL_InitFlags.SDL_INIT_AUDIO | SDL_InitFlags.SDL_INIT_HAPTIC);
@@ -80,8 +80,6 @@ internal static class AppRunnerInternal<TApp> where TApp : class, IApp, new()
             .WithPixelCore();
 
         initializeServicesDelegate?.Invoke(builder);
-
-        using var app = new TApp();
 
         SDL_WindowFlags flags = 0;
 

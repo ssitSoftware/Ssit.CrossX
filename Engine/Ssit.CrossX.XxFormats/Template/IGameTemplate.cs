@@ -1,4 +1,5 @@
 using System.Numerics;
+using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.IO;
 
@@ -32,4 +33,5 @@ public interface IGameTemplate
     int TrimToPixels => 0;
     
     Size TargetSize { get; }
+    IApp GenerateAppForEditor(string path);
 }

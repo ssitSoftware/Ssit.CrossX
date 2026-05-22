@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Libs\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
+      <ProjectReference Include="..\Ssit.CrossX.SDL\Ssit.CrossX.SDL.csproj" />
       <ProjectReference Include="..\Ssit.CrossX.XxFormats\Ssit.CrossX.XxFormats.csproj" />
       <ProjectReference Include="..\Ssit.CrossX.XxGames\Ssit.CrossX.XxGames.csproj" />
       <ProjectReference Include="..\Ssit.CrossX\Ssit.CrossX.csproj" />

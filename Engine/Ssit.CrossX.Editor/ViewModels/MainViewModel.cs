@@ -10,6 +10,7 @@ using Ssit.CrossX.Editor.Models;
 using Ssit.CrossX.Editor.Service;
 using Ssit.CrossX.Editor.Tools;
 using CommunityToolkit.Mvvm.Input;
+using Ssit.CrossX.SDL;
 using Ssit.CrossX.XxFormats.Map;
 using Ssit.CrossX.XxFormats.Template;
 
@@ -95,6 +96,7 @@ namespace Ssit.CrossX.Editor.ViewModels
 
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
+        public RelayCommand RunCommand { get; }
 
         private string _filePath;
         private MapFile _mapFile;
@@ -158,6 +160,8 @@ namespace Ssit.CrossX.Editor.ViewModels
             
             EnterFullscreenCommand = new RelayCommand(() => EditorViewModel.IsFullscreen = true);
 
+            RunCommand = new RelayCommand(Run, CanRun);
+            
             HorizontalFlipCommand = new RelayCommand(() =>
             {
                 if (_instances.Tools.Current is InsertImageTool tool)
@@ -192,7 +196,35 @@ namespace Ssit.CrossX.Editor.ViewModels
 
             Menu = GenerateMenu();
         }
-        
+
+        private bool CanRun() => _runAppTask?.IsCompleted ?? true;
+
+        private void Run()
+        {
+            if (false == (_runAppTask?.IsCompleted ?? true))
+            {
+                return;
+            }
+
+            _runAppTask = Task.Delay(1000);
+            RunCommand.NotifyCanExecuteChanged();
+            
+            var tempDir = Path.GetTempPath();
+            Directory.CreateDirectory(tempDir);
+            
+            var path = Path.Combine(tempDir, "RunMap.map");
+
+            using (var stream = File.Open(path, FileMode.Create))
+            {
+                MapFile.Save(stream);
+            }
+
+            using var app = _instances.Template.GenerateAppForEditor(path);
+            AppRunner.Run(app);
+
+            RunCommand.NotifyCanExecuteChanged();
+        }
+
         private void MapOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             IsModified = MapFile?.IsModified ?? false;
@@ -427,6 +459,8 @@ namespace Ssit.CrossX.Editor.ViewModels
         }
 
         private bool _forceClose;
+        private Task _runAppTask;
+
         public bool CanClose()
         {
             if (_forceClose)

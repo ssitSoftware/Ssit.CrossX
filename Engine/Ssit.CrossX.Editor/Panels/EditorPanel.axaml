@@ -204,7 +204,8 @@
                     <Button
                         Classes="Toolbar"
                         ToolTip.Tip="Run map"
-                        i:Attached.Icon="mdi-play" />
+                        i:Attached.Icon="mdi-play"
+                        Command="{Binding RunCommand}"/>
 
                     <Border Classes="ToolbarSeparator" />
                 </StackPanel>

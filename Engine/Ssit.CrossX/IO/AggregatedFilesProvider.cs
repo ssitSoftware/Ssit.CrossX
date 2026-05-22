@@ -22,7 +22,7 @@ public class AggregatedFilesProvider: IFilesProvider
         {
             throw new FileNotFoundException($"File {path} not found. Drive not found.");
         }
-        
+
         return provider.Open(newPath);
     }
 

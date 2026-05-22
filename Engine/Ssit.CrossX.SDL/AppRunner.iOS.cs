@@ -19,7 +19,11 @@ public static class AppRunner
         NativeLibrary.SetDllImportResolver(typeof(SDL3_mixer).Assembly, (_, asm, path) => NativeLibrary.Load(Path.Combine(frameworkPath, "SDL3_mixer.framework/SDL3_mixer"), asm, path));
         NativeLibrary.SetDllImportResolver(typeof(SDL3_image).Assembly, (_, asm, path) => NativeLibrary.Load(Path.Combine(frameworkPath, "SDL3_image.framework/SDL3_image"), asm, path));
         
-        _runAction = () => AppRunnerInternal<TApp>.Run();
+        _runAction = () =>
+        {
+            using var app = new TApp();
+            AppRunnerInternal.Run(app);
+        };
         
         SDL3.SDL_AddEventWatch(&AppEventWatcher.AppEventWatch, IntPtr.Zero);
         SDL3.SDL_RunApp(0, null, &Run, IntPtr.Zero);

@@ -6,9 +6,27 @@ namespace Ssit.CrossX.SDL;
 
 public static class AppRunner
 {
-    public static void Run<TApp>() where TApp : class, IApp, new()
+    public static void Run<TApp>(object args = null) where TApp : class, IApp, new()
     {
-        AppRunnerInternal<TApp>.Run();
+        using var app = new TApp();
+        AppRunnerInternal.Run(app, args);
+    }
+    
+    public static void Run(IApp app, object args = null)
+    {
+        try
+        {
+            AppRunnerInternal.Run(app, args);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            app.Dispose();
+        }
     }
 }
 

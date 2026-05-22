@@ -14,8 +14,8 @@ public class CrossXSdlActivity<TApp> : SDLActivity where TApp : class, IApp, new
 
     protected override void Main()
     {
-        Console.WriteLine("Starting CrossXSdlActivity");
-        AppRunnerInternal<TApp>.Run(initializeAppDelegate: container =>
+        using var app = new TApp();
+        AppRunnerInternal.Run(app, initializeAppDelegate: container =>
         {
             _eventSource = (EventSource)container.Get<IEventSource>();
         });

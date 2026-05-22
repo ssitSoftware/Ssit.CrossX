@@ -3,6 +3,38 @@ using System.IO;
 
 namespace Ssit.CrossX.IO;
 
+public class LocalFilesProvider : IFilesProvider
+{
+    public Stream Open(string path)
+    {
+        path = FixPath(path);
+        return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+    }
+
+    public bool FileExists(string path)
+    {
+        path = FixPath(path);
+        path = PathHelper.NormalizePath(path);
+        return File.Exists(path);
+    }
+
+    public string[] GetFiles(string path, string extension = null)
+    {
+        return Directory.GetFiles(path, $"*.{extension ?? "*"}");
+    }
+
+    private string FixPath(string path)
+    {
+        if (!path.StartsWith("/")) path = "/" + path;
+        return path;
+    }
+
+    public string GetPhisicalFilePath(string path)
+    {
+        return path;
+    }
+}
+
 public class BundleFilesProvider: IFilesProvider
 {
     private readonly string _bundleDir = "";

@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Input;
+using Ssit.CrossX.Graphics;
 using Ssit.CrossX.UI.Services;
 using Ssit.CrossX.UI.Values;
 
@@ -17,8 +18,8 @@ public class IconCheckBox : Background, IButtonView
     public ButtonCommandType EnabledCommandTypes { get; set; } = ButtonCommandType.Select;
     public IUiSounds CustomSounds { get; set; }
 
-    public ImageSource Image { get; set; }
-    public ImageSource ImagePushed { get; set; }
+    public ImageSource<ITexture> Image { get; set; }
+    public ImageSource<ITexture> ImagePushed { get; set; }
     public Size IconSize { get; set; }
     
     public int FrameOn { get; set; } = 1;

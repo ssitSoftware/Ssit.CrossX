@@ -16,7 +16,7 @@ public class TargetGameTimer : IGameTimer
         fps =  Math.Max(fps, 60);
         
         var min= parameters.TargetFps * 0.9f;
-        var max = parameters.TargetFps * 1.75f;
+        var max = parameters.TargetFps * 1.81;
         
         while (fps < min)
         {

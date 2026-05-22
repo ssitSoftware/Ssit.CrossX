@@ -5,7 +5,7 @@ namespace Ssit.CrossX.UI.Views;
 
 public class ImageView: Background
 {
-    public IImageSource Source { get; set; }
+    public IImageSource<ITexture> Source { get; set; }
     public ContentAlign? ContentAlign { get; set; }
     public RgbaColor? TintColor { get; set; }
     public ImageScalingMode? Scaling { get; set; }

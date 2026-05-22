@@ -78,7 +78,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
 
         if (width.IsAuto || height.IsAuto)
         {
-            var texture = AttachedView.Source?.GetTexture(_container);
+            var texture = AttachedView.Source?.GetImage(_container);
             var size = AttachedView.Source?.SourceRect?.Size ?? texture?.Resource.Size;
             
             if (width.IsAuto)
@@ -121,7 +121,7 @@ public class ImageViewHandler : BackgroundHandler<ImageView>
     protected override void OnDraw(IRenderer2 renderer)
     {
         base.OnDraw(renderer);
-        var texture = AttachedView.Source?.GetTexture(_container);
+        var texture = AttachedView.Source?.GetImage(_container);
         
         if (texture is null)
         {

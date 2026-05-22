@@ -10,21 +10,21 @@ using Ssit.CrossX.UI.Services;
 
 namespace Ssit.CrossX.UI.Values;
 
-public sealed class ImageSource: IImageSource
+public sealed class ImageSource<TTexture> : IImageSource<TTexture> where TTexture : class, IDisposable
 {
-    public static implicit operator ImageSource(string path) => new(path);
-    public static implicit operator ImageSource((string path, Rectangle rect) o) => new(o.path, o.rect);
-    public static implicit operator ImageSource(Uri uri) => new(uri);
+    public static implicit operator ImageSource<TTexture>(string path) => new(path);
+    public static implicit operator ImageSource<TTexture>((string path, Rectangle rect) o) => new(o.path, o.rect);
+    public static implicit operator ImageSource<TTexture>(Uri uri) => new(uri);
     
     private string _resourcePath;
     private Uri _resourceUri;
     
-    private Task<ResourceHandle<ITexture>> _loadTextureTask;
+    private Task<ResourceHandle<TTexture>> _loadTextureTask;
     private CancellationTokenSource _cancellationTokenSource;
     
     private readonly object _lock = new();
     
-    private ResourceHandle<ITexture> _texture;
+    private ResourceHandle<TTexture> _texture;
 
     public event Action ImageChanged;
 
@@ -41,7 +41,7 @@ public sealed class ImageSource: IImageSource
         }
     }
     
-    public ResourceHandle<ITexture> Texture
+    public ResourceHandle<TTexture> Texture
     {
         set
         {
@@ -59,7 +59,7 @@ public sealed class ImageSource: IImageSource
         }
     }
     
-    public ResourceHandle<ITexture> GetTexture(IIoCContainer container)
+    public ResourceHandle<TTexture> GetImage(IIoCContainer container)
     {
         lock (_lock)
         {
@@ -134,9 +134,9 @@ public sealed class ImageSource: IImageSource
         _resourceUri = uri;
     }
 
-    private async Task<ResourceHandle<ITexture>> LoadTextureFromParameters(IIoCContainer container, CancellationToken cancellationToken)
+    private async Task<ResourceHandle<TTexture>> LoadTextureFromParameters(IIoCContainer container, CancellationToken cancellationToken)
     {
-        ResourceHandle<ITexture> result = null;
+        ResourceHandle<TTexture> result = null;
         if (_resourcePath is not null)
         {
             result = await LoadContent(container, cancellationToken);
@@ -165,14 +165,14 @@ public sealed class ImageSource: IImageSource
         throw new InvalidOperationException("Cannot load image from resource path.");
     }
 
-    private Task<ResourceHandle<ITexture>> LoadContent(IIoCContainer container, CancellationToken _)
+    private Task<ResourceHandle<TTexture>> LoadContent(IIoCContainer container, CancellationToken _)
     {
-        ResourceHandle<ITexture> result = null;
+        ResourceHandle<TTexture> result = null;
         lock (_lock)
         {
             if (_resourcePath is not null)
             {
-                result = container.Get<IContentManager>().Get<ITexture>(_resourcePath);
+                result = container.Get<IContentManager>().Get<TTexture>(_resourcePath);
                 _resourcePath = null;
             }
         }
@@ -182,10 +182,10 @@ public sealed class ImageSource: IImageSource
             return Task.FromResult(result);
         }
         
-        return Task.FromException<ResourceHandle<ITexture>>(new InvalidProgramException("Cannot load image from resource path."));
+        return Task.FromException<ResourceHandle<TTexture>>(new InvalidProgramException("Cannot load image from resource path."));
     }
     
-    private async Task<ResourceHandle<ITexture>> LoadFromUri(IIoCContainer container,
+    private async Task<ResourceHandle<TTexture>> LoadFromUri(IIoCContainer container,
         CancellationToken cancellationToken)
     {
         Uri uri;
@@ -219,7 +219,7 @@ public sealed class ImageSource: IImageSource
         }
         
         memoryStream.Seek(0, SeekOrigin.Begin);
-        var texture = container.IoCConstruct<ITexture>(new LoadTextureParameters
+        var texture = container.IoCConstruct<TTexture>(new LoadTextureParameters
         {
             DiffuseMapStream = memoryStream
         });
@@ -230,7 +230,7 @@ public sealed class ImageSource: IImageSource
             cancellationToken.ThrowIfCancellationRequested();
         }
         
-        return new ResourceHandleUnmanaged<ITexture>(texture, uri.AbsoluteUri);
+        return new ResourceHandleUnmanaged<TTexture>(texture, uri.AbsoluteUri);
     }
 
     public void Dispose()

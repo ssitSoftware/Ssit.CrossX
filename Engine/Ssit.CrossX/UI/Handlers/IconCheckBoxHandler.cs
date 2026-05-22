@@ -69,7 +69,7 @@ public class IconCheckBoxHandler<TCheckBox> : BackgroundHandler<TCheckBox>, IInp
         var source = _buttonHelper.IsPressed ? AttachedView.ImagePushed : AttachedView.Image;
         source ??= AttachedView.Image;
         
-        var texture = source?.GetTexture(_container);
+        var texture = source?.GetImage(_container);
         
         if (texture is null)
         {

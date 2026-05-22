@@ -1,13 +1,12 @@
 using System;
 using Ssit.CrossX.Content;
-using Ssit.CrossX.Graphics;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.UI.Values;
 
-public interface IImageSource: IDisposable
+public interface IImageSource<TResource> : IDisposable where TResource: class, IDisposable
 {
     event Action ImageChanged;
-    ResourceHandle<ITexture> GetTexture(IIoCContainer container);
+    ResourceHandle<TResource> GetImage(IIoCContainer container);
     Rectangle? SourceRect { get; }
 }

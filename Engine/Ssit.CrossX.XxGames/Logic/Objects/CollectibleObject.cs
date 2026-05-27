@@ -13,7 +13,7 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
     private readonly string _soundId;
     private readonly ICommonSoundContainer _soundContainer;
 
-    protected CollectibleObject(string spritePath, string idleSequence, string soundId, GameObjectsServices services, ObjectCreationParameters parameters)
+    protected CollectibleObject(string spritePath, string idleSequence, string soundId, GameObjectsServices services, ObjectCreationParameters parameters, SizeF size = default)
         : base(services, parameters)
     {
         _idleSequence = idleSequence;
@@ -26,7 +26,7 @@ public abstract class CollectibleObject : SpriteGameObject2, ICollectible, Sprit
             Type = ColliderType.Trigger,
             AttachToBody = Body,
             Active = true,
-            Size = new SizeF(0.4f, 0.4f),
+            Size = size.Width == 0 ? new SizeF(0.4f, 0.4f) : size,
             Material = Material.Default
         });
 

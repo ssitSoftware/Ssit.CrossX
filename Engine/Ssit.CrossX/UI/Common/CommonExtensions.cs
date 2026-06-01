@@ -14,6 +14,12 @@ public static class CommonExtensions
             .WithSingleton<ITranslator, Translator>(languagesPath);
     }
     
+    public static IIoCContainerBuilder WithTranslator( this IIoCContainerBuilder builder, params string[] languagesPaths )
+    {
+        return builder
+            .WithSingleton<ITranslator, Translator>(languagesPaths);
+    }
+    
     public static IHandlerMapper AddCommonUiMaping( this IHandlerMapper mapper )
     {
         return mapper

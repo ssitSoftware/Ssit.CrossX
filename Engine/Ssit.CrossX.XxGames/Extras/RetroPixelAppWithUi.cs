@@ -111,9 +111,8 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     protected sealed override void OnInitializeServices(IIoCContainerBuilder builder)
     {
         var assembly = ResourceAssembly;
-        var filesProvider = new AggregatedFilesProvider();
-
-        filesProvider.AddProvider("assets:", new EmbeddedFilesProvider(assembly, assembly.GetName().Name + ".Assets"));
+        
+        var filesProvider = new AggregatedFilesProvider(GameTemplate.AssetsProvider as AggregatedFilesProvider);
 
         foreach (var fontSource in FontSources)
         {
@@ -167,10 +166,14 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
     protected sealed override void OnInitializeUi(IIoCContainerBuilder builder, INavigationMap navigationMap, IHandlerMapper handlers)
     {
         base.OnInitializeUi(builder, navigationMap, handlers);
-        builder.WithTranslator("assets:/Languages.tsv");
 
+        ShouldInitializeUiServices(builder);
         ShouldInitializeNavigation(navigationMap);
         ShouldInitializeCustomViews(handlers);
+    }
+
+    protected virtual void ShouldInitializeUiServices(IIoCContainerBuilder builder)
+    {
     }
 
     protected virtual void ShouldInitializeNavigation(INavigationMap navigationMap)

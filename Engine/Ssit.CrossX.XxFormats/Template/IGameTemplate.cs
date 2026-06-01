@@ -33,5 +33,4 @@ public interface IGameTemplate
     int TrimToPixels => 0;
     
     Size TargetSize { get; }
-    IApp GenerateAppForEditor(string path);
 }

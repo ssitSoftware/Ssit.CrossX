@@ -8,6 +8,17 @@ public class AggregatedFilesProvider: IFilesProvider
 {
     private readonly Dictionary<string, IFilesProvider> _fileProviders = new();
 
+    public AggregatedFilesProvider(AggregatedFilesProvider other = null)
+    {
+        if (other != null)
+        {
+            foreach (var kv in other._fileProviders)
+            {
+                _fileProviders.Add(kv.Key, kv.Value);
+            }
+        }
+    }
+    
     public AggregatedFilesProvider AddProvider(string drive, IFilesProvider provider)
     {
         _fileProviders.Add(drive, provider);

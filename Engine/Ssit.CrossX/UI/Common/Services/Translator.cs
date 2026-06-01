@@ -23,6 +23,28 @@ internal class Translator : ITranslator
         }
     }
     
+    public Translator(IFilesProvider filesProvider, string[] paths)
+    {
+        var list = new List<Dictionary<string, string>>();
+        
+        foreach (var path in paths)
+        {
+            using var stream = filesProvider.Open(path);
+            var text = new StreamReader(stream).ReadToEnd();
+
+            var lines = text.Split('\n', '\r');
+            
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                ParseLine(line, list);
+            }
+        }
+
+        _languages = list.ToArray();
+        UpdateLanguage(_languages[_language]);
+    }
+    
     public Translator(IFilesProvider filesProvider, string path)
     {
         using var stream = filesProvider.Open(path);

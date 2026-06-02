@@ -7,6 +7,8 @@ internal class NativeTextInputIos(NativeTextInputServiceIos service) : INativeTe
 {
     private bool _disposed;
 
+    public bool IsShiftPressed => service.IsShiftPressed;
+
     public void Dispose()
     {
         if (_disposed) return;

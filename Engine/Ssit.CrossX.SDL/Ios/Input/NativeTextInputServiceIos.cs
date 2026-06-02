@@ -17,6 +17,9 @@ internal class NativeTextInputServiceIos : INativeTextInputService
     private RectangleF? _newBounds;
     private float _keyboardTop = float.MaxValue; // MaxValue = keyboard not visible
     private CGAffineTransform? _originalTransform;
+    private bool _isShiftPressed;
+
+    internal bool IsShiftPressed => _isShiftPressed;
 
     public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType)
     {
@@ -149,6 +152,8 @@ internal class NativeTextInputServiceIos : INativeTextInputService
             var handled = false;
             foreach (UIPress press in presses)
             {
+                _service._isShiftPressed = (press.Key?.ModifierFlags & UIKeyModifierFlags.Shift) != 0;
+
                 switch (press.Key?.KeyCode)
                 {
                     case UIKeyboardHidUsage.KeyboardLeftArrow:
@@ -162,6 +167,17 @@ internal class NativeTextInputServiceIos : INativeTextInputService
                 }
             }
             if (!handled) base.PressesBegan(presses, evt);
+        }
+
+        public override void PressesEnded(NSSet<UIPress> presses, UIPressesEvent evt)
+        {
+            foreach (UIPress press in presses)
+            {
+                var code = press.Key?.KeyCode;
+                if (code == UIKeyboardHidUsage.KeyboardLeftShift || code == UIKeyboardHidUsage.KeyboardRightShift)
+                    _service._isShiftPressed = false;
+            }
+            base.PressesEnded(presses, evt);
         }
     }
 }

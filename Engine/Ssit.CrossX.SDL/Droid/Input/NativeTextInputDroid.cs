@@ -7,6 +7,8 @@ internal class NativeTextInputDroid(NativeTextInputServiceDroid service) : INati
 {
     private bool _disposed;
 
+    public bool IsShiftPressed => service.IsShiftPressed;
+
     public void Dispose()
     {
         if (_disposed) return;

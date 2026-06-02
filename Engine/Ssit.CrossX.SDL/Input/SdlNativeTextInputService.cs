@@ -11,7 +11,16 @@ internal unsafe class SdlNativeTextInputService(IInternalWindowProvider windowPr
     {
         public event Action Disposed;
         public event Action<RectangleF, int> PositionUpdated;
-        
+
+        public bool IsShiftPressed
+        {
+            get
+            {
+                var mod = SDL_GetModState();
+                return (mod & (SDL_Keymod.SDL_KMOD_LSHIFT | SDL_Keymod.SDL_KMOD_RSHIFT)) != 0;
+            }
+        }
+
         public void Dispose() => Disposed?.Invoke();
         public void UpdatePosition(RectangleF bounds, int cursorPosition)
         {

@@ -14,6 +14,9 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
     private INativeTextInputConsumer? _currentConsumer;
 
     private RectangleF? _newBounds;
+    private bool _isShiftPressed;
+
+    internal bool IsShiftPressed => _isShiftPressed;
     
     public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType)
     {
@@ -62,6 +65,8 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
     internal bool HandleKeyEvent(KeyEvent e)
     {
         if (_currentConsumer == null || e.Action != KeyEventActions.Down) return false;
+
+        _isShiftPressed = (e.MetaState & MetaKeyStates.ShiftOn) != 0;
 
         switch (e.KeyCode)
         {

@@ -110,7 +110,7 @@ internal static class AppRunnerInternal
         
         builder
             .WithInstance<IRenderer2>(sdlRenderer)
-            .WithInstance<IAppWindowManager>(appWindowManager)
+            .WithInstance<IAppWindowManager>(appWindowManager).As<IInternalWindowProvider>()
             .WithInstance<IPointingDevices>(pointingDevices).As<IInputHandler>()
             .WithInstance(new SdlHandles(window, renderer));
         
@@ -155,12 +155,19 @@ internal static class AppRunnerInternal
         
         AppEventWatcher.AppActivated += eventSource.OnResume;
         AppEventWatcher.AppDeativated += eventSource.OnPause;
+
+        services.TryGet<IInternalTextInputService>(out var internalTextInputService);
         
         while (appWindowManager.ShouldContinue)
         {
             SDL_Event @event;
             while (SDL_PollEvent(&@event))
             {
+                if (true == internalTextInputService?.ProcessEvent(@event))
+                {
+                    continue;
+                }
+                
                 switch ((SDL_EventType)@event.type)
                 {
                     case SDL_EventType.SDL_EVENT_QUIT:

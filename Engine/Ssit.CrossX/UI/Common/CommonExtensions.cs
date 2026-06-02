@@ -8,19 +8,19 @@ namespace Ssit.CrossX.UI.Common;
 
 public static class CommonExtensions
 {
-    public static IIoCContainerBuilder WithTranslator( this IIoCContainerBuilder builder, string languagesPath )
+    public static IIoCContainerBuilder WithTranslator(this IIoCContainerBuilder builder, string languagesPath)
     {
         return builder
             .WithSingleton<ITranslator, Translator>(languagesPath);
     }
     
-    public static IIoCContainerBuilder WithTranslator( this IIoCContainerBuilder builder, params string[] languagesPaths )
+    public static IIoCContainerBuilder WithTranslator(this IIoCContainerBuilder builder, params string[] languagesPaths)
     {
         return builder
             .WithSingleton<ITranslator, Translator>(languagesPaths);
     }
     
-    public static IHandlerMapper AddCommonUiMaping( this IHandlerMapper mapper )
+    public static IHandlerMapper AddCommonUiMaping(this IHandlerMapper mapper)
     {
         return mapper
             .AddMapping<GameView, GameViewHandler>();

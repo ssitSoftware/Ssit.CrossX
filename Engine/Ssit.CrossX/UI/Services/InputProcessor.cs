@@ -58,13 +58,16 @@ internal sealed class InputProcessor: IInputContext
         {
             if (true == page.FocusedElement?.DisableAllInput)
                 return;
+
+            if (page.FocusedElement?.OnUiButton(button, this) ?? false)
+            {
+                return;
+            }
             
             if (page.OnUiButton(button, this))
             {
                 return;
             }
-
-            page.FocusedElement?.OnUiButton(button, this);
         }
         catch (Exception ex)
         {

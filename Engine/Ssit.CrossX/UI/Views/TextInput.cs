@@ -1,11 +1,9 @@
-using System;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.UI.Parameters;
 using Ssit.CrossX.UI.Values;
 
 namespace Ssit.CrossX.UI.Views;
 
-[Flags]
 public enum TextUpdateMode
 {
     Accept =  0,
@@ -34,6 +32,7 @@ public class TextInput: View
     
     public IButtonStateColors FrameColors { get; set; }
     public ColorWrapper? ActiveFrameColor { get; set; }
+    public ColorWrapper? CursorColor { get; set; }
     
     public Length? FrameThickness { get; set; }
     public Length? ActiveFrameThickness { get; set; }
@@ -41,4 +40,5 @@ public class TextInput: View
     public TextScaling Scaling { get; set; } = TextScaling.Default;
     public SharedBool Enabled { get; set; }
     public TextUpdateMode? UpdateMode { get; set; }
+    
 }

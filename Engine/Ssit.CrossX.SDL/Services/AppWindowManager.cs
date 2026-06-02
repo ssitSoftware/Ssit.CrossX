@@ -5,7 +5,7 @@ using static SDL.SDL3;
 
 namespace Ssit.CrossX.SDL.Services;
 
-internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* renderer): IAppWindowManager
+internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* renderer): IAppWindowManager, IInternalWindowProvider
 {
     private IActionScheduler _actionScheduler;
     public bool ShouldContinue { get; private set; } = true;
@@ -107,4 +107,13 @@ internal unsafe class AppWindowManager(SDL_Window* window, SDL_Renderer* rendere
     {
         Closing?.Invoke(args);
     }
+
+    public SDL_Window* Window => window;
+    public SDL_Renderer* Renderer => renderer;
+}
+
+internal unsafe interface IInternalWindowProvider
+{
+    SDL_Window* Window { get; }
+    SDL_Renderer* Renderer { get; }
 }

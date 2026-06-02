@@ -12,9 +12,10 @@ public class NativeTextInputDroid : INativeTextInput
         _consumer = consumer;
     }
 
-    public void Dispose()
+    public void Dispose() => _consumer.OnTextInputClosed();
+
+    public void UpdatePosition(RectangleF bounds, int cursorPosition)
     {
-        _consumer.OnTextInputCancel();
     }
 }
 #endif

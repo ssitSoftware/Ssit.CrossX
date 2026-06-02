@@ -181,14 +181,6 @@ public abstract class Page<TViewModel>: View, IPage where TViewModel: class
 
     protected virtual bool OnUiButton(UiButton button, IInputContext inputContext)
     {
-        if (ViewModel is IUiButtonHandler handler)
-        {
-            if (handler.OnUiButton(button))
-            {
-                return true;
-            }
-        }
-        
         switch (button)
         {
             case UiButton.Back:

@@ -164,9 +164,28 @@ internal class NativeTextInputServiceIos : INativeTextInputService
                         _service.OnKey(Key.Right);
                         handled = true;
                         break;
+                    
+                    case  UIKeyboardHidUsage.KeyboardHome:
+                        _service.OnKey(Key.Home);
+                        handled = true;
+                        break;
+                    
+                    case  UIKeyboardHidUsage.KeyboardEnd:
+                        _service.OnKey(Key.End);
+                        handled = true;
+                        break;
+                    
+                    case UIKeyboardHidUsage.KeyboardDeleteForward:
+                        _service.OnKey(Key.Delete);
+                        handled = true;
+                        break;
                 }
             }
-            if (!handled) base.PressesBegan(presses, evt);
+
+            if (!handled)
+            {
+                base.PressesBegan(presses, evt);
+            }
         }
 
         public override void PressesEnded(NSSet<UIPress> presses, UIPressesEvent evt)

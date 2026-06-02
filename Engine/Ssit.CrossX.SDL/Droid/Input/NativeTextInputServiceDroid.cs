@@ -73,10 +73,22 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
             case Keycode.Del:
                 _currentConsumer.OnKey(Key.Backspace);
                 return true;
+            
+            case Keycode.ForwardDel:
+                _currentConsumer.OnKey(Key.Delete);
+                return true;
 
             case Keycode.Enter:
             case Keycode.NumpadEnter:
                 _currentConsumer.OnKey(Key.Enter);
+                return true;
+            
+            case Keycode.MoveHome:
+                _currentConsumer.OnKey(Key.Home);
+                return true;
+            
+            case Keycode.MoveEnd:
+                _currentConsumer.OnKey(Key.End);
                 return true;
 
             default:

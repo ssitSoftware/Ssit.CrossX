@@ -22,7 +22,7 @@ internal unsafe class SdlNativeTextInputService(IInternalWindowProvider windowPr
     private NativeTextInput _currentDisposable;
     private INativeTextInputConsumer _currentConsumer;
     
-    public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType, RectangleF bounds, int cursorPosition = 0)
+    public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType)
     {
         _currentDisposable?.Dispose();
         _currentDisposable = new NativeTextInput();

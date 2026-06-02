@@ -159,9 +159,9 @@ public class TextInputHandler(
         
         _cursorPosition = _currentText.Length;
         _isActiveInput = true;
-
-        var (rect,  cursorPos) = CalculateNativePosition();
-        _currentTextInput = nativeTextInputService.AllocateTextInput(this, InputType.Text, rect, cursorPos);
+        
+        _currentTextInput = nativeTextInputService.AllocateTextInput(this, InputType.Text);
+        UpdateNativePosition();
     }
 
     private void UpdateNativePosition()

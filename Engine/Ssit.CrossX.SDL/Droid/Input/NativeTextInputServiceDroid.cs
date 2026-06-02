@@ -15,7 +15,7 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
 
     private RectangleF? _newBounds;
     
-    public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType, RectangleF bounds, int cursorPosition = 0)
+    public INativeTextInput AllocateTextInput(INativeTextInputConsumer consumer, InputType inputType)
     {
         _current?.Dispose();
         _currentConsumer = consumer;
@@ -29,8 +29,6 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
                 _inputView = new NativeInputView(activity, this);
                 activity.AddContentView(_inputView, new ViewGroup.MarginLayoutParams(1, 1));
             }
-
-            SetProperPosition(bounds);
             
             activity.Window?.SetSoftInputMode(SoftInput.AdjustPan);
             _inputView.RequestFocus();

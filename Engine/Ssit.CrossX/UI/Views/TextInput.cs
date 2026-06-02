@@ -41,4 +41,5 @@ public class TextInput: View
     public SharedBool Enabled { get; set; }
     public TextUpdateMode? UpdateMode { get; set; }
     
+    public Length? AdditionalKeyboardMargin { get; set; }
 }

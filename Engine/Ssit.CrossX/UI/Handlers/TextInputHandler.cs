@@ -179,11 +179,13 @@ public class TextInputHandler(
         var sb = ScreenBounds;
 
         var frameWidth = AttachedView.ActiveFrameThickness?.Calculate(CurrentScale, 1) ?? CurrentScale + 1;
-        frameWidth *= 2;
         
         var cpPixels = (int)Vector2.TransformNormal(new Vector2(_cursorPositionInPixels + textRect.X - sb.X + frameWidth, 0), inputCoordinateSystem.TransformInv).X;
 
         sb = sb.Inflate(frameWidth);
+        var margin = AttachedView.AdditionalKeyboardMargin?.Calculate(CurrentScale, 1) ?? 0;
+        
+        sb = new RectangleF(sb.X, sb.Y - margin, sb.Width, sb.Height + margin * 2);
         
         var topLeft = Vector2.Transform(sb.TopLeft, inputCoordinateSystem.TransformInv);
         var bottomRight = Vector2.Transform(sb.BottomRight, inputCoordinateSystem.TransformInv);

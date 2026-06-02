@@ -86,6 +86,7 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
 
     private void SetProperPosition(RectangleF bounds)
     {
+        _newBounds = bounds;
         if (_inputView?.LayoutParameters is not ViewGroup.MarginLayoutParams lp) return;
 
         lp.SetMargins((int)bounds.X, (int)(bounds.Y + bounds.Height), 0, 0);
@@ -93,15 +94,13 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
         lp.Height = 1;
         _inputView.LayoutParameters = lp;
         _inputView.RequestLayout();
+        // Post so RequestRectangleOnScreen runs after the layout pass completes
+        _inputView.Post(ApplyRequestRectangleOnScreen);
     }
 
     internal void UpdatePosition(RectangleF bounds, int _)
     {
-        activity.RunOnUiThread(() =>
-        {
-            SetProperPosition(bounds);
-            ApplyRequestRectangleOnScreen();
-        });
+        activity.RunOnUiThread(() => SetProperPosition(bounds));
     }
 
     private void ApplyRequestRectangleOnScreen()
@@ -117,7 +116,6 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
     private class NativeInputView : View, ViewTreeObserver.IOnGlobalLayoutListener
     {
         private readonly NativeTextInputServiceDroid _service;
-        private int _lastVisibleHeight;
 
         public NativeInputView(Context context, NativeTextInputServiceDroid service) : base(context)
         {
@@ -129,18 +127,15 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
 
         public void OnGlobalLayout()
         {
-            var r = new Android.Graphics.Rect();
-            GetWindowVisibleDisplayFrame(r);
-            var visibleHeight = r.Height();
-
-            if (visibleHeight != _lastVisibleHeight)
+            // Re-apply full position in case bounds were set before keyboard appeared
+            var bounds = _service._newBounds;
+            if (bounds.HasValue)
             {
-                _lastVisibleHeight = visibleHeight;
-                _service.ApplyRequestRectangleOnScreen();
+                _service.SetProperPosition(bounds.Value);
             }
         }
 
-        public override IInputConnection? OnCreateInputConnection(EditorInfo? outAttrs)
+        public override IInputConnection OnCreateInputConnection(EditorInfo? outAttrs)
         {
             if (outAttrs != null)
             {

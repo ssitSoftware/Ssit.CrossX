@@ -17,4 +17,5 @@ public interface IGeometryRenderer
     void DrawVertices(ITexture texture, IVertexBuffer vertexBuffer, int count = -1, RgbaColor? color = null);
     void DrawPoint(Vector2 position, RgbaColor color);
     void DrawPoints(IReadOnlyList<Vector2> points, RgbaColor color);
+    void DrawFrame(RectangleF sb, RgbaColor frameColor, float thickness = 1);
 }

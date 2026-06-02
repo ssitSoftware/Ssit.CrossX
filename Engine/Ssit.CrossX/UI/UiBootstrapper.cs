@@ -64,6 +64,7 @@ public static class UiBootstrapper
             .AddMapping<SpriteView, SpriteViewHandler>()
             .AddMapping<MarkdownView, MarkdownViewHandler<MarkdownView>>()
             .AddMapping<HorizontalSlider, HorizontalSliderHandler<HorizontalSlider>>()
-            .AddMapping<FocusableContainer, FocusableContainerHandler>();
+            .AddMapping<FocusableContainer, FocusableContainerHandler>()
+            .AddMapping<TextInput, TextInputHandler>();
     }
 }

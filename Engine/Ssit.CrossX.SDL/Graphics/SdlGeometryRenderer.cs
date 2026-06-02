@@ -82,6 +82,36 @@ internal unsafe class SdlGeometryRenderer(SDL_Renderer* renderer, IRenderStatePr
 
         LinesRendered += 4;
     }
+    
+    public void DrawFrame(RectangleF rect, RgbaColor color, float thickness = 1)
+    {
+        var scale = RenderStateProvider.Scale;
+        var offset = RenderStateProvider.Offset;
+     
+        int width = (int) MathF.Ceiling(thickness * scale);
+        
+        SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
+        SDL_SetRenderDrawBlendMode(renderer, RenderStateProvider.BlendMode.ToSdlBlendMode());
+        
+        SDL_FRect targetRect = new()
+        {
+            x = rect.X * scale + offset.X,
+            y = rect.Y * scale + offset.Y,
+            w = rect.Width * scale,
+            h = rect.Height * scale
+        };
+
+        for (var idx = 0; idx < width; idx++)
+        {
+            SDL_RenderRect(renderer, &targetRect);
+            LinesRendered += 4;
+            
+            targetRect.x += 1;
+            targetRect.y += 1;
+            targetRect.w -= 2;
+            targetRect.h -= 2;
+        }
+    }
 
     public void FillRectangle(RectangleF rect, RgbaColor color)
     {

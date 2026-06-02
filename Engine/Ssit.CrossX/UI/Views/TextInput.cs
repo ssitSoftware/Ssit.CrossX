@@ -42,4 +42,5 @@ public class TextInput: View
     public TextUpdateMode? UpdateMode { get; set; }
     
     public Length? AdditionalKeyboardMargin { get; set; }
+    public ColorWrapper? SelectionColor { get; set; }
 }

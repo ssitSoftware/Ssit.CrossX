@@ -242,4 +242,34 @@ public readonly struct RectangleF: IEquatable<RectangleF>
     public RectangleF Offset(Vector2 offset) => new(X + offset.X, Y + offset.Y, Width, Height);
     
     public static RectangleF operator + (RectangleF rect, Vector2 offset) => rect.Offset(offset);
+
+    public RectangleF SetWidth(float width)
+    {
+        return new RectangleF(X, Y, width, Height);
+    }
+    
+    public RectangleF SetHeight(float height)
+    {
+        return new RectangleF(X, Y, Height, height);
+    }
+    
+    public RectangleF SetSize(SizeF size)
+    {
+        return new RectangleF(X, Y, size.Width, size.Height);
+    }
+    
+    public RectangleF SetX(float x)
+    {
+        return new RectangleF(x, Y, Width, Height);
+    }
+    
+    public RectangleF SetY(float y)
+    {
+        return new RectangleF(X, y, Width, Height);
+    }
+    
+    public RectangleF SetPosition(Vector2 position)
+    {
+        return new RectangleF(position.X, position.Y, Width, Height);
+    }
 }

@@ -40,14 +40,15 @@ public class TextInputHandler(
     private  INativeTextInput _currentTextInput;
     
     private int _cursorPosition;
+    private int _selectionStart = -1;
 
     protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : _scale;
 
     private readonly TextRenderingContext _textRenderingContext = new();
     
     private string _currentText;
-
     private bool _wasActiveInput;
+    private float _textDisplayOffset;
     
     public override void Init()
     {
@@ -180,7 +181,7 @@ public class TextInputHandler(
 
         var frameWidth = AttachedView.ActiveFrameThickness?.Calculate(CurrentScale, 1) ?? CurrentScale + 1;
         
-        var cpPixels = (int)Vector2.TransformNormal(new Vector2(_cursorPositionInPixels + textRect.X - sb.X + frameWidth, 0), inputCoordinateSystem.TransformInv).X;
+        var cpPixels = (int)Vector2.TransformNormal(new Vector2(_cursorPositionInPixels + _textDisplayOffset + textRect.X - sb.X + frameWidth, 0), inputCoordinateSystem.TransformInv).X;
 
         sb = sb.Inflate(frameWidth);
         var margin = AttachedView.AdditionalKeyboardMargin?.Calculate(CurrentScale, 1) ?? 0;
@@ -400,6 +401,44 @@ public class TextInputHandler(
         var textRect = GetTextRectangle();
         var isPlaceholder = string.IsNullOrEmpty(_currentText);
 
+        float cursorPositionX = 0;
+
+        renderer.StateManager.SaveState();
+        renderer.StateManager.SetClipRect(textRect);
+
+        var fullTextSize = font.TextSize(_currentText).Width * TextScale;
+        
+        if (_isActiveInput && !isPlaceholder)
+        {
+            cursorPositionX = font.TextSize(new TextSource(_currentText, 0, _cursorPosition)).Width * TextScale;
+            
+            var displayPosition = cursorPositionX + _textDisplayOffset;
+            
+            if (displayPosition > textRect.Width)
+            {
+                _textDisplayOffset -= displayPosition - textRect.Width;
+            }
+
+            if (displayPosition < 0)
+            {
+                _textDisplayOffset += -displayPosition;
+            }
+            
+            var rightPosition = _textDisplayOffset + fullTextSize;
+            if (rightPosition < textRect.Width)
+            {
+                _textDisplayOffset += textRect.Width - rightPosition;
+                _textDisplayOffset = Math.Min(0, _textDisplayOffset);
+            }
+            
+            renderer.StateManager.Translate(new Vector2(_textDisplayOffset, 0));
+        }
+        else
+        {
+            _textDisplayOffset = 0;
+        }
+
+        
         if (isPlaceholder)
         {
             if (AttachedView.Placeholder is not null)
@@ -419,12 +458,26 @@ public class TextInputHandler(
         }
         else
         {
+            if (_selectionStart >= 0)
+            {
+                var selectionColor = AttachedView.SelectionColor?.GetColor(paletteSource, renderer) ?? RgbaColor.White;
+                
+                var min = Math.Min(_selectionStart, _cursorPosition);
+                var max = Math.Max(_selectionStart, _cursorPosition);
+                
+                var start = font.TextSize(new TextSource(_currentText, 0, min)).Width * TextScale;
+                var end = font.TextSize(new TextSource(_currentText, 0, max)).Width * TextScale;
+
+                var rect = new RectangleF(textRect.X + start, textRect.Y, end - start, font.LineSize * TextScale);
+                renderer.GeometryRenderer.FillRectangle(rect, selectionColor);
+            }
+            
             var textColor = GetColor(AttachedView.TextColors, renderer);
             var textOutlineColor = GetColor(AttachedView.TextOutlineColors, renderer);
             renderer.TextRenderer.DrawText(
                 font: font,
                 text: _currentText,
-                position: textRect,
+                position: textRect.SetWidth(fullTextSize + 10),
                 align: ContentAlign.Left | ContentAlign.VCenter,
                 scale: TextScale,
                 color: textColor,
@@ -434,11 +487,9 @@ public class TextInputHandler(
         
         if (_isActiveInput)
         {
-            var positionX = font.TextSize(new TextSource(_currentText, 0, _cursorPosition)).Width * TextScale;
-
-            if (Math.Abs(positionX - _cursorPositionInPixels) > 0.001f)
+            if (Math.Abs(cursorPositionX - _cursorPositionInPixels) > 0.001f)
             {
-                _cursorPositionInPixels = positionX;
+                _cursorPositionInPixels = cursorPositionX;
                 UpdateNativePosition();
             }
             
@@ -447,7 +498,7 @@ public class TextInputHandler(
                 var textOutlineColor = GetColor(AttachedView.TextOutlineColors, renderer);
                 frameColor = AttachedView.CursorColor?.GetColor(paletteSource, renderer) ?? frameColor;
                 
-                var cursorRect = new RectangleF(textRect.X + positionX - 0.5f, textRect.Y, TextScale,
+                var cursorRect = new RectangleF(textRect.X + cursorPositionX - 0.5f, textRect.Y, TextScale,
                     font.LineSize * TextScale);
 
                 renderer.GeometryRenderer.FillRectangle(cursorRect, frameColor ?? RgbaColor.White);
@@ -457,6 +508,8 @@ public class TextInputHandler(
                 renderer.GeometryRenderer.DrawFrame(cursorRect, textOutlineColor ?? RgbaColor.White, TextScale);
             }
         }
+        
+        renderer.StateManager.RestoreState();
     }
 
     private RectangleF GetTextRectangle()
@@ -495,6 +548,8 @@ public class TextInputHandler(
 
     public void OnTextInput(string text)
     {
+        DeleteSelectionText();
+        
         var beforeCursor = _currentText.Substring(0, _cursorPosition);
         var afterCursor = _currentText.Substring(_cursorPosition);
         
@@ -530,39 +585,85 @@ public class TextInputHandler(
                 }
                 break;
             case Key.Backspace:
-                if (_cursorPosition > 0)
+                
+                if (!DeleteSelectionText())
                 {
-                    _currentText = _currentText.Substring(0, _cursorPosition - 1) + _currentText.Substring(_cursorPosition);
-                    _cursorPosition--;
-                    
-                    if (AttachedView.UpdateMode == TextUpdateMode.Live)
+                    if (_cursorPosition > 0)
                     {
-                        AttachedView.Text?.SetText(_currentText);
+                        _currentText = _currentText.Substring(0, _cursorPosition - 1) +
+                                       _currentText.Substring(_cursorPosition);
+                        _selectionStart = -1;
+                        _cursorPosition--;
                     }
+                }
+
+                if (AttachedView.UpdateMode == TextUpdateMode.Live)
+                {
+                    AttachedView.Text?.SetText(_currentText);
                 }
                 return true;
             
             case Key.Delete:
-                if (_currentText.Length > _cursorPosition)
+                if (!DeleteSelectionText() && _currentText.Length > _cursorPosition)
                 {
                     _currentText = _currentText.Substring(0, _cursorPosition) +
                                    _currentText.Substring(_cursorPosition + 1);
                     
-                    if (AttachedView.UpdateMode == TextUpdateMode.Live)
-                    {
-                        AttachedView.Text?.SetText(_currentText);
-                    }
+                    _selectionStart = -1;
+                }
+                if (AttachedView.UpdateMode == TextUpdateMode.Live)
+                {
+                    AttachedView.Text?.SetText(_currentText);
                 }
                 return true;
             
             case Key.Left:
-                _cursorPosition = Math.Max(0, _cursorPosition - 1);
+                SetCursorPosition(_cursorPosition - 1);
                 return true;
             
             case Key.Right:
-                _cursorPosition = Math.Min(_currentText.Length, _cursorPosition + 1);
+                SetCursorPosition(_cursorPosition + 1);
+                return true;
+            
+            case Key.Home:
+                SetCursorPosition(0);
+                return true;
+            
+            case Key.End:
+                SetCursorPosition(int.MaxValue);
                 return true;
         }
         return false;
+    }
+
+    private void SetCursorPosition(int position)
+    {
+        if (_currentTextInput.IsShiftPressed)
+        {
+            if (_selectionStart < 0)
+            {
+                _selectionStart = _cursorPosition;
+            }
+        }
+        else
+        {
+            _selectionStart = -1;
+        }
+        
+        _cursorPosition = Math.Min(_currentText.Length, Math.Max(position, 0));
+    }
+
+    private bool DeleteSelectionText()
+    {
+        if (_selectionStart < 0) return false;
+        
+        var min = Math.Min(_selectionStart, _cursorPosition);
+        var max = Math.Max(_selectionStart, _cursorPosition);
+        
+        _currentText = _currentText.Substring(0, min) + _currentText.Substring(max);
+        
+        _cursorPosition = min;
+        _selectionStart = -1;
+        return true;
     }
 }

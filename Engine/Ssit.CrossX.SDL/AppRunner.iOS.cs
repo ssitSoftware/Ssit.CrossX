@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SDL;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.SDL.Ios.Input;
 
 namespace Ssit.CrossX.SDL;
 
@@ -22,7 +24,10 @@ public static class AppRunner
         _runAction = () =>
         {
             using var app = new TApp();
-            AppRunnerInternal.Run(app);
+            AppRunnerInternal.Run(app, initializeServicesDelegate: builder =>
+            {
+                builder.WithSingleton<INativeTextInputService, NativeTextInputServiceIos>();
+            });
         };
         
         SDL3.SDL_AddEventWatch(&AppEventWatcher.AppEventWatch, IntPtr.Zero);

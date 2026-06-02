@@ -117,6 +117,7 @@ internal class NativeTextInputServiceIos : INativeTextInputService
     internal void OnText(string text) => _currentConsumer?.OnTextInput(text);
     internal void OnBackspace() => _currentConsumer?.OnKey(Key.Backspace);
     internal void OnEnter() => _currentConsumer?.OnKey(Key.Enter);
+    internal void OnKey(Key key) => _currentConsumer?.OnKey(key);
 
     private class NativeInputView : UIView, IUIKeyInput
     {
@@ -142,6 +143,26 @@ internal class NativeTextInputServiceIos : INativeTextInputService
         }
 
         public void DeleteBackward() => _service.OnBackspace();
+
+        public override void PressesBegan(NSSet<UIPress> presses, UIPressesEvent evt)
+        {
+            var handled = false;
+            foreach (UIPress press in presses)
+            {
+                switch (press.Key?.KeyCode)
+                {
+                    case UIKeyboardHidUsage.KeyboardLeftArrow:
+                        _service.OnKey(Key.Left);
+                        handled = true;
+                        break;
+                    case UIKeyboardHidUsage.KeyboardRightArrow:
+                        _service.OnKey(Key.Right);
+                        handled = true;
+                        break;
+                }
+            }
+            if (!handled) base.PressesBegan(presses, evt);
+        }
     }
 }
 

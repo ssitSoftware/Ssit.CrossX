@@ -435,7 +435,6 @@ public class TextInputHandler(
         if (_isActiveInput)
         {
             var positionX = font.TextSize(new TextSource(_currentText, 0, _cursorPosition)).Width * TextScale;
-            
 
             if (Math.Abs(positionX - _cursorPositionInPixels) > 0.001f)
             {

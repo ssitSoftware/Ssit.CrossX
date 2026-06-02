@@ -2,6 +2,8 @@
 
 using Org.Libsdl.App;
 using Ssit.CrossX.Core;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.SDL.Droid.Input;
 using Ssit.CrossX.SDL.Services;
 
 namespace Ssit.CrossX.SDL.Droid;
@@ -18,6 +20,9 @@ public class CrossXSdlActivity<TApp> : SDLActivity where TApp : class, IApp, new
         AppRunnerInternal.Run(app, initializeAppDelegate: container =>
         {
             _eventSource = (EventSource)container.Get<IEventSource>();
+        }, initializeServicesDelegate: builder =>
+        {
+            builder.WithSingleton<INativeTextInputService, NativeTextInputServiceDroid>();
         });
     }
 

@@ -3,19 +3,23 @@ using Ssit.CrossX.Input;
 
 namespace Ssit.CrossX.SDL.Droid.Input;
 
-public class NativeTextInputDroid : INativeTextInput
+internal class NativeTextInputDroid(NativeTextInputServiceDroid service) : INativeTextInput
 {
-    private readonly INativeTextInputConsumer _consumer;
+    private bool _disposed;
 
-    public NativeTextInputDroid(INativeTextInputConsumer consumer, InputType inputType)
+    public void Dispose()
     {
-        _consumer = consumer;
+        if (_disposed) return;
+        _disposed = true;
+        service.OnDisposed(this);
     }
-
-    public void Dispose() => _consumer.OnTextInputClosed();
 
     public void UpdatePosition(RectangleF bounds, int cursorPosition)
     {
+        if (!_disposed)
+        {
+            service.UpdatePosition(bounds, cursorPosition);
+        }
     }
 }
 #endif

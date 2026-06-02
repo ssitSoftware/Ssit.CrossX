@@ -20,6 +20,7 @@ public class TextInputHandler(
     PageInputContext pageInputContext,
     IUiSounds uiSounds,
     INativeTextInputService nativeTextInputService,
+    IInputCoordinateSystem inputCoordinateSystem,
     IPaletteSource paletteSource = null)
     : ViewHandler<TextInput>(parameters), IFocusable, IInputConsumer, INativeTextInputConsumer
 {
@@ -33,6 +34,8 @@ public class TextInputHandler(
     private bool _pushed;
     private int? _currentPointerId;
     private float _scale;
+
+    private float _cursorPositionInPixels;
     
     private  INativeTextInput _currentTextInput;
     
@@ -41,7 +44,6 @@ public class TextInputHandler(
     protected float TextScale => AttachedView.Scaling == TextScaling.Pixel ? CurrentScale : _scale;
 
     private readonly TextRenderingContext _textRenderingContext = new();
-    private readonly TextRenderingContext _textRenderingContextCursor = new();
     
     private string _currentText;
 
@@ -158,7 +160,35 @@ public class TextInputHandler(
         _cursorPosition = _currentText.Length;
         _isActiveInput = true;
 
-        _currentTextInput = nativeTextInputService.AllocateTextInput(this, InputType.Text);
+        var (rect,  cursorPos) = CalculateNativePosition();
+        _currentTextInput = nativeTextInputService.AllocateTextInput(this, InputType.Text, rect, cursorPos);
+    }
+
+    private void UpdateNativePosition()
+    {
+        if (_currentTextInput is null)
+            return;
+
+        var (rect,  cursorPos) = CalculateNativePosition();
+        _currentTextInput.UpdatePosition(rect, cursorPos);
+    }
+
+    private (RectangleF, int) CalculateNativePosition()
+    {
+        var textRect = GetTextRectangle();
+        var sb = ScreenBounds;
+
+        var frameWidth = AttachedView.ActiveFrameThickness?.Calculate(CurrentScale, 1) ?? CurrentScale + 1;
+        frameWidth *= 2;
+        
+        var cpPixels = (int)Vector2.TransformNormal(new Vector2(_cursorPositionInPixels + textRect.X - sb.X + frameWidth, 0), inputCoordinateSystem.TransformInv).X;
+
+        sb = sb.Inflate(frameWidth);
+        
+        var topLeft = Vector2.Transform(sb.TopLeft, inputCoordinateSystem.TransformInv);
+        var bottomRight = Vector2.Transform(sb.BottomRight, inputCoordinateSystem.TransformInv);
+        
+        return (new RectangleF(topLeft, bottomRight - topLeft), cpPixels);
     }
 
     private void Deactivate()
@@ -400,19 +430,31 @@ public class TextInputHandler(
                 context: _textRenderingContext);
         }
         
-        if (_isActiveInput && (DateTime.Now.TimeOfDay.TotalSeconds % 1) < 0.5f)
+        if (_isActiveInput)
         {
-            var textOutlineColor = GetColor(AttachedView.TextOutlineColors, renderer);
-            frameColor = AttachedView.CursorColor?.GetColor(paletteSource, renderer) ?? frameColor;
-            
             var positionX = font.TextSize(new TextSource(_currentText, 0, _cursorPosition)).Width * TextScale;
-            var cursorRect = new RectangleF(textRect.X + positionX - 0.5f, textRect.Y, TextScale, font.LineSize * TextScale);
             
-            renderer.GeometryRenderer.FillRectangle(cursorRect, frameColor  ?? RgbaColor.White);
+
+            if (Math.Abs(positionX - _cursorPositionInPixels) > 0.001f)
+            {
+                _cursorPositionInPixels = positionX;
+                UpdateNativePosition();
+            }
             
-            cursorRect = cursorRect.Inflate(TextScale);
-            
-            renderer.GeometryRenderer.DrawFrame(cursorRect, textOutlineColor ?? RgbaColor.White, TextScale);
+            if (DateTime.Now.TimeOfDay.TotalSeconds % 1 < 0.5f)
+            {
+                var textOutlineColor = GetColor(AttachedView.TextOutlineColors, renderer);
+                frameColor = AttachedView.CursorColor?.GetColor(paletteSource, renderer) ?? frameColor;
+                
+                var cursorRect = new RectangleF(textRect.X + positionX - 0.5f, textRect.Y, TextScale,
+                    font.LineSize * TextScale);
+
+                renderer.GeometryRenderer.FillRectangle(cursorRect, frameColor ?? RgbaColor.White);
+
+                cursorRect = cursorRect.Inflate(TextScale);
+
+                renderer.GeometryRenderer.DrawFrame(cursorRect, textOutlineColor ?? RgbaColor.White, TextScale);
+            }
         }
     }
 
@@ -465,8 +507,6 @@ public class TextInputHandler(
     }
 
     public void OnTextInputClosed() => Deactivate();
-
-    public RectangleF TextInputBounds { get; }
     
     public bool OnKey(Key key)
     {

@@ -23,5 +23,13 @@ internal class NativeTextInputDroid(NativeTextInputServiceDroid service) : INati
             service.UpdatePosition(bounds, cursorPosition);
         }
     }
+
+    public void Reactivate()
+    {
+        if (!_disposed)
+        {
+            service.Reactivate(this);
+        }
+    }
 }
 #endif

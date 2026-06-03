@@ -34,8 +34,6 @@ public class TextInputHandler(
     private bool _pushed;
     private int? _currentPointerId;
     private float _scale;
-
-    private float _cursorPositionInPixels;
     
     private  INativeTextInput _currentTextInput;
     
@@ -125,10 +123,7 @@ public class TextInputHandler(
 
     private void Activate(Vector2 position)
     {
-        if (!_isActiveInput)
-        {
-            Activate();
-        }
+        Activate();
         
         var posX = position.X - ScreenBounds.X;
         if (AttachedView.Padding?.Left.HasValue ?? false)
@@ -156,8 +151,12 @@ public class TextInputHandler(
     private void Activate()
     {
         if (_currentTextInput != null)
+        {
+            _currentTextInput.Reactivate();
+            UpdateNativePosition();
             return;
-        
+        }
+
         _cursorPosition = _currentText.Length;
         _isActiveInput = true;
         
@@ -170,18 +169,15 @@ public class TextInputHandler(
         if (_currentTextInput is null)
             return;
 
-        var (rect,  cursorPos) = CalculateNativePosition();
-        _currentTextInput.UpdatePosition(rect, cursorPos);
+        var rect = CalculateNativePosition();
+        _currentTextInput.UpdatePosition(rect, 0);
     }
 
-    private (RectangleF, int) CalculateNativePosition()
+    private RectangleF CalculateNativePosition()
     {
-        var textRect = GetTextRectangle();
         var sb = ScreenBounds;
 
         var frameWidth = AttachedView.ActiveFrameThickness?.Calculate(CurrentScale, 1) ?? CurrentScale + 1;
-        
-        var cpPixels = (int)Vector2.TransformNormal(new Vector2(_cursorPositionInPixels + _textDisplayOffset + textRect.X - sb.X + frameWidth, 0), inputCoordinateSystem.TransformInv).X;
 
         sb = sb.Inflate(frameWidth);
         var margin = AttachedView.AdditionalKeyboardMargin?.Calculate(CurrentScale, 1) ?? 0;
@@ -190,8 +186,8 @@ public class TextInputHandler(
         
         var topLeft = Vector2.Transform(sb.TopLeft, inputCoordinateSystem.TransformInv);
         var bottomRight = Vector2.Transform(sb.BottomRight, inputCoordinateSystem.TransformInv);
-        
-        return (new RectangleF(topLeft, bottomRight - topLeft), cpPixels);
+
+        return new RectangleF(topLeft, bottomRight - topLeft);
     }
 
     private void Deactivate()
@@ -487,12 +483,6 @@ public class TextInputHandler(
         
         if (_isActiveInput)
         {
-            if (Math.Abs(cursorPositionX - _cursorPositionInPixels) > 0.001f)
-            {
-                _cursorPositionInPixels = cursorPositionX;
-                UpdateNativePosition();
-            }
-            
             if (DateTime.Now.TimeOfDay.TotalSeconds % 1 < 0.5f)
             {
                 var textOutlineColor = GetColor(AttachedView.TextOutlineColors, renderer);

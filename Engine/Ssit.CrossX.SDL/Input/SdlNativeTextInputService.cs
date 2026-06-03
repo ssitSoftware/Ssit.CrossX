@@ -26,6 +26,8 @@ internal unsafe class SdlNativeTextInputService(IInternalWindowProvider windowPr
         {
             PositionUpdated?.Invoke(bounds, cursorPosition);
         }
+
+        public void Reactivate() { }
     }
 
     private NativeTextInput _currentDisposable;

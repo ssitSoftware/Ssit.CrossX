@@ -1,4 +1,4 @@
-namespace Ssit.CrossX.XxGames.Logic.Steering;
+namespace Ssit.CrossX.XxGames.Logic.Stering;
 
 public abstract class SingleSteeringBehavior<TObject, TBehavior> : SteeringBehavior<TObject> where TBehavior : SingleSteeringBehavior<TObject, TBehavior>, new()
 {

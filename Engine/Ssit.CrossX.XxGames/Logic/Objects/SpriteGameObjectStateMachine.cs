@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Sprites;
-using Ssit.CrossX.XxGames.Logic.Steering;
+using Ssit.CrossX.XxGames.Logic.Stering;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 

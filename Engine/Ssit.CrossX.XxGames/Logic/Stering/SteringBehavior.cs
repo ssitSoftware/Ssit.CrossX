@@ -2,7 +2,7 @@ using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Physics;
 
-namespace Ssit.CrossX.XxGames.Logic.Steering;
+namespace Ssit.CrossX.XxGames.Logic.Stering;
 
 public class SteeringBehavior<TObject>
 {

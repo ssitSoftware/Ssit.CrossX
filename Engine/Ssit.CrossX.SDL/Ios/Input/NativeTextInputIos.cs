@@ -12,6 +12,7 @@ internal class NativeTextInputIos(NativeTextInputServiceIos service) : INativeTe
     public void Dispose()
     {
         if (_disposed) return;
+        
         _disposed = true;
         service.OnDisposed(this);
     }
@@ -19,7 +20,11 @@ internal class NativeTextInputIos(NativeTextInputServiceIos service) : INativeTe
     public void UpdatePosition(RectangleF bounds, int cursorPosition)
     {
         if (!_disposed)
+        {
             service.UpdatePosition(bounds, cursorPosition);
+        }
     }
+
+    public void Reactivate() { }
 }
 #endif

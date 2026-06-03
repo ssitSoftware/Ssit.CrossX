@@ -1,6 +1,6 @@
 using Ssit.CrossX.Input;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
-using Ssit.CrossX.XxGames.Logic.Steering;
+using Ssit.CrossX.XxGames.Logic.Stering;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 

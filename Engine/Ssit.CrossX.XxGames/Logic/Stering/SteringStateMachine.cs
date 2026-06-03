@@ -1,6 +1,6 @@
 using System;
 
-namespace Ssit.CrossX.XxGames.Logic.Steering;
+namespace Ssit.CrossX.XxGames.Logic.Stering;
 
 public sealed class SteeringStateMachine<TObject>(TObject obj)
 {

@@ -1,4 +1,4 @@
-using Ssit.CrossX.XxGames.Logic.Steering;
+using Ssit.CrossX.XxGames.Logic.Stering;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects;
 

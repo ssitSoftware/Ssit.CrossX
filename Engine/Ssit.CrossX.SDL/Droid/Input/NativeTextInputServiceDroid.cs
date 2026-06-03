@@ -215,5 +215,16 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
             return true;
         }
     }
+
+    public void Reactivate(NativeTextInputDroid input)
+    {
+        if (_current == input && _inputView != null && _currentConsumer != null)
+        {
+            _inputView.RequestFocus();
+                        
+            var imm = (InputMethodManager)activity.GetSystemService(Context.InputMethodService)!;
+            imm.ShowSoftInput(_inputView, ShowFlags.Forced);
+        }
+    }
 }
 #endif

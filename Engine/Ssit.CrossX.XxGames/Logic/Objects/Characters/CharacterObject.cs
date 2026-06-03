@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Audio;
 using Ssit.CrossX.XxGames.Audio;
-using Ssit.CrossX.XxGames.Logic.Steering;
+using Ssit.CrossX.XxGames.Logic.Stering;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 

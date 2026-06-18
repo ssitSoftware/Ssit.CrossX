@@ -14,4 +14,11 @@ public static class PhysicsUtils
         var newVelocity =  collider.AttachedBody.Velocity.X * (1 - MathF.Min(1, fr1 * fr2 * dt));
         collider.AttachedBody.Velocity = collider.AttachedBody.Velocity with { X = newVelocity };
     }
+
+    public static IMaterial CloneAndUpdate(this IMaterial material, Action<IMaterial> updateAction)
+    {
+        var newMaterial = material.Clone();
+        updateAction(newMaterial);
+        return newMaterial;
+    }
 }

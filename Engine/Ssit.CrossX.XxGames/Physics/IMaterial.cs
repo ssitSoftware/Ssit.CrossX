@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ssit.CrossX.XxGames.Physics;
+﻿namespace Ssit.CrossX.XxGames.Physics;
 
 public interface IMaterial
 {
@@ -10,5 +8,4 @@ public interface IMaterial
     ColliderSides Sides { get; set; }
     int ColliderGroup { get; set; }
     IMaterial Clone(int? newIndex = null);
-    
 }

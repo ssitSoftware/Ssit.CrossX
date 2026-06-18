@@ -128,6 +128,17 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
     internal void OnBackspace() => _currentConsumer?.OnKey(Key.Backspace);
     internal void OnEnter() => _currentConsumer?.OnKey(Key.Enter);
 
+    public void Reactivate(NativeTextInputDroid input)
+    {
+        if (_current == input && _inputView != null && _currentConsumer != null)
+        {
+            _inputView.RequestFocus();
+                        
+            var imm = (InputMethodManager)activity.GetSystemService(Context.InputMethodService)!;
+            imm.ShowSoftInput(_inputView, ShowFlags.Forced);
+        }
+    }
+    
     private class NativeInputView : View, ViewTreeObserver.IOnGlobalLayoutListener
     {
         private readonly NativeTextInputServiceDroid _service;
@@ -213,17 +224,6 @@ internal class NativeTextInputServiceDroid(Activity activity) : INativeTextInput
         {
             _service.OnEnter();
             return true;
-        }
-    }
-
-    public void Reactivate(NativeTextInputDroid input)
-    {
-        if (_current == input && _inputView != null && _currentConsumer != null)
-        {
-            _inputView.RequestFocus();
-                        
-            var imm = (InputMethodManager)activity.GetSystemService(Context.InputMethodService)!;
-            imm.ShowSoftInput(_inputView, ShowFlags.Forced);
         }
     }
 }

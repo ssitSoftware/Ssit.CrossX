@@ -30,7 +30,7 @@ public class JumpAttackBehavior : SteeringBehavior<ISteeringCharacter>
 
         obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpAttackRaiseVelocity };
         
-        obj.SoundContainer.Play("JumpCombo");
+        obj.SoundContainer?.Play("JumpCombo");
         obj.SetSteeringState("JumpCombo");
         return true;
     }

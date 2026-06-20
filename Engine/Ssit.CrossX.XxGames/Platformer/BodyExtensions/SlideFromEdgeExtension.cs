@@ -40,7 +40,9 @@ public class SlideFromEdgeExtension: IBodyExtension, IBodyEventsReceiver
             var aabb = collider.Aabb;
             _collidersBuffer.Clear();
 
-            if (!_body.Simulation.CheckCollision(new Aabb(aabb.Left, aabb.Bottom - 0.02f, aabb.Right, aabb.Bottom + 0.05f), _body, 0, _collidersBuffer)) return;
+            var group = collider.Material.ColliderGroup;
+            
+            if (!_body.Simulation.CheckCollision(new Aabb(aabb.Left, aabb.Bottom - 0.02f, aabb.Right, aabb.Bottom + 0.05f), _body, group, 0, _collidersBuffer)) return;
 
             for (var idx = 0; idx < _collidersBuffer.Count; )
             {

@@ -77,7 +77,7 @@ public abstract class MechanicalDoor(GameObjectsServices services, ObjectCreatio
         SetState(IsOpen ? "Open" : "Closed");
         Body.Colliders[0].IsActive = !IsOpen;
 
-        foreach (var col in Body.Simulation.GetColliders(Body.Colliders[0].Aabb, Body, 0, ColliderType.Dynamic))
+        foreach (var col in Body.Simulation.GetColliders(Body.Colliders[0].Aabb, Body, IMaterial.AllColliders, 0, ColliderType.Dynamic))
         {
             col.AttachedBody?.Touch();
         }

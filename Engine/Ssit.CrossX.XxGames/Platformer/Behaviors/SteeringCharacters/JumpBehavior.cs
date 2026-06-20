@@ -15,7 +15,7 @@ public class JumpBehavior(CheckAdditionalGroundHelper additionalGroundHelper) : 
         if (obj.SteeringInput.Button(SteeringControlNames.Jump) != ButtonState.JustPressed)
             return false;
         
-        obj.SoundContainer.Play("Jump");
+        obj.SoundContainer?.Play("Jump");
         obj.SetSteeringState("Raise");
         return true;
     }

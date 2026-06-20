@@ -17,13 +17,17 @@ public class UndoRedoEntry
         _mapFile = editorInstances.Map;
         _editorInstances = editorInstances;
 
-        var memoryStream = new MemoryStream();
-        var gzipStream = new GZipStream(memoryStream, CompressionLevel.SmallestSize);
-        var writer = new BinaryWriter(gzipStream);
+        using var memoryStream = new MemoryStream();
+        {
+            using var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress);
+            using var writer = new BinaryWriter(gzipStream);
 
-        _mapFile.SaveRaw(writer);
-        gzipStream.Flush();
-        memoryStream.Flush();
+            _mapFile.SaveRaw(writer);
+            writer.Flush();
+
+            gzipStream.Flush();
+            memoryStream.Flush();
+        }
 
         _data = memoryStream.GetBuffer();
     }

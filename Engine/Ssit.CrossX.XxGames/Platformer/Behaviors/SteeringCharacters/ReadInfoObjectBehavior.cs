@@ -10,8 +10,9 @@ public class ReadInfoObjectBehavior : SteeringBehavior<ISteeringCharacter>
 {
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
+        var group = obj.Body.Colliders[0].Material.ColliderGroup;
         var charAabb = obj.Body.Colliders[0].Aabb;
-        var colliders = obj.Body.Simulation.GetColliders(charAabb, obj.Body, colliderType: ColliderType.Trigger);
+        var colliders = obj.Body.Simulation.GetColliders(charAabb, obj.Body, group, colliderType: ColliderType.Trigger);
 
         foreach (var collider in colliders)
         {

@@ -28,8 +28,9 @@ public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 
         var center = obj.Body.Position + flippedOffset;
 
         var aabb = new Aabb(center, size);
+        
 
-        var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body, colliderType: ColliderType.Dynamic | ColliderType.Trigger, debugRegister: true);
+        var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body, IMaterial.AllColliders, colliderType: ColliderType.Dynamic | ColliderType.Trigger, debugRegister: true);
 
         foreach (var collider in colliders)
         {

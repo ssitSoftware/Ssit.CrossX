@@ -15,7 +15,7 @@ public class AttackBehavior : SteeringBehavior<ISteeringCharacter>
             with { X = obj.FaceLeft ? 
                 -obj.PhysicsValues.AttackVelocity : obj.PhysicsValues.AttackVelocity };
         
-        obj.SoundContainer.Play("Attack");
+        obj.SoundContainer?.Play("Attack");
         obj.SetSteeringState("Attack");
         return true;
     }

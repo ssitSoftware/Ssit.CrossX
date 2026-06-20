@@ -44,7 +44,7 @@ public abstract class Detector(GameObjectsServices services, ObjectCreationParam
     {
         base.OnFixedUpdate(ref cancelUpdate);
         
-        var isOn = Body.Simulation.CheckCollision(Body.Colliders[0].Aabb, Body, 0, null, ColliderType.Dynamic);
+        var isOn = Body.Simulation.CheckCollision(Body.Colliders[0].Aabb, Body, IMaterial.AllColliders, 0, null, ColliderType.Dynamic);
         if (isOn != IsOn)
         {
             IsOn = isOn;

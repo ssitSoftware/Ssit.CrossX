@@ -13,7 +13,9 @@ public class WallGrabCheckBehavior(int grabMaterialIndex) : SteeringBehavior<ISt
             ? new Aabb(charAabb.Left - 0.2f, charAabb.Top, charAabb.Left + 0.01f, charAabb.Bottom)
             : new Aabb(charAabb.Right - 0.01f, charAabb.Top, charAabb.Right + 0.2f, charAabb.Bottom);
 
-        var colliders = obj.Body.Simulation.GetColliders(probe, obj.Body, colliderType: ColliderType.Trigger);
+        var group = obj.Body.Colliders[0].Material.ColliderGroup;
+        
+        var colliders = obj.Body.Simulation.GetColliders(probe, obj.Body, group, colliderType: ColliderType.Trigger);
         foreach (var collider in colliders)
         {
             if (collider.Material.Index != grabMaterialIndex)

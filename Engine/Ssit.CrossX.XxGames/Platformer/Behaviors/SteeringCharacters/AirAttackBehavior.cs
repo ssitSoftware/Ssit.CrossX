@@ -23,7 +23,7 @@ public class AirAttackBehavior(float horizontalMoveDivider = 1, float addHorizon
             obj.FaceLeft = !obj.FaceLeft;
         }
         
-        obj.SoundContainer.Play("Attack");
+        obj.SoundContainer?.Play("Attack");
         obj.SetSteeringState("AirAttack");
         
         return true;

@@ -12,7 +12,7 @@ public class WallJumpBehavior : SteeringBehavior<ISteeringCharacter>
             return false;
 
         obj.FaceLeft = !obj.FaceLeft;
-        obj.SoundContainer.Play("WallJump");
+        obj.SoundContainer?.Play("WallJump");
         obj.SetSteeringState("Raise");
         return true;
     }

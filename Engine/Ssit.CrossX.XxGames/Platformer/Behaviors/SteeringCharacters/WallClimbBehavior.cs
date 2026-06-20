@@ -34,7 +34,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<IS
     protected override void OnExit(ISteeringCharacter obj)
     {
         obj.Body.IsKinematic = false;
-        obj.SoundContainer.StopLoop("Climb");
+        obj.SoundContainer?.StopLoop("Climb");
     }
 
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
@@ -48,7 +48,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<IS
             return true;
         }
 
-        obj.SoundContainer.PlayLoop("Climb");
+        obj.SoundContainer?.PlayLoop("Climb");
         
         var charAabb = obj.Body.Colliders[0].Aabb;
         var climbAabb = parameters.ClimbAabb.Value;
@@ -75,12 +75,14 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<IS
 
     private Aabb? FindClimbAabb(ISteeringCharacter obj)
     {
+        var group = obj.Body.Colliders[0].Material.ColliderGroup;
+        
         var aabb = obj.Body.Colliders[0].Aabb;
         var probe = obj.FaceLeft
             ? new Aabb(aabb.Left - 0.2f, aabb.Top, aabb.Left + 0.01f, aabb.Bottom)
             : new Aabb(aabb.Right - 0.01f, aabb.Top, aabb.Right + 0.2f, aabb.Bottom);
 
-        var colliders = obj.Body.Simulation.GetColliders(probe, obj.Body);
+        var colliders = obj.Body.Simulation.GetColliders(probe, obj.Body, group);
 
         Aabb? climbAabb = null;
         foreach (var collider in colliders)

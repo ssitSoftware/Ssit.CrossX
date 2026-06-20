@@ -34,21 +34,24 @@ public class AttackWhenCharacterInHitRangeBehavior(SizeF detectorSize, float det
                 centerY + detectorSize.Height / 2f
             );
         }
-
-        var colliders = obj.Body.Simulation.GetColliders(detectorAabb, obj.Body, colliderType: ColliderType.Dynamic);
+        
+        var colliders = obj.Body.Simulation.GetColliders(detectorAabb, obj.Body, IMaterial.AllColliders, colliderType: ColliderType.Dynamic);
 
         foreach (var collider in colliders)
         {
             if (collider.AttachedBody?.Owner is not IHittable { Alive: true } hittable)
                 continue;
 
+            if (!hittable.IsEnemy(obj))
+                continue;
+            
             obj.SetSteeringState("Attack");
-            obj.CommonSoundContainer.Play("Slash");
+            obj.CommonSoundContainer?.Play("Slash");
+            
             if (hittable.Hit(new Vector2(obj.FaceLeft ? -1 : 1, 0), attackPower))
             {
                 onAttackSuccessful?.Invoke(obj);
             }
-            
             return true;
         }
 

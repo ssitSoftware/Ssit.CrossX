@@ -27,7 +27,9 @@ public class CheckAdditionalGroundHelper(params int[] excludeMaterials)
             aabb.Top = aabb.Bottom;
             aabb.Bottom += 0.4f;
             
-            var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body);
+            var group = obj.Body.Colliders[0].Material.ColliderGroup;
+            
+            var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body, group);
             if (colliders.Count == 0)
                 return false;
 

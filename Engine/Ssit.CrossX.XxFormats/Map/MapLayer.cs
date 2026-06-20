@@ -302,7 +302,7 @@ public class MapLayer: BindableModel
 
      protected virtual void LoadInternal(BinaryReader reader)
      {
-         var gameTemplate = GameTemplate;
+        var gameTemplate = GameTemplate;
         Name = reader.ReadString();
         Depth = reader.ReadSingle();
         HorizontalSpeed = reader.ReadSingle();

@@ -113,6 +113,12 @@ internal class Simulation : ISimulation
         _bodies.Sort((o1, o2) => o1.UpdateOrder - o2.UpdateOrder);
     }
     
+    public void GetColliders(IList<ICollider> list, Aabb aabb, IBody testingBody, int colliderGroup, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false)
+    {
+        list.Clear();
+        CheckCollision(aabb, testingBody, colliderGroup, epsilon, list, colliderType, debugRegister);
+    }
+    
     public IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, int colliderGroup, float epsilon = 0, ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false)
     {
         _tempCollidersList.Clear();

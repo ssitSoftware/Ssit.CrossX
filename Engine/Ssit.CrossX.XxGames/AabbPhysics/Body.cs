@@ -139,9 +139,19 @@ internal class Body : IBody
         }
     }
 
-    public void KinematicMove(Vector2 move, bool kinematicStandardMoveHybrid, IBody skipBody = null)
+    public void KinematicMove(Vector2 move, KinematicMoveMode mode, IBody skipBody = null)
     {
         IsActive = true;
+
+        if (mode == KinematicMoveMode.Move)
+        {
+            MoveInternal(ref move);
+            KinematicVelocity += move / Simulation.SimulationParameters.TimeDelta;
+            return;
+        }
+        
+        var kinematicStandardMoveHybrid = mode == KinematicMoveMode.Hybrid;
+        
         var normal = Vector2.Zero;
         var friction = Vector2.Zero;
 
@@ -162,7 +172,7 @@ internal class Body : IBody
                         if (horizontalMovementCollider.AttachedBody != skipBody)
                         {
                             var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + horizontalMovementCollider.AttachedBody.Mass) : 1;
-                            horizontalMovementCollider.AttachedBody?.KinematicMove(new Vector2(attemptedMove.X - move.X, 0) * modifier, kinematicStandardMoveHybrid, this);
+                            horizontalMovementCollider.AttachedBody?.KinematicMove(new Vector2(attemptedMove.X - move.X, 0) * modifier, mode, this);
                             horizontalMovementCollider.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
                             move = attemptedMove;
                             break;
@@ -174,7 +184,7 @@ internal class Body : IBody
                         if (skipBody != verticalMovementCollider.AttachedBody)
                         {
                             var modifier = kinematicStandardMoveHybrid ? Mass / (Mass + verticalMovementCollider.AttachedBody.Mass) : 1;
-                            verticalMovementCollider.AttachedBody?.KinematicMove(new Vector2(0, attemptedMove.Y - move.Y) * modifier, kinematicStandardMoveHybrid, this);
+                            verticalMovementCollider.AttachedBody?.KinematicMove(new Vector2(0, attemptedMove.Y - move.Y) * modifier, mode, this);
                             verticalMovementCollider.RaiseCollisionWith(false, Colliders[idx], Vector2.Zero);
                             move = attemptedMove;
                             break;
@@ -189,6 +199,7 @@ internal class Body : IBody
 
         if (kinematicStandardMoveHybrid)
         {
+            KinematicVelocity += move / Simulation.SimulationParameters.TimeDelta;
             Move(move);
         }
         else
@@ -207,8 +218,10 @@ internal class Body : IBody
             rec.OnBodyMoved(move);
         }
     }
+
+    public void Move(Vector2 offset) => MoveInternal(ref offset);
     
-    public void Move(Vector2 offset)
+    private void MoveInternal(ref Vector2 offset)
     {
         IsActive = true;
 

@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.XxGames.Logic.Narration;
+using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
@@ -175,7 +176,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
             var offset = MathF.Min(PhysicsValues.WalkSpeed * dt, MathF.Abs(_walkToPositionX.Value - Body.Position.X));;
             var dir = MathF.Sign(_walkToPositionX.Value - Body.Position.X);
             
-            Body.KinematicMove(new Vector2(dir * offset, 0), false);
+            Body.KinematicMove(new Vector2(dir * offset, 0), KinematicMoveMode.Kinematic);
             
             if (MathF.Abs(Body.Position.X - _walkToPositionX.Value) < 0.025f)
             {

@@ -173,4 +173,13 @@ public class MersenneTwister
         }
         return Generate() * (higherBound - lowerBound) + lowerBound;
     }
+    
+    public float Next(float lowerBound, float higherBound)
+    {
+        if (higherBound < lowerBound)
+        {
+            throw new ArgumentException("Higher bound must be greater than lower bound");
+        }
+        return (float)(Generate() * (higherBound - lowerBound) + lowerBound);
+    }
 }

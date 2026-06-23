@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 using Ssit.CrossX.XxGames.Logic.Stering;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters.Bots;
 
@@ -35,7 +36,7 @@ public class VerticalPatrolBehavior(bool returnToOriginalPositionIfNotVisible) :
 
         velocity = MathF.Min(velocity, MathF.Abs(destination - obj.Body.Position.Y));
 
-        obj.Body.KinematicMove(new Vector2(0, velocity), false);
+        obj.Body.KinematicMove(new Vector2(0, velocity), KinematicMoveMode.Kinematic);
 
         obj.SetSteeringState("Move");
         return false;

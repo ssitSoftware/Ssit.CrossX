@@ -64,7 +64,7 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<IS
         }
 
         var previousPosition = obj.Body.Position;
-        obj.Body.KinematicMove(new Vector2(0, -obj.PhysicsValues.WallClimbSpeed * dt), true);
+        obj.Body.KinematicMove(new Vector2(0, -obj.PhysicsValues.WallClimbSpeed * dt), KinematicMoveMode.Kinematic);
         if (obj.Body.Position.Y >= previousPosition.Y)
         {
             obj.SetSteeringState("Fall");

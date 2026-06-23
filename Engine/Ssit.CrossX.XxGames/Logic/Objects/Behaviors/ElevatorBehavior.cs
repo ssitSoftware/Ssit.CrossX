@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Behaviors;
 
@@ -68,7 +69,7 @@ public class ElevatorBehavior(Elevator elevator): Behavior
             var velocity = speed * moveDir;
             var move = velocity * dt;
             
-            elevator.Body.KinematicMove(move, false);
+            elevator.Body.KinematicMove(move, KinematicMoveMode.Kinematic);
             _lastMoveDirection = moveDir;
             break;
         }

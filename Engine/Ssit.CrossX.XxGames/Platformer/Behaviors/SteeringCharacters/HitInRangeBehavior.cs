@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.XxGames.Logic.Objects;
@@ -9,6 +10,8 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
 public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 1) : SteeringBehavior<ISteeringCharacter>
 {
+    private readonly List<ICollider> _colliders = new();
+    
     // ReSharper disable once ClassNeverInstantiated.Local
     private class Parameters
     {
@@ -29,10 +32,10 @@ public class HitInRangeBehavior(SizeF size, Vector2 offset, float attackPower = 
 
         var aabb = new Aabb(center, size);
         
+        _colliders.Clear();
+        obj.Body.Simulation.CheckCollision(aabb, obj.Body, colliders: _colliders, colliderType: ColliderType.Dynamic | ColliderType.Trigger, debugRegister: true);
 
-        var colliders = obj.Body.Simulation.GetColliders(aabb, obj.Body, IMaterial.AllColliders, colliderType: ColliderType.Dynamic | ColliderType.Trigger, debugRegister: true);
-
-        foreach (var collider in colliders)
+        foreach (var collider in _colliders)
         {
             if (collider.AttachedBody?.Owner is not IHittable { Alive: true } hittable)
                 continue;

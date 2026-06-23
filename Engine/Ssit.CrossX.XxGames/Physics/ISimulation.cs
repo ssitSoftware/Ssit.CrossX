@@ -28,7 +28,7 @@ public interface ISimulation: IDisposable
 
     IReadOnlyList<ICollider> GetColliders(Aabb aabb, IBody testingBody, int colliderGroup, float epsilon = 0,
         ColliderType colliderType = ColliderType.Static | ColliderType.Dynamic, bool debugRegister = false);
-
+    
     IReadOnlyList<Aabb> Debug_GetCollisionChecks();
     void Debug_GetQuadTreeAreas(IList<Aabb> aabbs);
     void RemoveCollider(ICollider collider);

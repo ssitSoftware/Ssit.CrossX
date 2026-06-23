@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Numerics;
-using Ssit.CrossX.XxGames.AabbPhysics.Colliders;
 
 namespace Ssit.CrossX.XxGames.Physics;
+
+public enum KinematicMoveMode
+{
+    Kinematic,
+    Hybrid,
+    Move
+}
 
 public interface IBody: IDisposable
 {
@@ -21,7 +27,7 @@ public interface IBody: IDisposable
     void AddColliders(params ICollider[] colliders);
     void RemoveCollider(ICollider collider);
     void Move(Vector2 offset);
-    void KinematicMove(Vector2 offset, bool kinematicStandardMoveHybrid, IBody skipBody = null);
+    void KinematicMove(Vector2 offset, KinematicMoveMode mode, IBody skipBody = null);
     void ApplyForce(Vector2 force);
     void LimitVelocity(float maxHorizontalVelocity, float maxVerticalVelocity);
     void LimitVelocity(float maxVelocity);

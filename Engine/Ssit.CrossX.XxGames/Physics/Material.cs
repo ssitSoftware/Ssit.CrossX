@@ -8,7 +8,7 @@ public class Material : IMaterial
     public float Friction { get; set; }
     public float Bounce { get; set; }
     public ColliderSides Sides { get; set; }
-    public int ColliderGroup { get; set; } = 1;
+    public int ColliderGroup { get; set; } = IMaterial.AllColliders;
 
     public int Index { get; set; }
 

@@ -47,12 +47,12 @@ public class SdlHapticDevice: IHapticDevice
         switch (style)
         {
             case FeedbackStyle.ButtonPush:
-                timeInMs = 50;
+                timeInMs = 30;
                 strength = 0.1f * (int)UiFeedbackLevel;
                 break;
             
             case FeedbackStyle.ButtonRelease:
-                timeInMs = 50;
+                timeInMs = 30;
                 strength = 0.05f * (int)UiFeedbackLevel;
                 break;
             

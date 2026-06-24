@@ -10,12 +10,25 @@ namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 public class WallContactCollisionBehavior(int wallClimbMaterialIndex, params string[] wallSlideFromStates): SteeringBehavior<ISteeringCharacter>
 {
     private readonly HashSet<string> _wallSlideFromStates = new(wallSlideFromStates);
+
+    private readonly HashSet<int> _noSlideMaterials = new();
     
+    public int[] NoSlideMaterials
+    {
+        set
+        {
+            foreach (var material in value)
+            {
+                _noSlideMaterials.Add(material);
+            }
+        }
+    }
+
     protected override bool OnCollision(ISteeringCharacter obj, ICollider source, ICollider other, Vector2 impact)
     {
         if (MathF.Abs(impact.X) > 0.01f)
         {
-            if (other.Aabb.Bottom > source.Aabb.Center.Y)
+            if (other.Aabb.Bottom > source.Aabb.Center.Y && !_noSlideMaterials.Contains(other.Material.Index))
             {
                 if (other.Material.Index == wallClimbMaterialIndex)
                 {

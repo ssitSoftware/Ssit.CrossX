@@ -10,7 +10,7 @@ namespace Ssit.CrossX.SDL.Input;
 [SuppressMessage("Interoperability", "CA1422")]
 public class SdlHapticDevice: IHapticDevice
 {
-    public FeedbackLevel UiFeedbackLevel { get; set; } = FeedbackLevel.Level1;
+    public FeedbackLevel UiFeedbackLevel { get; set; } = FeedbackLevel.Level2;
     public FeedbackLevel ForceFeedbackLevel { get; set; } = FeedbackLevel.Level2;
     
     private readonly UIImpactFeedbackGenerator[] _feedbackGenerators;

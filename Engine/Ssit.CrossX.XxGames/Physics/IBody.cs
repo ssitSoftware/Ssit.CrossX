@@ -7,6 +7,7 @@ public enum KinematicMoveMode
 {
     Kinematic,
     Hybrid,
+    MoveAddVelocity,
     Move
 }
 

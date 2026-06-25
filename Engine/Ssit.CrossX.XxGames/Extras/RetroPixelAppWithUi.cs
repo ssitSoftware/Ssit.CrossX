@@ -10,10 +10,8 @@ using Ssit.CrossX.Graphics.Sprites;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.IO;
 using Ssit.CrossX.UI;
-using Ssit.CrossX.UI.Common;
 using Ssit.CrossX.UI.Components;
 using Ssit.CrossX.UI.Services;
-using Ssit.CrossX.Utils;
 using Ssit.CrossX.XxFormats.Template;
 using Ssit.IoC;
 
@@ -70,7 +68,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
               DisplacementFactorR = new Vector2(-scaleX, scaleY),
               DisplacementFactorG = new Vector2(0.0f, 0.0f),
               DisplacementFactorB = new Vector2(scaleX, -scaleY),
-              SelfGlowFactor = 0.5f
+              SelfGlowFactor = 0.55f
             },
             CrtParameters = new PixelAppHost.CrtParameters
             {
@@ -80,7 +78,7 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
                 LampGlow = 0.3f,
                 LampDownSize = 4,
                 Distortion = 1.05f,
-                Interline = 0.4f,
+                Interline = 0.35f,
                 NoiseCount = 1000,
                 NoiseIntensity = 0.2f
             }

@@ -143,10 +143,14 @@ internal class Body : IBody
     {
         IsActive = true;
 
-        if (mode == KinematicMoveMode.Move)
+        if (mode is KinematicMoveMode.Move or KinematicMoveMode.MoveAddVelocity)
         {
             MoveInternal(ref move);
-            KinematicVelocity += move / Simulation.SimulationParameters.TimeDelta;
+
+            if (mode == KinematicMoveMode.MoveAddVelocity)
+            {
+                KinematicVelocity += move / Simulation.SimulationParameters.TimeDelta;
+            }
             return;
         }
         

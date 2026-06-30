@@ -1,0 +1,6 @@
+<linker>
+  <!-- Prevent the trimmer from modifying SDL3-CS binding assembly.
+       AOT compiles from the original (aot-in/) version; if the trimmer changes
+       the packaged version, struct instance sizes diverge and Mono aborts at class-init. -->
+  <assembly fullname="SDL3-CS" action="copy" />
+</linker>

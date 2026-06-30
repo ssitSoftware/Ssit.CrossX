@@ -40,4 +40,8 @@
       <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.5" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+      <TrimmerRootDescriptor Include="TrimmerRootDescriptors.xml" />
+    </ItemGroup>
+
 </Project>

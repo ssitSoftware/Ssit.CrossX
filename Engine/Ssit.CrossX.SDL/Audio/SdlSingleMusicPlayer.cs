@@ -32,7 +32,8 @@ public unsafe class SdlSingleMusicPlayer : ISingleMusicPlayer
     {
         if (_track != null && _track.Pointer != null)
         {
-            MIX_SetTrackGain(_track.Pointer, _soundManager.MusicVolume);
+            var mv = _soundManager.MusicVolume;
+            MIX_SetTrackGain(_track.Pointer, mv);
         }
     }
 

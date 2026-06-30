@@ -7,19 +7,22 @@ using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.SDL.Droid.Input;
 using Ssit.CrossX.SDL.Services;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.SDL.Droid;
 
-public class CrossXSdlActivity<TApp> : SDLActivity where TApp : class, IApp, new()
+public abstract class CrossXSdlActivity : SDLActivity
 {
     private EventSource _eventSource;
     private NativeTextInputServiceDroid _textInputService;
+
+    protected abstract IApp CreateApp();
 
     protected override string[] GetLibraries() => ["SDL3", "SDL3_image", "SDL3_mixer"];
 
     protected override void Main()
     {
-        using var app = new TApp();
+        using var app = CreateApp();
         AppRunnerInternal.Run(app, initializeAppDelegate: container =>
         {
             _eventSource = (EventSource)container.Get<IEventSource>();
@@ -28,8 +31,11 @@ public class CrossXSdlActivity<TApp> : SDLActivity where TApp : class, IApp, new
         {
             builder.WithInstance<Activity>(this);
             builder.WithSingleton<INativeTextInputService, NativeTextInputServiceDroid>();
+            OnConfigureServices(builder);
         });
     }
+
+    protected virtual void OnConfigureServices(IIoCContainerBuilder builder) { }
 
     public override bool DispatchKeyEvent(KeyEvent e)
     {

@@ -69,7 +69,7 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
         _currentPlaylist = null;
         _currentMusicProvider = null;
     }
-
+    
     public IMusicPlayer RegisterPlaylist(string name, params string[] songs)
     {
         var playlist = new MusicPlaylist(songs.Select(o=> new Song(o)).ToArray());
@@ -98,8 +98,25 @@ public class LoopsMusicPlayer : IMusicPlayer, IUpdatable, IDisposable
             _currentPlaylistName = name;
             return;
         }
+
+        if (!_playlists.TryGetValue(name ?? "?????????", out var playlist))
+        {
+            foreach (var player in _players)
+            {
+                player.FadeOut(10);
+            }
         
-        if (!_playlists.TryGetValue(name, out var playlist)) return;
+            if (_currentPlaylist != null && _currentMusicProvider != null)
+            {
+                _currentPlaylist.CurrentSong = _currentMusicProvider.CurrentSongIndex;
+                _currentPlaylist.CurrentPosition = _currentMusicProvider.CurrentSongBlock;
+            }
+            
+            _currentPlaylist = null;
+            _currentMusicProvider = null;
+            _currentPlaylistName = "";
+            return;
+        }
 
         if (ReferenceEquals(_currentPlaylist, playlist)) return;
         

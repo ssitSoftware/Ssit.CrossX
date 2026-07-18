@@ -351,8 +351,15 @@ namespace Ssit.CrossX.Editor.ViewModels
                     return true;
                 }
             }
-            catch (FileNotFoundException) { }
-            catch (DirectoryNotFoundException) { }
+            catch (FileNotFoundException)
+            {
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (FormatException)
+            {
+            }
 
             return false;
         }

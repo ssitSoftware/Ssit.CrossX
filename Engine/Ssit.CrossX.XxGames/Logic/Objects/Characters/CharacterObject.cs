@@ -46,7 +46,9 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
         }
         return (TParameters)obj;
     }
-    
+
+    protected void SetParameter<TParameter>(TParameter parameter) => _parameters[typeof(TParameter)] = parameter;
+
     void IBodyEventsReceiver.OnCollision(ICollider source, ICollider other, Vector2 impact)
     {
         SteeringStateMachine.InternalStateMachine.CurrentState?.Collission((TCharacter)this, source, other, impact);

@@ -15,7 +15,11 @@ public abstract class MenuPage<TViewModel>(float transitionTime = 0.1f) : PageWi
         if (Services.Get<PageInputContext>().ShowFocus)
         {
             var focusable = inputContext.FindFocusable(DefaultId, this);
-            inputContext.Focus(focusable, this);
+
+            if (focusable is not null)
+            {
+                inputContext.Focus(focusable, this);
+            }
         }
     }
     

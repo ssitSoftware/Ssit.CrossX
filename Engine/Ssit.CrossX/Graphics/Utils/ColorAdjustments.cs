@@ -24,6 +24,24 @@ public static class ColorAdjustments
         return newColors;
     }
     
+    public static RgbaColor[] ToTechnicolor(IReadOnlyList<RgbaColor> colors, bool premultiplied = true)
+    {
+        var newColors = new RgbaColor[colors.Count];
+        for (var idx = 0; idx < colors.Count; idx++)
+        {
+            var color = colors[idx];
+            if (premultiplied)
+            {
+                color = color.ToNonPremultiplied();
+            }
+            color = AdjustHsl(AdjustGamma(color, 1.5f, false), 0, 0.95f, 1, false);
+            newColors[idx] = Technicolor.ToTechniColor2(color);
+            newColors[idx] = newColors[idx].Mix(colors[idx], 0.5f);
+        }
+
+        return newColors;
+    }
+
     private static RgbaColor ToNonPremultiplied(this RgbaColor color)
     {
         if (color.A == 0)

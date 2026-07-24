@@ -6,6 +6,7 @@ using SDL;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.SDL.Ios.Input;
+using Ssit.IoC;
 
 namespace Ssit.CrossX.SDL;
 
@@ -13,7 +14,7 @@ public static class AppRunner
 {
     private static Action _runAction;
     
-    public static unsafe void Run<TApp>() where TApp : class, IApp, new()
+    public static unsafe void Run<TApp>(Action<IIoCContainerBuilder> initializeServices = null) where TApp : class, IApp, new()
     {
         var frameworkPath = Path.Combine(AppContext.BaseDirectory!, "Frameworks");
         
@@ -27,6 +28,7 @@ public static class AppRunner
             AppRunnerInternal.Run(app, initializeServicesDelegate: builder =>
             {
                 builder.WithSingleton<INativeTextInputService, NativeTextInputServiceIos>();
+                initializeServices?.Invoke(builder);
             });
         };
         

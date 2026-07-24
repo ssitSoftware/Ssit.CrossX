@@ -87,6 +87,11 @@ public abstract class MusicPlayerBase : IMusicPlayer, IDisposable
         return true;
     }
 
+    public void Restart()
+    {
+        // TODO: implement
+    }
+
     public Song GetNextSong()
     {
         var nextSong = _currentPlaylist.CurrentSong + 1;

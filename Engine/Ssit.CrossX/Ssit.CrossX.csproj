@@ -29,4 +29,8 @@
       <ProjectReference Include="..\..\Libs\Ssit.IoC\Ssit.IoC\Ssit.IoC.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Ads\" />
+    </ItemGroup>
+
 </Project>

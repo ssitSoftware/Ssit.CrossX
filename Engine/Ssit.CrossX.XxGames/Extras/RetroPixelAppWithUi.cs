@@ -63,24 +63,25 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
             Mode = mode,
             GlowParameters = new PixelAppHost.GlowParameters
             {
-              Blur = Blurs.Gaussian3X3,
-              BlurDivider = Blurs.Gaussian3X3Divider * 0.65f,
+              Blur = Blurs.Gaussian5X5,
+              BlurDivider = Blurs.Gaussian5X5Divider * 0.65f,
               DisplacementFactorR = new Vector2(-scaleX, scaleY),
               DisplacementFactorG = new Vector2(0.0f, 0.0f),
               DisplacementFactorB = new Vector2(scaleX, -scaleY),
-              SelfGlowFactor = 0.55f
+              SelfGlowFactor = 0.6f
             },
             CrtParameters = new PixelAppHost.CrtParameters
             {
                 DisplacementFactorR = new Vector2(-scaleX, scaleY),
                 DisplacementFactorG = new Vector2(0.0f, 0.0f),
                 DisplacementFactorB = new Vector2(scaleX, -scaleY),
-                LampGlow = 0.3f,
+                LampGlow = 0.5f,
                 LampDownSize = 4,
                 Distortion = 1.05f,
-                Interline = 0.35f,
+                Interline = 0.4f,
+                VerticalInterline = 0.1f,
                 NoiseCount = 1000,
-                NoiseIntensity = 0.2f
+                NoiseIntensity = 0.1f
             }
         };
     }

@@ -4,7 +4,7 @@ using Ssit.CrossX.IO;
 
 namespace Ssit.CrossX.Fonts.RetroPixel;
 
-public class RetroPixelFonts 
+public static class RetroPixelFonts 
 {
     private class SourceClass : IAssetsSource
     {

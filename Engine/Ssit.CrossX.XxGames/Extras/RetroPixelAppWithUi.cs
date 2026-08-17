@@ -64,11 +64,11 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
             GlowParameters = new PixelAppHost.GlowParameters
             {
               Blur = Blurs.Gaussian5X5,
-              BlurDivider = Blurs.Gaussian5X5Divider * 0.65f,
+              BlurDivider = Blurs.Gaussian5X5Divider,// * 0.8f,
               DisplacementFactorR = new Vector2(-scaleX, scaleY),
               DisplacementFactorG = new Vector2(0.0f, 0.0f),
               DisplacementFactorB = new Vector2(scaleX, -scaleY),
-              SelfGlowFactor = 0.6f
+              SelfGlowFactor = 0.55f
             },
             CrtParameters = new PixelAppHost.CrtParameters
             {
@@ -76,12 +76,12 @@ public abstract class RetroPixelAppWithUi<TGameTemplate>(string name, RgbaColor[
                 DisplacementFactorG = new Vector2(0.0f, 0.0f),
                 DisplacementFactorB = new Vector2(scaleX, -scaleY),
                 LampGlow = 0.5f,
-                LampDownSize = 4,
-                Distortion = 1.05f,
-                Interline = 0.4f,
-                VerticalInterline = 0.1f,
-                NoiseCount = 1000,
-                NoiseIntensity = 0.1f
+                LampDownSize = 2,
+                Distortion = 1f,
+                Interline = 0.2f,
+                //VerticalInterline = 0.1f,
+                //NoiseCount = 1000,
+                //NoiseIntensity = 0.1f
             }
         };
     }

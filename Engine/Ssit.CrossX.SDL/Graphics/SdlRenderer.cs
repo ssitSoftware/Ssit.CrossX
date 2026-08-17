@@ -80,11 +80,12 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
         var stateManager = new StateManager(this);
         StateManager = stateManager;
         StateProvider = stateManager;
-        
+
         _quadsRenderer = new SdlQuadsRenderer(_renderer, stateManager);
         _geometryRenderer = new SdlGeometryRenderer(_renderer, stateManager);
         _spriteRenderer = new SdlSpriteRenderer(_renderer, stateManager);
         TextRenderer = new TextRenderer(QuadsRenderer);
+
         UpdateHwMode(stateManager.BlendMode, stateManager.ClipRect);
     }
     

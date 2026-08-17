@@ -24,6 +24,7 @@ public class PixelAppHost: IAppHost
         public Mode Mode = Mode.WidthAndHeight;
         public int MaxScale = 2;
         public int MinScale = 1;
+        public bool UseHalfSize = false;
         public GlowParameters GlowParameters;
         public CrtParameters CrtParameters;
         public bool PixelPerfect = false;
@@ -66,6 +67,7 @@ public class PixelAppHost: IAppHost
     private readonly Parameters _parameters;
     private readonly IIoCContainer _iocContainer;
     private readonly IRenderer2 _renderer;
+    private IRenderTarget _gameTarget;
     private IRenderTarget _renderTarget;
     private IRenderTarget _glowRenderTarget;
     private IRenderTarget _lampGlowRenderTarget;
@@ -102,9 +104,27 @@ public class PixelAppHost: IAppHost
         BeginRender();
         try
         {
+            _renderer.SetRenderTarget(_gameTarget ?? _renderTarget);
+            
             _renderer.StateManager.Reset();
             _renderer.StateManager.SetGlowMode(false);
-            renderAction(state);
+            
+            if (_gameTarget != null)
+            {
+                _renderer.StateManager.Scale(0.5f);
+                
+                renderAction(state);
+                
+                _renderer.StateManager.Reset();
+                _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
+                _renderer.SetRenderTarget(_renderTarget);
+                
+                _renderer.SpriteRenderer.Draw(_gameTarget, Vector2.Zero, scale: 2);
+            }
+            else
+            {
+                renderAction(state);
+            }
 
             if (_glowRenderTarget != null)
             {
@@ -121,14 +141,33 @@ public class PixelAppHost: IAppHost
 
                 if (true == _parameters.GlowParameters?.EnableGameGlow)
                 {
+                    _renderer.StateManager.Reset();
                     _renderer.StateManager.SetGlowMode(true);
-                    renderAction(state);
+                    
+                    if (_gameTarget != null)
+                    {
+                        _renderer.SetRenderTarget(_gameTarget);
+                        _renderer.StateManager.Scale(0.5f);
+                        
+                        renderAction(state);
+                
+                        _renderer.StateManager.Reset();
+                        _renderer.StateManager.SetTextureFilter(TextureFilter.Linear);
+                        _renderer.SetRenderTarget(_glowRenderTarget);
+                        _renderer.SpriteRenderer.Draw(_gameTarget, Vector2.Zero, scale: 2);
+                    }
+                    else
+                    {
+                        renderAction(state);
+                    }
+                    
                     _renderer.StateManager.SetGlowMode(false);
                 }
             }
         }
         finally
         {
+            _renderer.StateManager.Reset();
             EndRenderWrapped();
         }
     }
@@ -158,8 +197,6 @@ public class PixelAppHost: IAppHost
             _renderer.SetRenderTarget(_glowRenderTarget);
             _renderer.SpriteRenderer.Draw(_renderTarget, Vector2.Zero);
         }
-        
-        _renderer.SetRenderTarget(_renderTarget);
     }
     
     private Vector2[] _noise = new Vector2[1024];
@@ -167,7 +204,7 @@ public class PixelAppHost: IAppHost
     private void EndRender()
     {
         _renderer.StateManager.SetTextureFilter(TextureFilter.Nearest);
-
+        
         var sourceTexture = _renderTarget;
 
         if (_parameters.CrtParameters?.Interline > 0)
@@ -637,11 +674,22 @@ public class PixelAppHost: IAppHost
 
         _lampGlowRenderTarget?.Dispose();
         _lampGlowRenderTarget = null;
+        
+        _gameTarget?.Dispose();
+        _gameTarget = null;
 
         _renderTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
         {
             Size = size
         });
+
+        if (_parameters.UseHalfSize)
+        {
+            _gameTarget = _iocContainer.IoCConstruct<IRenderTarget>(new CreateRenderTargetParameters
+            {
+                Size = size / 2
+            });
+        }
 
         if (_parameters.GlowParameters is not null)
         {
@@ -682,5 +730,8 @@ public class PixelAppHost: IAppHost
         
         _lampGlowRenderTarget?.Dispose();
         _lampGlowRenderTarget = null;
+        
+        _gameTarget?.Dispose();
+        _gameTarget = null;
     }
 }

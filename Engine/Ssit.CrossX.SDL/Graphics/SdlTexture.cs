@@ -200,11 +200,11 @@ public unsafe class SdlTexture: ITexture
     
     private void UpdateSdlPalette()
     {
-        UpdateSdlPalette(ref _textureDiff, _surfaceDiff, _sdlPalette.PaletteHandle);
+        UpdateSdlPalette(ref _textureDiff, _surfaceDiff, _sdlPalette?.PaletteHandle);
 
         if (_surfaceGlow != null && _surfaceGlow.Pointer != null)
         {
-            UpdateSdlPalette(ref _textureGlow, _surfaceGlow, _sdlPalette.GlowPaletteHandle);
+            UpdateSdlPalette(ref _textureGlow, _surfaceGlow, _sdlPalette?.GlowPaletteHandle);
         }
         else if (_textureGlow != null && _textureGlow.Pointer != null)
         {

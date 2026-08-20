@@ -6,6 +6,7 @@ using Ssit.CrossX.Audio.Internal;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Core.Internal;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Effects;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.Input.Internal;
@@ -13,6 +14,7 @@ using Ssit.IoC;
 using Ssit.CrossX.SDL.Audio;
 using Ssit.CrossX.SDL.Common;
 using Ssit.CrossX.SDL.Graphics;
+using Ssit.CrossX.SDL.Graphics.Effects;
 using Ssit.CrossX.SDL.Input;
 using Ssit.CrossX.SDL.Services;
 
@@ -72,6 +74,7 @@ internal static class AppRunnerInternal
             .WithImplementation<ITexture, SdlTexture>()
             .WithImplementation<IRenderTarget, SdlRenderTarget>()
             .WithImplementation<IVertexBuffer, SdlVertexBuffer>()
+            .WithImplementation<IBloomEffect, SdlBloomEffect>()
             .WithSingleton<ISoundManager, SdlSoundManagerImpl>().As<SdlSoundManagerImpl>()
             .WithSingleton<SdlTrackPool, SdlTrackPool>()
             .WithImplementation<ISoundEffect, SdlSoundEffectImpl>()
@@ -100,7 +103,17 @@ internal static class AppRunnerInternal
 #endif
         
         var window = SDL_CreateWindow("", size.Width, size.Height, flags);
-        var renderer = SDL_CreateRenderer(window, (byte*)null);
+
+        // Prefer the "gpu" driver so SDL_GetGPURendererDevice (used by SDL-backed IEffect
+        // implementations, eg. SdlBloomEffect) has a device to work with. Legacy drivers
+        // (metal/direct3d12/vulkan/...) don't expose one. Falls back to SDL's own default
+        // selection if "gpu" isn't available on this platform.
+        var renderer = SDL_CreateRenderer(window, "gpu");
+        if (renderer is null)
+        {
+            renderer = SDL_CreateRenderer(window, (byte*)null);
+        }
+
         SDL_SetRenderVSync(renderer, 1);
         
         var pointingDevices = new SdlPointingDevices(new SdlHandle<SDL_Window>(window));

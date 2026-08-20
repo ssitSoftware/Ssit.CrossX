@@ -35,10 +35,10 @@ public class LabelButtonHandler<TLabelButton>: LabelHandler<TLabelButton>, IInpu
     private readonly ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>> _buttonHelper;
 
     public LabelButtonHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, 
-        IActionDispatcher actionDispatcher, IUiSounds uiSounds, IHapticDevice hapticDevice, 
+        IUiActionDispatcher uiActionDispatcher, IUiSounds uiSounds, IHapticDevice hapticDevice, 
         PageInputContext pageInputContext,
         IPaletteSource paletteSource = null) 
-        : base(parameters, fontsManager, actionDispatcher, paletteSource)
+        : base(parameters, fontsManager, uiActionDispatcher, paletteSource)
     {
         _pageInputContext = pageInputContext;
         _buttonHelper = new ButtonHelper<TLabelButton, LabelButtonHandler<TLabelButton>>(this, AttachedView?.CustomSounds ?? uiSounds, hapticDevice, pageInputContext);

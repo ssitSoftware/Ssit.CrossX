@@ -30,7 +30,5 @@ public interface IGameTemplate
     int PreviewZoom { get; }
     RgbaColor EmptyColor { get; }
     RgbaColor TilesBgColor => EmptyColor;
-    int TrimToPixels => 0;
-    
     Size TargetSize { get; }
 }

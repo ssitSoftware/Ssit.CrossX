@@ -30,8 +30,7 @@ public class ParticleSystem(IContentManager contentManager, IGameTemplate gameTe
         public void Draw(IRenderer2 renderer, IGameTemplate gameTemplate)
         {
             var pos = Position * gameTemplate.TileSize;
-            pos = pos.TrimVectorToPixels(gameTemplate.TrimToPixels);
-            
+
             renderer.SpriteRenderer.Draw(Texture, pos, Source, new Vector2(Source.Width / 2f, Source.Height / 2f), imageTransform: Velocity.X < 0 ? ImageTransform.FlipHorizontal : ImageTransform.None,
                 scale: MinScale + TimeToLive / TimeToLiveOriginal * (1-MinScale));
         }

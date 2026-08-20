@@ -2,7 +2,7 @@ using System;
 
 namespace Ssit.CrossX.UI.Services;
 
-public interface IActionDispatcher
+public interface IUiActionDispatcher
 {
     void Enqueue(Action action);
 }

@@ -157,7 +157,7 @@ public sealed class ImageSource<TTexture> : IImageSource<TTexture> where TTextur
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                container.Get<IActionDispatcher>().Enqueue(() => ImageChanged?.Invoke());
+                container.Get<IUiActionDispatcher>().Enqueue(() => ImageChanged?.Invoke());
                 return result;
             }
         }

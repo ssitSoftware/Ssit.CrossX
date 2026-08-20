@@ -15,3 +15,15 @@ public class ApplyJumpVelocityBehavior : SteeringBehavior<ISteeringCharacter>
         obj.SteeringParameters.IsOnGround = false;
     }
 }
+
+public class ApplyVerticalJumpVelocityBehavior : SteeringBehavior<ISteeringCharacter>
+{
+    protected override void OnEnter(ISteeringCharacter obj)
+    {
+        obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };
+        obj.Body.Velocity += obj.Body.KinematicVelocity with { Y = 0 };
+        
+        obj.Body.Position -= new Vector2(0, 0.22f);
+        obj.SteeringParameters.IsOnGround = false;
+    }
+}

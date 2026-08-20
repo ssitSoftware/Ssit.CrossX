@@ -69,7 +69,6 @@ public abstract class SpriteGameObject: StateGameObject, IGameObjectRenderer2, S
     protected virtual void OnRender(IRenderer2 renderer, RgbaColor color)
     {
         var pos = Body.Position * Services.GameTemplate.TileSize;
-        pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
         renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
     }
 

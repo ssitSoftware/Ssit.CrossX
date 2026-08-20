@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Input;
 using Ssit.CrossX.XxFormats.Template;
-using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Utils;
 
 namespace Ssit.CrossX.XxGames.Logic;
@@ -11,16 +11,16 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
 {
     private Vector2 _lookAt;
 
-    private IBody _primaryTarget;
+    private IPositionObject _primaryTarget;
     private Vector2 _primaryOffset;
     private float _primaryFollowFactor;
     
-    private IBody _temporaryTarget;
+    private IPositionObject _temporaryTarget;
     private Vector2 _temporaryOffset;
     private float _temporaryReturnTime;
     private float _temporaryFollowFactor;
     
-    private IBody Body => _temporaryTarget ?? _primaryTarget;
+    private IPositionObject PositionObject => _temporaryTarget ?? _primaryTarget;
     private Vector2 Offset => _temporaryTarget != null ? _temporaryOffset : _primaryOffset + _cameraMove * 6;
     private float FollowFactor => _temporaryTarget != null ? _temporaryFollowFactor : _primaryFollowFactor;
     
@@ -28,6 +28,7 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
 
     public Vector2 LookAt => GetLookAt();
 
+    private List<Vector2> _lastTargetPositions = new();
     private Vector2 _cameraMove;
     
     private int? _cameraWindowWidth;
@@ -48,22 +49,22 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
             var index = (int)(lookAt.Y / _cameraWindowHeight.Value);
             lookAt.Y = index * _cameraWindowHeight.Value / 2f;
         }
-        
-        return lookAt.TrimVectorToPixels(template.TrimToPixels);
+
+        return lookAt;
     }
     
-    public void SetPrimaryTarget(IBody body, Vector2 offset, float followFactor)
+    public void SetPrimaryTarget(IPositionObject positionObject, Vector2 offset, float followFactor)
     {
-        _primaryTarget = body;
+        _primaryTarget = positionObject;
         _primaryOffset = offset;
         _primaryFollowFactor = followFactor;
         
         _lookAt = _primaryTarget.Position + _primaryOffset;
     }
 
-    public void SetTemporaryTarget(IBody body, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter)
+    public void SetTemporaryTarget(IPositionObject positionObject, Vector2 offset, float followFactor, Action onFocused, TimeSpan returnAfter)
     {
-        _temporaryTarget = body;
+        _temporaryTarget = positionObject;
         _temporaryOffset = offset;
         _temporaryReturnTime = (float)returnAfter.TotalSeconds;
         _onTemporaryTargetFocused = onFocused;
@@ -85,7 +86,7 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
     
     public void Update(float dt)
     {
-        if (Body is null)
+        if (PositionObject is null)
             return;
 
         var moveX = inputMappings[0].GetAxis("CameraX");
@@ -94,21 +95,51 @@ internal class Camera(IGameTemplate template, IInputMappings inputMappings): ICa
         var dir = new Vector2(moveX, moveY);
         _cameraMove = dir;
 
-        var target = Body.Position + Offset;
+        var target = PositionObject.Position + Offset;
+        _lastTargetPositions.Add(target);
 
-        if (_primaryFollowFactor > 100000)
+        while (_lastTargetPositions.Count > 10)
+        {
+            _lastTargetPositions.RemoveAt(0);
+        }
+
+        var lastTarget = Vector2.Zero;
+        foreach (var positions in _lastTargetPositions)
+        {
+            lastTarget += positions;
+        }
+        lastTarget /= _lastTargetPositions.Count;
+
+        var targetDiff = target - lastTarget;
+        var factorMul = 4 - targetDiff.Length();
+        factorMul = MathF.Sqrt(MathF.Max(1, factorMul));
+
+        if ((target - _lookAt).Length() <= 1)
+        {
+            factorMul *= factorMul;
+        }
+        factorMul /= 2;
+        factorMul = MathF.Max(1, factorMul);
+        
+        if (targetDiff != Vector2.Zero)
+        {
+            factorMul = 1;
+        }
+        
+        if (_primaryFollowFactor == 0)
         {
             _lookAt = target;
             return;
         }
         
-        var factor = MathF.Min(1, dt * FollowFactor);
-        
+        var factor = MathF.Min(1, FollowFactor * dt * factorMul);
         var newLookAt = factor * target + (1 - factor) * _lookAt;
+        
         var diff = newLookAt - target;
         
-        var epsilon = 0.125f / template.TileSize;
-         if (MathF.Abs(diff.X) < epsilon && MathF.Abs(diff.Y) < epsilon)
+        var epsilon = 0.1f / template.TileSize;
+
+        if (MathF.Abs(diff.X) < epsilon && MathF.Abs(diff.Y) < epsilon)
         {
             newLookAt = target;
         }

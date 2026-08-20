@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Ssit.CrossX.UI.Services;
 
-internal class ActionDispatcher : IActionDispatcher
+internal class UiActionDispatcher : IUiActionDispatcher
 {
     private readonly object _lock = new();
     

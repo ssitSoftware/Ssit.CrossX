@@ -10,6 +10,6 @@ public static class MathUtils
         if (pixelsInOne <= float.Epsilon)
             return vec;
         
-        return new(MathF.Floor(vec.X * pixelsInOne) / pixelsInOne, MathF.Floor(vec.Y * pixelsInOne) / pixelsInOne);
+        return new((int)(vec.X * pixelsInOne) / pixelsInOne, (int)(vec.Y * pixelsInOne) / pixelsInOne);
     }
 }

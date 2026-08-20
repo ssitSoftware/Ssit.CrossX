@@ -136,9 +136,16 @@ public class AabbSimulationBuilder
         
         var tilesets = _mapFile.Tilesets.Select(o =>
         {
-            using var stream = _filesProvider.Open(PathHelper.GetPathWithExtension(o, "mask.png"));
+            var path = PathHelper.GetPathWithExtension(o, "mask.png");
+            if (!_filesProvider.FileExists(path))
+            {
+                var helperStream = _filesProvider.Open(o);
+                var image =  ImagesUtility.LoadImage(helperStream);
+                Array.Clear(image, 0, image.GetLength(0) * image.GetLength(1));
+                return image;
+            }
+            using var stream = _filesProvider.Open(path);
             return ImagesUtility.LoadImage(stream);
-
         }).ToArray();
         
         foreach (var layer in layers)

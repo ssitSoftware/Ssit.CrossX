@@ -72,7 +72,6 @@ public class Pushable(GameObjectsServices services, ObjectCreationParameters par
     protected virtual void Render(IRenderer2 renderer, RgbaColor color)
     {
         var pos = Body.Position * Services.GameTemplate.TileSize;
-        pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
         
         renderer.SpriteRenderer.Draw(_spriteSheet.Resource, pos, 
             _sequence.Frames[0].Source, 

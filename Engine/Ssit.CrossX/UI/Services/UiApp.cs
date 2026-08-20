@@ -5,7 +5,7 @@ using Ssit.CrossX.UI.Exceptions;
 
 namespace Ssit.CrossX.UI.Services;
 
-internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher)
+internal class UiApp(IIoCContainer services, IUiActionDispatcher iUiActionDispatcher)
     : IUiApp
 {
     INavigation IUiApp.Navigation => Navigation;
@@ -28,7 +28,7 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
     public IIoCContainer Services { get; private set; } = services;
     public InputProcessor InputProcessor { get; private set; }
     
-    private readonly ActionDispatcher _actionDispatcher = (ActionDispatcher)iActionDispatcher;
+    private readonly UiActionDispatcher _uiActionDispatcher = (UiActionDispatcher)iUiActionDispatcher;
 
     public void Initialize(Navigation navigation)
     {
@@ -38,7 +38,7 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
     
     public void Update(float dt)
     {
-        _actionDispatcher.Dispatch();
+        _uiActionDispatcher.Dispatch();
 
         InputProcessor.Process();
         Navigation.Update(dt);
@@ -58,7 +58,7 @@ internal class UiApp(IIoCContainer services, IActionDispatcher iActionDispatcher
                 Navigation.CurrentPage?.RecalculateLayout();
                 Navigation.CurrentPage?.Update(0);
                 
-                _actionDispatcher.Dispatch();
+                _uiActionDispatcher.Dispatch();
                 Navigation.Update(0);
             }
         }

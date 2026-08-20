@@ -8,4 +8,5 @@ public class LabelButtonEx: LabelButton
     public Length? FocusWaveAmplitude { get; set; }
     public float? FocusWaveFrequency { get; set; }
     public ColorWrapper FocusedLowColor { get; set; }
+    public bool? AnimateBevel { get; set; }
 }

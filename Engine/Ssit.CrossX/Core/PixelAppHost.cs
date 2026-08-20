@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Ssit.CrossX.Graphics;
+using Ssit.CrossX.Graphics.Effects;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.Utils;
 using Ssit.IoC;
@@ -27,6 +28,7 @@ public class PixelAppHost: IAppHost
         public bool UseHalfSize = false;
         public GlowParameters GlowParameters;
         public CrtParameters CrtParameters;
+        public BloomParameters BloomParameters;
         public bool PixelPerfect = false;
     }
     
@@ -64,6 +66,12 @@ public class PixelAppHost: IAppHost
         public bool HasDisplacement => DisplacementFactorR != Vector2.Zero || DisplacementFactorG != Vector2.Zero || DisplacementFactorB != Vector2.Zero;
     }
 
+    public class BloomParameters
+    {
+        public float Threshold;
+        public float Intensity;
+    }
+
     private readonly Parameters _parameters;
     private readonly IIoCContainer _iocContainer;
     private readonly IRenderer2 _renderer;
@@ -76,6 +84,8 @@ public class PixelAppHost: IAppHost
 
     public int Scale { get; private set; } = 1;
     private int _finalScale = 1;
+    
+    private IBloomEffect _bloomEffect;
     
     public Size TargetSize => _renderTarget?.Size ?? new Size(800, 600);
     public Size DesignTargetSize => _renderTarget?.Size / Scale ?? new Size(800, 600);
@@ -91,6 +101,8 @@ public class PixelAppHost: IAppHost
         _parameters = parameters;
         _iocContainer = iocContainer;
         _renderer = renderer;
+        
+        _bloomEffect = iocContainer.IoCConstruct<IBloomEffect>();
     }
 
     public void Resize(SizeF size, bool forceRecreation = false)
@@ -437,10 +449,18 @@ public class PixelAppHost: IAppHost
 
     private void DrawToTarget(IRenderTarget sourceTexture, RectangleF targetRect)
     {
+        if (_parameters.BloomParameters != null)
+        {
+            _bloomEffect.BloomIntensity = _parameters.BloomParameters.Intensity;
+            _bloomEffect.BloomThreshold = _parameters.BloomParameters.Threshold;
+            _renderer.SetEffect(_bloomEffect);
+        }
+        
         var distortion = _parameters.CrtParameters?.Distortion ?? 0;
         if (MathF.Abs(distortion) < 0.01f)
         {
             _renderer.QuadsRenderer.Draw(sourceTexture, targetRect);
+            _renderer.SetEffect(null);
             return;
         }
 
@@ -455,6 +475,8 @@ public class PixelAppHost: IAppHost
             _previousCrtDistortion = distortion;
         }
         _renderer.GeometryRenderer.DrawVertices(sourceTexture, _barrelVertices);
+        
+        _renderer.SetEffect(null);
     }
 
     private void PrepareVertices(RectangleF targetRect)
@@ -733,5 +755,8 @@ public class PixelAppHost: IAppHost
         
         _gameTarget?.Dispose();
         _gameTarget = null;
+        
+        _bloomEffect?.Dispose();
+        _bloomEffect = null;
     }
 }

@@ -25,7 +25,11 @@ internal class GraphicGlyphFont : GlyphFont, IGlyphFont
         (FontSheet, OutlineSheet) = TextureHelper.LoadComplexSheet(filesProvider, iocContainer, sheetPath);
     }
 
-    public void Dispose() => FontSheet?.Dispose();
+    public void Dispose()
+    {
+        FontSheet?.Dispose();
+        OutlineSheet?.Dispose();
+    }
 
     public Size TextSize(TextSource text, TextSpacing spacing) => GlyphFontRenderer.MeasureText(this, text, spacing);
 }

@@ -49,7 +49,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
     protected virtual async void TalkToSelf(string conversationId)
     {
         Body.Velocity = Vector2.Zero;
-        _camera.SetTemporaryTarget(Body, new Vector2(0,-4), 4, null, TimeSpan.FromDays(10));
+        _camera.SetTemporaryTarget(this, new Vector2(0,-4), 4, null, TimeSpan.FromDays(10));
         
         SteeringStateMachine.SetSteeringState("Talking");
         
@@ -137,7 +137,7 @@ public abstract class CharacterNarrativeOperatorObject<TCharacter> : CharacterOb
         await npc.StartConversation(Body.Position.X, conversationId);
 
         var tcs = new TaskCompletionSource();
-        _camera.SetTemporaryTarget(Body, new Vector2(0, -2f), 5, () =>
+        _camera.SetTemporaryTarget(this, new Vector2(0, -2f), 5, () =>
         {
             tcs.SetResult();
         }, TimeSpan.Zero);

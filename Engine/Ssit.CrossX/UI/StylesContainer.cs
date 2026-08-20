@@ -47,6 +47,12 @@ internal class StylesContainer
 
     public void ApplyStyles(object obj, string classes)
     {
+        if (string.IsNullOrWhiteSpace(classes))
+        {
+            ApplyStyle(obj, "__default__");
+            return;
+        }
+        
         var styles = classes.Split(',', ' ');
         foreach (var style in styles)
         {

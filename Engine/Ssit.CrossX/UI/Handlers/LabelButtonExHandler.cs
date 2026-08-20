@@ -17,10 +17,10 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     private float _time;
     
     public LabelButtonExHandler(CreateHandlerParameters parameters, IFontsManager fontsManager,
-        IActionDispatcher actionDispatcher,
+        IUiActionDispatcher uiActionDispatcher,
         IUiSounds uiSounds, IHapticDevice hapticDevice, PageInputContext pageInputContext,
         IPaletteSource paletteSource = null) 
-        : base(parameters, fontsManager, actionDispatcher, uiSounds, hapticDevice, pageInputContext, paletteSource)
+        : base(parameters, fontsManager, uiActionDispatcher, uiSounds, hapticDevice, pageInputContext, paletteSource)
     {
     }
 
@@ -47,16 +47,23 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
             _waveAmplitude -= dt * amplitude * 16;
             _waveAmplitude = MathF.Max(_waveAmplitude, targetAmplitude);
         }
-        
-        if (_bevel < targetBevel)
+
+        if (AttachedView.AnimateBevel.GetValueOrDefault())
         {
-            _bevel += dt * bevel * 8;
-            _bevel = MathF.Min(_bevel, targetBevel);
+            if (_bevel < targetBevel)
+            {
+                _bevel += dt * bevel * 8;
+                _bevel = MathF.Min(_bevel, targetBevel);
+            }
+            else if (_bevel > targetBevel)
+            {
+                _bevel -= dt * bevel * 16;
+                _bevel = MathF.Max(_bevel, targetBevel);
+            }
         }
-        else if (_bevel > targetBevel)
+        else
         {
-            _bevel -= dt * bevel * 16;
-            _bevel = MathF.Max(_bevel, targetBevel);
+            _bevel = targetBevel;
         }
     }
 
@@ -64,8 +71,8 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
     {
         var globalOffset = _waveAmplitude * MathF.Sin(_time * AttachedView.FocusWaveFrequency.GetValueOrDefault() * 2 * MathF.PI);
 
-        var offset0 = new Vector2(0.0f, -0.25f) * _bevel + globalOffset * new Vector2(1f, 0);
-        var offset1 = new Vector2(0.5f, -1.25f) * _bevel + globalOffset * new Vector2(1f, 0);
+        var offset0 = new Vector2(0.0f, -0.0f) * _bevel + globalOffset * new Vector2(1f, 0);
+        var offset1 = new Vector2(1.0f, -1.0f) * _bevel + globalOffset * new Vector2(1f, 0);
         
         DrawText(renderer, RgbaColor.Transparent, TextOutlineColor(renderer) ?? RgbaColor.Transparent, offset0);
 
@@ -82,7 +89,7 @@ public class LabelButtonExHandler: LabelButtonHandler<LabelButtonEx>
 
         if ( MathF.Abs(globalOffset) > 0 || Focused)
         {
-            var color = AttachedView.TextColors?.GetColor(renderer, PaletteSource, false, true, false, Enabled, IsChecked);
+            var color = AttachedView.TextColors?.GetColor(renderer, PaletteSource, false, true, IsPushed, Enabled, IsChecked);
             DrawText(renderer, color ?? RgbaColor.Transparent, RgbaColor.Transparent, offset1);
         }
     }

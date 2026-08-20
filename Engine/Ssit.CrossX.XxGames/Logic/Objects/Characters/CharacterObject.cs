@@ -9,7 +9,7 @@ using Ssit.CrossX.XxGames.Platformer.Builders;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteeringCharacter where TCharacter: CharacterObject<TCharacter>
+public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEventsReceiver, IActivationHandler, ISteeringCharacter, IPositionObject where TCharacter: CharacterObject<TCharacter>
 {
     TParameters IGameObject.Get<TParameters>(bool create) => GetParameters<TParameters>(create);
     SteeringState<ISteeringCharacter> ISteeringCharacter.CurrentSteeringState => SteeringStateMachine.InternalStateMachine.CurrentState;
@@ -19,6 +19,8 @@ public abstract class CharacterObject<TCharacter> : SpriteGameObject2, IBodyEven
     public CharacterSteeringParameters SteeringParameters { get; } = new();
     
     protected abstract ISteeringInput SteeringInput { get; }
+    
+    public virtual Vector2 Position => Body.Position;
     
     public Vector2 MomentumOffset { get; set; }
     protected Vector2 GroundDetectionEpsilon { get; set; } = Vector2.Zero;

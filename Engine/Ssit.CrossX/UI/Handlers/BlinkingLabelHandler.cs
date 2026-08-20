@@ -13,8 +13,8 @@ public class BlinkingLabelHandler<TLabel>: LabelHandler<TLabel> where TLabel: La
     private float VisibleTime => AttachedView.VisibleTime ?? 1f;
     private float HiddenTime => AttachedView.HiddenTime ?? 1f;
     
-    public BlinkingLabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, 
-        IPaletteSource paletteSource = null) : base(parameters, fontsManager, actionDispatcher, paletteSource)
+    public BlinkingLabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IUiActionDispatcher uiActionDispatcher, 
+        IPaletteSource paletteSource = null) : base(parameters, fontsManager, uiActionDispatcher, paletteSource)
     {
     }
 

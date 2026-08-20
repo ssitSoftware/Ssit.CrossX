@@ -11,11 +11,11 @@ namespace Ssit.CrossX.UI.Handlers;
 
 public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
 {
-    private readonly IActionDispatcher _actionDispatcher;
+    private readonly IUiActionDispatcher _uiActionDispatcher;
 
-    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IActionDispatcher actionDispatcher, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource)
+    public LabelHandler(CreateHandlerParameters parameters, IFontsManager fontsManager, IUiActionDispatcher uiActionDispatcher, IPaletteSource paletteSource = null) : base(parameters, fontsManager, paletteSource)
     {
-        _actionDispatcher = actionDispatcher;
+        _uiActionDispatcher = uiActionDispatcher;
     }
 
     public override void Init()
@@ -80,7 +80,7 @@ public class LabelHandler<TLabel> : TextBaseHandler<TLabel> where TLabel: Label
         catch(Exception)
         {
             TextRenderingContext.Reset();
-            _actionDispatcher.Enqueue(OnTextChanged);
+            _uiActionDispatcher.Enqueue(OnTextChanged);
             Parent?.GetParent<IPage>().InvalidateRendering();
         }
     }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SDL;
 using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.SDL.Graphics.Effects;
 
 using static SDL.SDL3;
 
@@ -10,15 +11,17 @@ namespace Ssit.CrossX.SDL.Graphics;
 public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvider renderStateProvider)
     : SdlRendererBase(renderStateProvider), IQuadsRenderer
 {
+    internal ISdlGpuEffect ActiveGpuEffect;
+
     public int QuadsRendered { get; private set; }
 
     public void Draw(ITexture texture, RectangleF target, Rectangle? nullableSource = null, RgbaColor? colorAttr = null)
     {
         var scale = RenderStateProvider.Scale;
         var offset = RenderStateProvider.Offset;
-        
+
         var source = nullableSource ?? new Rectangle(0, 0, texture.Size.Width, texture.Size.Height);
-        
+
         SDL_FRect sourceRect = new()
         {
             x = source.X,
@@ -35,9 +38,11 @@ public unsafe class SdlQuadsRenderer(SDL_Renderer* renderer, IRenderStateProvide
             w = target.Width * scale,
             h = target.Height * scale
         };
-        
+
+        ActiveGpuEffect?.PrepareDraw(new RectangleF(targetRect.x, targetRect.y, targetRect.w, targetRect.h));
+
         var textureHandle = PrepareTextureRender(texture, colorAttr);
-        
+
         SDL_RenderTexture(renderer, textureHandle.Pointer,
             &sourceRect, &targetRect);
 

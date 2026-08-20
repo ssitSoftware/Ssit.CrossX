@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Numerics;
 using Ssit.CrossX.Core;
 using Ssit.CrossX.Graphics.Renderer;
+using Ssit.CrossX.Input;
+using Ssit.CrossX.Input.Internal;
 using Ssit.CrossX.UI.Common;
 using Ssit.CrossX.UI.Common.Pages;
 using Ssit.IoC;
@@ -66,6 +68,8 @@ public abstract class UiPixelApp : IApp
         AppHost = CreateAppHost(container);
             
         UiApp = container.InitializeUi(OnInitializeUi);
+        UiApp.Services.Get<PageInputContext>().ShowFocus = UiApp.Services.Get<IPointingDevices>().Mode == PointingDevicesMode.Disabled;
+        
         OnResize(_renderer.Bounds.Size);
     }
 

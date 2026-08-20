@@ -3,6 +3,7 @@ using Ssit.CrossX.Graphics;
 using Ssit.CrossX.Graphics.Internal;
 using Ssit.CrossX.Graphics.Renderer;
 using Ssit.CrossX.SDL.Common;
+using Ssit.CrossX.SDL.Graphics.Effects;
 
 using static SDL.SDL3;
 
@@ -127,6 +128,22 @@ public unsafe class SdlRenderer: IRenderer2, StateManager.IUpdateHwModeHandler
             return;
         }
         SDL_SetRenderTarget(_renderer, renderTarget.GetMap<SdlHandle<SDL_Texture>>(TextureMaps.Diffuse).Pointer);
+    }
+
+    public void SetEffect(IEffect effect)
+    {
+        var gpuEffect = effect as ISdlGpuEffect;
+
+        _quadsRenderer.ActiveGpuEffect = gpuEffect;
+
+        if (gpuEffect != null)
+        {
+            SDL_SetGPURenderState(_renderer, gpuEffect.GetRenderState(_renderer));
+        }
+        else
+        {
+            SDL_SetGPURenderState(_renderer, null);
+        }
     }
 
     public void ResetStats()

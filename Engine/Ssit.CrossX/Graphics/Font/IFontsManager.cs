@@ -25,6 +25,14 @@ public interface IFontsManager
     /// </summary>
     /// <param name="fontsJsonPath">A path to the JSON data describing the fonts.</param>
     void LoadFonts(string fontsJsonPath);
+
+    /// <summary>
+    /// Loads a bitmap font using the specified name, image file path, and size.
+    /// </summary>
+    /// <param name="name">The name to assign to the bitmap font.</param>
+    /// <param name="imagePath">The path to the image file containing the font's bitmap representation.</param>
+    /// <param name="size">The dimensions of the font's single character.</param>
+    void LoadBitmapFont(string name, string imagePath, Size size);
     
     /// <summary>
     /// Retrieves a font with the specified name and size from the font manager.

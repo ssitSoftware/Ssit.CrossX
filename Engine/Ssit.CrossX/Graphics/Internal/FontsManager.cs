@@ -70,6 +70,27 @@ internal class FontsManager: IFontsManager, IDisposable
         }
     }
 
+    public void LoadBitmapFont(string name, string path, Size size)
+    {
+        using var stream = _filesProvider.Open(path);
+        
+        var loadParameters = new LoadTextureParameters
+        {
+            DiffuseMapStream = stream,
+            ColorMode = LoadTextureColorMode.WhiteAlpha
+        };
+        
+        var texture = _container.IoCConstruct<ITexture>(loadParameters);
+        
+        var bitmapFont = new BitmapFont(name, size, texture, ' ', '}');
+        if (!_fonts.TryGetValue(bitmapFont.Name, out var list))
+        {
+            list = new List<IGlyphFont>();
+            _fonts.Add(bitmapFont.Name, list);
+        }
+        list.Add(bitmapFont);
+    }
+
     public IFont GetFont(string name, float size = 0)
     {
         var diff = float.MaxValue;

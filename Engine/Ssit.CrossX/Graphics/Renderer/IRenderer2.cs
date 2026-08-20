@@ -15,4 +15,5 @@ public interface IRenderer2
     
     void Clear(RgbaColor color);
     void SetRenderTarget(IRenderTarget renderTarget);
+    void SetEffect(IEffect effect);
 }

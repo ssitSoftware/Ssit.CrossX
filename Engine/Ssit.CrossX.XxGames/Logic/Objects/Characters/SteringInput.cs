@@ -3,7 +3,7 @@ using Ssit.CrossX.Input;
 
 namespace Ssit.CrossX.XxGames.Logic.Objects.Characters;
 
-public class SteeringInput(IInputMapping mapping = null): ISteeringInputController
+public class SteeringInput : ISteeringInputController
 {
     private readonly Dictionary<string, ButtonState> _buttonStates = new();
     private readonly Dictionary<string, float> _values = new();
@@ -11,7 +11,13 @@ public class SteeringInput(IInputMapping mapping = null): ISteeringInputControll
     private readonly Dictionary<string, string> _mappings = new();
     private readonly List<string> _buttonIds = new();
     private readonly List<string> _valueIds = new();
-    
+    private readonly IInputMapping _mapping;
+
+    public SteeringInput(IInputMapping mapping = null)
+    {
+        _mapping = mapping;
+    }
+
     public ButtonState Button(string id) => _buttonStates.GetValueOrDefault(id, ButtonState.Empty);
     public float Value(string id) => _values.GetValueOrDefault(id, 0.0f);
     
@@ -29,14 +35,14 @@ public class SteeringInput(IInputMapping mapping = null): ISteeringInputControll
 
     public void FixedUpdate()
     {
-        if (mapping is null)
+        if (_mapping is null)
             return;
         
         foreach (var id in _buttonIds)
         {
             if (_mappings.TryGetValue(id, out var idState))
             {
-                var state = mapping.GetButton(idState);
+                var state = _mapping.GetButton(idState);
                 var prevState = Button(id);
                     
                 _buttonStates[id] = new ButtonState(state.IsDown, prevState.IsDown != state.IsDown);
@@ -47,11 +53,12 @@ public class SteeringInput(IInputMapping mapping = null): ISteeringInputControll
         {
             if (_mappings.TryGetValue(id, out var valueId))
             {
-                _values[id] = mapping.GetAxis(id);
+                _values[id] = _mapping.GetAxis(id);
             }
         }
     }
 
     public void SetValue(string id, float value) => _values[id] = value;
     public void SetButtonState(string id, ButtonState buttonState) => _buttonStates[id] = buttonState;
+    public void FinishInitialization() => FixedUpdate();
 }

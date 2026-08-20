@@ -118,7 +118,11 @@ public readonly partial struct RgbaColor(byte red, byte green, byte blue, byte a
         var s = delta != 0 ? delta / (1 - MathF.Abs(2 * l - 1)) : 0;
         var h = 0f;
 
-        if (Math.Abs(cMax - Rf) < float.Epsilon)
+        if (delta == 0)
+        {
+            h = 0;
+        }
+        else if (Math.Abs(cMax - Rf) < float.Epsilon)
         {
             h = 60 * ((Gf - Bf) / delta) % 6;
         }

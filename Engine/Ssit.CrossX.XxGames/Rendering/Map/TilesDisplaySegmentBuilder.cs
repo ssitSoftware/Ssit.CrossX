@@ -65,6 +65,8 @@ public class TilesDisplaySegmentBuilder
     {
         var list = new List<TilesDisplaySegment>();
         
+        
+        
         try
         {
             _verticesMap.Clear();
@@ -94,9 +96,7 @@ public class TilesDisplaySegmentBuilder
                         _verticesMap.Add(tile.TileSet, quads);
                     }
 
-                    float epsilon = 0.01f;
-
-                    var size = xbr - xtl;
+                    float epsilon = 0.0001f;
                     
                     xtl.X += epsilon;
                     xtl.Y += epsilon;

@@ -24,7 +24,7 @@ public static class UiBootstrapper
             .WithSingleton<IStylesManager, StylesManager>()
             .WithSingleton<IHandlerMapper, FullHandlerMapper>()
             .WithSingleton<IUiServices, UiServices>()
-            .WithSingleton<IActionDispatcher, ActionDispatcher>()
+            .WithSingleton<IUiActionDispatcher, UiActionDispatcher>()
             .WithSingleton<IUiSounds, UiSoundsContainer>()
             .WithSingleton<IUiApp, UiApp>();
         

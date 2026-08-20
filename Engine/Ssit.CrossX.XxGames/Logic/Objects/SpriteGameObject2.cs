@@ -119,10 +119,15 @@ public abstract class SpriteGameObject2 : IGameObjectRenderer2, IBodyOwner
     {
         if (Sprite is null)
             return;
-        
-        var pos = Body.Position * Services.GameTemplate.TileSize;
-        pos = pos.TrimVectorToPixels(Services.GameTemplate.TrimToPixels);
-        renderer.SpriteRenderer.Draw(Sprite, pos, transform: Transform, color: color);
+
+        var position = Body.Position;
+        if (this is IPositionObject positionObject)
+        {
+            position = positionObject.Position;
+        }
+
+        position *= Services.GameTemplate.TileSize;
+        renderer.SpriteRenderer.Draw(Sprite, position, transform: Transform, color: color);
     }
 
     protected virtual void OnFixedUpdate(ref bool cancelUpdate)

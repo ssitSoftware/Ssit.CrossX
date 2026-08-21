@@ -44,7 +44,7 @@ public class AirJumpBehavior : SteeringBehavior<ISteeringCharacter>
                 
                 obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };
                 obj.Body.Velocity = obj.Body.Velocity with { X = obj.FaceLeft ? -obj.PhysicsValues.RunSpeed : obj.PhysicsValues.RunSpeed };
-             
+
                 if (dir.HasValue)
                 {
                     obj.Body.Velocity = dir.Value;
@@ -53,7 +53,9 @@ public class AirJumpBehavior : SteeringBehavior<ISteeringCharacter>
                         obj.FaceLeft = dir.Value.X < 0;
                     }
                 }
-                
+
+                obj.SteeringParameters.JumpHorizontalVelocity = obj.Body.Velocity.X;
+
                 return true;
             }
         }

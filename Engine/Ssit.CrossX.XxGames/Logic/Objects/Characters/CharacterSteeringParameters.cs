@@ -29,7 +29,8 @@ public class CharacterSteeringParameters
     
     public bool JumpOfRequested;
     public bool JumpRequested;
-    
+    public float JumpHorizontalVelocity;
+
     public float MaxVelocity;
     public bool DisableFall;
     

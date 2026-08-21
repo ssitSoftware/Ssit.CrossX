@@ -4,13 +4,14 @@ using Ssit.CrossX.XxGames.Logic.Stering;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class ApplyJumpVelocityBehavior : SteeringBehavior<ISteeringCharacter>
+public class ApplyVerticalJumpVelocityBehavior : SteeringBehavior<ISteeringCharacter>
 {
     protected override void OnEnter(ISteeringCharacter obj)
     {
-        obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };
-        obj.Body.Velocity = obj.Body.Velocity with { X = (obj.FaceLeft ? -obj.PhysicsValues.RunSpeed : obj.PhysicsValues.RunSpeed) + obj.Body.KinematicVelocity.X };
         obj.SteeringParameters.JumpHorizontalVelocity = obj.Body.Velocity.X;
+
+        obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };
+        obj.Body.Velocity += obj.Body.KinematicVelocity with { Y = 0 };
 
         obj.Body.Position -= new Vector2(0, 0.22f);
         obj.SteeringParameters.IsOnGround = false;

@@ -1,0 +1,31 @@
+using System;
+using Ssit.CrossX.XxGames.Logic.Objects.Characters;
+using Ssit.CrossX.XxGames.Logic.Stering;
+
+namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
+
+public class AirSteerBehavior : SteeringBehavior<ISteeringCharacter>
+{
+    protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
+    {
+        var move = obj.SteeringInput.Value(SteeringControlNames.HorizontalMove);
+
+        if (MathF.Abs(move) <= 0.1f)
+            return false;
+
+        var physicsValues = obj.PhysicsValues;
+        var maxAirSpeed = MathF.Max(MathF.Abs(obj.SteeringParameters.JumpHorizontalVelocity), physicsValues.AirControlZeroSpeed);
+        var target = move * maxAirSpeed;
+        var maxDelta = physicsValues.AirAcceleration * dt;
+        var velocity = obj.Body.Velocity;
+
+        var newX = MathF.Abs(target - velocity.X) <= maxDelta
+            ? target
+            : velocity.X + MathF.Sign(target - velocity.X) * maxDelta;
+
+        obj.Body.Velocity = velocity with { X = newX };
+        obj.FaceLeft = move < 0;
+
+        return false;
+    }
+}

@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <Folder Include="Logic\Objects\Behaviors\" />
+      <Folder Include="Platformer\Behaviors\SteeringCharacters\Parameters\" />
     </ItemGroup>
 
 </Project>

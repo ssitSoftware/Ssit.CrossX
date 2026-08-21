@@ -9,7 +9,7 @@ public interface ICharacterPhysicsValues
     float JumpFactor => 4.0f;
     float JumpOfSpeed => 2.0f;
     float PushPullVelocity => 4.4f;
-    float FrictionOnLandingFactor => 1.1f;
+    float FrictionModifierOnLandingFactor => 0.5f;
     float JumpHoldAccelFactor => 2.0f;
     float JumpHoldAccelInc => 0.11f;
     float WallSlideSpeed => 5.5f;
@@ -21,4 +21,7 @@ public interface ICharacterPhysicsValues
     float ThrustDownVelocity => 18f;
     float MoveAwayDistance => 2f;
     float MoveAwaySpeed => 20f;
+    float AirAcceleration => 36f;
+    float AirControlSpeed => RunSpeed;
+    float AirControlZeroSpeed => RunSpeed / 4;
 }

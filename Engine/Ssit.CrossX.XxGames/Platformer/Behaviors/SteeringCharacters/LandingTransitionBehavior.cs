@@ -11,6 +11,7 @@ public class LandingTransitionBehavior(string onGroundState, CheckAdditionalGrou
         if (!additionalGroundHelper.IsOnGroundExtra(obj))
             return false;
 
+        obj.GetParameters<LandingParameters>(true).Velocity = obj.Body.Velocity;
         obj.SetSteeringState(onGroundState);
         return true;
     }

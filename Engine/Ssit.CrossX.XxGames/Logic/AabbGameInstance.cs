@@ -14,13 +14,18 @@ using Ssit.CrossX.XxGames.Logic.Objects;
 using Ssit.CrossX.XxGames.Physics;
 using Ssit.CrossX.XxGames.Platformer.Builders;
 using Ssit.CrossX.XxGames.Rendering.Map;
-using Ssit.CrossX.XxGames.Utils;
 using Ssit.IoC;
 
 namespace Ssit.CrossX.XxGames.Logic;
 
 public class AabbGameInstance : IGameInstance, IMessenger
 {
+    public interface IBackgroundRenderer: IDisposable
+    {
+        void Render(IRenderer2 renderer);
+        void Update(float deltaTime);
+    }
+    
     public class Parameters
     {
         public string MapPath { get; set; }
@@ -29,6 +34,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         public int BackgroundColorIndex { get; set; }
         public int? MaxFps { get; set; }
         public int? TargetFps { get; set; }
+        public IBackgroundRenderer BackgroundRenderer { get; set; }
     }
     
     IIoCContainer IGameInstance.Services => Container;
@@ -44,7 +50,9 @@ public class AabbGameInstance : IGameInstance, IMessenger
     private readonly IGameTemplate _gameTemplate;
     private readonly IPaletteSource _paletteSource;
     private readonly MapDisplayElement _mapDisplayElement;
-
+    
+    private readonly IBackgroundRenderer _backgroundRenderer;
+    
     // ReSharper disable once MemberCanBePrivate.Global
     public readonly ISimulation Simulation;
     public readonly IIoCContainer Container;
@@ -90,6 +98,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         _gameTemplate = gameTemplate;
         _paletteSource = paletteSource;
         _bgColorIndex = parameters.BackgroundColorIndex;
+        _backgroundRenderer = parameters.BackgroundRenderer;
         
         using var stream = contentManager.FilesProvider.Open(parameters.MapPath);
         var map = MapFile.FromStream(stream, gameTemplate);
@@ -165,6 +174,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
         {
             Message?.Invoke(message);
         }
+        _backgroundRenderer?.Update(deltaTime);
         Update(deltaTime);
     }
     
@@ -185,13 +195,19 @@ public class AabbGameInstance : IGameInstance, IMessenger
             return;
 
         var bgColor = GetBgColor();
-
-        renderer.StateManager.SaveState();
-        renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : bgColor);
         
+        renderer.StateManager.SaveState();
+
+        if (renderer.StateProvider.UseGlowTextures || _backgroundRenderer == null)
+        {
+            renderer.GeometryRenderer.FillRectangle(target, renderer.StateProvider.UseGlowTextures ? RgbaColor.Black : bgColor);
+        }
+
         renderer.StateManager.Translate(target.TopLeft);
         renderer.StateManager.Scale(scale);
 
+        _backgroundRenderer?.Render(renderer);
+        
         var size = target.Size.ToVector() / scale;
         
         MapRenderer.Render(renderer, _mapDisplayElement, Simulation, _camera.LookAt,
@@ -255,7 +271,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
 
         _timer.Update(deltaTime);
         
-        Simulation.SimulationParameters.TimeDelta = deltaTime;
+        Simulation.SimulationParameters.TimeDelta = _timer.TimeDelta;
         Simulation.Update(deltaTime, FixedUpdate);
         _mapDisplayElement.Update(deltaTime);
         Updated?.Invoke();
@@ -272,6 +288,7 @@ public class AabbGameInstance : IGameInstance, IMessenger
             _scheduler.Schedule(_mapDisplayElement.Dispose);
             Simulation.Dispose();
             Container?.Dispose();
+            _backgroundRenderer?.Dispose();
         });
     }
     

@@ -7,8 +7,14 @@ using Ssit.CrossX.XxGames.Physics;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
-public class WallContactCollisionBehavior(int wallClimbMaterialIndex, params string[] wallSlideFromStates): SteeringBehavior<ISteeringCharacter>
+public class WallContactCollisionBehavior(WallContactCollisionBehavior.DefaultMode mode, int wallClimbMaterialIndex, params string[] wallSlideFromStates): SteeringBehavior<ISteeringCharacter>
 {
+    public enum DefaultMode
+    {
+        SwitchDirection,
+        GoIdle
+    }
+    
     private readonly HashSet<string> _wallSlideFromStates = new(wallSlideFromStates);
 
     private readonly HashSet<int> _noSlideMaterials = new();
@@ -49,7 +55,15 @@ public class WallContactCollisionBehavior(int wallClimbMaterialIndex, params str
 
             if (aabb.Intersects(other.Aabb) && obj.SteeringParameters.IsOnStaticGround)
             {
-                obj.FaceLeft = !obj.FaceLeft;
+                if (mode == DefaultMode.SwitchDirection)
+                {
+                    obj.FaceLeft = !obj.FaceLeft;
+                }
+                else
+                {
+                    obj.SetSteeringState("Idle");
+                }
+
                 return true;
             }
         }

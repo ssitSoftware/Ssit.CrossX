@@ -15,6 +15,12 @@ public class AirSteerBehavior : SteeringBehavior<ISteeringCharacter>
 
         var physicsValues = obj.PhysicsValues;
         var maxAirSpeed = MathF.Max(MathF.Abs(obj.SteeringParameters.JumpHorizontalVelocity), physicsValues.AirControlZeroSpeed);
+
+        if (MathF.Sign(move) != MathF.Sign(obj.SteeringParameters.JumpHorizontalVelocity))
+        {
+            maxAirSpeed = physicsValues.AirControlZeroSpeed / 2;
+        }
+        
         var target = move * maxAirSpeed;
         var maxDelta = physicsValues.AirAcceleration * dt;
         var velocity = obj.Body.Velocity;

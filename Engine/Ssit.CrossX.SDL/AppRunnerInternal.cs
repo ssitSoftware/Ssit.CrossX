@@ -131,7 +131,7 @@ internal static class AppRunnerInternal
 
         if (builder.IsRegistered(typeof(IPaletteSource)))
         {
-            builder.WithSingleton<ISdlPalette, SdlPalette>();
+            builder.WithSingleton<ISdlPalette, SdlPalette>().As<IPlatformPalette>();
         }
         
         var services = builder.Build();

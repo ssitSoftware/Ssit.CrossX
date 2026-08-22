@@ -33,7 +33,7 @@ public unsafe class SdlTexture: ITexture
 
     private readonly bool _useDiffuseAsGlow;
 
-    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, IActionScheduler actionScheduler, IEventSource eventSource, ISdlPalette sdlPalette = null)
+    public SdlTexture(SdlHandles handles, LoadTextureParameters parameters, IActionScheduler actionScheduler, IEventSource eventSource, ISdlPalette sdlPalette)
     {
         _handles = handles;
         _actionScheduler = actionScheduler;
@@ -179,7 +179,7 @@ public unsafe class SdlTexture: ITexture
             return;
         }
 
-        if (palettePtr !=  null && palettePtr.Pointer != null)
+        if (palettePtr != null && palettePtr.Pointer != null)
         {
             SDL_SetSurfacePalette(surfacePtr.Pointer, palettePtr.Pointer);
         }

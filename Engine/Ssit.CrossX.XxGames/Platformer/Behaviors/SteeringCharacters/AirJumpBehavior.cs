@@ -54,7 +54,7 @@ public class AirJumpBehavior : SteeringBehavior<ISteeringCharacter>
                     }
                 }
 
-                obj.SteeringParameters.JumpHorizontalVelocity = obj.Body.Velocity.X;
+                obj.SteeringParameters.LastHorizontalVelocity = obj.Body.Velocity.X;
 
                 return true;
             }

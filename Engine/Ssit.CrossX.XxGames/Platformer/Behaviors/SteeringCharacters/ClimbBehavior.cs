@@ -39,6 +39,12 @@ public class ClimbBehavior(int climbMaterialIndex) : SteeringBehavior<ISteeringC
 
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
+        if (obj.SteeringParameters.IsOnGround)
+        {
+            obj.SetSteeringState("Idle");
+            return true;
+        }
+        
         var parameters = obj.GetParameters<Parameters>(true);
         parameters.ClimbAabb ??= FindClimbAabb(obj);
 
@@ -48,17 +54,20 @@ public class ClimbBehavior(int climbMaterialIndex) : SteeringBehavior<ISteeringC
             return true;
         }
 
-        var verticalMove = obj.SteeringInput.Value(SteeringControlNames.VerticalMove);
-
         var charAabb = obj.Body.Colliders[0].Aabb;
         var climbAabb = parameters.ClimbAabb.Value;
 
-        // Reached the top while climbing up — shift forward to stand on it
+        // Once more than half the character is above the climbable surface, finish the climb
+        // automatically as if Up were held, regardless of actual vertical input.
+        var pastHalfway = charAabb.Top + charAabb.Height / 8 <= climbAabb.Top;
+        var verticalMove = pastHalfway ? -1f : obj.SteeringInput.Value(SteeringControlNames.VerticalMove);
+
+        // Reached the top while climbing up — shift onto it and keep moving in the facing direction
         if (verticalMove < 0 && charAabb.Bottom <= climbAabb.Top)
         {
-            var shift = obj.FaceLeft ? -0.6f : 0.6f;
-            obj.Body.Position += new Vector2(shift, 0);
-            obj.Body.Velocity = Vector2.Zero;
+            var direction = obj.FaceLeft ? -1f : 1f;
+            obj.Body.Position += new Vector2(direction * 0.2f, 0);
+            obj.Body.Velocity = new Vector2(direction * obj.PhysicsValues.WalkSpeed, 0);
             obj.SetSteeringState("Run");
             return true;
         }

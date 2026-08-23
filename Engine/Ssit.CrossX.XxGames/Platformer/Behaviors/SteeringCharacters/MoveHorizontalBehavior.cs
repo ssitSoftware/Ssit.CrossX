@@ -2,7 +2,6 @@ using System;
 using Ssit.CrossX.XxGames.Logic.Objects.Characters;
 using Ssit.CrossX.XxGames.Logic.Stering;
 using Ssit.CrossX.XxGames.Physics;
-using Ssit.CrossX.XxGames.Platformer.Helpers;
 
 namespace Ssit.CrossX.XxGames.Platformer.Behaviors.SteeringCharacters;
 
@@ -12,7 +11,6 @@ public class MoveHorizontalBehavior() : SteeringBehavior<ISteeringCharacter>
     {
         if (!obj.SteeringParameters.IsOnGround)
         {
-            obj.SetSteeringState("Fall");
             return false;
         }
 
@@ -33,6 +31,7 @@ public class MoveHorizontalBehavior() : SteeringBehavior<ISteeringCharacter>
                 return false;
 
             obj.SetSteeringState(MathF.Abs(newX) < physicsValues.WalkSpeed ? "Walk" : "Run");
+            obj.SteeringParameters.LastHorizontalVelocity = obj.Body.Velocity.X;
         }
         else
         {

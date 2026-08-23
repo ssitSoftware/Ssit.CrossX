@@ -79,8 +79,8 @@ public class WallClimbBehavior(int wallClimbMaterialIndex) : SteeringBehavior<IS
         
         var aabb = obj.Body.Colliders[0].Aabb;
         var probe = obj.FaceLeft
-            ? new Aabb(aabb.Left - 0.2f, aabb.Top, aabb.Left + 0.01f, aabb.Bottom)
-            : new Aabb(aabb.Right - 0.01f, aabb.Top, aabb.Right + 0.2f, aabb.Bottom);
+            ? new Aabb(aabb.Left - 0.2f, aabb.Top, aabb.Left + 0.01f, aabb.Bottom - 0.05f)
+            : new Aabb(aabb.Right - 0.01f, aabb.Top, aabb.Right + 0.2f, aabb.Bottom - 0.05f);
 
         var colliders = obj.Body.Simulation.GetColliders(probe, obj.Body, group);
 

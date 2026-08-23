@@ -36,7 +36,7 @@ public class WallContactCollisionBehavior(WallContactCollisionBehavior.DefaultMo
         {
             if (other.Aabb.Bottom > source.Aabb.Center.Y && !_noSlideMaterials.Contains(other.Material.Index))
             {
-                if (other.Material.Index == wallClimbMaterialIndex)
+                if (!obj.SteeringParameters.IsOnGround && other.Material.Index == wallClimbMaterialIndex)
                 {
                     obj.SetSteeringState("WallClimb");
                     return true;

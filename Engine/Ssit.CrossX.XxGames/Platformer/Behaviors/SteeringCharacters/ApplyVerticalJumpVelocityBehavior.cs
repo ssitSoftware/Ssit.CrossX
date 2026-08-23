@@ -9,11 +9,11 @@ public class ApplyVerticalJumpVelocityBehavior : SteeringBehavior<ISteeringChara
 {
     protected override void OnEnter(ISteeringCharacter obj)
     {
-        obj.SteeringParameters.JumpHorizontalVelocity = obj.Body.Velocity.X;
+        obj.SteeringParameters.LastHorizontalVelocity = obj.Body.Velocity.X;
 
         if (MathF.Abs(obj.Body.Velocity.X) < 0.1f)
         {
-            obj.SteeringParameters.JumpHorizontalVelocity = obj.FaceLeft ? -0.1f : 0.1f;
+            obj.SteeringParameters.LastHorizontalVelocity = obj.FaceLeft ? -0.1f : 0.1f;
         }
 
         obj.Body.Velocity = obj.Body.Velocity with { Y = -obj.PhysicsValues.JumpVelocity };

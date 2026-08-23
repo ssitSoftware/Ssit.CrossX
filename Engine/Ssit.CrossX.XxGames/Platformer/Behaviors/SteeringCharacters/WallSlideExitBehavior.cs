@@ -8,6 +8,12 @@ public class WallSlideExitBehavior : SteeringBehavior<ISteeringCharacter>
 {
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
+        if (obj.SteeringParameters.IsOnGround)
+        {
+            obj.SetSteeringState("Idle");
+            return true;
+        }
+        
         var aabb = obj.Body.Colliders[0].Aabb;
         var wallProbe = obj.FaceLeft
             ? new Aabb(aabb.Left - 0.1f, aabb.Top + 0.1f, aabb.Left, aabb.Bottom - 0.1f)

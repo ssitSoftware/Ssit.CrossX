@@ -9,12 +9,12 @@ public class JumpBehavior(CheckAdditionalGroundHelper additionalGroundHelper) : 
 {
     protected override bool OnFixedUpdate(ISteeringCharacter obj, float dt)
     {
-        if (!additionalGroundHelper.IsOnGroundExtra(obj))
-            return false;
-        
         if (obj.SteeringInput.Button(SteeringControlNames.Jump) != ButtonState.JustPressed)
             return false;
         
+        if (!additionalGroundHelper.IsOnGroundExtra(obj))
+            return false;
+
         obj.SoundContainer?.Play("Jump");
         obj.SetSteeringState("Raise");
         return true;

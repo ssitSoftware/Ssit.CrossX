@@ -15,7 +15,7 @@ public class CheckAdditionalGroundHelper(params int[] excludeMaterials)
 
             if (obj.FaceLeft)
             {
-                aabb.Right += 0.3f;
+                aabb.Right += 0.5f;
                 aabb.Left += 0.1f;
             }
             else
@@ -24,7 +24,7 @@ public class CheckAdditionalGroundHelper(params int[] excludeMaterials)
                 aabb.Right -= 0.1f;
             }
 
-            aabb.Top = aabb.Bottom;
+            aabb.Top = aabb.Bottom - 0.05f;
             aabb.Bottom += 0.4f;
             
             var group = obj.Body.Colliders[0].Material.ColliderGroup;
